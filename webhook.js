@@ -10,7 +10,7 @@ const server = app.listen(process.env.PORT || 5000, () => {
 
 /* For Facebook Validation */
 app.get('/webhook', (req, res) => {
-  if (req.query['hub.mode'] && req.query['hub.verify_token'] === 'child_of_ch@5bot!') {
+  if (req.query['hub.mode'] && req.query['hub.verify_token'] === '<TOKEN>') {
     res.status(200).send(req.query['hub.challenge']);
   } else {
     res.status(403).end();
@@ -40,7 +40,7 @@ app.post('/webhook', (req, res) => {
 
 //  request({
 //    url: 'https://graph.facebook.com/v2.6/me/messages',
-//    qs: {access_token: 'DQVJ0UmNGZAm1CaDlpMHlMLUlmbFQ1dXh5cS1qQ2lyM1dvRjlsNnRfUlQwUEtOZAUgwNGNockltWkJSRjdzb0REVkxtX3FhYnBPZA19sRXB5c1dmWFFiT3dlczVsdDhrTkNNeXJwQ0tBdklKMnZAEX2pHN2ZAjd3liNDdJRXppc19Kd1JTMkEzYzdEX1Y2UWFERldZAUDVBTXgtRGNzYktDSkp3SFhMOGN3OHZAHZATBLZA2s3ZAnREM1NZALWJybllJSFk1N3lrTTUzb2FkNGRkNC1UNDNxWQZDZD'},
+//    qs: {access_token: '<TOKEN>'},
 //    method: 'POST',
 //    json: {
 //      recipient: {id: sender},
@@ -55,14 +55,14 @@ app.post('/webhook', (req, res) => {
 //  });
 //}
 
-const apiaiApp = require('apiai')('dee91c4603864109b2d13ab6ecbac526');
+const apiaiApp = require('apiai')('<TOKEN>');
 
 function sendMessage(event) {
   let sender = event.sender.id;
   let text = event.message.text;
 
   let apiai = apiaiApp.textRequest(text, {
-    sessionId: 'tabby_cat' // use any arbitrary id
+    sessionId: '<TOKEN>' // use any arbitrary id
   });
 
   apiai.on('response', (response) => {
@@ -70,7 +70,7 @@ function sendMessage(event) {
 
       request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
-        qs: {access_token: 'DQVJ0UmNGZAm1CaDlpMHlMLUlmbFQ1dXh5cS1qQ2lyM1dvRjlsNnRfUlQwUEtOZAUgwNGNockltWkJSRjdzb0REVkxtX3FhYnBPZA19sRXB5c1dmWFFiT3dlczVsdDhrTkNNeXJwQ0tBdklKMnZAEX2pHN2ZAjd3liNDdJRXppc19Kd1JTMkEzYzdEX1Y2UWFERldZAUDVBTXgtRGNzYktDSkp3SFhMOGN3OHZAHZATBLZA2s3ZAnREM1NZALWJybllJSFk1N3lrTTUzb2FkNGRkNC1UNDNxWQZDZD'},
+        qs: {access_token: '<TOKEN>'},
         method: 'POST',
         json: {
           recipient: {id: sender},
