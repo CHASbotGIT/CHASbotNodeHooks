@@ -133,8 +133,8 @@ const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 const APIAI_TOKEN = process.env.APIAI_TOKEN;
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
-const server_port = process.env.OPENSHIFT_NODEJS_PORT;
-const server_ip_address = process.env.OPENSHIFT_NODEJS_IP;
+var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 
 // Set-up pre-requisites for app
 const express = require('express');
