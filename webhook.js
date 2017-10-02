@@ -136,6 +136,8 @@ const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
 var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 
+console.log('Magic = ' + VERIFY_TOKEN);
+
 // Set-up pre-requisites for app
 const express = require('express');
 const bodyParser = require('body-parser');
