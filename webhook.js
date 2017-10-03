@@ -135,6 +135,8 @@ const APIAI_TOKEN = process.env.APIAI_TOKEN;
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
 var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+var letsEncrypt_Url = process.env.LETS_ENCRYPT;
+var letsEncrypt_Response = process.env.LETS_ENCRYPT_RESPONSE;
 
 // Set-up pre-requisites for app
 const express = require('express');
@@ -153,7 +155,13 @@ const server = app.listen(server_port, server_ip_address, () => {
   console.log( "Listening on " + server_ip_address + ", port " + server_port );
 });
 
-console.log('Magic = ' + VERIFY_TOKEN);
+// Lets encrypt response - spoof SSL:
+if(letsEncrypt_Url != undefined && letsEncrypt_Response != undefined) {
+  self.app.get('/.well-known/acme-challenge/' + letsEncrypt_Url, function (req, res) {
+    res.send(letsEncrypt_Response);
+    res.end();
+  });
+};
 
 // Facebook/workplace validation
 // Configure webhook in work chat integration - VERIFY_TOKEN matches code and app
