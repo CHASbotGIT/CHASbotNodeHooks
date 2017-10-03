@@ -155,9 +155,12 @@ const server = app.listen(server_port, server_ip_address, () => {
   console.log( "Listening on " + server_ip_address + ", port " + server_port );
 });
 
-// Lets encrypt response - spoof SSL:
-if(letsEncrypt_Url != undefined && letsEncrypt_Response != undefined) {
-  self.app.get('/.well-known/acme-challenge/' + letsEncrypt_Url, function (req, res) {
+// Lets encrypt response - spoof SSL
+console.log("SSL URL: " + letsEncrypt_Url);
+console.log("SSL Response: " + letsEncrypt_Response);
+if (letsEncrypt_Url != undefined && letsEncrypt_Response != undefined) {
+  app.get('/.well-known/acme-challenge/' + letsEncrypt_Url, function (req, res) {
+    console.log("SSL Triggered");
     res.send(letsEncrypt_Response);
     res.end();
   });
