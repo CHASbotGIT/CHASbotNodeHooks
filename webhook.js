@@ -134,7 +134,7 @@ const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 const APIAI_TOKEN = process.env.APIAI_TOKEN;
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 var server_port = process.env.PORT || 8080;
-var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+//var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 //var letsEncrypt_Url = process.env.LETS_ENCRYPT;
 //var letsEncrypt_Response = process.env.LETS_ENCRYPT_RESPONSE;
 
@@ -151,8 +151,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //  console.log('Express server listening on port %d in %s mode', server.address().port, app.settings.env);
 //});
 // Local or Hosted
-const server = app.listen(server_port, server_ip_address, () => {
-  console.log( "Listening on " + server_ip_address + ", port " + server_port );
+const server = app.listen(server_port, () => {
+ console.log( "Listening on ", + server_port); 
+ //console.log( "Listening on " + server_ip_address + ", port " + server_port );
 });
 
 /* Lets encrypt response - spoof SSL
