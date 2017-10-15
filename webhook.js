@@ -11,7 +11,9 @@
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 const APIAI_TOKEN = process.env.APIAI_TOKEN;
+//NNbjjyMbkqBkAUuDQYDC
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
+const SECRET_CRYPTO = process.env.SECRET_CRYPTO;
 // Free linkable image hosting at https://imgbox.com
 const IMG_URL_PREFIX = "https://images.imgbox.com/";
 const IMG_URL_SUFFIX = "_o.png";
@@ -99,6 +101,20 @@ var CHAS_EVENTS_OOPS = [
 ];
 var CHAS_EVENTS_OOPS_INDEX = 0;
 var fs = require("fs");
+// CHAS biographies
+const CHAS_BIOS_TRIGGER_PHRASE = 'who is'; // Triggers in lower case
+const CHAS_BIOS_BLOCK_SIZE = 2;
+var CHAS_BIOS_TRIGGER = 0;
+var CHAS_BIOS = new Array();
+var CHAS_BIOS_TOTAL = 0;
+var CHAS_BIOS_INDEX = -1;
+var CHAS_BIOS_NAME = '';
+var CHAS_BIOS_OOPS = [
+  "🤔 Oops, that's not a person I could find...",
+  "🤔 Mmmm, not somebody that I recognise...",
+  "🤔 Not sure I'm able to help you with who that is..."
+];
+var CHAS_BIOS_OOPS_INDEX = 0;
 // Rock Paper Scissors Lizard Spock
 const RPSLS_TRIGGER_PHRASE = 'bazinga'; // Triggers in lower case
 const RPSLS_INTRO = "💡 First to five is the champion. Scissors cuts Paper, Paper covers Rock, Rock crushes Lizard, Lizard poisons Spock, Spock smashes Scissors, Scissors decapitates Lizard, Lizard eats Paper, Paper disproves Spock, Spock vaporizes Rock, and Rock crushes Scissors!";
@@ -132,6 +148,66 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Messenger templates can be found at:
 // https://developers.facebook.com/docs/messenger-platform/send-messages/templates
 
+var enCrypt = function(text_plain) {
+  var algorithm = 'aes-256-ctr';
+  var passkey = SECRET_CRYPTO;
+  var cipher = crypto.createCipher(algorithm,passkey)
+  var crypted = cipher.update(text_plain,'utf-8','hex')
+  crypted += cipher.final('hex');
+  return crypted;
+}
+var deCrypt = function(text_obscure) {
+  var algorithm = 'aes-256-ctr';
+  var passkey = SECRET_CRYPTO;
+  var decipher = crypto.createDecipher(algorithm,passkey)
+  var dec = decipher.update(text_obscure,'hex','utf-8')
+  dec += decipher.final('utf-8');
+  return dec;
+}
+function enCryptBios () {
+  var text_block = fs.readFileSync("./bios_private.txt", "utf-8");
+  var text_block_split = text_block.split("\n");
+  var stream = fs.createWriteStream("./bios_public.txt", "utf-8");
+  stream.once('open', function(fd) {
+    var stream_loop = 0;
+    for (stream_loop = 0; stream_loop < text_block_split.length; stream_loop++) {
+      //console.log(text_block_split[stream_loop]);
+      if (stream_loop == text_block_split.length - 1 ) {
+        stream.write(enCrypt(text_block_split[stream_loop])); // Last line
+      } else {
+        stream.write(enCrypt(text_block_split[stream_loop]) + '\n');
+      }
+    };
+    stream.end();
+  });
+}
+
+function deCryptBios () {
+  var text_block = fs.readFileSync("./bios_public.txt", "utf-8");
+  var text_block_split_garbled = text_block.split("\n");
+  CHAS_BIOS = new Array();
+  var decrypt_loop = 0;
+  for (decrypt_loop = 0; decrypt_loop < text_block_split_garbled.length; decrypt_loop++) {
+    CHAS_BIOS[decrypt_loop] = deCrypt(text_block_split_garbled[decrypt_loop]);
+  };
+  var number_bios_entries = CHAS_BIOS.length;
+  console.log('Bios entries: ' + number_bios_entries);
+  var remainder = number_bios_entries % CHAS_BIOS_BLOCK_SIZE;
+  console.log('Bios remainder (looking for 0): ' + remainder);
+  CHAS_BIOS_TOTAL = number_bios_entries / CHAS_BIOS_BLOCK_SIZE;
+  console.log('Events: ' + CHAS_BIOS_TOTAL);
+  if (( remainder != 0 )||( CHAS_BIOS_TOTAL == 0 )) {
+    console.log('*** WHOOPS *** Something funky going on with bios');
+    return false;
+  } else {
+    return true;
+  }
+}
+
+// Load in encrypted biography information
+//enCryptBios(); // Run once to encrypt biography CHAS file
+var CHAS_BIOS_VIABLE = deCryptBios(); // Normal runtime configuration
+
 function CalendarLoad() {
   // Load in calendar events
   var text_block = fs.readFileSync("./calendar.txt", "utf-8");
@@ -153,14 +229,14 @@ function CalendarLoad() {
 var CHAS_EVENTS_VIABLE = CalendarLoad();
 
 // ESTABLISH LISTENER
-/* Only for TESTING via local NGROK.IO
+// Only for TESTING via local NGROK.IO
 const server = app.listen(server_port, server_ip_address, () => {
   console.log( "Listening on " + server_ip_address + ", port " + server_port );
-});*/
-// Only for PRODUCTION hosting on HEROKU
+});
+/* Only for PRODUCTION hosting on HEROKU
 const server = app.listen(server_port, () => {
  console.log( "Listening on ", + server_port);
-});
+});*/
 
 // Facebook/workplace validation
 // Configure webhook in work chat integration - VERIFY_TOKEN matches code and app
@@ -200,7 +276,6 @@ app.post('/webhook', (req, res) => {
               };
             };
           };
-
           position_in_analyse_text = analyse_text.search(RPSLS_TRIGGER_PHRASE) + 1;
           console.log('Bazinga search result: ' + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
@@ -268,6 +343,20 @@ app.post('/webhook', (req, res) => {
               CHAS_EVENTS_NAME = analyse_text.slice(starting_point,ending_point);
             };
           };
+          // CHAS Bios
+          CHAS_BIOS_TRIGGER = 0;
+          position_in_analyse_text = analyse_text.search(CHAS_BIOS_TRIGGER_PHRASE) + 1;
+          console.log('CHAS name phrase search result: ' + position_in_analyse_text);
+          if (position_in_analyse_text > 0) {
+            starting_point = position_in_analyse_text + CHAS_BIOS_TRIGGER_PHRASE.length;
+            ending_point = analyse_text.length;
+            string_length = ending_point - starting_point;
+            console.log ('Length is ' + string_length + ', starting @ ' + starting_point + ' and go to ' + ending_point);
+            if (string_length > 0) {
+              CHAS_BIOS_TRIGGER = 1;
+              CHAS_BIOS_NAME = analyse_text.slice(starting_point,ending_point);
+            };
+          };
           // Pick a response route
           if (MARVEL_TRIGGER == 1){
             console.log('Marvel Character: ' + HERO_WHO);
@@ -275,9 +364,12 @@ app.post('/webhook', (req, res) => {
           } else if (CHASABET_TRIGGER == 1) {
             console.log('CHAS alpahbet: ' + CHASABET_LETTER);
             getAlphabetCHAS(CHASABET_LETTER,event);
-          } else if (CHAS_EVENTS_TRIGGER == 1) {
+          } else if (CHAS_EVENTS_TRIGGER == 1 && CHAS_EVENTS_VIABLE) {
             console.log('CHAS event: ' + CHAS_EVENTS_NAME);
             getEventCHAS(CHAS_EVENTS_NAME,event);
+          } else if (CHAS_BIOS_TRIGGER == 1 && CHAS_BIOS_VIABLE) {
+            console.log('CHAS bios: ' + CHAS_BIOS_NAME);
+            getBiosCHAS(CHAS_BIOS_NAME,event);
           } else if (RPSLS_TRIGGER > 0) {
             console.log('RPSLSpock: ' + RPSLS_PICK_PLAYER);
             getRPSLS(event);
@@ -367,6 +459,8 @@ function sendTextDirect(event) {
           console.log('Error: ', response.body.error);
       }
     }); // request
+    var waitTill = new Date(new Date().getTime() + 800);
+    while(waitTill > new Date()){}
   }
   messageText = '';
 }
@@ -534,6 +628,21 @@ function PostResultsEventsCHAS(pass_on_event,result_or_not) {
   };
 }
 
+function PostResultsBiosCHAS(pass_on_event,result_or_not) {
+  console.log(new Date() + 'PostResultsBiosCHAS');
+  if (result_or_not == 1) {
+    console.log('>>>>>>>>>>>>>>>> ' + CHAS_BIOS_INDEX);
+    messageText = CHAS_BIOS[CHAS_BIOS_INDEX + 1];
+    console.log('>>>>>>>>>>>>>>>> ' + CHAS_BIOS[CHAS_BIOS_INDEX + 1]);
+    sendTextDirect(pass_on_event);
+  } else {
+    messageText = CHAS_BIOS_OOPS[CHAS_BIOS_OOPS_INDEX] + ' try something instead of ' + toTitleCase(CHAS_BIOS_NAME) + '?'; // Required within sendTextDirect
+    CHAS_BIOS_OOPS_INDEX = CHAS_BIOS_OOPS_INDEX + 1;
+    if (CHAS_BIOS_OOPS_INDEX == CHAS_BIOS_OOPS.length) { CHAS_BIOS_OOPS_INDEX = 0 };
+    sendTextDirect(pass_on_event);
+  };
+}
+
 // Fetch back special queries
 function getAlphabetCHAS(LetterTile,pass_in_event) {
   console.log('*** CHAS alphabet look-up ***');
@@ -695,6 +804,82 @@ function getEventCHAS(EventName,pass_in_event) {
     PostResultsEventsCHAS(pass_in_event,0);
   } else {
     PostResultsEventsCHAS(pass_in_event,1);
+  }
+}
+
+function getBiosCHAS(PersonName,pass_in_event) {
+  console.log('*** CHAS biography look-up ***');
+  CHAS_BIOS_INDEX = -1;
+  CHAS_BIOS_NAME = PersonName;
+  // Take the input provded by the user...
+  // ...convert to lowercase
+  PersonName = PersonName.toLowerCase();
+  var compare_to_string = PersonName;
+  // Remove spaces just to check the final length of the alpha content
+  PersonName = PersonName.replace(/\s/g, '');
+  var stripped_sentence_length = PersonName.length;
+  console.log('Cleaned message is: ' + compare_to_string);
+  console.log('Length: ' + stripped_sentence_length);
+  var error_caught = false; // Gets changed to true, if things go iffy before the end
+  if ( stripped_sentence_length == 0 ) {
+    console.log('*** WHOOPS *** There is nothing left to compare');
+    error_caught = true;
+  }
+  // Variables
+  var stripped_message_count = 0;
+  var regex_builder = '';
+  var next_stripped_word = '';
+  var found_bio = false;
+  var zero_is_a_match = -1;
+  var event_loop = 0;
+  var keyword_loop = 0;
+  // Here we go looping through each set of keywords
+  console.log('CHAS_BIOS_TOTAL: ' + CHAS_BIOS_TOTAL);
+  for (event_loop = 0; event_loop < CHAS_BIOS_TOTAL; event_loop++){
+    // Break up the keywords into an array of individual words
+    var sentence_split = CHAS_BIOS[event_loop * CHAS_BIOS_BLOCK_SIZE].split(' ');
+    var sentence_length = sentence_split.length;
+    console.log('Number of words: ' + sentence_length);
+    // If there are no keywords at all, the skip the rest of this iteration
+    if (sentence_length == 0) {continue};
+    // Reset variables for the inner loop
+    stripped_message_count = 0;
+    regex_builder = '';
+    for (keyword_loop = 0; keyword_loop < sentence_length; keyword_loop++) {
+      // Make lowercase
+      next_stripped_word = sentence_split[keyword_loop].toLowerCase();
+      // Strip out all but letters from each keyword and skip small words
+      next_stripped_word = next_stripped_word.replace(/[^A-Za-z]/g, '');
+      regex_builder = regex_builder + REGEX_START + next_stripped_word + REGEX_MIDDLE;
+      console.log('Next word: ' + next_stripped_word);
+      stripped_message_count = stripped_message_count + 1;
+    }
+    // Nothing left to compare because search terms have all been stripped out
+    if (stripped_message_count == 0) {continue};
+    // Complete the search terms regular expression
+    regex_builder = regex_builder + REGEX_END;
+    console.log('Stripped number of words: ' + stripped_message_count);
+    console.log('Regex search: ' + regex_builder);
+    zero_is_a_match = compare_to_string.search(regex_builder);
+    console.log('Match Check: ' + zero_is_a_match);
+    // If there is a match then a value of 0 is returned
+    if (zero_is_a_match == 0){
+      console.log('We have a match: ' + (event_loop * CHAS_BIOS_BLOCK_SIZE));
+      // Sets the index value for the name/keywords for the event
+      CHAS_BIOS_INDEX = event_loop * CHAS_BIOS_BLOCK_SIZE;
+      found_bio = true;
+      break;
+    }
+  }
+  // If there is not a name found then things have gone funky
+  if (!found_bio) {
+    console.log('*** WHOOPS *** No matching name found');
+    error_caught = true;
+  }
+  if (error_caught) {
+    PostResultsBiosCHAS(pass_in_event,0);
+  } else {
+    PostResultsBiosCHAS(pass_in_event,1);
   }
 }
 
