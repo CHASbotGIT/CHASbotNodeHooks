@@ -229,14 +229,14 @@ function CalendarLoad() {
 var CHAS_EVENTS_VIABLE = CalendarLoad();
 
 // ESTABLISH LISTENER
-// Only for TESTING via local NGROK.IO
+/* Only for TESTING via local NGROK.IO
 const server = app.listen(server_port, server_ip_address, () => {
   console.log( "Listening on " + server_ip_address + ", port " + server_port );
-});
-/* Only for PRODUCTION hosting on HEROKU
+});*/
+// Only for PRODUCTION hosting on HEROKU
 const server = app.listen(server_port, () => {
  console.log( "Listening on ", + server_port);
-});*/
+});
 
 // Facebook/workplace validation
 // Configure webhook in work chat integration - VERIFY_TOKEN matches code and app
