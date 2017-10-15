@@ -459,7 +459,7 @@ function sendTextDirect(event) {
           console.log('Error: ', response.body.error);
       }
     }); // request
-    var waitTill = new Date(new Date().getTime() + 800);
+    var waitTill = new Date(new Date().getTime() + 1000);
     while(waitTill > new Date()){}
   }
   messageText = '';
