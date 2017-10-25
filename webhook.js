@@ -221,11 +221,11 @@ function deCryptBios () {
     CHAS_BIOS[decrypt_loop] = deCrypt(text_block_split_garbled[decrypt_loop]);
   };
   var number_bios_entries = CHAS_BIOS.length;
-  //console.log("DEBUG [deCryptBios]> Bios entries: " + number_bios_entries);
+  console.log("DEBUG [deCryptBios]> Bios entries: " + number_bios_entries);
   var remainder = number_bios_entries % CHAS_BIOS_BLOCK_SIZE;
-  //console.log("DEBUG [deCryptBios]> Bios remainder (looking for 0): " + remainder);
+  console.log("DEBUG [deCryptBios]> Bios remainder (looking for 0): " + remainder);
   CHAS_BIOS_TOTAL = number_bios_entries / CHAS_BIOS_BLOCK_SIZE;
-  //console.log("DEBUG [deCryptBios]> Events: " + CHAS_BIOS_TOTAL);
+  console.log("DEBUG [deCryptBios]> Events: " + CHAS_BIOS_TOTAL);
   if (( remainder != 0 )||( CHAS_BIOS_TOTAL == 0 )) {
     console.log("ERROR [deCryptBios]> Something funky going on with bios");
     return false;
