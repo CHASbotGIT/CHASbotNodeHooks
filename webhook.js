@@ -700,7 +700,7 @@ function postResultsBiosCHAS(pass_on_event,result_or_not) {
   if (result_or_not == 1) {
     //console.log("DEBUG [postResultsBiosCHAS]> Index: " + CHAS_BIOS_INDEX);
     console.log("INFO [postResultsBiosCHAS]> Reponse: Successful");
-    messageText = CHAS_BIOS[CHAS_BIOS_INDEX + 1]);
+    messageText = CHAS_BIOS[CHAS_BIOS_INDEX + 1];
     //console.log("DEBUG [postResultsBiosCHAS]> Result: " + CHAS_BIOS[CHAS_BIOS_INDEX + 1]);
     sendTextDirect(pass_on_event);
   } else {
