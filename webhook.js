@@ -266,8 +266,8 @@ const server = CHASbot.listen(server_port, server_ip_address, () => {
 });*/
 // Only for PRODUCTION hosting on HEROKU
 const server = CHASbot.listen(server_port, () => {
- //console.log("INFO [HEROKU]> Listening on ", + server_port);
- //console.log("INFO [HEROKU]>>>>>>>>>>>>>>>>>> STARTED <<<<<<<<<<<<<<<<<<");
+ console.log("INFO [HEROKU]> Listening on ", + server_port);
+ console.log("INFO [HEROKU]>>>>>>>>>>>>>>>>>> STARTED <<<<<<<<<<<<<<<<<<");
 });
 
 // Facebook/workplace validation
