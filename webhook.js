@@ -37,8 +37,9 @@ const IMG_URL_PREFIX = "https://images.imgbox.com/";
 const IMG_URL_SUFFIX = "_o.png";
 const CHAS_THUMB = 'https://images.imgbox.com/99/1d/bFWYzY68_o.jpg';
 const SOURCE_CALENDAR = "./calendar.txt"; // Same directory as source code
-const SOURCE_BIOGRAPHIES = "./bios_private.txt"; // Same directory as source code
-const ENCRYPTED_BIOGRAPHIES = "./bios_public.txt"; // Same directory as source code
+const SOURCE_BIOGRAPHIES = "./bios_private.txt"; // Same directory as source code // "./fundraising_private.txt"
+const ENCRYPTED_BIOGRAPHIES = "./bios_public.txt"; // Same directory as source code //
+const ENCRYPTED_FR_CARD = "./fundraising_public.txt";
 var server_port = process.env.PORT || 9000; //8080;
 var server_ip_address = '127.0.0.1'; // Only for testing via local NGROK.IO
 // Triggers in lowercase - following phrases are handled in code
@@ -142,6 +143,7 @@ var CHAS_BIOS = new Array();
 var CHAS_BIOS_TOTAL = 0;
 var CHAS_BIOS_INDEX = -1;
 var CHAS_BIOS_NAME = '';
+var CHAS_FR_CARD = "Contact your local Fundraising Team:" + "\n";
 // Rock Paper Scissors Lizard Spock
 const RPSLS_INTRO = "💡 First to five is the champion. Scissors cuts Paper, Paper covers Rock, Rock crushes Lizard, Lizard poisons Spock, Spock smashes Scissors, Scissors decapitates Lizard, Lizard eats Paper, Paper disproves Spock, Spock vaporizes Rock, and Rock crushes Scissors!";
 const RPSLS_PROMPT = "Choose... Rock, Paper, Scissors, Lizard or Spock?";
@@ -229,6 +231,14 @@ function deCryptBios () {
   //console.log("DEBUG [deCryptBios]> Bios remainder (looking for 0): " + remainder);
   CHAS_BIOS_TOTAL = number_bios_entries / CHAS_BIOS_BLOCK_SIZE;
   //console.log("DEBUG [deCryptBios]> Events: " + CHAS_BIOS_TOTAL);
+  text_block = fs.readFileSync(ENCRYPTED_FR_CARD, "utf-8");
+  text_block_split_garbled = text_block.split("\n");
+  decrypt_loop = 0;
+  for (decrypt_loop = 0; decrypt_loop < text_block_split_garbled.length; decrypt_loop++) {
+    CHAS_FR_CARD = CHAS_FR_CARD + deCrypt(text_block_split_garbled[decrypt_loop]);
+    if (decrypt_loop != text_block_split_garbled.length) {CHAS_FR_CARD = CHAS_FR_CARD + "\n"};
+  };
+  //console.log("DEBUG [deCryptBios]> Contact Card: " + CHAS_FR_CARD);
   if (( remainder != 0 )||( CHAS_BIOS_TOTAL == 0 )) {
     console.log("ERROR [deCryptBios]> Something funky going on with bios");
     return false;
