@@ -42,6 +42,7 @@ const ENCRYPTED_BIOGRAPHIES = "./bios_public.txt"; // Same directory as source c
 var server_port = process.env.PORT || 9000; //8080;
 var server_ip_address = '127.0.0.1'; // Only for testing via local NGROK.IO
 // Triggers in lowercase - following phrases are handled in code
+const CHAS_LOGO_TRIGGER_PHRASE = 'chas logo';
 const CHASABET_TIRGGER_PHRASE1 = 'chas alphabet';
 const CHASABET_TIRGGER_PHRASE2 = 'chas letter';
 const MARVEL_TIRGGER_PHRASE = 'marvel codename';
