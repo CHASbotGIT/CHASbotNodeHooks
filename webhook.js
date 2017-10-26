@@ -897,6 +897,8 @@ function getEventCHAS(EventName,pass_in_event) {
   // Take the input provded by the user...
   // ...convert to lowercase
   EventName = EventName.toLowerCase();
+  // 5k special case
+  EventName = EventName.replace(/5k/g, 'fivek');
   // 10k special case
   EventName = EventName.replace(/10k/g, 'tenk');
   // Strip out anything that isn't an alpha or a space
@@ -940,6 +942,8 @@ function getEventCHAS(EventName,pass_in_event) {
     for (keyword_loop = 0; keyword_loop < sentence_length; keyword_loop++) {
       // Make lowercase
       next_stripped_word = sentence_split[keyword_loop].toLowerCase();
+      // 5k special case
+      next_stripped_word = next_stripped_word.replace(/5k/g, 'fivek');
       // 10k special case
       next_stripped_word = next_stripped_word.replace(/10k/g, 'tenk');
       // Strip out all but letters from each keyword and skip small words
