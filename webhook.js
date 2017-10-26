@@ -616,6 +616,12 @@ CHASbot.post('/heroku', (req, res) => {
       displayText: trimTo(640,msg),
       source: 'cards'
     });
+  } else if (req.body.result.action === 'fundraising') {
+    return res.json({
+      speech: CHAS_FR_CARD,
+      displayText: trimTo(640,CHAS_FR_CARD),
+      source: 'fundraising'
+    });
   }
 });
 
