@@ -67,6 +67,8 @@ const URL_WIKI = "https://images.imgbox.com/30/62/Vv6KJ9k9_o.png";
 var SEARCH_METHOD = '';
 var SEARCH_TERM = '';
 var SEARCH_TRIGGER = 0;
+// CHAS logo
+var CHAS_LOGO_TRIGGER = 0;
 // CHAS alphabet
 var CHASABET_TRIGGER = 0;
 var CHASABET_LETTER = ''; // Result
@@ -386,6 +388,11 @@ CHASbot.post('/webhook', (req, res) => {
               };
             };
           };
+          // CHAS logo
+          CHAS_LOGO_TRIGGER = 0;
+          position_in_analyse_text = analyse_text.search(CHAS_LOGO_TRIGGER_PHRASE) + 1;
+          //console.log("DEBUG [postWebhook]> " + CHAS_LOGO_TRIGGER_PHRASE + " search result: " + position_in_analyse_text);
+          if (position_in_analyse_text > 0) { CHAS_LOGO_TRIGGER = 1 };
           // CHAS Events
           CHAS_EVENTS_TRIGGER = 0;
           position_in_analyse_text = analyse_text.lastIndexOf(CHAS_EVENTS_TIRGGER_PHRASE) + 1;
@@ -433,7 +440,14 @@ CHASbot.post('/webhook', (req, res) => {
           } else if (SEARCH_TRIGGER == 1) {
             //console.log("DEBUG [postWebhook]> Search: " + SEARCH_TERM);
             postSearch(event);
-          }else {
+          } else if (CHAS_LOGO_TRIGGER == 1) {
+            //console.log("DEBUG [postWebhook]> Logo");
+            console.log("INFO [postWebhook]> Sender: " + FB_WHO);
+            console.log("INFO [postWebhook]> Request: " + CHAS_LOGO_TRIGGER_PHRASE);
+            console.log("INFO [postWebhook]> Action: postWebhook.postImage");
+            console.log("INFO [postWebhook]> Response: IMG URL " + CHAS_THUMB);
+            postImage(CHAS_THUMB,event)
+          } else {
             //console.log("DEBUG [postWebhook]> No special cases, send via APIAI");
             sendMessageViaAPIAI(event);
           }
