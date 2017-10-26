@@ -247,11 +247,11 @@ function loadCalendar() {
   CHAS_EVENTS_CALENDAR = text_block.split("\n");
   // Catch if the calendar list is funky i.e. isn't in blocks of four or missing at least one set
   var number_calendar_entries = CHAS_EVENTS_CALENDAR.length;
-  //console.log("DEBUG [loadCalendar]> Calendar entries: " + number_calendar_entries);
+  console.log("DEBUG [loadCalendar]> Calendar entries: " + number_calendar_entries);
   var remainder = number_calendar_entries % CHAS_EVENTS_BLOCK_SIZE;
-  //console.log("DEBUG [loadCalendar]> Calendar remainder (looking for 0): " + remainder);
+  console.log("DEBUG [loadCalendar]> Calendar remainder (looking for 0): " + remainder);
   CHAS_EVENTS_TOTAL = number_calendar_entries / CHAS_EVENTS_BLOCK_SIZE;
-  //console.log("DEBUG [loadCalendar]> Events: " + CHAS_EVENTS_TOTAL);
+  console.log("DEBUG [loadCalendar]> Events: " + CHAS_EVENTS_TOTAL);
   if (( remainder != 0 )||( CHAS_EVENTS_TOTAL == 0 )) {
     console.log("ERROR [loadCalendar]> Something funky going on with calendar");
     return false;
