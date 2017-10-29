@@ -14,6 +14,7 @@ const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 const SECRET_CRYPTO = process.env.SECRET_CRYPTO;
 const MARVEL_PRIVATE_KEY = process.env.MARVEL_PRIVATE_KEY;
 const MARVEL_PUBLIC_KEY = process.env.MARVEL_PUBLIC_KEY;
+const GROUP_LINKS_ROOT = process.env.GROUP_LINKS_ROOT;
 // Set-up Node.js requirements for app
 const express = require('express'); // https://expressjs.com
 const bodyParser = require('body-parser'); // https://github.com/expressjs/body-parser
@@ -30,6 +31,7 @@ CHASbot.use(bodyParser.urlencoded({ extended: true }));
 // https://developers.facebook.com/docs/messenger-platform/send-messages/templates
 // FB end-points
 const FB_MESSENGER_ENDPOINT = 'https://graph.facebook.com/v2.6/me/messages';
+const GROUP_DOCS = "https://work-" + GROUP_LINKS_ROOT + ".facebook.com/groups/1707079182933694";
 // Free secure linkable image hosting at https://imgbox.com
 const IMG_URL_PREFIX = "https://images.imgbox.com/";
 const IMG_URL_SUFFIX = "_o.png";
@@ -55,6 +57,8 @@ const DIALOGFLOW_ACTION_SLIM_SHADY = 'slim_shady';
 const DIALOGFLOW_ACTION_FUNDRAISING = 'fundraising';
 const DIALOGFLOW_ACTION_PICKCARD = 'cards';
 const DIALOGFLOW_ACTION_WEATHER = 'weather';
+const DIALOGFLOW_ACTION_GROUP_DOCS = 'group_docs';
+var DIALOGFLOW_ACTION_TEMPLATE = false;
 // For message handling
 let messageData = '';
 let messageText = '';
@@ -73,13 +77,13 @@ const SEARCH_WIKI = "https://en.wikipedia.org/w/index.php?search=";
 const URL_WIKI = "https://images.imgbox.com/30/62/Vv6KJ9k9_o.png";
 var SEARCH_METHOD = '';
 var SEARCH_TERM = '';
-var SEARCH_TRIGGER = 0;
+var SEARCH_TRIGGER = false;
 // CHAS events
 const REGEX_START = '(?=.*\\b'; // Regular expression bits
 const REGEX_MIDDLE = '\\b)';
 const REGEX_END = '.+';
 const CHAS_EVENTS_BLOCK_SIZE = 4;
-var CHAS_EVENTS_TRIGGER = 0;
+var CHAS_EVENTS_TRIGGER = false;
 var CHAS_EVENTS_CALENDAR = new Array();
 var CHAS_EVENTS_TOTAL = 0;
 var CHAS_EVENTS_INDEX = -1;
@@ -95,7 +99,7 @@ var CHAS_EVENTS_OOPS_INDEX = 0;
 // CHAS biographies
 const CHAS_BIOS_BLOCK_SIZE = 2;
 var CHAS_BIOS_VIABLE = false;
-var CHAS_BIOS_TRIGGER = 0;
+var CHAS_BIOS_TRIGGER = false;
 var CHAS_BIOS = new Array();
 var CHAS_BIOS_TOTAL = 0;
 var CHAS_BIOS_INDEX = -1;
@@ -132,7 +136,7 @@ var GREETING_MESSAGE = [
 ];
 var GREETING_MESSAGE_INDEX = 0;
 // CHAS logo
-var CHAS_LOGO_TRIGGER = 0;
+var CHAS_LOGO_TRIGGER = false;
 // CHAS alphabet
 var CHASABET_TRIGGER = 0;
 var CHASABET_LETTER = ''; // Result
@@ -167,7 +171,7 @@ CHASABET [25] = ["f6/89/4pwI187X","3c/4f/AguL64HL"]; // Z
 var CHASABET_INDEX = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 // For Marvel API
 // Keys above
-var MARVEL_TRIGGER = 0;
+var MARVEL_TRIGGER = false;
 var HERO_WHO = ''; // Result
 var HERO_DESCRIPTION = ''; // Result
 var HERO_THUMB = ''; // Result
@@ -392,7 +396,7 @@ CHASbot.post('/webhook', (req, res) => {
           analyse_text = analyse_text.toLowerCase();
           // Check for custom triggers
           // Search
-          SEARCH_TRIGGER = 0;
+          SEARCH_TRIGGER = false;
           var rightmost_starting_point = -1;
           var trigger_loop = 0;
           for (trigger_loop = 0; trigger_loop < SEARCH_METHODS.length; trigger_loop++){
@@ -407,7 +411,7 @@ CHASbot.post('/webhook', (req, res) => {
                 //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
                 //console.log("DEBUG [postWebhook]> Search method found: " + SEARCH_METHOD);
                 if (string_length > 0) {
-                  SEARCH_TRIGGER = 1;
+                  SEARCH_TRIGGER = true;
                   SEARCH_TERM = analyse_text.slice(starting_point,ending_point);
                   //console.log("DEBUG [postWebhook]> Search term: " + SEARCH_TERM);
                 };
@@ -444,7 +448,7 @@ CHASbot.post('/webhook', (req, res) => {
             };
           };
           // Marvel
-          MARVEL_TRIGGER = 0;
+          MARVEL_TRIGGER = false;
           position_in_analyse_text = analyse_text.lastIndexOf(MARVEL_TIRGGER_PHRASE) + 1;
           //console.log("DEBUG [postWebhook]> " + MARVEL_TIRGGER_PHRASE + " phrase search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
@@ -453,7 +457,7 @@ CHASbot.post('/webhook', (req, res) => {
             string_length = ending_point - starting_point;
             //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
             if (string_length > 0) {
-              MARVEL_TRIGGER = 1;
+              MARVEL_TRIGGER = true;
               HERO_WHO = analyse_text.slice(starting_point,ending_point);
               HERO_WHO = toTitleCase(HERO_WHO);
             };
@@ -485,12 +489,12 @@ CHASbot.post('/webhook', (req, res) => {
             };
           };
           // CHAS logo
-          CHAS_LOGO_TRIGGER = 0;
+          CHAS_LOGO_TRIGGER = false;
           position_in_analyse_text = analyse_text.search(CHAS_LOGO_TRIGGER_PHRASE) + 1;
           //console.log("DEBUG [postWebhook]> " + CHAS_LOGO_TRIGGER_PHRASE + " search result: " + position_in_analyse_text);
-          if (position_in_analyse_text > 0) {CHAS_LOGO_TRIGGER = 1};
+          if (position_in_analyse_text > 0) {CHAS_LOGO_TRIGGER = true};
           // CHAS Events
-          CHAS_EVENTS_TRIGGER = 0;
+          CHAS_EVENTS_TRIGGER = false;
           position_in_analyse_text = analyse_text.lastIndexOf(CHAS_EVENTS_TIRGGER_PHRASE) + 1;
           //console.log("DEBUG [postWebhook]> " + CHAS_EVENTS_TIRGGER_PHRASE + " phrase search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
@@ -499,12 +503,12 @@ CHASbot.post('/webhook', (req, res) => {
             string_length = ending_point - starting_point;
             //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
             if (string_length > 0) {
-              CHAS_EVENTS_TRIGGER = 1;
+              CHAS_EVENTS_TRIGGER = true;
               CHAS_EVENTS_NAME = analyse_text.slice(starting_point,ending_point);
             };
           };
           // CHAS Bios
-          CHAS_BIOS_TRIGGER = 0;
+          CHAS_BIOS_TRIGGER = false;
           position_in_analyse_text = analyse_text.lastIndexOf(CHAS_BIOS_TRIGGER_PHRASE) + 1;
           //console.log("DEBUG [postWebhook]> " + CHAS_BIOS_TRIGGER_PHRASE + " phrase search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
@@ -513,30 +517,30 @@ CHASbot.post('/webhook', (req, res) => {
             string_length = ending_point - starting_point;
             //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
             if (string_length > 0) {
-              CHAS_BIOS_TRIGGER = 1;
+              CHAS_BIOS_TRIGGER = true;
               CHAS_BIOS_NAME = analyse_text.slice(starting_point,ending_point);
             };
           };
           // Pick a response route
-          if (MARVEL_TRIGGER == 1){
+          if (MARVEL_TRIGGER){
             //console.log("DEBUG [postWebhook]> Marvel Character: " + HERO_WHO);
             getMarvelChar(HERO_WHO,event);
           } else if (CHASABET_TRIGGER == 1) {
             //console.log("DEBUG [postWebhook]> CHAS alpahbet: " + CHASABET_LETTER);
             getAlphabetCHAS(CHASABET_LETTER,event);
-          } else if (CHAS_EVENTS_TRIGGER == 1 && CHAS_EVENTS_VIABLE) {
+          } else if (CHAS_EVENTS_TRIGGER && CHAS_EVENTS_VIABLE) {
             //console.log("DEBUG [postWebhook]> CHAS event: " + CHAS_EVENTS_NAME);
             getEventCHAS(CHAS_EVENTS_NAME,event);
-          } else if (CHAS_BIOS_TRIGGER == 1 && CHAS_BIOS_VIABLE) {
+          } else if (CHAS_BIOS_TRIGGER && CHAS_BIOS_VIABLE) {
             //console.log("DEBUG [postWebhook]> CHAS bios: " + CHAS_BIOS_NAME);
             getBiosCHAS(CHAS_BIOS_NAME,event);
           } else if (RPSLS_TRIGGER > 0) {
             //console.log("DEBUG [postWebhook]> RPSLSpock: " + RPSLS_PICK_PLAYER);
             getRPSLS(event);
-          } else if (SEARCH_TRIGGER == 1) {
+          } else if (SEARCH_TRIGGER) {
             //console.log("DEBUG [postWebhook]> Search: " + SEARCH_TERM);
             postSearch(event);
-          } else if (CHAS_LOGO_TRIGGER == 1) {
+          } else if (CHAS_LOGO_TRIGGER) {
             //console.log("DEBUG [postWebhook]> Logo");
             console.log("INFO [postWebhook]> Sender: " + FB_WHO_ID);
             console.log("INFO [postWebhook]> Request: " + CHAS_LOGO_TRIGGER_PHRASE);
@@ -573,7 +577,6 @@ function trimTo(trim_length,inputString) {
 }
 
 // SENDING SECTION
-// Send structured template
 function sendTemplate(event) {
   // messageData set outside of function call
   let sender = event.sender.id;
@@ -619,15 +622,14 @@ function sendTextDirect(event) {
 }
 
 // Message request pinged off of API.AI for response
-function sendMessageViaAPIAI(event) {
-  let sender = event.sender.id;
-  let text = event.message.text;
+function sendMessageViaAPIAI(event_dialog) {
+  let sender = event_dialog.sender.id;
+  let text = event_dialog.message.text;
   let apiai = dialogFlow.textRequest(text, {
     sessionId: 'chasbot_sessionID' // Arbitrary id
   });
   apiai.on('response', (response) => {
     messageText = response.result.fulfillment.speech;
-    if (messageTextExtra != '') {messageText = messageTextExtra + messageText};
     console.log("INFO [sendMessageViaAPIAI]> Sender: " + FB_WHO_ID);
     console.log("INFO [sendMessageViaAPIAI]> Request: " + response.result.resolvedQuery);
     if (response.result.action == '') {
@@ -635,22 +637,14 @@ function sendMessageViaAPIAI(event) {
     } else {
       console.log("INFO [sendMessageViaAPIAI]> Action: " + response.result.action);
     }
-    console.log("INFO [sendMessageViaAPIAI]> Response: " + messageText);
-    request({
-      uri: FB_MESSENGER_ENDPOINT,
-      qs: {access_token: PAGE_ACCESS_TOKEN},
-      method: 'POST',
-      json: {
-        recipient: {id: sender},
-        message: {text: trimTo(640,messageText)}
-      }
-    }, (error, response) => {
-      if (error) {
-        console.log("ERROR [sendMessageViaAPIAI]> Error sending via APIAI message: ", error);
-      } else if (response.body.error) {
-        console.log("ERROR [sendMessageViaAPIAI]> Undefined: ", response.body.error);
-      }
-    });
+    if (DIALOGFLOW_ACTION_TEMPLATE) {
+      console.log("INFO [sendMessageViaAPIAI]> Response Template");
+      sendTemplate(event_dialog);
+      DIALOGFLOW_ACTION_TEMPLATE = false;
+    } else {
+      console.log("INFO [sendMessageViaAPIAI]> Response: " + messageText);
+      sendTextDirect(event_dialog);
+    }
   });
   apiai.on('error', (error) => {
     console.log("ERROR [sendMessageViaAPIAI]> Undefined: " + error);
@@ -683,8 +677,7 @@ CHASbot.post('/heroku', (req, res) => {
         let messageText = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
         return res.json({
           speech: messageText,
-          displayText: trimTo(640,messageText),
-          source: DIALOGFLOW_ACTION_WEATHER
+          displayText: messageText
         });
       } else {
         let errorMessage = "Oops, I wasn't able to look up that place name.";
@@ -703,14 +696,12 @@ CHASbot.post('/heroku', (req, res) => {
     if (CARD_PROMPT == CARD_PROMPTS.length) {CARD_PROMPT = 0};
     return res.json({
       speech: messageText,
-      displayText: trimTo(640,messageText),
-      source: DIALOGFLOW_ACTION_PICKCARD
+      displayText: messageText
     });
   } else if (req.body.result.action === DIALOGFLOW_ACTION_FUNDRAISING) {
     return res.json({
       speech: CHAS_FR_CARD,
-      displayText: trimTo(640,CHAS_FR_CARD),
-      source: DIALOGFLOW_ACTION_FUNDRAISING
+      displayText: CHAS_FR_CARD
     });
     //console.log("DEBUG [postHeroku]> Send fundraising contact card");
   } else if (req.body.result.action === DIALOGFLOW_ACTION_SLIM_SHADY) {
@@ -724,8 +715,14 @@ CHASbot.post('/heroku', (req, res) => {
     LAST_TIMESTAMP = new Date().getTime();
     return res.json({
       speech: messageText,
-      displayText: trimTo(640,messageText),
-      source: DIALOGFLOW_ACTION_SLIM_SHADY
+      displayText: messageText
+    });
+  } else if (req.body.result.action === DIALOGFLOW_ACTION_GROUP_DOCS) {
+    DIALOGFLOW_ACTION_TEMPLATE = true;
+    primeLinkButton(GROUP_DOCS,"For an answer to this and other similar questions, visit and join the group that stores the library of all relevant CHAS forms, documents and policies.",'📚 Useful Documents');
+    return res.json({
+      speech: "Useful Documents Link",
+      displayText: messageData
     });
   }
 });
@@ -743,6 +740,25 @@ function postImage(image_url,pass_on_event) {
   }; // template
   messageData = image_template; // Required within sendTemplate
   sendTemplate(pass_on_event);
+}
+
+function primeLinkButton(link_url,reponse_msg,btn_msg) {
+  //console.log("DEBUG [primeLinkButton]> Input: " + reponse_msg);
+  let link_template = {
+    attachment: {
+      type: "template",
+      payload: {
+        template_type:"button",
+        text:reponse_msg,
+        buttons: [{
+          type:'web_url',
+          url:link_url,
+          title:btn_msg
+        }] // buttons
+      } // payload
+    } // attachment
+  }; // template
+  messageData = link_template;
 }
 
 function postMarvelResults(pass_on_event,result_or_not) {
