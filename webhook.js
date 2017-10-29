@@ -30,16 +30,15 @@ CHASbot.use(bodyParser.urlencoded({ extended: true }));
 // https://developers.facebook.com/docs/messenger-platform/send-messages/templates
 // FB end-points
 const FB_MESSENGER_ENDPOINT = 'https://graph.facebook.com/v2.6/me/messages';
-const LONG_MSG_WAIT = 1500; // one second
-var FB_WHO = 0;
-// Free linkable image hosting at https://imgbox.com
+// Free secure linkable image hosting at https://imgbox.com
 const IMG_URL_PREFIX = "https://images.imgbox.com/";
 const IMG_URL_SUFFIX = "_o.png";
 const CHAS_THUMB = 'https://images.imgbox.com/99/1d/bFWYzY68_o.jpg';
 const SOURCE_CALENDAR = "./calendar.txt"; // Same directory as source code
-const SOURCE_BIOGRAPHIES = "./bios_private.txt"; // Same directory as source code // "./fundraising_private.txt"
+const SOURCE_BIOGRAPHIES = "./bios_private.txt"; // Same directory as source code // "./fundraising_private.txt" "./ids_private.txt"
 const ENCRYPTED_BIOGRAPHIES = "./bios_public.txt"; // Same directory as source code //
 const ENCRYPTED_FR_CARD = "./fundraising_public.txt";
+const ENCRYPTED_IDS = "./ids_public.txt";
 var server_port = process.env.PORT || 9000; //8080;
 var server_ip_address = '127.0.0.1'; // Only for testing via local NGROK.IO
 // Triggers in lowercase - following phrases are handled in code
@@ -51,9 +50,15 @@ const CHAS_EVENTS_TIRGGER_PHRASE = 'when is';
 const CHAS_BIOS_TRIGGER_PHRASE = 'who is';
 const RPSLS_TRIGGER_PHRASE = 'bazinga';
 var SEARCH_METHODS = new Array ("search","google","wiki","beeb");
+// DialogFlow fulfillment
+const DIALOGFLOW_ACTION_SLIM_SHADY = 'slim_shady';
+const DIALOGFLOW_ACTION_FUNDRAISING = 'fundraising';
+const DIALOGFLOW_ACTION_PICKCARD = 'cards';
+const DIALOGFLOW_ACTION_WEATHER = 'weather';
 // For message handling
 let messageData = '';
 let messageText = '';
+let messageTextExtra = '';
 var analyse_text = '';
 var position_in_analyse_text = -1;
 var starting_point = 0;
@@ -69,55 +74,6 @@ const URL_WIKI = "https://images.imgbox.com/30/62/Vv6KJ9k9_o.png";
 var SEARCH_METHOD = '';
 var SEARCH_TERM = '';
 var SEARCH_TRIGGER = 0;
-// CHAS logo
-var CHAS_LOGO_TRIGGER = 0;
-// CHAS alphabet
-var CHASABET_TRIGGER = 0;
-var CHASABET_LETTER = ''; // Result
-var CHASABET_URL = ''; // Result
-var CHASABET = new Array();
-CHASABET [0] = new Array("b1/96/zO6mBcwI","a5/59/dH8YmE0D","28/ca/zIHlflOC"); // A
-CHASABET [1] = new Array("a7/6b/ykRlRXQ4","35/79/3Fm87p1Z","69/18/7Jwe1SDT"); // B
-CHASABET [2] = new Array("70/0e/A6ZJwetJ","33/25/aueWYGEx","d9/7e/LaVqtDUQ","85/b1/qh0uavuP"); // C
-CHASABET [3] = new Array("4a/a3/NqUpBNz4","ef/4c/z5RNxmlD"); // D
-CHASABET [4] = new Array("63/f7/XaiHgD71","ce/ac/9nCwH3g9","35/3d/TcTbkDhK"); // E
-CHASABET [5] = new Array("87/c5/ap69ZMxm","ce/20/wUUatq8C"); // F
-CHASABET [6] = new Array("49/5d/eC9uvi9B","ff/3b/pmvdcWts"); // G
-CHASABET [7] = new Array("b5/90/PvvkWezf","f5/bf/UXiVHjNV","b6/e0/Tcqrhxhp","ac/2b/eZ5jnY3u","6f/19/EZadWwIQ"); // H
-CHASABET [8] = new Array("8b/6a/7NVhU4DB","e4/de/dhkBg1G6","ff/35/GWYGOn6L"); // I
-CHASABET [9] = new Array("50/96/RJQnEZTR","39/a9/rQJGozJp"); // J
-CHASABET [10] = new Array("a2/d8/Js4Pp0yx","8a/48/3BMq2BbT"); // K
-CHASABET [11] = new Array("47/a9/rEoruoPl","ce/8e/XQgh4mnL"); // L
-CHASABET [12] = new Array("e4/d9/3aBWWbLv","9b/f7/YaUMcKiy","8a/24/EUOb4ml4"); // M
-CHASABET [13] = new Array("a7/b6/I4LznlDF","c5/56/WnE5akMy"); // N
-CHASABET [14] = new Array("15/78/HIa3Mfir","0f/72/VgMNNoMu"); // O
-CHASABET [15] = new Array("ef/30/jcLeoia1","00/5c/EKuPupn8","83/0a/dxQuIG6C"); // P
-CHASABET [16] = new Array("99/c2/eHly9qnq"); // Q
-CHASABET [17] = new Array("ef/1c/CUsKXwFq","f8/96/qJJm4MIB"); // R
-CHASABET [18] = new Array("0b/02/O7uHlTst","fd/fe/Tae390bV","95/97/GCCT6cS1","00/ed/yR9lW1az","3c/36/HzHUAz82"); // S
-CHASABET [19] = new Array("a3/8d/r0xzFJPR","aa/a0/koSvqmVT"); // T
-CHASABET [20] = new Array("2d/47/F50Ty0wO","d9/04/C1nlNJpU","08/e4/y1bij5xT","fb/a8/pTmffp5t"); // U
-CHASABET [21] = new Array("d9/da/kzg0lQ8V","e1/79/F9f57NK1"); // V
-CHASABET [22] = new Array("6e/ec/Hd1zypGj","95/0b/xyZtCqje","b0/f5/wBb2EsqF"); // W
-CHASABET [23] = new Array("e9/0c/nB1EzCck","2e/60/2ETG0nZa"); // X
-CHASABET [24] = new Array("2a/4a/9R5ZzF7V","d0/23/QDFnWi52"); // Y
-CHASABET [25] = new Array("f6/89/4pwI187X","3c/4f/AguL64HL"); // Z
-var CHASABET_INDEX = new Array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
-// For Marvel API
-// Keys above
-var MARVEL_TRIGGER = 0;
-var HERO_WHO = ''; // Result
-var HERO_DESCRIPTION = ''; // Result
-var HERO_THUMB = ''; // Result
-var HERO_URL = ''; // Result
-var HERO_OOPS = [
-  "⚠️ Alert: Hydra stole this result from the S.H.I.E.L.D. database...",
-  "☠️ Warning: Hydra Infiltration. Result unavailable while under attack from enemy forces...",
-  "👁️ Not even the eye of Uatu sees your request...",
-  "💾 Program missing, exiting protocol...",
-  "💣 Danger: Energy Overload..."
-];
-var HERO_OOPS_INDEX = 0;
 // CHAS events
 const REGEX_START = '(?=.*\\b'; // Regular expression bits
 const REGEX_MIDDLE = '\\b)';
@@ -138,25 +94,105 @@ var CHAS_EVENTS_OOPS = [
 var CHAS_EVENTS_OOPS_INDEX = 0;
 // CHAS biographies
 const CHAS_BIOS_BLOCK_SIZE = 2;
+var CHAS_BIOS_VIABLE = false;
 var CHAS_BIOS_TRIGGER = 0;
 var CHAS_BIOS = new Array();
 var CHAS_BIOS_TOTAL = 0;
 var CHAS_BIOS_INDEX = -1;
 var CHAS_BIOS_NAME = '';
 var CHAS_FR_CARD = "Contact your local Fundraising Team:" + "\n";
+// Slim Shady
+const TIME_TO_WAIT = 7200000; // 2 hours = 1000 * 60 * 120
+const IDS_BLOCK_SIZE = 2;
+var IDS_VIABLE = false;
+var IDS_TOTAL = 0;
+var IDS_LIST = new Array();
+var FB_WHO_ID = 0;
+var FB_WHO = '';
+var FB_WHO_ESTABLSIHED = false;
+var LAST_TIMESTAMP = null;
+var TIME_OF_DAY = [
+  [22,"Getting late"],[19,"Good evening"],[18,"Time for tea"],[13,"Afternoon"],[12,"Lunch time"],
+  [11,"Time for Elevenses"],[8,"Morning"],[7,"Breakfast time"],[6,"Another day another dollar"],
+  [5,"Whoa, you're an early bird"],[4,"You're up early (or very late)"],[3,"Yawn, worst time to be awake"],
+  [2,"You're up late"],[1,"Zzzzz, sorry"],[0,"It's the witching hour"]
+];
+var RANDOMISED_COMPLIMENT = [
+  "Looking good.","You're more fun than bubblewrap.","I bet you do crossword puzzles in ink.",
+  "You're like a breath of fresh air.","You're like sunshine on a rainy day.","On a scale from 1 to 10, you're an 11.",
+  "Your smile is contagious.","You know how to find that silver lining.","You're inspiring.","I like your style.",
+  "You're a great listener.","I bet you sweat glitter.","You were cool way before hipsters.",
+  "Hanging out with you is always a blast.","You're one of a kind.","You always know just what to say.",
+  "There's ordinary, and then there's you."
+];
+var RANDOMISED_COMPLIMENT_INDEX = 0;
+var GREETING_MESSAGE = [
+  "Pleasure to meet you,","Joy to meet you,","Nice to meet you,","Great to meet you,","Hi,","Hello,","Hey,",
+  "Good chating with you,","Nice chatting with,","How do you do,","You have lovely name,"
+];
+var GREETING_MESSAGE_INDEX = 0;
+// CHAS logo
+var CHAS_LOGO_TRIGGER = 0;
+// CHAS alphabet
+var CHASABET_TRIGGER = 0;
+var CHASABET_LETTER = ''; // Result
+var CHASABET_URL = ''; // Result
+var CHASABET = new Array();
+CHASABET [0] = ["b1/96/zO6mBcwI","a5/59/dH8YmE0D","28/ca/zIHlflOC"]; // A
+CHASABET [1] = ["a7/6b/ykRlRXQ4","35/79/3Fm87p1Z","69/18/7Jwe1SDT"]; // B
+CHASABET [2] = ["70/0e/A6ZJwetJ","33/25/aueWYGEx","d9/7e/LaVqtDUQ","85/b1/qh0uavuP"]; // C
+CHASABET [3] = ["4a/a3/NqUpBNz4","ef/4c/z5RNxmlD"]; // D
+CHASABET [4] = ["63/f7/XaiHgD71","ce/ac/9nCwH3g9","35/3d/TcTbkDhK"]; // E
+CHASABET [5] = ["87/c5/ap69ZMxm","ce/20/wUUatq8C"]; // F
+CHASABET [6] = ["49/5d/eC9uvi9B","ff/3b/pmvdcWts"]; // G
+CHASABET [7] = ["b5/90/PvvkWezf","f5/bf/UXiVHjNV","b6/e0/Tcqrhxhp","ac/2b/eZ5jnY3u","6f/19/EZadWwIQ"]; // H
+CHASABET [8] = ["8b/6a/7NVhU4DB","e4/de/dhkBg1G6","ff/35/GWYGOn6L"]; // I
+CHASABET [9] = ["50/96/RJQnEZTR","39/a9/rQJGozJp"]; // J
+CHASABET [10] = ["a2/d8/Js4Pp0yx","8a/48/3BMq2BbT"]; // K
+CHASABET [11] = ["47/a9/rEoruoPl","ce/8e/XQgh4mnL"]; // L
+CHASABET [12] = ["e4/d9/3aBWWbLv","9b/f7/YaUMcKiy","8a/24/EUOb4ml4"]; // M
+CHASABET [13] = ["a7/b6/I4LznlDF","c5/56/WnE5akMy"]; // N
+CHASABET [14] = ["15/78/HIa3Mfir","0f/72/VgMNNoMu"]; // O
+CHASABET [15] = ["ef/30/jcLeoia1","00/5c/EKuPupn8","83/0a/dxQuIG6C"]; // P
+CHASABET [16] = ["99/c2/eHly9qnq"]; // Q
+CHASABET [17] = ["ef/1c/CUsKXwFq","f8/96/qJJm4MIB"]; // R
+CHASABET [18] = ["0b/02/O7uHlTst","fd/fe/Tae390bV","95/97/GCCT6cS1","00/ed/yR9lW1az","3c/36/HzHUAz82"]; // S
+CHASABET [19] = ["a3/8d/r0xzFJPR","aa/a0/koSvqmVT"]; // T
+CHASABET [20] = ["2d/47/F50Ty0wO","d9/04/C1nlNJpU","08/e4/y1bij5xT","fb/a8/pTmffp5t"]; // U
+CHASABET [21] = ["d9/da/kzg0lQ8V","e1/79/F9f57NK1"]; // V
+CHASABET [22] = ["6e/ec/Hd1zypGj","95/0b/xyZtCqje","b0/f5/wBb2EsqF"]; // W
+CHASABET [23] = ["e9/0c/nB1EzCck","2e/60/2ETG0nZa"]; // X
+CHASABET [24] = ["2a/4a/9R5ZzF7V","d0/23/QDFnWi52"]; // Y
+CHASABET [25] = ["f6/89/4pwI187X","3c/4f/AguL64HL"]; // Z
+var CHASABET_INDEX = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+// For Marvel API
+// Keys above
+var MARVEL_TRIGGER = 0;
+var HERO_WHO = ''; // Result
+var HERO_DESCRIPTION = ''; // Result
+var HERO_THUMB = ''; // Result
+var HERO_URL = ''; // Result
+var HERO_OOPS = [
+  "⚠️ Alert: Hydra stole this result from the S.H.I.E.L.D. database...",
+  "☠️ Warning: Hydra Infiltration. Result unavailable while under attack from enemy forces...",
+  "👁️ Not even the eye of Uatu sees your request...",
+  "💾 Program missing, exiting protocol...",
+  "💣 Danger: Energy Overload..."
+];
+var HERO_OOPS_INDEX = 0;
 // Rock Paper Scissors Lizard Spock
 const RPSLS_INTRO = "💡 First to five is the champion. Scissors cuts Paper, Paper covers Rock, Rock crushes Lizard, Lizard poisons Spock, Spock smashes Scissors, Scissors decapitates Lizard, Lizard eats Paper, Paper disproves Spock, Spock vaporizes Rock, and Rock crushes Scissors!";
 const RPSLS_PROMPT = "Choose... Rock, Paper, Scissors, Lizard or Spock?";
-var RPSLS_VALID = new Array ("rock","paper","scissors","lizard","spock");
-var RPSLS_OUTCOMES = new Array ("cuts","covers","crushes","poisons","smashes","decapitates","eats","disproves","vaporizes","crushes");
-var RPSLS_WIN = new Array ("scissorspaper","paperrock","rocklizard","lizardspock","spockscissors","scissorslizard","lizardpaper","paperspock","spockrock","rockscissors");
-var RPSLS_LOSE = new Array ("paperscissors","rockpaper","lizardrock","spocklizard","scissorsspock","lizardscissors","paperlizard","spockpaper","rockspock","scissorsrock");
-var RPSLS_DRAW = new Array ("rockrock","paperpaper","scissorsscissors","lizardlizard","spockspock");
-var RPSLS_IMGS = new Array (
+var RPSLS_VALID = ["rock","paper","scissors","lizard","spock"];
+var RPSLS_OUTCOMES = ["cuts","covers","crushes","poisons","smashes","decapitates","eats","disproves","vaporizes","crushes"];
+var RPSLS_WIN = ["scissorspaper","paperrock","rocklizard","lizardspock","spockscissors","scissorslizard","lizardpaper","paperspock","spockrock","rockscissors"];
+var RPSLS_LOSE = ["paperscissors","rockpaper","lizardrock","spocklizard","scissorsspock","lizardscissors","paperlizard","spockpaper","rockspock","scissorsrock"];
+var RPSLS_DRAW = ["rockrock","paperpaper","scissorsscissors","lizardlizard","spockspock"];
+var RPSLS_IMGS = [
 "8a/24/7grzIThv",
 "60/ab/GGWv7VGf","5b/aa/gX9yjh8W","de/9a/ZW4Y0A3c","9b/b0/jozAYCPJ","fc/69/9RIO0UnP","ae/96/fImaS52o","e6/d8/NZf7rjvm","ce/75/2lShOY7A","1c/c0/v4T6eRgk","39/85/kCcL35Wx",
 "7c/cc/6aXrZ3OR","57/e7/gXFlvW70","49/29/I58HCq4Z","ea/83/4oIJFaQX","35/46/6jfnQOWP","51/27/Mgd2xmkH","5b/43/75oya7i9","65/e5/J9Pi4L30","6d/76/wmyBvmzC","1c/dd/A1qkLRfu",
-"8d/24/mYcLupcw","36/71/2TxupBuJ","88/de/fyL64Fit","ad/1f/a8wUNfkw","56/dd/yE6mRKxp");
+"8d/24/mYcLupcw","36/71/2TxupBuJ","88/de/fyL64Fit","ad/1f/a8wUNfkw","56/dd/yE6mRKxp"];
 var RPSLS_IMG_URL = '';
 var RPSLS_PICK_CHASBOT = '';
 var RPSLS_PICK_PLAYER = '';
@@ -168,20 +204,14 @@ var RPSLS_TRIGGER = 0;
 var LLAP_TRIGGER = 0;
 // Playing cards
 var CARD_PICK = '';
-var CARD_DECK  = new Array (
+var CARD_DECK  = [
 "♥A","♥2","♥3","♥4","♥5","♥6","♥7","♥8","♥9","♥10","♥J","♥Q","♥K",
 "♠A","♠2","♠3","♠4","♠5","♠6","♠7","♠8","♠9","♠10","♠J","♠Q","♠K",
 "♦A","♦2","♦3","♦4","♦5","♦6","♦7","♦8","♦9","♦10","♦J","♦Q","♦K",
-"♣A","♣2","♣3","♣4","♣5","♣6","♣7","♣8","♣9","♣10","♣J","♣Q","♣K"
-);
+"♣A","♣2","♣3","♣4","♣5","♣6","♣7","♣8","♣9","♣10","♣J","♣Q","♣K"];
 var CARD_PROMPTS = [
-  "I've picked... ",
-  "This time I've drawn... ",
-  "I've selected... ",
-  "You're card is... "
-];
+  "I've picked... ","This time I've drawn... ","I've selected... ","You're card is... "];
 var CARD_PROMPT = 0;
-
 // Encryption and decryption of biographies
 var enCrypt = function(text_plain) {
   var algorithm = 'aes-256-ctr';
@@ -202,7 +232,7 @@ var deCrypt = function(text_obscure) {
 function enCryptBios () {
   var text_block = fs.readFileSync(SOURCE_BIOGRAPHIES, "utf-8");
   var text_block_split = text_block.split("\n");
-  var stream = fs.createWriteStream(ENCRYPTED_BIOGRAPHIES, "utf-8");
+  var stream = fs.createWriteStream(ENCRYPTED_IDS, "utf-8");
   stream.once('open', function(fd) {
     var stream_loop = 0;
     for (stream_loop = 0; stream_loop < text_block_split.length; stream_loop++) {
@@ -217,7 +247,7 @@ function enCryptBios () {
   });
 }
 
-function deCryptBios () {
+function deCryptContents () {
   var text_block = fs.readFileSync(ENCRYPTED_BIOGRAPHIES, "utf-8");
   var text_block_split_garbled = text_block.split("\n");
   CHAS_BIOS = new Array();
@@ -226,11 +256,36 @@ function deCryptBios () {
     CHAS_BIOS[decrypt_loop] = deCrypt(text_block_split_garbled[decrypt_loop]);
   };
   var number_bios_entries = CHAS_BIOS.length;
-  //console.log("DEBUG [deCryptBios]> Bios entries: " + number_bios_entries);
+  //console.log("DEBUG [deCryptContents]> Bios entries: " + number_bios_entries);
   var remainder = number_bios_entries % CHAS_BIOS_BLOCK_SIZE;
-  //console.log("DEBUG [deCryptBios]> Bios remainder (looking for 0): " + remainder);
+  //console.log("DEBUG [deCryptContents]> Bios remainder (looking for 0): " + remainder);
   CHAS_BIOS_TOTAL = number_bios_entries / CHAS_BIOS_BLOCK_SIZE;
-  //console.log("DEBUG [deCryptBios]> Events: " + CHAS_BIOS_TOTAL);
+  //console.log("DEBUG [deCryptContents]> Events: " + CHAS_BIOS_TOTAL);
+  if ((remainder != 0)||(CHAS_BIOS_TOTAL == 0)) {
+    console.log("ERROR [deCryptContents]> Something funky going on with bios");
+    CHAS_BIOS_VIABLE = false;
+  } else {
+    CHAS_BIOS_VIABLE = true;
+  };
+  text_block = fs.readFileSync(ENCRYPTED_IDS, "utf-8");
+  text_block_split_garbled = text_block.split("\n");
+  IDS_LIST = new Array();
+  decrypt_loop = 0;
+  for (decrypt_loop = 0; decrypt_loop < text_block_split_garbled.length; decrypt_loop++) {
+    IDS_LIST[decrypt_loop] = deCrypt(text_block_split_garbled[decrypt_loop]);
+  };
+  var number_ids_entries = IDS_LIST.length;
+  //console.log("DEBUG [deCryptContents]> ID entries: " + number_ids_entries);
+  remainder = number_ids_entries % IDS_BLOCK_SIZE;
+  //console.log("DEBUG [deCryptContents]> ID remainder (looking for 0): " + remainder);
+  IDS_TOTAL = number_ids_entries / IDS_BLOCK_SIZE;
+  //console.log("DEBUG [deCryptContents]> IDs: " + IDS_TOTAL);
+  if ((remainder != 0)||(IDS_TOTAL == 0)) {
+    console.log("ERROR [deCryptContents]> Something funky going on with IDs");
+    IDS_VIABLE = false;
+  } else {
+    IDS_VIABLE = true;
+  };
   text_block = fs.readFileSync(ENCRYPTED_FR_CARD, "utf-8");
   text_block_split_garbled = text_block.split("\n");
   decrypt_loop = 0;
@@ -238,18 +293,12 @@ function deCryptBios () {
     CHAS_FR_CARD = CHAS_FR_CARD + deCrypt(text_block_split_garbled[decrypt_loop]);
     if (decrypt_loop != text_block_split_garbled.length) {CHAS_FR_CARD = CHAS_FR_CARD + "\n"};
   };
-  //console.log("DEBUG [deCryptBios]> Contact Card: " + CHAS_FR_CARD);
-  if (( remainder != 0 )||( CHAS_BIOS_TOTAL == 0 )) {
-    console.log("ERROR [deCryptBios]> Something funky going on with bios");
-    return false;
-  } else {
-    return true;
-  }
+  //console.log("DEBUG [deCryptContents]> Contact Card: " + CHAS_FR_CARD);
 }
 
 // Load in encrypted biography information
 //enCryptBios(); // Run once to encrypt biography CHAS file
-var CHAS_BIOS_VIABLE = deCryptBios(); // Normal runtime configuration
+deCryptContents(); // Normal runtime configuration
 
 function loadCalendar() {
   // Load in calendar events
@@ -262,7 +311,7 @@ function loadCalendar() {
   //console.log("DEBUG [loadCalendar]> Calendar remainder (looking for 0): " + remainder);
   CHAS_EVENTS_TOTAL = number_calendar_entries / CHAS_EVENTS_BLOCK_SIZE;
   //console.log("DEBUG [loadCalendar]> Events: " + CHAS_EVENTS_TOTAL);
-  if (( remainder != 0 )||( CHAS_EVENTS_TOTAL == 0 )) {
+  if ((remainder != 0)||(CHAS_EVENTS_TOTAL == 0)) {
     console.log("ERROR [loadCalendar]> Something funky going on with calendar");
     return false;
   } else {
@@ -301,7 +350,43 @@ CHASbot.post('/webhook', (req, res) => {
       entry.messaging.forEach((event) => {
         //if (event.read && event.read.watermark) { //console.log("DEBUG [postWebhook]> Receipt: " + event.read.watermark) };
         if (event.message && event.message.text) {
-          FB_WHO = event.sender.id;
+          FB_WHO_ID = event.sender.id;
+          // Lookup ID
+          if (!FB_WHO_ESTABLSIHED && IDS_VIABLE) {
+            var find_index = 0;
+            var match_id = 0;
+            for (find_index = 0; find_index < IDS_TOTAL; find_index++) {
+              // 1,3,5 etc.
+              match_id = IDS_LIST[find_index * IDS_BLOCK_SIZE + 1];
+              //console.log("DEBUG [postWebhook]> Find match for ID (" + FB_WHO_ID + "): " + match_id);
+              if (FB_WHO_ID == match_id) {
+                FB_WHO = IDS_LIST[find_index * IDS_BLOCK_SIZE];
+                //console.log("DEBUG [postWebhook]> Matched to: " + FB_WHO);
+                FB_WHO_ESTABLSIHED = true;
+                break;
+              }
+            };
+          }
+          // Prime personalised response
+          if (LAST_TIMESTAMP == null||new Date().getTime() - LAST_TIMESTAMP > TIME_TO_WAIT){
+            //console.log("DEBUG [postWebhook]> Interval since last message has been: " + TIME_TO_WAIT);
+            if (FB_WHO_ESTABLSIHED){
+              var hr = new Date().getHours();
+              for (var loop_hour = 0; loop_hour < TIME_OF_DAY.length; loop_hour++) {
+                if (hr >= TIME_OF_DAY[loop_hour][0]) {
+                  messageTextExtra = TIME_OF_DAY[loop_hour][1];
+                  break;
+                }
+              };
+              messageTextExtra = messageTextExtra + ' ' + FB_WHO + '. ' + RANDOMISED_COMPLIMENT[RANDOMISED_COMPLIMENT_INDEX] + ' ';
+              RANDOMISED_COMPLIMENT_INDEX = RANDOMISED_COMPLIMENT_INDEX + 1;
+              if (RANDOMISED_COMPLIMENT_INDEX > RANDOMISED_COMPLIMENT.length) {RANDOMISED_COMPLIMENT_INDEX = 1};
+              //console.log("DEBUG [postWebhook]> Segue: " + messageTextExtra);
+            };
+            LAST_TIMESTAMP = new Date().getTime();
+          } else {
+            messageTextExtra = '';
+          }
           // Clean input
           analyse_text = event.message.text;
           analyse_text = analyse_text.toLowerCase();
@@ -403,7 +488,7 @@ CHASbot.post('/webhook', (req, res) => {
           CHAS_LOGO_TRIGGER = 0;
           position_in_analyse_text = analyse_text.search(CHAS_LOGO_TRIGGER_PHRASE) + 1;
           //console.log("DEBUG [postWebhook]> " + CHAS_LOGO_TRIGGER_PHRASE + " search result: " + position_in_analyse_text);
-          if (position_in_analyse_text > 0) { CHAS_LOGO_TRIGGER = 1 };
+          if (position_in_analyse_text > 0) {CHAS_LOGO_TRIGGER = 1};
           // CHAS Events
           CHAS_EVENTS_TRIGGER = 0;
           position_in_analyse_text = analyse_text.lastIndexOf(CHAS_EVENTS_TIRGGER_PHRASE) + 1;
@@ -453,7 +538,7 @@ CHASbot.post('/webhook', (req, res) => {
             postSearch(event);
           } else if (CHAS_LOGO_TRIGGER == 1) {
             //console.log("DEBUG [postWebhook]> Logo");
-            console.log("INFO [postWebhook]> Sender: " + FB_WHO);
+            console.log("INFO [postWebhook]> Sender: " + FB_WHO_ID);
             console.log("INFO [postWebhook]> Request: " + CHAS_LOGO_TRIGGER_PHRASE);
             console.log("INFO [postWebhook]> Action: postWebhook.postImage");
             console.log("INFO [postWebhook]> Response: IMG URL " + CHAS_THUMB);
@@ -483,7 +568,7 @@ function firstAlpha(inputString) {
   return '';
 }
 function trimTo(trim_length,inputString) {
-  if (inputString.length > trim_length) { inputString = inputString.slice(0,trim_length-1) + "🤐" };
+  if (inputString.length > trim_length) {inputString = inputString.slice(0,trim_length-1) + "🤐"};
   return inputString;
 }
 
@@ -512,6 +597,10 @@ function sendTemplate(event) {
 function sendTextDirect(event) {
   // messageText set outside of function call
   let sender = event.sender.id;
+  if (messageTextExtra != '') {
+    messageText = messageTextExtra + messageText;
+    messageTextExtra = '';
+  };
   request({
     uri: FB_MESSENGER_ENDPOINT,
     qs: {access_token: PAGE_ACCESS_TOKEN},
@@ -537,22 +626,23 @@ function sendMessageViaAPIAI(event) {
     sessionId: 'chasbot_sessionID' // Arbitrary id
   });
   apiai.on('response', (response) => {
-    let aiText = response.result.fulfillment.speech;
-    console.log("INFO [sendMessageViaAPIAI]> Sender: " + FB_WHO);
+    messageText = response.result.fulfillment.speech;
+    if (messageTextExtra != '') {messageText = messageTextExtra + messageText};
+    console.log("INFO [sendMessageViaAPIAI]> Sender: " + FB_WHO_ID);
     console.log("INFO [sendMessageViaAPIAI]> Request: " + response.result.resolvedQuery);
     if (response.result.action == '') {
       console.log("INFO [sendMessageViaAPIAI]> Action: " + response.result.metadata.intentName);
     } else {
       console.log("INFO [sendMessageViaAPIAI]> Action: " + response.result.action);
     }
-    console.log("INFO [sendMessageViaAPIAI]> Response: " + aiText);
+    console.log("INFO [sendMessageViaAPIAI]> Response: " + messageText);
     request({
       uri: FB_MESSENGER_ENDPOINT,
       qs: {access_token: PAGE_ACCESS_TOKEN},
       method: 'POST',
       json: {
         recipient: {id: sender},
-        message: {text: trimTo(640,aiText)}
+        message: {text: trimTo(640,messageText)}
       }
     }, (error, response) => {
       if (error) {
@@ -570,31 +660,31 @@ function sendMessageViaAPIAI(event) {
 
 // Webhook for API.ai to get response from the 3rd party API
 CHASbot.post('/heroku', (req, res) => {
-  //console.log("DEBUG [postAI]> " + req.body.result);
-  if (req.body.result.action === 'weather') {
+  //console.log("DEBUG [postHeroku]> " + req.body.result);
+  if (req.body.result.action === DIALOGFLOW_ACTION_WEATHER) {
     // Set a default weather location
     var city = 'Edinburgh';
     if (typeof req.body.result.parameters['geo-city-gb'] != 'undefined') {
       city = req.body.result.parameters['geo-city-gb'];
-      //console.log("DEBUG [postAI]> Location @ :" + city);
+      //console.log("DEBUG [postHeroku]> Location @ :" + city);
     };
     if (typeof req.body.result.parameters['hospice_places'] != 'undefined') {
       city = req.body.result.parameters['hospice_places'];
-      //console.log("DEBUG [postAI]> Hospice @ :" + city);
+      //console.log("DEBUG [postHeroku]> Hospice @ :" + city);
     };
     let restUrl = 'http://api.openweathermap.org/data/2.5/weather?APPID='+WEATHER_API_KEY+'&q='+city;
-    //console.log("DEBUG [postAI]> Weather URL: " + restUrl);
+    //console.log("DEBUG [postHeroku]> Weather URL: " + restUrl);
     request.get(restUrl, (err, response, body) => {
       if (!err && response.statusCode == 200) {
         let json = JSON.parse(body);
-        //console.log("DEBUG [postAI]> " + json);
+        //console.log("DEBUG [postHeroku]> " + json);
         let tempF = ~~(json.main.temp * 9/5 - 459.67);
         let tempC = ~~(json.main.temp - 273.15);
-        let msg = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
+        let messageText = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
         return res.json({
-          speech: msg,
-          displayText: trimTo(640,msg),
-          source: 'weather'
+          speech: messageText,
+          displayText: trimTo(640,messageText),
+          source: DIALOGFLOW_ACTION_WEATHER
         });
       } else {
         let errorMessage = "Oops, I wasn't able to look up that place name.";
@@ -606,21 +696,36 @@ CHASbot.post('/heroku', (req, res) => {
         });
       }
     })
-  } else if (req.body.result.action === 'cards'){
+  } else if (req.body.result.action === DIALOGFLOW_ACTION_PICKCARD){
     CARD_PICK = CARD_DECK[Math.floor(Math.random()*CARD_DECK.length)];
-    let msg = CARD_PROMPTS[CARD_PROMPT] + CARD_PICK;
+    messageText = CARD_PROMPTS[CARD_PROMPT] + CARD_PICK;
     CARD_PROMPT = CARD_PROMPT + 1;
-    if (CARD_PROMPT == CARD_PROMPTS.length) { CARD_PROMPT = 0 };
+    if (CARD_PROMPT == CARD_PROMPTS.length) {CARD_PROMPT = 0};
     return res.json({
-      speech: msg,
-      displayText: trimTo(640,msg),
-      source: 'cards'
+      speech: messageText,
+      displayText: trimTo(640,messageText),
+      source: DIALOGFLOW_ACTION_PICKCARD
     });
-  } else if (req.body.result.action === 'fundraising') {
+  } else if (req.body.result.action === DIALOGFLOW_ACTION_FUNDRAISING) {
     return res.json({
       speech: CHAS_FR_CARD,
       displayText: trimTo(640,CHAS_FR_CARD),
-      source: 'fundraising'
+      source: DIALOGFLOW_ACTION_FUNDRAISING
+    });
+    //console.log("DEBUG [postHeroku]> Send fundraising contact card");
+  } else if (req.body.result.action === DIALOGFLOW_ACTION_SLIM_SHADY) {
+    if (typeof req.body.result.parameters['given-name'] != 'undefined') {
+      FB_WHO = req.body.result.parameters['given-name'];
+      //console.log("DEBUG [postHeroku]> Slim shady: " + FB_WHO);
+    };
+    messageText = GREETING_MESSAGE[GREETING_MESSAGE_INDEX] + ' ' + FB_WHO + '.';
+    GREETING_MESSAGE_INDEX = GREETING_MESSAGE_INDEX + 1;
+    if (GREETING_MESSAGE_INDEX == GREETING_MESSAGE.length) {GREETING_MESSAGE_INDEX = 0};
+    LAST_TIMESTAMP = new Date().getTime();
+    return res.json({
+      speech: messageText,
+      displayText: trimTo(640,messageText),
+      source: DIALOGFLOW_ACTION_SLIM_SHADY
     });
   }
 });
@@ -642,7 +747,7 @@ function postImage(image_url,pass_on_event) {
 
 function postMarvelResults(pass_on_event,result_or_not) {
   //console.log("DEBUG [postMarvelResults]> Pass or Fail: " + result_or_not);
-  console.log("INFO [postMarvelResults]> Sender: " + FB_WHO);
+  console.log("INFO [postMarvelResults]> Sender: " + FB_WHO_ID);
   console.log("INFO [postMarvelResults]> Request: " + MARVEL_TIRGGER_PHRASE + " " + HERO_WHO);
   console.log("INFO [postMarvelResults]> Action: getMarvelChar.postMarvelResults");
   if (result_or_not == 1) {
@@ -661,9 +766,8 @@ function postMarvelResults(pass_on_event,result_or_not) {
               url: HERO_URL,
               messenger_extensions: false,
               webview_height_ratio: "tall"
-              } // default_action
-            } // elements
-          ] // elements
+            } // default_action
+          }] // elements
         } // payload
       } // attachment
     }; // template
@@ -675,14 +779,14 @@ function postMarvelResults(pass_on_event,result_or_not) {
     console.log("INFO [postMarvelResults]> Reponse: Unuccessful");
     messageText = HERO_OOPS[HERO_OOPS_INDEX] + ' try something instead of ' + HERO_WHO + '?'; // Required within sendTextDirect
     HERO_OOPS_INDEX = HERO_OOPS_INDEX + 1;
-    if (HERO_OOPS_INDEX == HERO_OOPS.length) { HERO_OOPS_INDEX = 0 };
+    if (HERO_OOPS_INDEX == HERO_OOPS.length) {HERO_OOPS_INDEX = 0};
     sendTextDirect(pass_on_event);
   };
 }
 
 function postResultsEventsCHAS(pass_on_event,result_or_not) {
   //console.log("DEBUG [postResultsEventsCHAS]> Pass or Fail: " + result_or_not);
-  console.log("INFO [postResultsEventsCHAS]> Sender: " + FB_WHO);
+  console.log("INFO [postResultsEventsCHAS]> Sender: " + FB_WHO_ID);
   console.log("INFO [postResultsEventsCHAS]> Request: " + CHAS_EVENTS_TIRGGER_PHRASE + " " + CHAS_EVENTS_NAME);
   console.log("INFO [postResultsEventsCHAS]> Action: getEventCHAS.postResultsEventsCHAS");
   if (result_or_not == 1) {
@@ -704,9 +808,8 @@ function postResultsEventsCHAS(pass_on_event,result_or_not) {
               url: CHAS_EVENTS_INFORMATION,
               messenger_extensions: false,
               webview_height_ratio: "tall"
-              } // default_action
-            } // elements
-          ] // elements
+            } // default_action
+          }] // elements
         } // payload
       } // attachment
     }; // template
@@ -718,14 +821,14 @@ function postResultsEventsCHAS(pass_on_event,result_or_not) {
     console.log("INFO [postResultsEventsCHAS]> Reponse: Unsuccessful");
     messageText = CHAS_EVENTS_OOPS[CHAS_EVENTS_OOPS_INDEX] + ' try something instead of ' + toTitleCase(CHAS_EVENTS_NAME) + '?'; // Required within sendTextDirect
     CHAS_EVENTS_OOPS_INDEX = CHAS_EVENTS_OOPS_INDEX + 1;
-    if (CHAS_EVENTS_OOPS_INDEX == CHAS_EVENTS_OOPS.length) { CHAS_EVENTS_OOPS_INDEX = 0 };
+    if (CHAS_EVENTS_OOPS_INDEX == CHAS_EVENTS_OOPS.length) {CHAS_EVENTS_OOPS_INDEX = 0};
     sendTextDirect(pass_on_event);
   };
 }
 
 function postResultsBiosCHAS(pass_on_event,result_or_not) {
   //console.log("DEBUG [postResultsBiosCHAS]> Input: " + pass_on_event);
-  console.log("INFO [postResultsBiosCHAS]> Sender: " + FB_WHO);
+  console.log("INFO [postResultsBiosCHAS]> Sender: " + FB_WHO_ID);
   console.log("INFO [postResultsBiosCHAS]> Request: " + CHAS_BIOS_TRIGGER_PHRASE + " " + CHAS_BIOS_NAME);
   console.log("INFO [postResultsBiosCHAS]> Action: getBiosCHAS.postResultsBiosCHAS");
   if (result_or_not == 1) {
@@ -742,7 +845,7 @@ function postResultsBiosCHAS(pass_on_event,result_or_not) {
 
 function postSearch(pass_on_event) {
   //console.log("DEBUG [postSearch]> Input: " + pass_on_event);
-  console.log("INFO [postSearch]> Sender: " + FB_WHO);
+  console.log("INFO [postSearch]> Sender: " + FB_WHO_ID);
   console.log("INFO [postSearch]> Request: " + SEARCH_METHOD + ' ' + SEARCH_TERM);
   console.log("INFO [postSearch]> Action: postSearch.sendTemplate");
   var search_title = '';
@@ -775,9 +878,8 @@ function postSearch(pass_on_event) {
             url: search_url,
             messenger_extensions: false,
             webview_height_ratio: "tall"
-            } // default_action
-          } // elements
-        ] // elements
+          } // default_action
+        }] // elements
       } // payload
     } // attachment
   }; // template
@@ -831,7 +933,7 @@ function postSearch(pass_on_event) {
 // Fetch back special queries
 function getAlphabetCHAS(LetterTile,pass_in_event) {
   //console.log("DEBUG [getAlphabetCHAS]> Input: " + LetterTile);
-  console.log("INFO [getAlphabetCHAS]> Sender: " + FB_WHO);
+  console.log("INFO [getAlphabetCHAS]> Sender: " + FB_WHO_ID);
   console.log("INFO [getAlphabetCHAS]> Request: " + CHASABET_TIRGGER_PHRASE1 + " or " + CHASABET_TIRGGER_PHRASE2 + " " + LetterTile);
   console.log("INFO [getAlphabetCHAS]> Action: getAlphabetCHAS.postImage");
   var target_letter_code = LetterTile.charCodeAt(0) - 97;
@@ -931,7 +1033,7 @@ function getEventCHAS(EventName,pass_in_event) {
   //console.log("DEBUG [getEventCHAS]> Cleaned message is: " + compare_to_string);
   //console.log("DEBUG [getEventCHAS]> Length: " + stripped_sentence_length);
   var error_caught = false; // Gets changed to true, if things go iffy before the end
-  if ( stripped_sentence_length == 0 ) {
+  if (stripped_sentence_length == 0) {
     //console.log("DEBUG [getEventCHAS]> There is nothing left to compare");
     error_caught = true;
   }
@@ -964,8 +1066,8 @@ function getEventCHAS(EventName,pass_in_event) {
       next_stripped_word = next_stripped_word.replace(/10k/g, 'tenk');
       // Strip out all but letters from each keyword and skip small words
       next_stripped_word = next_stripped_word.replace(/[^A-Za-z]/g, '');
-      if (!(( next_stripped_word == 'the' ) || ( next_stripped_word == 'in' ) ||
-            ( next_stripped_word == 'at' ) || ( next_stripped_word == 'on' ))) {
+      if (!((next_stripped_word == 'the') || (next_stripped_word == 'in') ||
+            (next_stripped_word == 'at') || (next_stripped_word == 'on'))) {
         regex_builder = regex_builder + REGEX_START + next_stripped_word + REGEX_MIDDLE;
         //console.log("DEBUG [getEventCHAS]> Next word: " + next_stripped_word);
         stripped_message_count = stripped_message_count + 1;
@@ -1014,7 +1116,7 @@ function getBiosCHAS(PersonName,pass_in_event) {
   //console.log("DEBUG [getBiosCHAS]> Cleaned message is: " + compare_to_string);
   //console.log("DEBUG [getBiosCHAS]> Length: " + stripped_sentence_length);
   var error_caught = false; // Gets changed to true, if things go iffy before the end
-  if ( stripped_sentence_length == 0 ) {
+  if (stripped_sentence_length == 0) {
     //console.log("DEBUG [getBiosCHAS]> There is nothing left to compare");
     error_caught = true;
   }
@@ -1080,9 +1182,7 @@ function getRPSLS(pass_in_event) {
   //console.log("DEBUG [getRPSLS]> Round");
   if (RPSLS_TRIGGER == 1) { // Provide some instructions + prompt
     postImage(IMG_URL_PREFIX + RPSLS_IMGS[0] + IMG_URL_SUFFIX,pass_in_event);
-    messageText = RPSLS_INTRO; // Required within sendTextDirect
-    sendTextDirect(pass_in_event);
-    messageText = RPSLS_PROMPT; // Required within sendTextDirect
+    messageText = RPSLS_INTRO + "\n" + RPSLS_PROMPT; // Required within sendTextDirect
     sendTextDirect(pass_in_event);
   } else if (RPSLS_TRIGGER == 2) { // Just prompt
     messageText = RPSLS_PROMPT; // Required within sendTextDirect
