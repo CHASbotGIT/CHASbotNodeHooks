@@ -638,7 +638,7 @@ function sendMessageViaAPIAI(event_dialog) {
       console.log("INFO [sendMessageViaAPIAI]> Action: " + response.result.action);
     }
     if (DIALOGFLOW_ACTION_TEMPLATE) {
-      console.log("INFO [sendMessageViaAPIAI]> Response Template");
+      console.log("INFO [sendMessageViaAPIAI]> Response: Template");
       sendTemplate(event_dialog);
       DIALOGFLOW_ACTION_TEMPLATE = false;
     } else {
