@@ -642,7 +642,11 @@ function sendMessageViaAPIAI(event_dialog) {
       sendTemplate(event_dialog);
       DIALOGFLOW_ACTION_TEMPLATE = false;
     } else {
-      console.log("INFO [sendMessageViaAPIAI]> Response: " + messageText);
+      if (messageTextExtra = '') {
+        console.log("INFO [sendMessageViaAPIAI]> Response: " + messageText);
+      } else {
+        console.log("INFO [sendMessageViaAPIAI]> Response: " + messageTextExtra + ' ' + messageText);
+      }
       sendTextDirect(event_dialog);
     }
   });
