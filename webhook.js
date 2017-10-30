@@ -111,7 +111,7 @@ var CHAS_BIOS_INDEX = -1;
 var CHAS_BIOS_NAME = '';
 var CHAS_FR_CARD = "Contact your local Fundraising Team:" + "\n";
 // Slim Shady
-const TIME_TO_WAIT = 7200000; // 2 hours = 1000 * 60 * 120
+const TIME_TO_WAIT = 30000; //7200000; // 2 hours = 1000 * 60 * 120
 const IDS_BLOCK_SIZE = 2;
 var IDS_VIABLE = false;
 var IDS_TOTAL = 0;
