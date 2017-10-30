@@ -129,12 +129,10 @@ var RANDOMISED_COMPLIMENT = [
   "Hanging out with you is always a blast.","You're one of a kind.","You always know just what to say.",
   "There's ordinary, and then there's you."
 ];
-var RANDOMISED_COMPLIMENT_INDEX = 0;
 var GREETING_MESSAGE = [
   "Pleasure to meet you,","Joy to meet you,","Nice to meet you,","Great to meet you,","Hi,","Hello,","Hey,",
   "Good chating with you,","Nice chatting with,","How do you do,","You have lovely name,"
 ];
-var GREETING_MESSAGE_INDEX = 0;
 // CHAS logo
 var CHAS_LOGO_TRIGGER = false;
 // CHAS alphabet
@@ -382,9 +380,7 @@ CHASbot.post('/webhook', (req, res) => {
                   break;
                 }
               };
-              messageTextExtra = messageTextExtra + ' ' + FB_WHO + '. ' + RANDOMISED_COMPLIMENT[RANDOMISED_COMPLIMENT_INDEX] + ' ';
-              RANDOMISED_COMPLIMENT_INDEX = RANDOMISED_COMPLIMENT_INDEX + 1;
-              if (RANDOMISED_COMPLIMENT_INDEX > RANDOMISED_COMPLIMENT.length) {RANDOMISED_COMPLIMENT_INDEX = 1};
+              messageTextExtra = messageTextExtra + ' ' + FB_WHO + '. ' + RANDOMISED_COMPLIMENT[Math.floor(Math.random()*RANDOMISED_COMPLIMENT.length)] + ' ';
               //console.log("DEBUG [postWebhook]> Segue: " + messageTextExtra);
             };
             LAST_TIMESTAMP = new Date().getTime();
@@ -713,9 +709,7 @@ CHASbot.post('/heroku', (req, res) => {
       FB_WHO = req.body.result.parameters['given-name'];
       //console.log("DEBUG [postHeroku]> Slim shady: " + FB_WHO);
     };
-    messageText = GREETING_MESSAGE[GREETING_MESSAGE_INDEX] + ' ' + FB_WHO + '.';
-    GREETING_MESSAGE_INDEX = GREETING_MESSAGE_INDEX + 1;
-    if (GREETING_MESSAGE_INDEX == GREETING_MESSAGE.length) {GREETING_MESSAGE_INDEX = 0};
+    messageText = GREETING_MESSAGE[Math.floor(Math.random()*GREETING_MESSAGE.length)] + ' ' + FB_WHO + '.';
     LAST_TIMESTAMP = new Date().getTime();
     return res.json({
       speech: messageText,
