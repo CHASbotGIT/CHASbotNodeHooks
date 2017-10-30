@@ -111,7 +111,7 @@ var CHAS_BIOS_INDEX = -1;
 var CHAS_BIOS_NAME = '';
 var CHAS_FR_CARD = "Contact your local Fundraising Team:" + "\n";
 // Slim Shady
-const TIME_TO_WAIT = 30000; //7200000; // 2 hours = 1000 * 60 * 120
+const TIME_TO_WAIT = 7200000; // 2 hours = 1000 * 60 * 120
 const IDS_BLOCK_SIZE = 2;
 var IDS_VIABLE = false;
 var IDS_TOTAL = 0;
@@ -377,7 +377,7 @@ CHASbot.post('/webhook', (req, res) => {
           }
           // Prime personalised response
           if (LAST_TIMESTAMP == null||new Date().getTime() - LAST_TIMESTAMP > TIME_TO_WAIT){
-            console.log("DEBUG [postWebhook]> Interval since last message has been: " + TIME_TO_WAIT);
+            //console.log("DEBUG [postWebhook]> Interval since last message has been: " + TIME_TO_WAIT);
             if (FB_WHO_ESTABLSIHED){
               var hr = new Date().getHours();
               for (var loop_hour = 0; loop_hour < TIME_OF_DAY.length; loop_hour++) {
@@ -387,7 +387,7 @@ CHASbot.post('/webhook', (req, res) => {
                 }
               };
               messageTextExtra = messageTextExtra + ' ' + FB_WHO + '. ' + RANDOMISED_COMPLIMENT[Math.floor(Math.random()*RANDOMISED_COMPLIMENT.length)] + ' ';
-              console.log("DEBUG [postWebhook]> Segue: " + messageTextExtra);
+              //console.log("DEBUG [postWebhook]> Segue: " + messageTextExtra);
             };
             LAST_TIMESTAMP = new Date().getTime();
           } else {
@@ -644,7 +644,7 @@ function sendMessageViaAPIAI(event_dialog) {
       sendTemplate(event_dialog);
       DIALOGFLOW_ACTION_TEMPLATE = false;
     } else {
-      if (messageTextExtra = '') {
+      if (messageTextExtra == '') {
         console.log("INFO [sendMessageViaAPIAI]> Response: " + messageText);
       } else {
         console.log("INFO [sendMessageViaAPIAI]> Response: " + messageTextExtra + ' ' + messageText);
