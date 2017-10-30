@@ -29,9 +29,13 @@ CHASbot.use(bodyParser.json());
 CHASbot.use(bodyParser.urlencoded({ extended: true }));
 // Messenger templates can be found at:
 // https://developers.facebook.com/docs/messenger-platform/send-messages/templates
-// FB end-points
-const FB_MESSENGER_ENDPOINT = 'https://graph.facebook.com/v2.6/me/messages';
+// End-points
+const FB_MESSENGER_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages";
+const WEATHER_API_URL = "http://api.openweathermap.org/data/2.5/weather?APPID=";
 const GROUP_DOCS = "https://work-" + GROUP_LINKS_ROOT + ".facebook.com/groups/1707079182933694";
+const GROUP_DOCS_TXT = "For an answer to this and other similar questions, visit and join the group that stores the library of all relevant CHAS forms, documents and policies.";
+const CHAS_RETAIL = "https://www.chas.org.uk/contact_chas#retail";
+const CHAS_RETAIL_TXT = "🎄 Christmas cards and more are available now from our shops or by mail order.";
 // Free secure linkable image hosting at https://imgbox.com
 const IMG_URL_PREFIX = "https://images.imgbox.com/";
 const IMG_URL_SUFFIX = "_o.png";
@@ -58,6 +62,7 @@ const DIALOGFLOW_ACTION_FUNDRAISING = 'fundraising';
 const DIALOGFLOW_ACTION_PICKCARD = 'cards';
 const DIALOGFLOW_ACTION_WEATHER = 'weather';
 const DIALOGFLOW_ACTION_GROUP_DOCS = 'group_docs';
+const DIALOGFLOW_ACTION_XMAS = 'xmas';
 var DIALOGFLOW_ACTION_TEMPLATE = false;
 // For message handling
 let messageData = '';
@@ -133,6 +138,7 @@ var GREETING_MESSAGE = [
   "Pleasure to meet you,","Joy to meet you,","Nice to meet you,","Great to meet you,","Hi,","Hello,","Hey,",
   "Good chating with you,","Nice chatting with,","How do you do,","You have lovely name,"
 ];
+var GREETING_MESSAGE_INDEX = 0;
 // CHAS logo
 var CHAS_LOGO_TRIGGER = false;
 // CHAS alphabet
@@ -666,7 +672,7 @@ CHASbot.post('/heroku', (req, res) => {
       city = req.body.result.parameters['hospice_places'];
       //console.log("DEBUG [postHeroku]> Hospice @ :" + city);
     };
-    let restUrl = 'http://api.openweathermap.org/data/2.5/weather?APPID='+WEATHER_API_KEY+'&q='+city;
+    let restUrl = WEATHER_API_URL + WEATHER_API_KEY + '&q=' + city;
     //console.log("DEBUG [postHeroku]> Weather URL: " + restUrl);
     request.get(restUrl, (err, response, body) => {
       if (!err && response.statusCode == 200) {
@@ -717,9 +723,16 @@ CHASbot.post('/heroku', (req, res) => {
     });
   } else if (req.body.result.action === DIALOGFLOW_ACTION_GROUP_DOCS) {
     DIALOGFLOW_ACTION_TEMPLATE = true;
-    primeLinkButton(GROUP_DOCS,"For an answer to this and other similar questions, visit and join the group that stores the library of all relevant CHAS forms, documents and policies.",'📚 Useful Documents');
+    primeLinkButton(GROUP_DOCS,GROUP_DOCS_TXT,'📚 Useful Documents');
     return res.json({
       speech: "Useful Documents Link",
+      displayText: messageData
+    });
+  } else if (req.body.result.action === DIALOGFLOW_ACTION_XMAS) {
+    DIALOGFLOW_ACTION_TEMPLATE = true;
+    primeLinkButton(CHAS_RETAIL,CHAS_RETAIL_TXT,'🛍️ CHAS Retail');
+    return res.json({
+      speech: "CHAS Retail Contact Link",
       displayText: messageData
     });
   }
