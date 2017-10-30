@@ -366,10 +366,10 @@ CHASbot.post('/webhook', (req, res) => {
             for (find_index = 0; find_index < IDS_TOTAL; find_index++) {
               // 1,3,5 etc.
               match_id = IDS_LIST[find_index * IDS_BLOCK_SIZE + 1];
-              console.log("DEBUG [postWebhook]> Find match for ID (" + FB_WHO_ID + "): " + match_id);
+              //console.log("DEBUG [postWebhook]> Find match for ID (" + FB_WHO_ID + "): " + match_id);
               if (FB_WHO_ID == match_id) {
                 FB_WHO = IDS_LIST[find_index * IDS_BLOCK_SIZE];
-                console.log("DEBUG [postWebhook]> Matched to: " + FB_WHO);
+                //console.log("DEBUG [postWebhook]> Matched to: " + FB_WHO);
                 FB_WHO_ESTABLSIHED = true;
                 break;
               }
@@ -377,7 +377,7 @@ CHASbot.post('/webhook', (req, res) => {
           }
           // Prime personalised response
           if (LAST_TIMESTAMP == null||new Date().getTime() - LAST_TIMESTAMP > TIME_TO_WAIT){
-            //console.log("DEBUG [postWebhook]> Interval since last message has been: " + TIME_TO_WAIT);
+            console.log("DEBUG [postWebhook]> Interval since last message has been: " + TIME_TO_WAIT);
             if (FB_WHO_ESTABLSIHED){
               var hr = new Date().getHours();
               for (var loop_hour = 0; loop_hour < TIME_OF_DAY.length; loop_hour++) {
@@ -387,7 +387,7 @@ CHASbot.post('/webhook', (req, res) => {
                 }
               };
               messageTextExtra = messageTextExtra + ' ' + FB_WHO + '. ' + RANDOMISED_COMPLIMENT[Math.floor(Math.random()*RANDOMISED_COMPLIMENT.length)] + ' ';
-              //console.log("DEBUG [postWebhook]> Segue: " + messageTextExtra);
+              console.log("DEBUG [postWebhook]> Segue: " + messageTextExtra);
             };
             LAST_TIMESTAMP = new Date().getTime();
           } else {
