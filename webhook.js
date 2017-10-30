@@ -366,10 +366,10 @@ CHASbot.post('/webhook', (req, res) => {
             for (find_index = 0; find_index < IDS_TOTAL; find_index++) {
               // 1,3,5 etc.
               match_id = IDS_LIST[find_index * IDS_BLOCK_SIZE + 1];
-              //console.log("DEBUG [postWebhook]> Find match for ID (" + FB_WHO_ID + "): " + match_id);
+              console.log("DEBUG [postWebhook]> Find match for ID (" + FB_WHO_ID + "): " + match_id);
               if (FB_WHO_ID == match_id) {
                 FB_WHO = IDS_LIST[find_index * IDS_BLOCK_SIZE];
-                //console.log("DEBUG [postWebhook]> Matched to: " + FB_WHO);
+                console.log("DEBUG [postWebhook]> Matched to: " + FB_WHO);
                 FB_WHO_ESTABLSIHED = true;
                 break;
               }
