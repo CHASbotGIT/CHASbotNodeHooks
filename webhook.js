@@ -330,8 +330,8 @@ function loadCalendar() {
 }
 var CHAS_EVENTS_VIABLE = loadCalendar();
 
-/* ESTABLISH LISTENER
-// Only for TESTING via local NGROK.IO
+// ESTABLISH LISTENER
+/* Only for TESTING via local NGROK.IO
 const server = CHASbot.listen(server_port, server_ip_address, () => {
   console.log("INFO [NGROK.IO]> Listening on " + server_ip_address + ", port " + server_port );
   console.log("INFO [NGROK.IO]>>>>>>>>>>>>>>>>>>> STARTED <<<<<<<<<<<<<<<<<");
@@ -360,6 +360,9 @@ CHASbot.post('/webhook', (req, res) => {
       entry.messaging.forEach((event) => {
         //if (event.read && event.read.watermark) { //console.log("DEBUG [postWebhook]> Receipt: " + event.read.watermark) };
         if (event.message && event.message.text) {
+
+          console.log("<<<<<<<<<<"+ event.message.seq +">>>>>>>>>>");
+
           FB_WHO_ID = event.sender.id;
           // Lookup ID
           if (!FB_WHO_ESTABLSIHED && IDS_VIABLE) {
@@ -599,6 +602,10 @@ function sendTemplate(event) {
         console.log("ERROR [sendTemplate]> Undefined: ", response.body.error);
     }
   });
+  if (MARVEL_SEND) {
+    sendTextDirect(event);
+    MARVEL_SEND = false;
+  }
 }
 
 function sendTextDirect(event) {
@@ -623,10 +630,6 @@ function sendTextDirect(event) {
       console.log("ERROR [sendTextDirect]> Undefined: ", response.body.error);
     }
   }); // request
-  if (MARVEL_SEND) {
-    sendTemplate(event);
-    MARVEL_SEND = false;
-  }
 }
 
 // Message request pinged off of API.AI for response
@@ -803,13 +806,14 @@ function postMarvelResults(pass_on_event,result_or_not) {
     messageText = HERO_DESCRIPTION; // Required within sendTextDirect
     messageData = marvel_template; // Required within sendTemplate
     MARVEL_SEND = true;
+    sendTemplate(pass_on_event);
   } else {
     console.log("INFO [postMarvelResults]> Reponse: Unuccessful");
     messageText = HERO_OOPS[HERO_OOPS_INDEX] + ' try something instead of ' + HERO_WHO + '?'; // Required within sendTextDirect
     HERO_OOPS_INDEX = HERO_OOPS_INDEX + 1;
     if (HERO_OOPS_INDEX == HERO_OOPS.length) {HERO_OOPS_INDEX = 0};
+    sendTextDirect(pass_on_event);
   };
-  sendTextDirect(pass_on_event);
 }
 
 function postResultsEventsCHAS(pass_on_event,result_or_not) {
