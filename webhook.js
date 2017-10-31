@@ -32,6 +32,7 @@ CHASbot.use(bodyParser.urlencoded({ extended: true }));
 // End-points
 const FB_MESSENGER_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages";
 const WEATHER_API_URL = "http://api.openweathermap.org/data/2.5/weather?APPID=";
+const MARVEL_API_URL = "https://gateway.marvel.com/v1/public/characters?nameStartsWith="
 const GROUP_DOCS = "https://work-" + GROUP_LINKS_ROOT + ".facebook.com/groups/1707079182933694";
 const GROUP_DOCS_TXT = "For an answer to this and other similar questions, visit and join the group that stores the library of all relevant CHAS forms, documents and policies.";
 const CHAS_RETAIL = "https://www.chas.org.uk/contact_chas#retail";
@@ -176,6 +177,7 @@ var CHASABET_INDEX = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 // For Marvel API
 // Keys above
 var MARVEL_TRIGGER = false;
+var MARVEL_SEND = false;
 var HERO_WHO = ''; // Result
 var HERO_DESCRIPTION = ''; // Result
 var HERO_THUMB = ''; // Result
@@ -328,8 +330,8 @@ function loadCalendar() {
 }
 var CHAS_EVENTS_VIABLE = loadCalendar();
 
-// ESTABLISH LISTENER
-/* Only for TESTING via local NGROK.IO
+/* ESTABLISH LISTENER
+// Only for TESTING via local NGROK.IO
 const server = CHASbot.listen(server_port, server_ip_address, () => {
   console.log("INFO [NGROK.IO]> Listening on " + server_ip_address + ", port " + server_port );
   console.log("INFO [NGROK.IO]>>>>>>>>>>>>>>>>>>> STARTED <<<<<<<<<<<<<<<<<");
@@ -621,6 +623,10 @@ function sendTextDirect(event) {
       console.log("ERROR [sendTextDirect]> Undefined: ", response.body.error);
     }
   }); // request
+  if (MARVEL_SEND) {
+    sendTemplate(event);
+    MARVEL_SEND = false;
+  }
 }
 
 // Message request pinged off of API.AI for response
@@ -644,11 +650,7 @@ function sendMessageViaAPIAI(event_dialog) {
       sendTemplate(event_dialog);
       DIALOGFLOW_ACTION_TEMPLATE = false;
     } else {
-      if (messageTextExtra == '') {
-        console.log("INFO [sendMessageViaAPIAI]> Response: " + messageText);
-      } else {
-        console.log("INFO [sendMessageViaAPIAI]> Response: " + messageTextExtra + ' ' + messageText);
-      }
+      console.log("INFO [sendMessageViaAPIAI]> Response: " + messageTextExtra + ' ' + messageText);
       sendTextDirect(event_dialog);
     }
   });
@@ -680,7 +682,7 @@ CHASbot.post('/heroku', (req, res) => {
         //console.log("DEBUG [postHeroku]> " + json);
         let tempF = ~~(json.main.temp * 9/5 - 459.67);
         let tempC = ~~(json.main.temp - 273.15);
-        let messageText = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
+        messageText = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
         return res.json({
           speech: messageText,
           displayText: messageText
@@ -799,16 +801,15 @@ function postMarvelResults(pass_on_event,result_or_not) {
       } // attachment
     }; // template
     messageText = HERO_DESCRIPTION; // Required within sendTextDirect
-    sendTextDirect(pass_on_event);
     messageData = marvel_template; // Required within sendTemplate
-    sendTemplate(pass_on_event);
+    MARVEL_SEND = true;
   } else {
     console.log("INFO [postMarvelResults]> Reponse: Unuccessful");
     messageText = HERO_OOPS[HERO_OOPS_INDEX] + ' try something instead of ' + HERO_WHO + '?'; // Required within sendTextDirect
     HERO_OOPS_INDEX = HERO_OOPS_INDEX + 1;
     if (HERO_OOPS_INDEX == HERO_OOPS.length) {HERO_OOPS_INDEX = 0};
-    sendTextDirect(pass_on_event);
   };
+  sendTextDirect(pass_on_event);
 }
 
 function postResultsEventsCHAS(pass_on_event,result_or_not) {
@@ -979,7 +980,7 @@ function getMarvelChar(MarvelWho,pass_in_event) {
   //console.log("DEBUG [getMarvelChar]> Input: " + MarvelWho);
   // String together a URL using the provided keys and search parameters
   HERO_DESCRIPTION = '';
-  var url = "https://gateway.marvel.com/v1/public/characters?nameStartsWith=" + MarvelWho + "&apikey=" + MARVEL_PUBLIC_KEY;
+  var url = MARVEL_API_URL + MarvelWho + "&apikey=" + MARVEL_PUBLIC_KEY;
   var ts = new Date().getTime();
   var hash = crypto.createHash('md5').update(ts + MARVEL_PRIVATE_KEY + MARVEL_PUBLIC_KEY).digest('hex');
   url += "&ts=" + ts + "&hash=" + hash;
@@ -996,15 +997,12 @@ function getMarvelChar(MarvelWho,pass_in_event) {
         var characterData = JSON.parse(body);
         //console.log("DEBUG [getMarvelChar]> Character Code: " + characterData.code);
         if (characterData.code === 200) { // Successful response from Marvel
-          if (characterData['data'].count > 0) { // Multiple viable characters found
-            HERO_DESCRIPTION += "More than one result, so just showing the first. ";
-          };
           if (characterData['data'].count == 0) { // A successful response doesn't mean there was a match
             //console.log("DEBUG [getMarvelChar]> Valid URL but no results for " + toTitleCase(HERO_WHO));
             postMarvelResults(pass_in_event,0);
             return;
           } else if (characterData['data'].results[0].description !== '') { // Assess the first result back
-            HERO_DESCRIPTION += characterData.data.results[0].description;
+            HERO_DESCRIPTION = characterData.data.results[0].description;
             //console.log("DEBUG [getMarvelChar]> Description: " + HERO_DESCRIPTION);
             HERO_THUMB = characterData.data.results[0].thumbnail.path + '/standard_xlarge.jpg';
             //console.log("DEBUG [getMarvelChar]> Thumbnail: " + HERO_THUMB);
@@ -1013,7 +1011,7 @@ function getMarvelChar(MarvelWho,pass_in_event) {
             postMarvelResults(pass_in_event,1);
             return;
           } else { // Assess the first result back when there isn't a description provided by Marvel
-            HERO_DESCRIPTION += "Find out more at Marvel.";
+            HERO_DESCRIPTION = "Find out more at Marvel.";
             //console.log("DEBUG [getMarvelChar]> Description: " + HERO_DESCRIPTION);
             HERO_THUMB = characterData.data.results[0].thumbnail.path + '/standard_xlarge.jpg';
             //console.log("DEBUG [getMarvelChar]> Thumbnail: " + HERO_THUMB);
