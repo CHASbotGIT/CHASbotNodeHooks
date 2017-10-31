@@ -179,6 +179,7 @@ var CHASABET_INDEX = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 var MARVEL_TRIGGER = false;
 var MARVEL_SEND = false;
 var HERO_WHO = ''; // Result
+var HERO_WHO_NOW = '';
 var HERO_DESCRIPTION = ''; // Result
 var HERO_THUMB = ''; // Result
 var HERO_URL = ''; // Result
@@ -360,9 +361,6 @@ CHASbot.post('/webhook', (req, res) => {
       entry.messaging.forEach((event) => {
         //if (event.read && event.read.watermark) { //console.log("DEBUG [postWebhook]> Receipt: " + event.read.watermark) };
         if (event.message && event.message.text) {
-
-          console.log("<<<<<<<<<<"+ event.message.seq +">>>>>>>>>>");
-
           FB_WHO_ID = event.sender.id;
           // Lookup ID
           if (!FB_WHO_ESTABLSIHED && IDS_VIABLE) {
@@ -791,7 +789,7 @@ function postMarvelResults(pass_on_event,result_or_not) {
           template_type: "generic",
           elements: [
             {
-            title: HERO_WHO,
+            title: HERO_WHO_NOW,
             image_url: HERO_THUMB,
             default_action: {
               type: "web_url",
@@ -1006,6 +1004,7 @@ function getMarvelChar(MarvelWho,pass_in_event) {
             postMarvelResults(pass_in_event,0);
             return;
           } else if (characterData['data'].results[0].description !== '') { // Assess the first result back
+            HERO_WHO_NOW = MarvelWho;
             HERO_DESCRIPTION = characterData.data.results[0].description;
             //console.log("DEBUG [getMarvelChar]> Description: " + HERO_DESCRIPTION);
             HERO_THUMB = characterData.data.results[0].thumbnail.path + '/standard_xlarge.jpg';
@@ -1015,6 +1014,7 @@ function getMarvelChar(MarvelWho,pass_in_event) {
             postMarvelResults(pass_in_event,1);
             return;
           } else { // Assess the first result back when there isn't a description provided by Marvel
+            HERO_WHO_NOW = MarvelWho;
             HERO_DESCRIPTION = "Find out more at Marvel.";
             //console.log("DEBUG [getMarvelChar]> Description: " + HERO_DESCRIPTION);
             HERO_THUMB = characterData.data.results[0].thumbnail.path + '/standard_xlarge.jpg';
