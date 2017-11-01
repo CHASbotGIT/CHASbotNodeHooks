@@ -1064,6 +1064,7 @@ function checkHangman(pass_on_event) {
     };
     // If no remaining letters, hurray, you won
     if (HANGMAN_REMAINING == 0) {
+      HANGMAN_IN_PLAY = false;
       messageText = "Yes! You guessed the mystery staff member, " + HANGMAN_WORD.toUpperCase() + '!';
     };
     // Otherwise, wrong guess
