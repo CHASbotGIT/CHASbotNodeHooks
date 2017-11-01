@@ -56,6 +56,8 @@ const MARVEL_TIRGGER_PHRASE = 'marvel codename';
 const CHAS_EVENTS_TIRGGER_PHRASE = 'when is';
 const CHAS_BIOS_TRIGGER_PHRASE = 'who is';
 const RPSLS_TRIGGER_PHRASE = 'bazinga';
+const HANGMAN_TRIGGER_PHRASE = 'hangman';
+const HANGMAN_STOP_PHRASE = 'stop';
 var SEARCH_METHODS = new Array ("search","google","wiki","beeb");
 // DialogFlow fulfillment
 const DIALOGFLOW_ACTION_SLIM_SHADY = 'slim_shady';
@@ -223,6 +225,16 @@ var CARD_DECK  = [
 var CARD_PROMPTS = [
   "I've picked... ","This time I've drawn... ","I've selected... ","You're card is... "];
 var CARD_PROMPT = 0;
+// Hangman
+var HANGMAN_IN_PLAY = false;
+var HANGMAN_TRIGGER = false;
+var HANGMAN_REMAINING = 0;
+var HANGMAN_STRIKES = 0;
+var HANGMAN_GUESS = '';
+var HANGMAN_WORD = '';
+var HANGMAN_ANSWER = '';
+var HANGMAN_ANSWER_ARRAY = [];
+var HANGMAN_STRIKE_STRING = ["👍👍👍","👍👍👎","👍👎👎","👎👎👎"];
 // Encryption and decryption of biographies
 var enCrypt = function(text_plain) {
   var algorithm = 'aes-256-ctr';
@@ -400,6 +412,55 @@ CHASbot.post('/webhook', (req, res) => {
           analyse_text = event.message.text;
           analyse_text = analyse_text.toLowerCase();
           // Check for custom triggers
+          // Hangman
+          HANGMAN_TRIGGER = false;
+          HANGMAN_GUESS = '';
+          if (HANGMAN_IN_PLAY) { // Only check if we are playing
+            //console.log("DEBUG [postWebhook]> Hangman in play.");
+            position_in_analyse_text = analyse_text.search(HANGMAN_STOP_PHRASE) + 1;
+            if (position_in_analyse_text > 0) {
+              HANGMAN_IN_PLAY = false;
+              //console.log("DEBUG [postWebhook]> Hangman: Player wants to end i.e. " + analyse_text);
+            } else if (analyse_text.length != 1) {
+              messageText = "😞 One letter at a time please.";
+              //console.log("DEBUG [postWebhook]> Hangman: Guess is too long i.e. " + analyse_text);
+            } else if (analyse_text.match(/[a-z]/i)) {
+              //console.log("DEBUG [postWebhook]> Hangman: Guess is valid i.e. " + analyse_text);
+              HANGMAN_GUESS = analyse_text;
+            } else { // Not an alpha
+              //console.log("DEBUG [postWebhook]> Hangman: Guess is not an alpha i.e. " + analyse_text);
+              messageText = "🔤 A letter would be nice.";
+            };
+          };
+          // If the word typed is another trigger then it trumps the game and sets HANGMAN_IN_PLAY = false;
+          // Typing hangman mid-game will start a new game
+          position_in_analyse_text = analyse_text.search(HANGMAN_TRIGGER_PHRASE) + 1;
+          //console.log("DEBUG [postWebhook]> " + HANGMAN_TRIGGER_PHRASE + " search result: " + position_in_analyse_text);
+          if (CHAS_BIOS_VIABLE && position_in_analyse_text > 0) {
+            HANGMAN_TRIGGER = true;
+            HANGMAN_IN_PLAY = true;
+            HANGMAN_STRIKES = 0;
+            HANGMAN_ANSWER_ARRAY = [];
+            HANGMAN_WORD = CHAS_BIOS[Math.floor(Math.random() * CHAS_BIOS_TOTAL) * CHAS_BIOS_BLOCK_SIZE - 2];
+            HANGMAN_WORD = HANGMAN_WORD.toLowerCase();
+            //console.log("DEBUG [postWebhook]> Mystery name: " + HANGMAN_WORD);
+            // swap out spaces for under_scores
+            HANGMAN_WORD = HANGMAN_WORD.replace(/\s/g, '_');
+            // Set up the answer array
+            HANGMAN_ANSWER_ARRAY = [];
+            for (var i = 0; i < HANGMAN_WORD.length; i++) {
+              if (HANGMAN_WORD[i] == '_') {
+                HANGMAN_ANSWER_ARRAY[i] = "_";
+              } else {
+                HANGMAN_ANSWER_ARRAY[i] = "?";
+              };
+            };
+            HANGMAN_ANSWER = HANGMAN_ANSWER_ARRAY.join(' ');
+            messageText = "🤔 Figure out the mystery staff member name.\nType a letter to guess, or 'stop'.\nYour are allowed no more than 3 strikes.";
+            messageText = messageText + "\n" + HANGMAN_ANSWER;
+            messageText = messageText + "\n" + HANGMAN_STRIKE_STRING[HANGMAN_STRIKES] + " (" + HANGMAN_STRIKES + " strikes)";
+            //console.log("DEBUG [postWebhook]> Hangman Initialise: " + messageText);
+          };
           // Search
           SEARCH_TRIGGER = false;
           var rightmost_starting_point = -1;
@@ -417,6 +478,7 @@ CHASbot.post('/webhook', (req, res) => {
                 //console.log("DEBUG [postWebhook]> Search method found: " + SEARCH_METHOD);
                 if (string_length > 0) {
                   SEARCH_TRIGGER = true;
+                  HANGMAN_IN_PLAY = false; // Cxl Hangman
                   SEARCH_TERM = analyse_text.slice(starting_point,ending_point);
                   //console.log("DEBUG [postWebhook]> Search term: " + SEARCH_TERM);
                 };
@@ -443,6 +505,7 @@ CHASbot.post('/webhook', (req, res) => {
           position_in_analyse_text = analyse_text.search(RPSLS_TRIGGER_PHRASE) + 1;
           //console.log("DEBUG [postWebhook]> " + RPSLS_TRIGGER_PHRASE + " search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
+            HANGMAN_IN_PLAY = false; // Cxl Hangman
             if (RPSLS_INSTRUCT == 1) {
               RPSLS_TRIGGER = 1; // Provide intsructions + prompt
               RPSLS_INSTRUCT = 0; // Reset instructions
@@ -463,6 +526,7 @@ CHASbot.post('/webhook', (req, res) => {
             //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
             if (string_length > 0) {
               MARVEL_TRIGGER = true;
+              HANGMAN_IN_PLAY = false; // Cxl Hangman
               HERO_WHO = analyse_text.slice(starting_point,ending_point);
               HERO_WHO = toTitleCase(HERO_WHO);
             };
@@ -490,6 +554,7 @@ CHASbot.post('/webhook', (req, res) => {
               CHASABET_LETTER = firstAlpha(CHASABET_LETTER);
               if (CHASABET_LETTER != '') {
                 CHASABET_TRIGGER = 1;
+                HANGMAN_IN_PLAY = false; // Cxl Hangman
               };
             };
           };
@@ -497,7 +562,10 @@ CHASbot.post('/webhook', (req, res) => {
           CHAS_LOGO_TRIGGER = false;
           position_in_analyse_text = analyse_text.search(CHAS_LOGO_TRIGGER_PHRASE) + 1;
           //console.log("DEBUG [postWebhook]> " + CHAS_LOGO_TRIGGER_PHRASE + " search result: " + position_in_analyse_text);
-          if (position_in_analyse_text > 0) {CHAS_LOGO_TRIGGER = true};
+          if (position_in_analyse_text > 0) {
+            CHAS_LOGO_TRIGGER = true;
+            HANGMAN_IN_PLAY = false; // Cxl Hangman
+          };
           // CHAS Events
           CHAS_EVENTS_TRIGGER = false;
           position_in_analyse_text = analyse_text.lastIndexOf(CHAS_EVENTS_TIRGGER_PHRASE) + 1;
@@ -509,6 +577,7 @@ CHASbot.post('/webhook', (req, res) => {
             //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
             if (string_length > 0) {
               CHAS_EVENTS_TRIGGER = true;
+              HANGMAN_IN_PLAY = false; // Cxl Hangman
               CHAS_EVENTS_NAME = analyse_text.slice(starting_point,ending_point);
             };
           };
@@ -523,6 +592,7 @@ CHASbot.post('/webhook', (req, res) => {
             //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
             if (string_length > 0) {
               CHAS_BIOS_TRIGGER = true;
+              HANGMAN_IN_PLAY = false; // Cxl Hangman
               CHAS_BIOS_NAME = analyse_text.slice(starting_point,ending_point);
             };
           };
@@ -552,6 +622,16 @@ CHASbot.post('/webhook', (req, res) => {
             console.log("INFO [postWebhook]> Action: postWebhook.postImage");
             console.log("INFO [postWebhook]> Response: IMG URL " + CHAS_THUMB);
             postImage(CHAS_THUMB,event)
+          } else if (HANGMAN_TRIGGER) {
+            //console.log("DEBUG [postWebhook]> Hangman Initiated");
+            console.log("INFO [postWebhook]> Sender: " + FB_WHO_ID);
+            console.log("INFO [postWebhook]> Request: " + HANGMAN_TRIGGER_PHRASE);
+            console.log("INFO [postWebhook]> Action: postWebhook.sendTextDirect");
+            console.log("INFO [postWebhook]> Response: Hangman Mystery Name is " + HANGMAN_WORD);
+            sendTextDirect(event)
+          } else if (HANGMAN_IN_PLAY) {
+            //console.log("DEBUG [postWebhook]> Hangman Guess: " + HANGMAN_GUESS);
+            checkHangman(event);
           } else {
             //console.log("DEBUG [postWebhook]> No special cases, send via APIAI");
             sendMessageViaAPIAI(event);
@@ -628,6 +708,7 @@ function sendTextDirect(event) {
       console.log("ERROR [sendTextDirect]> Undefined: ", response.body.error);
     }
   }); // request
+  messageText = '';
 }
 
 // Message request pinged off of API.AI for response
@@ -958,6 +1039,52 @@ function postSearch(pass_on_event) {
     messageData = search_template;
     sendTemplate(pass_on_event);
   }
+}
+
+function checkHangman(pass_on_event) {
+  //console.log("DEBUG [checkHangman]> Input: " + pass_on_event);
+  if (messageText == '') {
+    var got_one = false;
+    var i = 0; // an indexer into the array
+    for (i = 0; i < HANGMAN_WORD.length; i++) {
+      if (HANGMAN_WORD[i] == HANGMAN_GUESS) {
+        HANGMAN_ANSWER_ARRAY[i] = HANGMAN_GUESS.toUpperCase(); // Swap the ? for the actual upper-case letter
+        got_one = true;
+        messageText = "Yes! " + HANGMAN_GUESS.toUpperCase() + " is in the answer.";
+        messageText = messageText + "\n" + HANGMAN_ANSWER_ARRAY.join(' ');
+        messageText = messageText + "\n" + HANGMAN_STRIKE_STRING[HANGMAN_STRIKES] + " (" + HANGMAN_STRIKES + " strikes)";
+      };
+    };
+    // Count the remaining letters
+    HANGMAN_REMAINING = 0;
+    for (i = 0; i < HANGMAN_WORD.length; i++) {
+      if (HANGMAN_ANSWER_ARRAY[i] == '?') {
+        HANGMAN_REMAINING = HANGMAN_REMAINING + 1;
+      };
+    };
+    // If no remaining letters, hurray, you won
+    if (HANGMAN_REMAINING == 0) {
+      messageText = "Yes! You guessed the mystery staff member, " + HANGMAN_WORD.toUpperCase() + '!';
+    };
+    // Otherwise, wrong guess
+    if (!got_one) {
+      messageText = "Sorry, no " + HANGMAN_GUESS.toUpperCase() + " to be found.";
+      HANGMAN_STRIKES = HANGMAN_STRIKES + 1;
+      // Game Over
+      if (HANGMAN_STRIKES == 4) {
+        HANGMAN_IN_PLAY = false;
+        messageText = '\n' + 'The mystery staff member was ' + HANGMAN_WORD.toUpperCase() + '!'
+      } else {
+        messageText = messageText + "\n" + HANGMAN_ANSWER_ARRAY.join(' ');
+        messageText = messageText + "\n" + HANGMAN_STRIKE_STRING[HANGMAN_STRIKES] + " (" + HANGMAN_STRIKES + " strikes)";
+      };
+    };
+  };
+  console.log("INFO [checkHangman]> Sender: " + FB_WHO_ID);
+  console.log("INFO [checkHangman]> Request: Hangman guess was " + HANGMAN_GUESS);
+  console.log("INFO [checkHangman]> Action: Input: checkHangman.sendTextDirect");
+  console.log("INFO [checkHangman]> Response: " + messageText);
+  sendTextDirect(pass_on_event);
 }
 
 // Fetch back special queries
