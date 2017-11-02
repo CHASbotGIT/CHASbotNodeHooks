@@ -366,6 +366,10 @@ CHASbot.get('/webhook', (req, res) => {
   }
 });
 
+setInterval(function() {
+    http.get("https://chasbot.herokuapp.com/");
+}, 300000); // every 5 minutes (300000)
+
 // Handling all messenges in and processing special cases
 CHASbot.post('/webhook', (req, res) => {
   if (req.body.object === 'page') {
