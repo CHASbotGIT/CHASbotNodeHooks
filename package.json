@@ -1,7 +1,7 @@
 {
   "name": "chasbot",
   "version": "1.0.0",
-  "description": "Workchat bot using api.a",
+  "description": "Workchat bot using dialgoflow",
   "main": "webhook.js",
   "scripts": {
     "start": "node webhook.js",
@@ -16,14 +16,17 @@
       "ai",
       "chat",
       "workplace",
-      "workchat"
+      "workchat",
+      "node",
+      "marvel",
+      "openweather"
     ],
   "author": "DC4CHAS",
   "license": "MIT",
   "dependencies": {
-    "apiai": "^4.0.3",
-    "body-parser": "^1.18.2",
     "express": "^4.16.1",
-    "request": "^2.83.0"
+    "body-parser": "^1.18.2",
+    "request": "^2.83.0",
+    "apiai": "^4.0.3"
   }
 }
