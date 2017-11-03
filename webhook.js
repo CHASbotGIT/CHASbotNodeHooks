@@ -382,7 +382,7 @@ CHASbot.get('/webhook', (req, res) => {
   }
 });
 
-/? Keep Heroku alive
+// Keep Heroku alive
 setInterval(function() {
     http.get("https://chasbot.herokuapp.com/");
 }, 900000); // every 15 minutes
