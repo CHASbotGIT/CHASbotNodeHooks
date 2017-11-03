@@ -15,11 +15,12 @@ const SECRET_CRYPTO = process.env.SECRET_CRYPTO;
 const MARVEL_PRIVATE_KEY = process.env.MARVEL_PRIVATE_KEY;
 const MARVEL_PUBLIC_KEY = process.env.MARVEL_PUBLIC_KEY;
 const GROUP_LINKS_ROOT = process.env.GROUP_LINKS_ROOT;
-// Set-up Node.js requirements for app
+// Set-up dependecies for app
 const express = require('express'); // https://expressjs.com
 const bodyParser = require('body-parser'); // https://github.com/expressjs/body-parser
 const request = require('request'); // https://github.com/request/request
 const dialogFlow = require('apiai')(APIAI_TOKEN); // https://www.npmjs.com/package/apiai
+// Node.js libraries used
 const http = require('https'); // https://nodejs.org/api/https.html
 const crypto = require('crypto'); // https://nodejs.org/api/crypto.html
 const fs = require("fs"); // https://nodejs.org/api/fs.html
@@ -39,6 +40,7 @@ const CHAS_RETAIL = "https://www.chas.org.uk/contact_chas#retail";
 const CHAS_RETAIL_TXT = "🎄 Christmas cards and more are available now from our shops or by mail order.";
 // Free secure linkable image hosting at https://imgbox.com
 const IMG_URL_PREFIX = "https://images.imgbox.com/";
+const IMG_URL_PREFIX2 = "https://images2.imgbox.com/";
 const IMG_URL_SUFFIX = "_o.png";
 const CHAS_THUMB = 'https://images.imgbox.com/99/1d/bFWYzY68_o.jpg';
 const SOURCE_CALENDAR = "./calendar.txt"; // Same directory as source code
@@ -49,6 +51,8 @@ const ENCRYPTED_IDS = "./ids_public.txt";
 var server_port = process.env.PORT || 9000; //8080;
 var server_ip_address = '127.0.0.1'; // Only for testing via local NGROK.IO
 // Triggers in lowercase - following phrases are handled in code
+const CHASBOT_HELP_TRIGGER_PHRASE = 'help';
+const CHASBOT_FEELING_LUCKY_TRIGGER_PHRASE = 'feeling lucky';
 const CHAS_LOGO_TRIGGER_PHRASE = 'chas logo';
 const CHASABET_TIRGGER_PHRASE1 = 'chas alphabet';
 const CHASABET_TIRGGER_PHRASE2 = 'chas letter';
@@ -86,6 +90,17 @@ const URL_WIKI = "https://images.imgbox.com/30/62/Vv6KJ9k9_o.png";
 var SEARCH_METHOD = '';
 var SEARCH_TERM = '';
 var SEARCH_TRIGGER = false;
+// CHASbot help
+var CHASBOT_HELP_PROMPTS = [
+  ["ad/e9/ivBhjDXd","When is the Devil Dash","Who is Morven MacLean","Where can I get collecting cans","How do I claim expenses","How do I get Christmas cards","CHAS alphabet C"],
+  ["7a/45/0uhs3nQx","Weather at Rachel House","Weather in Aberdeen","Search CHAS","Google FB Workplace","Wiki Santa Claus","Beeb Blue Planet"],
+  ["9a/f7/yRfMnV7i","Bazinga","Hangman","Pick a card","Toss a coin","Roll a dice","Magic 8"],
+  ["0a/fe/WxsCGnFs","What’s a scrub","Is winter coming","My milkshake","Witness me","Is this the real life","I want the truth"],
+  ["de/ff/4ZtuUqYX","Marvel codename Hulk","Execute Order 66","Beam me up","Open pod bay doors","Roll for initiative","Talk like Yoda"]
+];
+var HELP_SEND = false;
+var CHASBOT_HELP_TRIGGER = false;
+var CHASBOT_HELP_INDEX = 0;
 // CHAS events
 const REGEX_START = '(?=.*\\b'; // Regular expression bits
 const REGEX_MIDDLE = '\\b)';
@@ -235,6 +250,7 @@ var HANGMAN_WORD = '';
 var HANGMAN_ANSWER = '';
 var HANGMAN_ANSWER_ARRAY = [];
 var HANGMAN_STRIKE_STRING = ["👍👍👍","👍👍👎","👍👎👎","👎👎👎"];
+
 // Encryption and decryption of biographies
 var enCrypt = function(text_plain) {
   var algorithm = 'aes-256-ctr';
@@ -366,9 +382,10 @@ CHASbot.get('/webhook', (req, res) => {
   }
 });
 
+/? Keep Heroku alive
 setInterval(function() {
     http.get("https://chasbot.herokuapp.com/");
-}, 300000); // every 5 minutes (300000)
+}, 900000); // every 15 minutes
 
 // Handling all messenges in and processing special cases
 CHASbot.post('/webhook', (req, res) => {
@@ -416,6 +433,37 @@ CHASbot.post('/webhook', (req, res) => {
           analyse_text = event.message.text;
           analyse_text = analyse_text.toLowerCase();
           // Check for custom triggers
+          // Feeling lucky
+          position_in_analyse_text = analyse_text.search(CHASBOT_FEELING_LUCKY_TRIGGER_PHRASE) + 1;
+          //console.log("DEBUG [postWebhook]> " + CHASBOT_FEELING_LUCKY_TRIGGER_PHRASE + " search result: " + position_in_analyse_text);
+          if (position_in_analyse_text > 0) {
+            // Math.floor(Math.random()*(max-min+1)+min);
+            var cat = Math.floor(Math.random()*5); // 0 to 4
+            var ind = Math.floor(Math.random()*6+1); // 1 to 6
+            event.message.text = CHASBOT_HELP_PROMPTS[cat][ind];
+            analyse_text = event.message.text;
+            analyse_text = analyse_text.toLowerCase();
+            messageText = '*' + event.message.text + '*';
+            sendTextDirect(event);
+          }
+          // Help
+          CHASBOT_HELP_TRIGGER = false;
+          position_in_analyse_text = analyse_text.search(CHASBOT_HELP_TRIGGER_PHRASE) + 1;
+          //console.log("DEBUG [postWebhook]> " + CHASBOT_HELP_TRIGGER_PHRASE + " search result: " + position_in_analyse_text);
+          if (position_in_analyse_text > 0) {
+            CHASBOT_HELP_TRIGGER = true;
+            HELP_SEND = true;
+            var help_url = IMG_URL_PREFIX2 + CHASBOT_HELP_PROMPTS[CHASBOT_HELP_INDEX][0] + IMG_URL_SUFFIX;
+            //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
+            messageText = "Try some of these:";
+            for (var i = 1; i < 7; i++) {
+              messageText = messageText + '\n' + CHASBOT_HELP_PROMPTS[CHASBOT_HELP_INDEX][i];
+            };
+            messageText = messageText + '\n' + "Type *help* for more or try *feeling lucky*";
+            //console.log("DEBUG [postWebhook]> Help text: " + messageText);
+            CHASBOT_HELP_INDEX = CHASBOT_HELP_INDEX + 1;
+            if (CHASBOT_HELP_INDEX > 4) { CHASBOT_HELP_INDEX = 0 };
+          };
           // Hangman
           HANGMAN_TRIGGER = false;
           HANGMAN_GUESS = '';
@@ -462,7 +510,12 @@ CHASbot.post('/webhook', (req, res) => {
             HANGMAN_ANSWER = HANGMAN_ANSWER_ARRAY.join(' ');
             messageText = "🤔 Figure out the mystery staff member name.\nType a letter to guess, or 'stop'.\nYour are allowed no more than 3 strikes.";
             messageText = messageText + "\n" + HANGMAN_ANSWER;
-            messageText = messageText + "\n" + HANGMAN_STRIKE_STRING[HANGMAN_STRIKES] + " (" + HANGMAN_STRIKES + " strikes)";
+            messageText = messageText + "\n" + HANGMAN_STRIKE_STRING[HANGMAN_STRIKES] + " (" + HANGMAN_STRIKES + " strike";
+            if (HANGMAN_STRIKES == 1) {
+              messageText = messageText + ")";
+            } else {
+              messageText = messageText + "s)";
+            };
             //console.log("DEBUG [postWebhook]> Hangman Initialise: " + messageText);
           };
           // Search
@@ -601,7 +654,14 @@ CHASbot.post('/webhook', (req, res) => {
             };
           };
           // Pick a response route
-          if (MARVEL_TRIGGER){
+          if (CHASBOT_HELP_TRIGGER) {
+            //console.log("DEBUG [postWebhook]> Help: " + CHASBOT_HELP_INDEX);
+            console.log("INFO [postWebhook]> Sender: " + FB_WHO_ID);
+            console.log("INFO [postWebhook]> Request: " + CHASBOT_FEELING_LUCKY_TRIGGER_PHRASE);
+            console.log("INFO [postWebhook]> Action: postWebhook.postImage");
+            console.log("INFO [postWebhook]> Response: Help v." + CHASBOT_HELP_INDEX);
+            postImage(help_url,event);
+          } else if (MARVEL_TRIGGER){
             //console.log("DEBUG [postWebhook]> Marvel Character: " + HERO_WHO);
             getMarvelChar(HERO_WHO,event);
           } else if (CHASABET_TRIGGER == 1) {
@@ -684,9 +744,10 @@ function sendTemplate(event) {
         console.log("ERROR [sendTemplate]> Undefined: ", response.body.error);
     }
   });
-  if (MARVEL_SEND) {
+  if (MARVEL_SEND || HELP_SEND) {
     sendTextDirect(event);
     MARVEL_SEND = false;
+    HELP_SEND = false;
   }
 }
 
@@ -719,6 +780,9 @@ function sendTextDirect(event) {
 function sendMessageViaAPIAI(event_dialog) {
   let sender = event_dialog.sender.id;
   let text = event_dialog.message.text;
+  //if (CHASBOT_FEELING_LUCKY_TRIGGER) {
+  //  text =
+  //}
   let apiai = dialogFlow.textRequest(text, {
     sessionId: 'chasbot_sessionID' // Arbitrary id
   });
@@ -848,11 +912,11 @@ function primeLinkButton(link_url,reponse_msg,btn_msg) {
       type: "template",
       payload: {
         template_type:"button",
-        text:reponse_msg,
+        text: reponse_msg,
         buttons: [{
-          type:'web_url',
-          url:link_url,
-          title:btn_msg
+          type: 'web_url',
+          url:  link_url,
+          title:  btn_msg
         }] // buttons
       } // payload
     } // attachment
@@ -1042,7 +1106,7 @@ function postSearch(pass_on_event) {
     console.log("INFO [postSearch]> Reponse: Simple Search");
     messageData = search_template;
     sendTemplate(pass_on_event);
-  }
+  };
 }
 
 function checkHangman(pass_on_event) {
@@ -1056,7 +1120,12 @@ function checkHangman(pass_on_event) {
         got_one = true;
         messageText = "Yes! " + HANGMAN_GUESS.toUpperCase() + " is in the answer.";
         messageText = messageText + "\n" + HANGMAN_ANSWER_ARRAY.join(' ');
-        messageText = messageText + "\n" + HANGMAN_STRIKE_STRING[HANGMAN_STRIKES] + " (" + HANGMAN_STRIKES + " strikes)";
+        messageText = messageText + "\n" + HANGMAN_STRIKE_STRING[HANGMAN_STRIKES] + " (" + HANGMAN_STRIKES + " strike";
+        if (HANGMAN_STRIKES == 1) {
+          messageText = messageText + ")";
+        } else {
+          messageText = messageText + "s)";
+        };
       };
     };
     // Count the remaining letters
@@ -1078,10 +1147,15 @@ function checkHangman(pass_on_event) {
       // Game Over
       if (HANGMAN_STRIKES == 4) {
         HANGMAN_IN_PLAY = false;
-        messageText = '\n' + 'The mystery staff member was ' + HANGMAN_WORD.toUpperCase() + '!'
+        messageText = messageText + '\n' + 'The mystery staff member was ' + HANGMAN_WORD.toUpperCase() + '!'
       } else {
         messageText = messageText + "\n" + HANGMAN_ANSWER_ARRAY.join(' ');
-        messageText = messageText + "\n" + HANGMAN_STRIKE_STRING[HANGMAN_STRIKES] + " (" + HANGMAN_STRIKES + " strikes)";
+        messageText = messageText + "\n" + HANGMAN_STRIKE_STRING[HANGMAN_STRIKES] + " (" + HANGMAN_STRIKES + " strike";
+        if (HANGMAN_STRIKES == 1) {
+          messageText = messageText + ")";
+        } else {
+          messageText = messageText + "s)";
+        };
       };
     };
   };
