@@ -51,6 +51,7 @@ const ENCRYPTED_IDS = "./ids_public.txt";
 var server_port = process.env.PORT || 9000; //8080;
 var server_ip_address = '127.0.0.1'; // Only for testing via local NGROK.IO
 // Triggers in lowercase - following phrases are handled in code
+const CHASBOT_SURVEY_TRIGGER_PHRASE = 'survey';
 const CHASBOT_HELP_TRIGGER_PHRASE = 'help';
 const CHASBOT_FEELING_LUCKY_TRIGGER_PHRASE = 'feeling lucky';
 const CHAS_LOGO_TRIGGER_PHRASE = 'chas logo';
@@ -61,7 +62,7 @@ const CHAS_EVENTS_TIRGGER_PHRASE = 'when is';
 const CHAS_BIOS_TRIGGER_PHRASE = 'who is';
 const RPSLS_TRIGGER_PHRASE = 'bazinga';
 const HANGMAN_TRIGGER_PHRASE = 'hangman';
-const HANGMAN_STOP_PHRASE = 'stop';
+const STOP_PHRASE = 'stop';
 var SEARCH_METHODS = new Array ("search","google","wiki","beeb");
 // DialogFlow fulfillment
 const DIALOGFLOW_ACTION_SLIM_SHADY = 'slim_shady';
@@ -97,7 +98,7 @@ var CHASBOT_HELP_PROMPTS = [
   ["9a/f7/yRfMnV7i","Bazinga","Hangman","Pick a card","Toss a coin","Roll a dice","Magic 8"],
   ["0a/fe/WxsCGnFs","What’s a scrub","Is winter coming","My milkshake","Witness me","Is this the real life","I want the truth"],
   ["de/ff/4ZtuUqYX","Marvel codename Hulk","Execute Order 66","Beam me up","Open pod bay doors","Roll for initiative","Talk like Yoda"]
-];
+]; // images2 source
 var HELP_SEND = false;
 var CHASBOT_HELP_TRIGGER = false;
 var CHASBOT_HELP_INDEX = 0;
@@ -220,7 +221,7 @@ var RPSLS_IMGS = [
 "8a/24/7grzIThv",
 "60/ab/GGWv7VGf","5b/aa/gX9yjh8W","de/9a/ZW4Y0A3c","9b/b0/jozAYCPJ","fc/69/9RIO0UnP","ae/96/fImaS52o","e6/d8/NZf7rjvm","ce/75/2lShOY7A","1c/c0/v4T6eRgk","39/85/kCcL35Wx",
 "7c/cc/6aXrZ3OR","57/e7/gXFlvW70","49/29/I58HCq4Z","ea/83/4oIJFaQX","35/46/6jfnQOWP","51/27/Mgd2xmkH","5b/43/75oya7i9","65/e5/J9Pi4L30","6d/76/wmyBvmzC","1c/dd/A1qkLRfu",
-"8d/24/mYcLupcw","36/71/2TxupBuJ","88/de/fyL64Fit","ad/1f/a8wUNfkw","56/dd/yE6mRKxp"];
+"bc/5e/WXSBV3m7","7f/65/UufJXgwL","4b/4f/JO6B4jVX","5c/00/lLBYnA89","41/8b/iDCFzS5i"]; // Bottom row images2 source
 var RPSLS_IMG_URL = '';
 var RPSLS_PICK_CHASBOT = '';
 var RPSLS_PICK_PLAYER = '';
@@ -250,6 +251,23 @@ var HANGMAN_WORD = '';
 var HANGMAN_ANSWER = '';
 var HANGMAN_ANSWER_ARRAY = [];
 var HANGMAN_STRIKE_STRING = ["👍👍👍","👍👍👎","👍👎👎","👎👎👎"];
+// survey
+var CHASBOT_SURVEY_IN_PLAY = false;
+var CHASBOT_SURVEY_TRIGGER = false;
+var CHASBOT_SURVEY_FINAL_CHECK = false;
+var CHASBOT_SURVEY_VIABLE  = true;
+var CHASBOT_SURVEY_NAME = "SurveyNameNoSpaces"; // Loaded from survey.txt 1st line
+var CHASBOT_SURVEY_THANKS = "❤️ Thanks for taking our little survey"; // Loaded from survey.txt 2nd line
+var CHASBOT_SURVEY_QUESTIONS = [ // Comma separated lines per question
+  ["🤖 Welcome to this little survey.\nAre you having fun yet?","😄","😊","😐","😟","😩"],
+  ["On balance are you up or down?","👍","👎"],
+  ["Pick where you volunteer?","Robin","Rachel","Retail","Fundraising"],
+  ["Pick a number?","1","2","3","4"],
+  ["Pick a pet?","🦊","🐭","🐻","🦁","🐹"],
+  ["Any comments?"]
+];
+var CHASBOT_SURVEY_QUESTION_NUMBER = 0;
+// TO DO: Load survey from survey.txt file
 
 // Encryption and decryption of biographies
 var enCrypt = function(text_plain) {
@@ -433,6 +451,42 @@ CHASbot.post('/webhook', (req, res) => {
           analyse_text = event.message.text;
           analyse_text = analyse_text.toLowerCase();
           // Check for custom triggers
+          // Survey
+          var valid_choice = false;
+          if (CHASBOT_SURVEY_IN_PLAY||CHASBOT_SURVEY_FINAL_CHECK) {
+            position_in_analyse_text = analyse_text.search(STOP_PHRASE) + 1;
+            if (position_in_analyse_text > 0) {
+              // Reset
+              CHASBOT_SURVEY_FINAL_CHECK = false;
+              CHASBOT_SURVEY_IN_PLAY = false;
+              CHASBOT_SURVEY_QUESTION_NUMBER = 0;
+            } else if (CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER - 1].length == 1) { // Free text response
+              valid_choice = true;
+            } else {
+              for (var i = 1; i < CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER - 1].length; i++) {
+                position_in_analyse_text = event.message.text.search(CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER - 1][i]) + 1;
+                if (position_in_analyse_text > 0) {
+                  valid_choice = true;
+                  break;
+                };
+              };
+            };
+            if (valid_choice) {
+              console.log('SURVEY [' + CHASBOT_SURVEY_NAME + '],' + FB_WHO_ID + ',' + CHASBOT_SURVEY_QUESTION_NUMBER + ',' + event.message.text);
+            } else {
+              // Repeat previous question
+              CHASBOT_SURVEY_QUESTION_NUMBER = CHASBOT_SURVEY_QUESTION_NUMBER - 1;
+              CHASBOT_SURVEY_FINAL_CHECK = false;
+            }
+          };
+          // Trigger the survey
+          position_in_analyse_text = event.message.text.search(CHASBOT_SURVEY_TRIGGER_PHRASE) + 1;
+          if (position_in_analyse_text > 0 && CHASBOT_SURVEY_VIABLE) {
+            // Initialise
+            CHASBOT_SURVEY_FINAL_CHECK = false;
+            CHASBOT_SURVEY_IN_PLAY = true;
+            CHASBOT_SURVEY_QUESTION_NUMBER = 0;
+          }
           // Feeling lucky
           position_in_analyse_text = analyse_text.search(CHASBOT_FEELING_LUCKY_TRIGGER_PHRASE) + 1;
           //console.log("DEBUG [postWebhook]> " + CHASBOT_FEELING_LUCKY_TRIGGER_PHRASE + " search result: " + position_in_analyse_text);
@@ -469,7 +523,7 @@ CHASbot.post('/webhook', (req, res) => {
           HANGMAN_GUESS = '';
           if (HANGMAN_IN_PLAY) { // Only check if we are playing
             //console.log("DEBUG [postWebhook]> Hangman in play.");
-            position_in_analyse_text = analyse_text.search(HANGMAN_STOP_PHRASE) + 1;
+            position_in_analyse_text = analyse_text.search(STOP_PHRASE) + 1;
             if (position_in_analyse_text > 0) {
               HANGMAN_IN_PLAY = false;
               //console.log("DEBUG [postWebhook]> Hangman: Player wants to end i.e. " + analyse_text);
@@ -654,7 +708,20 @@ CHASbot.post('/webhook', (req, res) => {
             };
           };
           // Pick a response route
-          if (CHASBOT_HELP_TRIGGER) {
+          if (CHASBOT_SURVEY_IN_PLAY||CHASBOT_SURVEY_FINAL_CHECK) {
+            //console.log("DEBUG [postWebhook]> Survey);
+            if (CHASBOT_SURVEY_FINAL_CHECK) {
+              // End of survey and reset
+              CHASBOT_SURVEY_FINAL_CHECK = false;
+              CHASBOT_SURVEY_IN_PLAY = false;
+              CHASBOT_SURVEY_QUESTION_NUMBER = 0;
+              messageText = CHASBOT_SURVEY_THANKS;
+              sendTextDirect(event);
+            } else {
+              // Next survey question
+              sendSurveyQuestion(event);
+            };
+          } else if (CHASBOT_HELP_TRIGGER) {
             //console.log("DEBUG [postWebhook]> Help: " + CHASBOT_HELP_INDEX);
             console.log("INFO [postWebhook]> Sender: " + FB_WHO_ID);
             console.log("INFO [postWebhook]> Request: " + CHASBOT_FEELING_LUCKY_TRIGGER_PHRASE);
@@ -751,6 +818,108 @@ function sendTemplate(event) {
   }
 }
 
+function sendSurveyQuestion(event) {
+  //console.log("SURVEY [" + CHASBOT_SURVEY_NAME + "]> In Progress");
+  let sender = event.sender.id;
+  var rspns_items = CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER].length;
+  var qstn = CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][0];
+  switch (rspns_items) {
+    case 1:
+      var surveyTemplate = {
+        text: trimTo(640,qstn)};
+      break;
+    case 2:
+      var surveyTemplate = {
+        text: trimTo(640,qstn),
+        quick_replies:[
+              { content_type:"text",
+                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][1],
+                payload:"<POSTBACK_PAYLOAD>" }]};
+      break;
+    case 3:
+      var surveyTemplate = {
+        text: trimTo(640,qstn),
+        quick_replies:[
+              { content_type:"text",
+                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][1],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][2],
+                payload:"<POSTBACK_PAYLOAD>" }]};
+      break;
+    case 4:
+      var surveyTemplate = {
+        text: trimTo(640,qstn),
+        quick_replies:[
+              { content_type:"text",
+                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][1],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][2],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][3],
+                payload:"<POSTBACK_PAYLOAD>" }]};
+      break;
+    case 5:
+      var surveyTemplate = {
+        text: trimTo(640,qstn),
+        quick_replies:[
+              { content_type:"text",
+                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][1],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][2],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][3],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][4],
+                payload:"<POSTBACK_PAYLOAD>" }]};
+      break;
+    case 6:
+      var surveyTemplate = {
+        text: trimTo(640,qstn),
+        quick_replies:[
+              { content_type:"text",
+                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][1],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][2],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][3],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][4],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][5],
+                payload:"<POSTBACK_PAYLOAD>" }]};
+  }; // Switch
+  request({
+    uri: FB_MESSENGER_ENDPOINT,
+    qs: {access_token: PAGE_ACCESS_TOKEN},
+    method: 'POST',
+    json: {
+      recipient: {id: sender},
+      message: surveyTemplate
+    }
+  }, function (error, response) {
+    if (error) {
+      console.log("ERROR [sendSurveyQuestion]> Error sending simple message: ", error);
+    } else if (response.body.error) {
+      console.log("ERROR [sendSurveyQuestion]> Undefined: ", response.body.error);
+    }
+  }); // request
+  CHASBOT_SURVEY_QUESTION_NUMBER = CHASBOT_SURVEY_QUESTION_NUMBER + 1;
+  if (CHASBOT_SURVEY_QUESTION_NUMBER == CHASBOT_SURVEY_QUESTIONS.length) {
+    CHASBOT_SURVEY_IN_PLAY = false;
+    CHASBOT_SURVEY_FINAL_CHECK = true;
+  };
+}
+
 function sendTextDirect(event) {
   // messageText set outside of function call
   let sender = event.sender.id;
@@ -764,7 +933,9 @@ function sendTextDirect(event) {
     method: 'POST',
     json: {
       recipient: {id: sender},
-      message: {text: trimTo(640,messageText)}
+      message: {
+        text: trimTo(640,messageText),
+      }
     }
   }, function (error, response) {
     if (error) {
@@ -1161,7 +1332,7 @@ function checkHangman(pass_on_event) {
   };
   console.log("INFO [checkHangman]> Sender: " + FB_WHO_ID);
   console.log("INFO [checkHangman]> Request: Hangman guess was " + HANGMAN_GUESS);
-  console.log("INFO [checkHangman]> Action: Input: checkHangman.sendTextDirect");
+  console.log("INFO [checkHangman]> Action: checkHangman.sendTextDirect");
   console.log("INFO [checkHangman]> Response: " + messageText);
   sendTextDirect(pass_on_event);
 }
@@ -1415,14 +1586,23 @@ function getBiosCHAS(PersonName,pass_in_event) {
 
 function getRPSLS(pass_in_event) {
   //console.log("DEBUG [getRPSLS]> Round");
+  console.log("INFO [getRPSLS]> Sender: " + FB_WHO_ID);
   if (RPSLS_TRIGGER == 1) { // Provide some instructions + prompt
-    postImage(IMG_URL_PREFIX + RPSLS_IMGS[0] + IMG_URL_SUFFIX,pass_in_event);
+    console.log("INFO [getRPSLS]> Request: " + RPSLS_TRIGGER_PHRASE);
+    RPSLS_IMG_URL = IMG_URL_PREFIX + RPSLS_IMGS[0] + IMG_URL_SUFFIX;
+    postImage(RPSLS_IMG_URL,pass_in_event);
     messageText = RPSLS_INTRO + "\n" + RPSLS_PROMPT; // Required within sendTextDirect
+    console.log("INFO [getRPSLS]> Action: getRPSLS.postImage_sendTextDirect");
+    console.log("INFO [getRPSLS]> Reponse: IMG URL "  + RPSLS_IMG_URL + '; Text: ' + messageText);
     sendTextDirect(pass_in_event);
   } else if (RPSLS_TRIGGER == 2) { // Just prompt
+    console.log("INFO [getRPSLS]> Request: " + RPSLS_TRIGGER_PHRASE);
     messageText = RPSLS_PROMPT; // Required within sendTextDirect
+    console.log("INFO [getRPSLS]> Action: getRPSLS.sendTextDirect");
+    console.log("INFO [getRPSLS]> Reponse: " + messageText);
     sendTextDirect(pass_in_event);
   } else { // Compare results and show outcome
+    console.log("INFO [getRPSLS]> Request: " + RPSLS_PICK_PLAYER);
     RPSLS_PICK_CHASBOT = RPSLS_VALID[Math.floor(Math.random()*RPSLS_VALID.length)];
     var PLAYERvBOT = RPSLS_PICK_PLAYER + RPSLS_PICK_CHASBOT;
     messageText = '';
@@ -1461,7 +1641,7 @@ function getRPSLS(pass_in_event) {
       for (find_index = 0; find_index < RPSLS_DRAW.length; find_index++) {
         //console.log("DEBUG [getRPSLS]> Draw check: " + RPSLS_DRAW[find_index]);
         if (PLAYERvBOT == RPSLS_DRAW[find_index]) {
-          RPSLS_IMG_URL = IMG_URL_PREFIX + RPSLS_IMGS[21 + find_index] + IMG_URL_SUFFIX;
+          RPSLS_IMG_URL = IMG_URL_PREFIX2 + RPSLS_IMGS[21 + find_index] + IMG_URL_SUFFIX;
           messageText = "It's a draw. ";
           break;
         };
@@ -1490,6 +1670,8 @@ function getRPSLS(pass_in_event) {
       messageText = messageText + "🙂 Level pegging. (Score: CHASbot " + RPSLS_SCORE_CHASBOT ;
       messageText = messageText + ", you " + RPSLS_SCORE_PLAYER + ").";
     };
+    console.log("INFO [getRPSLS]> Action: getRPSLS.postImage_sendTextDirect");
+    console.log("INFO [getRPSLS]> Reponse: IMG URL "  + RPSLS_IMG_URL + '; Text: ' + messageText);
     postImage(RPSLS_IMG_URL,pass_in_event);
     sendTextDirect(pass_in_event);
   };
