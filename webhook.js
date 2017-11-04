@@ -466,8 +466,8 @@ CHASbot.post('/webhook', (req, res) => {
               for (var i = 1; i < CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER - 1].length; i++) {
                 position_in_analyse_text = event.message.text.search(CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER - 1][i]) + 1;
                 if (position_in_analyse_text > 0) {
-                  var str = event.message.text;
-                  if (str.length == 1) {event.message.text = i.toString};
+                  //var str = event.message.text;
+                  //if (str.length == 1) {event.message.text = i.toString};
                   valid_choice = true;
                   break;
                 };
