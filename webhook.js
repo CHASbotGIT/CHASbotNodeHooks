@@ -468,7 +468,7 @@ CHASbot.post('/webhook', (req, res) => {
                 if (position_in_analyse_text > 0) {
                   //var str = event.message.text;
                   //if (str.length == 1) {event.message.text = i.toString()};
-                  consol.log('>>>>>>>>>>>>>>>>>>>>>>>>' + i.toString());
+                  console.log('>>>>>>>>>>>>>>>>>>>>>>>>' + i.toString());
                   valid_choice = true;
                   break;
                 };
