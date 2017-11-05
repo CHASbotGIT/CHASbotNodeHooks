@@ -742,11 +742,11 @@ CHASbot.post('/webhook', (req, res) => {
             //console.log("DEBUG [postWebhook]> Survey);
             if (CHASBOT_SURVEY_FINAL_CHECK) {
               // End of survey and reset
+              messageText = "❤️ Thanks for taking our little survey";
+              sendTextDirect(event);
               CHASBOT_SURVEY_FINAL_CHECK = false;
               CHASBOT_SURVEY_IN_PLAY = false;
               CHASBOT_SURVEY_QUESTION_NUMBER = 0;
-              messageText = "❤️ Thanks for taking our little survey";
-              sendTextDirect(event);
             } else {
               // Next survey question
               sendSurveyQuestion(event);
