@@ -155,7 +155,7 @@ var RANDOMISED_COMPLIMENT = [
 ];
 var GREETING_MESSAGE = [
   "Pleasure to meet you,","Joy to meet you,","Nice to meet you,","Great to meet you,","Hi,","Hello,","Hey,",
-  "Good chating with you,","Nice chatting with,","How do you do,","You have lovely name,"
+  "Good chating with you,","Nice chatting with you,","How do you do,","You have a lovely name,"
 ];
 var GREETING_MESSAGE_INDEX = 0;
 // CHAS logo
