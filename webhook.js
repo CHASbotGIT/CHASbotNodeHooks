@@ -255,11 +255,11 @@ var HANGMAN_STRIKE_STRING = ["👍👍👍","👍👍👎","👍👎👎","👎�
 // survey
 var CHASBOT_SURVEY_IN_PLAY = false;
 var CHASBOT_SURVEY_TRIGGER = false;
-var CHASBOT_SURVEY_FINAL_CHECK = false;
 var CHASBOT_SURVEY_VIABLE  = true;
 var CHASBOT_SURVEY_NAME = ""; // Loaded from survey.txt 1st line
 var CHASBOT_SURVEY_QUESTIONS = [];
 var CHASBOT_SURVEY_QUESTION_NUMBER = 0;
+var CHASBOT_SURVEY_THANKS = "❤️ Thank you for finishing our little survey.";
 
 // Encryption and decryption of biographies
 var enCrypt = function(text_plain) {
@@ -376,7 +376,7 @@ function loadSurvey() {
   // Populate a temp array
   var load_array = text_block.split("\n");
   // Configure the survey
-  if (load_array.length > 3) {
+  if (load_array.length > 1) {
     for (var i = 0; i < load_array.length; i++) {
       CHASBOT_SURVEY_QUESTIONS[i] = load_array[i].split(","); // Split each row into arrays split by comma
       if (i==0 && CHASBOT_SURVEY_QUESTIONS[0].length != 1) {
@@ -393,7 +393,7 @@ function loadSurvey() {
       CHASBOT_SURVEY_QUESTIONS.shift(); // Removes <survey_name>
     }
   } else {
-    // Has to be at least 3 rows
+    // Has to be at least 2 rows
     gone_funky = true;
   };
   if (gone_funky) {
@@ -481,13 +481,11 @@ CHASbot.post('/webhook', (req, res) => {
           // Check for custom triggers
           // Survey
           var valid_choice = false;
-          if (CHASBOT_SURVEY_IN_PLAY||CHASBOT_SURVEY_FINAL_CHECK) {
+          if (CHASBOT_SURVEY_IN_PLAY) {
             position_in_analyse_text = analyse_text.search(STOP_PHRASE) + 1;
             if (position_in_analyse_text > 0) {
               // Reset
-              CHASBOT_SURVEY_FINAL_CHECK = false;
               CHASBOT_SURVEY_IN_PLAY = false;
-              CHASBOT_SURVEY_QUESTION_NUMBER = 0;
             } else if (CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER - 1].length == 1) { // Free text response
               valid_choice = true;
             } else {
@@ -504,25 +502,13 @@ CHASbot.post('/webhook', (req, res) => {
             if (valid_choice) {
               console.log('SURVEY [' + CHASBOT_SURVEY_NAME + '],' + FB_WHO_ID + ',' + CHASBOT_SURVEY_QUESTION_NUMBER + ',' + event.message.text);
             } else {
-              // Repeat previous question
-              CHASBOT_SURVEY_QUESTION_NUMBER = CHASBOT_SURVEY_QUESTION_NUMBER - 1;
-              CHASBOT_SURVEY_FINAL_CHECK = false;
+              CHASBOT_SURVEY_QUESTION_NUMBER = CHASBOT_SURVEY_QUESTION_NUMBER - 1; // Repeat previous question
             }
           };
-          if (CHASBOT_SURVEY_FINAL_CHECK) {
-           // End of survey and reset
-           CHASBOT_SURVEY_FINAL_CHECK = false;
-           CHASBOT_SURVEY_IN_PLAY = false;
-           CHASBOT_SURVEY_QUESTION_NUMBER = 0;
-           messageText = "❤️ Thanks for taking our little survey";
-           sendTextDirect(event);
-          }
           // Trigger the survey
           position_in_analyse_text = event.message.text.search(CHASBOT_SURVEY_TRIGGER_PHRASE) + 1;
           if (position_in_analyse_text > 0 && CHASBOT_SURVEY_VIABLE) {
-            // Initialise
-            CHASBOT_SURVEY_FINAL_CHECK = false;
-            CHASBOT_SURVEY_IN_PLAY = true;
+            CHASBOT_SURVEY_IN_PLAY = true; // Initialise
             CHASBOT_SURVEY_QUESTION_NUMBER = 0;
           }
           // Feeling lucky
@@ -746,7 +732,7 @@ CHASbot.post('/webhook', (req, res) => {
             };
           };
           // Pick a response route
-          if (CHASBOT_SURVEY_IN_PLAY||CHASBOT_SURVEY_FINAL_CHECK) {
+          if (CHASBOT_SURVEY_IN_PLAY) {
             //console.log("DEBUG [postWebhook]> Survey);
             sendSurveyQuestion(event);
           } else if (CHASBOT_HELP_TRIGGER) {
@@ -862,8 +848,14 @@ function sendTemplate(event) {
 function sendSurveyQuestion(event) {
   //console.log("SURVEY [" + CHASBOT_SURVEY_NAME + "]> In Progress");
   let sender = event.sender.id;
-  var rspns_items = CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER].length;
-  var qstn = CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][0];
+  if (CHASBOT_SURVEY_QUESTION_NUMBER == CHASBOT_SURVEY_QUESTIONS.length) {
+    var rspns_items = 1; // Thanks
+    var qstn = CHASBOT_SURVEY_THANKS;
+    CHASBOT_SURVEY_IN_PLAY = false;
+  } else { // Next question
+    var rspns_items = CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER].length;
+    var qstn = CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][0];
+  }
   switch (rspns_items) {
     case 1:
       var surveyTemplate = {
@@ -955,10 +947,6 @@ function sendSurveyQuestion(event) {
     }
   }); // request
   CHASBOT_SURVEY_QUESTION_NUMBER = CHASBOT_SURVEY_QUESTION_NUMBER + 1;
-  if (CHASBOT_SURVEY_QUESTION_NUMBER == CHASBOT_SURVEY_QUESTIONS.length) {
-    CHASBOT_SURVEY_IN_PLAY = false;
-    CHASBOT_SURVEY_FINAL_CHECK = true;
-  };
 }
 
 function sendTextDirect(event) {
