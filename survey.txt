@@ -6,4 +6,4 @@ Welcome to this little survey. 1. Are you having fun yet?,😄,😊,😐,😟,�
 5. Pick a number?,1,2,3,4
 6. Pick a pet?,🦊,🐭,🐻,🦁,🐹
 7. Who do you love most?,🤖
-8. Any comments?
+8. Had enough?,Yes,No
