@@ -509,6 +509,14 @@ CHASbot.post('/webhook', (req, res) => {
               CHASBOT_SURVEY_FINAL_CHECK = false;
             }
           };
+          if (CHASBOT_SURVEY_FINAL_CHECK) {
+           // End of survey and reset
+           CHASBOT_SURVEY_FINAL_CHECK = false;
+           CHASBOT_SURVEY_IN_PLAY = false;
+           CHASBOT_SURVEY_QUESTION_NUMBER = 0;
+           messageText = "❤️ Thanks for taking our little survey";
+           sendTextDirect(event);
+          }
           // Trigger the survey
           position_in_analyse_text = event.message.text.search(CHASBOT_SURVEY_TRIGGER_PHRASE) + 1;
           if (position_in_analyse_text > 0 && CHASBOT_SURVEY_VIABLE) {
@@ -740,17 +748,7 @@ CHASbot.post('/webhook', (req, res) => {
           // Pick a response route
           if (CHASBOT_SURVEY_IN_PLAY||CHASBOT_SURVEY_FINAL_CHECK) {
             //console.log("DEBUG [postWebhook]> Survey);
-            if (CHASBOT_SURVEY_FINAL_CHECK) {
-              // End of survey and reset
-              messageText = "❤️ Thanks for taking our little survey";
-              sendTextDirect(event);
-              CHASBOT_SURVEY_FINAL_CHECK = false;
-              CHASBOT_SURVEY_IN_PLAY = false;
-              CHASBOT_SURVEY_QUESTION_NUMBER = 0;
-            } else {
-              // Next survey question
-              sendSurveyQuestion(event);
-            };
+            sendSurveyQuestion(event);
           } else if (CHASBOT_HELP_TRIGGER) {
             //console.log("DEBUG [postWebhook]> Help: " + CHASBOT_HELP_INDEX);
             console.log("INFO [postWebhook]> Sender: " + FB_WHO_ID);
