@@ -387,7 +387,7 @@ function loadSurvey() {
         // Delete first row later ****************************
       } else if (i>1 && CHASBOT_SURVEY_QUESTIONS[i].length > 6) {
         gone_funky = true; // Can't have more than 6 elements i.e. Question + 5 Answers
-      };// if/else
+      }; // if/else
     }; // for
     if (!gone_funky) {
       CHASBOT_SURVEY_QUESTIONS.shift(); // Removes <survey_name>
@@ -415,7 +415,7 @@ const server = CHASbot.listen(server_port, server_ip_address, () => {
 const server = CHASbot.listen(server_port, () => {
  console.log("INFO [HEROKU]> Listening on ", + server_port);
  console.log("INFO [HEROKU]>>>>>>>>>>>>>>>>>> STARTED <<<<<<<<<<<<<<<<<<");
-});/
+});
 
 // Facebook/workplace validation
 // Configure webhook in work chat integration - VERIFY_TOKEN matches code and app
