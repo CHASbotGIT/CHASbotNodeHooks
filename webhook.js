@@ -43,6 +43,7 @@ const IMG_URL_PREFIX = "https://images.imgbox.com/";
 const IMG_URL_PREFIX2 = "https://images2.imgbox.com/";
 const IMG_URL_SUFFIX = "_o.png";
 const CHAS_THUMB = 'https://images.imgbox.com/99/1d/bFWYzY68_o.jpg';
+const SOURCE_SURVEY = "./survey.txt"; // Same directory as source code
 const SOURCE_CALENDAR = "./calendar.txt"; // Same directory as source code
 const SOURCE_BIOGRAPHIES = "./bios_private.txt"; // Same directory as source code // "./fundraising_private.txt" "./ids_private.txt"
 const ENCRYPTED_BIOGRAPHIES = "./bios_public.txt"; // Same directory as source code //
@@ -256,18 +257,9 @@ var CHASBOT_SURVEY_IN_PLAY = false;
 var CHASBOT_SURVEY_TRIGGER = false;
 var CHASBOT_SURVEY_FINAL_CHECK = false;
 var CHASBOT_SURVEY_VIABLE  = true;
-var CHASBOT_SURVEY_NAME = "SurveyNameNoSpaces"; // Loaded from survey.txt 1st line
-var CHASBOT_SURVEY_THANKS = "❤️ Thanks for taking our little survey"; // Loaded from survey.txt 2nd line
-var CHASBOT_SURVEY_QUESTIONS = [ // Comma separated lines per question
-  ["🤖 Welcome to this little survey.\nAre you having fun yet?","😄","😊","😐","😟","😩"],
-  ["On balance are you up or down?","👍","👎"],
-  ["Pick where you volunteer?","Robin","Rachel","Retail","Fundraising"],
-  ["Pick a number?","1","2","3","4"],
-  ["Pick a pet?","🦊","🐭","🐻","🦁","🐹"],
-  ["Any comments?"]
-];
+var CHASBOT_SURVEY_NAME = ""; // Loaded from survey.txt 1st line
+var CHASBOT_SURVEY_QUESTIONS = [];
 var CHASBOT_SURVEY_QUESTION_NUMBER = 0;
-// TO DO: Load survey from survey.txt file
 
 // Encryption and decryption of biographies
 var enCrypt = function(text_plain) {
@@ -375,7 +367,43 @@ function loadCalendar() {
     return true;
   }
 }
-var CHAS_EVENTS_VIABLE = loadCalendar();
+var CHASBOT_VIABLE = loadCalendar();
+
+function loadSurvey() {
+  var gone_funky = false;
+  // Load in survey as a block
+  var text_block = fs.readFileSync(SOURCE_SURVEY, "utf-8");
+  // Populate a temp array
+  var load_array = text_block.split("\n");
+  // Configure the survey
+  if (load_array.length > 3) {
+    for (var i = 0; i < load_array.length; i++) {
+      CHASBOT_SURVEY_QUESTIONS[i] = load_array[i].split(","); // Split each row into arrays split by comma
+      if (i==0 && CHASBOT_SURVEY_QUESTIONS[0].length != 1) {
+        gone_funky = true; // First row has to be <survey_name> without commas
+        break;
+      } else if (i==0 && CHASBOT_SURVEY_QUESTIONS[0].length == 1) {
+        CHASBOT_SURVEY_NAME = CHASBOT_SURVEY_QUESTIONS[0];
+        // Delete first row later ****************************
+      } else if (i>1 && CHASBOT_SURVEY_QUESTIONS[i].length > 6) {
+        gone_funky = true; // Can't have more than 6 elements i.e. Question + 5 Answers
+      };// if/else
+    }; // for
+    if (!gone_funky) {
+      CHASBOT_SURVEY_QUESTIONS.shift(); // Removes <survey_name>
+    }
+  } else {
+    // Has to be at least 3 rows
+    gone_funky = true;
+  };
+  if (gone_funky) {
+    console.log("ERROR [loadSurvey]> Something funky going on with survey");
+    return false;
+  } else {
+    return true;
+  };
+}
+var CHASBOT_SURVEY_VIABLE = loadSurvey();
 
 // ESTABLISH LISTENER
 /* Only for TESTING via local NGROK.IO
@@ -387,7 +415,7 @@ const server = CHASbot.listen(server_port, server_ip_address, () => {
 const server = CHASbot.listen(server_port, () => {
  console.log("INFO [HEROKU]> Listening on ", + server_port);
  console.log("INFO [HEROKU]>>>>>>>>>>>>>>>>>> STARTED <<<<<<<<<<<<<<<<<<");
-});
+});/
 
 // Facebook/workplace validation
 // Configure webhook in work chat integration - VERIFY_TOKEN matches code and app
@@ -430,9 +458,9 @@ CHASbot.post('/webhook', (req, res) => {
             };
           }
           // Prime personalised response
-          if (LAST_TIMESTAMP == null||new Date().getTime() - LAST_TIMESTAMP > TIME_TO_WAIT){
+          if (LAST_TIMESTAMP == null||new Date().getTime() - LAST_TIMESTAMP > TIME_TO_WAIT) {
             //console.log("DEBUG [postWebhook]> Interval since last message has been: " + TIME_TO_WAIT);
-            if (FB_WHO_ESTABLSIHED){
+            if (FB_WHO_ESTABLSIHED) {
               var hr = new Date().getHours();
               for (var loop_hour = 0; loop_hour < TIME_OF_DAY.length; loop_hour++) {
                 if (hr >= TIME_OF_DAY[loop_hour][0]) {
@@ -482,7 +510,7 @@ CHASbot.post('/webhook', (req, res) => {
             }
           };
           // Trigger the survey
-          position_in_analyse_text = analyse_text.search(CHASBOT_SURVEY_TRIGGER_PHRASE) + 1;
+          position_in_analyse_text = event.message.text.search(CHASBOT_SURVEY_TRIGGER_PHRASE) + 1;
           if (position_in_analyse_text > 0 && CHASBOT_SURVEY_VIABLE) {
             // Initialise
             CHASBOT_SURVEY_FINAL_CHECK = false;
@@ -578,7 +606,7 @@ CHASbot.post('/webhook', (req, res) => {
           SEARCH_TRIGGER = false;
           var rightmost_starting_point = -1;
           var trigger_loop = 0;
-          for (trigger_loop = 0; trigger_loop < SEARCH_METHODS.length; trigger_loop++){
+          for (trigger_loop = 0; trigger_loop < SEARCH_METHODS.length; trigger_loop++) {
             position_in_analyse_text = analyse_text.lastIndexOf(SEARCH_METHODS[trigger_loop]) + 1;
             if (position_in_analyse_text > 0) {
               starting_point = position_in_analyse_text + SEARCH_METHODS[trigger_loop].length;
@@ -604,7 +632,7 @@ CHASbot.post('/webhook', (req, res) => {
           if (RPSLS_IN_PLAY == 1) { // Only check if we are playing
             RPSLS_IN_PLAY = 0;
             trigger_loop = 0;
-            for (trigger_loop = 0; trigger_loop < RPSLS_VALID.length; trigger_loop++){
+            for (trigger_loop = 0; trigger_loop < RPSLS_VALID.length; trigger_loop++) {
               position_in_analyse_text = analyse_text.search(RPSLS_VALID[trigger_loop]) + 1;
               if (position_in_analyse_text > 0) {
                 RPSLS_PICK_PLAYER = RPSLS_VALID[trigger_loop];
@@ -717,7 +745,7 @@ CHASbot.post('/webhook', (req, res) => {
               CHASBOT_SURVEY_FINAL_CHECK = false;
               CHASBOT_SURVEY_IN_PLAY = false;
               CHASBOT_SURVEY_QUESTION_NUMBER = 0;
-              messageText = CHASBOT_SURVEY_THANKS;
+              messageText = "❤️ Thanks for taking our little survey";
               sendTextDirect(event);
             } else {
               // Next survey question
@@ -730,7 +758,7 @@ CHASbot.post('/webhook', (req, res) => {
             console.log("INFO [postWebhook]> Action: postWebhook.postImage");
             console.log("INFO [postWebhook]> Response: Help v." + CHASBOT_HELP_INDEX);
             postImage(help_url,event);
-          } else if (MARVEL_TRIGGER){
+          } else if (MARVEL_TRIGGER) {
             //console.log("DEBUG [postWebhook]> Marvel Character: " + HERO_WHO);
             getMarvelChar(HERO_WHO,event);
           } else if (CHASABET_TRIGGER == 1) {
@@ -778,7 +806,7 @@ CHASbot.post('/webhook', (req, res) => {
 
 // Strng handling functions
 function toTitleCase(inputString) {
-  return inputString.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+  return inputString.replace(/\w\S*/g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
 function firstAlpha(inputString) {
   for (var i = 0; i < inputString.length; i += 1) {
@@ -793,12 +821,12 @@ function trimTo(trim_length,inputString) {
   if (inputString.length > trim_length) {inputString = inputString.slice(0,trim_length-1) + "🤐"};
   return inputString;
 }
-function xLength(str){
+function xLength(str) {
   //http://blog.jonnew.com/posts/poo-dot-length-equals-two
   const joiner = "\u{200D}";
   const split = str.split(joiner);
   let count = 0;
-  for(const s of split){
+  for (const s of split) {
     //removing the variation selectors
     const num = Array.from(s.split(/[\ufe00-\ufe0f]/).join("")).length;
     count += num;
@@ -949,7 +977,7 @@ function sendTextDirect(event) {
     json: {
       recipient: {id: sender},
       message: {
-        text: trimTo(640,messageText),
+        text: trimTo(640,messageText)
       }
     }
   }, function (error, response) {
@@ -1033,7 +1061,7 @@ CHASbot.post('/heroku', (req, res) => {
         });
       }
     })
-  } else if (req.body.result.action === DIALOGFLOW_ACTION_PICKCARD){
+  } else if (req.body.result.action === DIALOGFLOW_ACTION_PICKCARD) {
     CARD_PICK = CARD_DECK[Math.floor(Math.random()*CARD_DECK.length)];
     messageText = CARD_PROMPTS[CARD_PROMPT] + CARD_PICK;
     CARD_PROMPT = CARD_PROMPT + 1;
@@ -1468,7 +1496,7 @@ function getEventCHAS(EventName,pass_in_event) {
   var keyword_loop = 0;
   // Here we go looping through each set of keywords
   //console.log("DEBUG [getEventCHAS]> Total events: " + CHAS_EVENTS_TOTAL);
-  for (event_loop = 0; event_loop < CHAS_EVENTS_TOTAL; event_loop++){
+  for (event_loop = 0; event_loop < CHAS_EVENTS_TOTAL; event_loop++) {
     // Break up the keywords into an array of individual words
     var sentence_split = CHAS_EVENTS_CALENDAR[event_loop * CHAS_EVENTS_BLOCK_SIZE].split(' ');
     var sentence_length = sentence_split.length;
@@ -1503,7 +1531,7 @@ function getEventCHAS(EventName,pass_in_event) {
     zero_is_a_match = compare_to_string.search(regex_builder);
     //console.log("DEBUG [getEventCHAS]> Match Check: " + zero_is_a_match);
     // If there is a match then a value of 0 is returned
-    if (zero_is_a_match == 0){
+    if (zero_is_a_match == 0) {
       //console.log("DEBUG [getEventCHAS]> Matched: " + (event_loop * CHAS_EVENTS_BLOCK_SIZE));
       // Sets the index value for the name/keywords for the event
       CHAS_EVENTS_INDEX = event_loop * CHAS_EVENTS_BLOCK_SIZE;
@@ -1551,7 +1579,7 @@ function getBiosCHAS(PersonName,pass_in_event) {
   var keyword_loop = 0;
   // Here we go looping through each set of keywords
   //console.log("DEBUG [getBiosCHAS]> Total: " + CHAS_BIOS_TOTAL);
-  for (event_loop = 0; event_loop < CHAS_BIOS_TOTAL; event_loop++){
+  for (event_loop = 0; event_loop < CHAS_BIOS_TOTAL; event_loop++) {
     // Break up the keywords into an array of individual words
     var sentence_split = CHAS_BIOS[event_loop * CHAS_BIOS_BLOCK_SIZE].split(' ');
     var sentence_length = sentence_split.length;
@@ -1579,7 +1607,7 @@ function getBiosCHAS(PersonName,pass_in_event) {
     zero_is_a_match = compare_to_string.search(regex_builder);
     //console.log("DEBUG [getBiosCHAS]> Match Check: " + zero_is_a_match);
     // If there is a match then a value of 0 is returned
-    if (zero_is_a_match == 0){
+    if (zero_is_a_match == 0) {
       //console.log("DEBUG [getBiosCHAS]> Matched: " + (event_loop * CHAS_BIOS_BLOCK_SIZE));
       // Sets the index value for the name/keywords for the event
       CHAS_BIOS_INDEX = event_loop * CHAS_BIOS_BLOCK_SIZE;
