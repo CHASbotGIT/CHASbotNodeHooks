@@ -482,7 +482,7 @@ CHASbot.post('/webhook', (req, res) => {
             }
           };
           // Trigger the survey
-          position_in_analyse_text = event.message.text.search(CHASBOT_SURVEY_TRIGGER_PHRASE) + 1;
+          position_in_analyse_text = analyse_text.search(CHASBOT_SURVEY_TRIGGER_PHRASE) + 1;
           if (position_in_analyse_text > 0 && CHASBOT_SURVEY_VIABLE) {
             // Initialise
             CHASBOT_SURVEY_FINAL_CHECK = false;
