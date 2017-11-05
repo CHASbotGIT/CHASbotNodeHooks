@@ -466,12 +466,8 @@ CHASbot.post('/webhook', (req, res) => {
               for (var i = 1; i < CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER - 1].length; i++) {
                 position_in_analyse_text = event.message.text.search(CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER - 1][i]) + 1;
                 if (position_in_analyse_text > 0) {
-                  var str = CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER - 1][i];
-                  console.log('>>>>>>>>>>>>>>>>>>>>>>>>' + str.length);
-                  if (str.length == 1) {
-                    console.log('>>>>>>>>>>>>>>>>>>>>>>>>' + i.toString());
-                    event.message.text = i.toString();
-                  };
+                  var xstr = event.message.text;
+                  if (xstr.xLength == 1) {event.message.text = i.toString()};
                   valid_choice = true;
                   break;
                 };
@@ -796,6 +792,19 @@ function firstAlpha(inputString) {
 function trimTo(trim_length,inputString) {
   if (inputString.length > trim_length) {inputString = inputString.slice(0,trim_length-1) + "🤐"};
   return inputString;
+}
+function xLength(str){
+  //http://blog.jonnew.com/posts/poo-dot-length-equals-two
+  const joiner = "\u{200D}";
+  const split = str.split(joiner);
+  let count = 0;
+  for(const s of split){
+    //removing the variation selectors
+    const num = Array.from(s.split(/[\ufe00-\ufe0f]/).join("")).length;
+    count += num;
+  }
+  //assuming the joiners are used appropriately
+  return count / split.length;
 }
 
 // SENDING SECTION
