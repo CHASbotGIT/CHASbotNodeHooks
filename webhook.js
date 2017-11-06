@@ -440,9 +440,10 @@ CHASbot.post('/webhook', (req, res) => {
       entry.messaging.forEach((event) => {
         //if (event.read && event.read.watermark) { //console.log("DEBUG [postWebhook]> Receipt: " + event.read.watermark) };
         if (event.message && event.message.text) {
+          FB_WHO_ESTABLSIHED = false;
           FB_WHO_ID = event.sender.id;
           // Lookup ID
-          if (!FB_WHO_ESTABLSIHED && IDS_VIABLE) {
+          if (IDS_VIABLE) {
             var find_index = 0;
             var match_id = 0;
             for (find_index = 0; find_index < IDS_TOTAL; find_index++) {
