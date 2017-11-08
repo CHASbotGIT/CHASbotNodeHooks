@@ -156,11 +156,6 @@ var RANDOM_COMPLIMENT = [
   "Hanging out with you is always a blast.","You're one of a kind.","You always know just what to say.",
   "There's ordinary, and then there's you."
 ];
-var GREETING_MESSAGE = [
-  "Pleasure to meet you,","Joy to meet you,","Nice to meet you,","Great to meet you,","Hi,","Hello,","Hey,",
-  "Good chating with you,","Nice chatting with you,","How do you do,","You have a lovely name,"
-];
-var GREETING_MESSAGE_INDEX = 0;
 // CHAS logo
 var TRIGGER_CHAS_LOGO = false;
 // CHAS alphabet
