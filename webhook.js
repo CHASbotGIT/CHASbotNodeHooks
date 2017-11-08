@@ -60,7 +60,6 @@ const TRIGGER_PHRASE_HANGMAN = 'hangman';
 const TRIGGER_PHRASE_STOP = 'stop';
 var TRIGGER_PHRASE_SEARCH = new Array ('search','google','wiki','beeb');
 // DialogFlow fulfillment hooks
-const HOOK_SLIM_SHADY = 'slim_shady';
 const HOOK_FUNDRAISING = 'fundraising';
 const HOOK_PICKCARD = 'cards';
 const HOOK_WEATHER = 'weather';
@@ -1067,17 +1066,6 @@ CHASbot.post('/heroku', (req, res) => {
       displayText: CHAS_FR_CARD
     });
     //console.log("DEBUG [postHeroku]> Send fundraising contact card");
-  } else if (req.body.result.action === HOOK_SLIM_SHADY) {
-    if (typeof req.body.result.parameters['given-name'] != 'undefined') {
-      FB_WHO = req.body.result.parameters['given-name'];
-      //console.log("DEBUG [postHeroku]> Slim shady: " + FB_WHO);
-    };
-    messageText = GREETING_MESSAGE[Math.floor(Math.random()*GREETING_MESSAGE.length)] + ' ' + FB_WHO + '.';
-    LAST_TIMESTAMP = new Date().getTime();
-    return res.json({
-      speech: messageText,
-      displayText: messageText
-    });
   } else if (req.body.result.action === HOOK_URL_GROUP_DOCS) {
     HOOK_TEMPLATE = true;
     primeLinkButton(URL_GROUP_DOCS,MSG_GROUP_DOC,'📚 Useful Documents');
