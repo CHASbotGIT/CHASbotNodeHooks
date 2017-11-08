@@ -7,19 +7,19 @@
 'use strict';
 // Pick up variables from the server implimentation || Remove API keys
 // Source: https://github.com/CHASbotGIT/CHASbotNodeHooks
-const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
-const APIAI_TOKEN = process.env.APIAI_TOKEN;
-const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
-const SECRET_CRYPTO = process.env.SECRET_CRYPTO;
-const MARVEL_PRIVATE_KEY = process.env.MARVEL_PRIVATE_KEY;
-const MARVEL_PUBLIC_KEY = process.env.MARVEL_PUBLIC_KEY;
-const GROUP_LINKS_ROOT = process.env.GROUP_LINKS_ROOT;
+const KEY_PAGE_ACCESS = process.env.KEY_PAGE_ACCESS;
+const KEY_VERIFY = process.env.KEY_VERIFY;
+const KEY_DIALOGFLOW = process.env.KEY_DIALOGFLOW;
+const KEY_API_WEATHER = process.env.KEY_API_WEATHER;
+const KEY_CRYPTO = process.env.KEY_CRYPTO;
+const KEY_MARVEL_PRIVATE = process.env.KEY_MARVEL_PRIVATE;
+const KEY_MARVEL_PUBLIC = process.env.KEY_MARVEL_PUBLIC;
+const KEY_ROOT = process.env.KEY_ROOT;
 // Set-up dependecies for app
 const express = require('express'); // https://expressjs.com
 const bodyParser = require('body-parser'); // https://github.com/expressjs/body-parser
 const request = require('request'); // https://github.com/request/request
-const dialogFlow = require('apiai')(APIAI_TOKEN); // https://www.npmjs.com/package/apiai
+const dialogFlow = require('apiai')(KEY_DIALOGFLOW); // https://www.npmjs.com/package/apiai
 // Node.js libraries used
 const http = require('https'); // https://nodejs.org/api/https.html
 const crypto = require('crypto'); // https://nodejs.org/api/crypto.html
@@ -30,85 +30,92 @@ CHASbot.use(bodyParser.json());
 CHASbot.use(bodyParser.urlencoded({ extended: true }));
 // Messenger templates can be found at:
 // https://developers.facebook.com/docs/messenger-platform/send-messages/templates
-// End-points
-const FB_MESSENGER_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages";
-const WEATHER_API_URL = "http://api.openweathermap.org/data/2.5/weather?APPID=";
-const MARVEL_API_URL = "https://gateway.marvel.com/v1/public/characters?nameStartsWith="
-const GROUP_DOCS = "https://work-" + GROUP_LINKS_ROOT + ".facebook.com/groups/1707079182933694";
-const GROUP_DOCS_TXT = "For an answer to this and other similar questions, visit and join the group that stores the library of all relevant CHAS forms, documents and policies.";
-const CHAS_RETAIL = "https://www.chas.org.uk/contact_chas#retail";
-const CHAS_RETAIL_TXT = "🎄 Christmas cards and more are available now from our shops or by mail order.";
-// Free secure linkable image hosting at https://imgbox.com
-const IMG_URL_PREFIX = "https://images.imgbox.com/";
-const IMG_URL_PREFIX2 = "https://images2.imgbox.com/";
-const IMG_URL_SUFFIX = "_o.png";
-const CHAS_THUMB = 'https://images.imgbox.com/99/1d/bFWYzY68_o.jpg';
-const SOURCE_SURVEY = "./survey.txt"; // Same directory as source code
-const SOURCE_CALENDAR = "./calendar.txt"; // Same directory as source code
-const SOURCE_BIOGRAPHIES = "./bios_private.txt"; // Same directory as source code // "./fundraising_private.txt" "./ids_private.txt"
-const ENCRYPTED_BIOGRAPHIES = "./bios_public.txt"; // Same directory as source code //
-const ENCRYPTED_FR_CARD = "./fundraising_public.txt";
-const ENCRYPTED_IDS = "./ids_public.txt";
-var server_port = process.env.PORT || 9000; //8080;
+// File dependecies
+const FILE_SURVEY = "./survey.txt"; // Same directory as source code
+const FILE_CALENDAR = "./calendar.txt"; // Same directory as source code
+const FILE_BIOGS = "./bios_private.txt"; // Same directory as source code // "./fundraising_private.txt" "./ids_private.txt"
+const FILE_ENCRYPTED_BIOS = "./bios_public.txt"; // Same directory as source code //
+const FILE_ENCRYPTED_FR_CARD = "./fundraising_public.txt";
+const FILE_ENCRYPTED_IDS = "./ids_public.txt";
+var server_port = process.env.PORT || 9000; //
 var server_ip_address = '127.0.0.1'; // Only for testing via local NGROK.IO
+// Messages
+const MSG_CHAS_RETAIL = "🎄 Christmas cards and more are available now from our shops or by mail order.";
+const MSG_GROUP_DOC = "For an answer to this and other similar questions, visit and join the group that stores the library of all relevant CHAS forms, documents and policies.";
+const MSG_SURVEY_THANKS = "❤️ Thank you for finishing our little survey.";
+const MSG_RPSLS_INTRO = "💡 First to five is the champion. Scissors cuts Paper, Paper covers Rock, Rock crushes Lizard, Lizard poisons Spock, Spock smashes Scissors, Scissors decapitates Lizard, Lizard eats Paper, Paper disproves Spock, Spock vaporizes Rock, and Rock crushes Scissors!";
+const MSG_RPSLS_PROMPT = "Choose... Rock, Paper, Scissors, Lizard or Spock?";
 // Triggers in lowercase - following phrases are handled in code
-const CHASBOT_SURVEY_TRIGGER_PHRASE = 'survey';
-const CHASBOT_HELP_TRIGGER_PHRASE = 'help';
-const CHASBOT_FEELING_LUCKY_TRIGGER_PHRASE = 'feeling lucky';
-const CHAS_LOGO_TRIGGER_PHRASE = 'chas logo';
-const CHASABET_TIRGGER_PHRASE1 = 'chas alphabet';
-const CHASABET_TIRGGER_PHRASE2 = 'chas letter';
-const MARVEL_TIRGGER_PHRASE = 'marvel codename';
-const CHAS_EVENTS_TIRGGER_PHRASE = 'when is';
-const CHAS_BIOS_TRIGGER_PHRASE = 'who is';
-const RPSLS_TRIGGER_PHRASE = 'bazinga';
-const HANGMAN_TRIGGER_PHRASE = 'hangman';
-const STOP_PHRASE = 'stop';
-var SEARCH_METHODS = new Array ("search","google","wiki","beeb");
-// DialogFlow fulfillment
-const DIALOGFLOW_ACTION_SLIM_SHADY = 'slim_shady';
-const DIALOGFLOW_ACTION_FUNDRAISING = 'fundraising';
-const DIALOGFLOW_ACTION_PICKCARD = 'cards';
-const DIALOGFLOW_ACTION_WEATHER = 'weather';
-const DIALOGFLOW_ACTION_GROUP_DOCS = 'group_docs';
-const DIALOGFLOW_ACTION_XMAS = 'xmas';
-var DIALOGFLOW_ACTION_TEMPLATE = false;
+const TRIGGER_PHRASE_SURVEY = 'survey';
+const TRIGGER_PHRASE_HELP = 'help';
+const TRIGGER_PHRASE_FEELING_LUCKY = 'feeling lucky';
+const TRIGGER_PHRASE_CHAS_LOGO = 'chas logo';
+const TRIGGER_PHRASE_CHASABET_1 = 'chas alphabet';
+const TRIGGER_PHRASE_CHASABET_2 = 'chas letter';
+const TIRGGER_PHRASE_MARVEL = 'marvel';
+const TIRGGER_PHRASE_CHAS_EVENTS = 'when is';
+const TIRGGER_PHRASE_CHAS_BIOGS = 'who is';
+const TIRGGER_PHRASE_RPSLS = 'bazinga';
+const TRIGGER_PHRASE_HANGMAN = 'hangman';
+const TRIGGER_PHRASE_STOP = 'stop';
+var TRIGGER_PHRASE_SEARCH = new Array ('search','google','wiki','beeb');
+// DialogFlow fulfillment hooks
+const HOOK_SLIM_SHADY = 'slim_shady';
+const HOOK_FUNDRAISING = 'fundraising';
+const HOOK_PICKCARD = 'cards';
+const HOOK_WEATHER = 'weather';
+const HOOK_URL_GROUP_DOCS = 'group_docs';
+const HOOK_XMAS = 'xmas';
+var HOOK_TEMPLATE = false;
+// Timings
+const KEEP_ALIVE = 25; // mins
+const TIME_TO_WAIT = 120; // mins
+// End-points
+const URL_CHAT_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages";
+const URL_API_WEATHER = "http://api.openweathermap.org/data/2.5/weather?APPID=";
+const URL_API_MARVEL = "https://gateway.marvel.com/v1/public/characters?nameStartsWith="
+const URL_GROUP_DOCS = "https://work-" + KEY_ROOT + ".facebook.com/groups/1707079182933694";
+const URL_CHAS_RETAIL = "https://www.chas.org.uk/contact_chas#retail";
+const URL_SEARCH_GOOGLE = "https://www.google.com/search?q=";
+const URL_SEARCH_WIKI = "https://en.wikipedia.org/w/index.php?search=";
+const URL_SEARCH_BEEB = "https://www.bbc.co.uk/search?q=";
+const URL_CHAS_THUMB = 'https://images.imgbox.com/99/1d/bFWYzY68_o.jpg';
+const URL_GOOGLE_THUMB = "https://images.imgbox.com/7f/57/CkDZNBfZ_o.png";
+const URL_WIKI_THUMB = "https://images.imgbox.com/30/62/Vv6KJ9k9_o.png";
+const URL_BEEB_THUMB = "https://images.imgbox.com/59/f5/PFN3tfX5_o.png";
+const URL_IMG_PREFIX = "https://images.imgbox.com/";
+const URL_IMG_PREFIX2 = "https://images2.imgbox.com/";
+const URL_IMG_SUFFIX = "_o.png";
 // For message handling
 let messageData = '';
 let messageText = '';
-let messageTextExtra = '';
 var analyse_text = '';
 var position_in_analyse_text = -1;
 var starting_point = 0;
 var ending_point = 0;
 var string_length = 0;
 // Search engine
-const SEARCH_BEEB = "https://www.bbc.co.uk/search?q=";
-const URL_BEEB = "https://images.imgbox.com/59/f5/PFN3tfX5_o.png";
-const SEARCH_GOOGLE = "https://www.google.com/search?q=";
-const URL_GOOGLE = "https://images.imgbox.com/7f/57/CkDZNBfZ_o.png";
-const SEARCH_WIKI = "https://en.wikipedia.org/w/index.php?search=";
-const URL_WIKI = "https://images.imgbox.com/30/62/Vv6KJ9k9_o.png";
+var TRIGGER_SEARCH = false;
 var SEARCH_METHOD = '';
 var SEARCH_TERM = '';
-var SEARCH_TRIGGER = false;
 // CHASbot help
-var CHASBOT_HELP_PROMPTS = [
+var TRIGGER_HELP = false;
+var HELP_SEND = false;
+var HELP_PROMPTS = [
   ["ad/e9/ivBhjDXd","When is the Devil Dash","Who is Morven MacLean","Where can I get collecting cans","How do I claim expenses","How do I get Christmas cards","CHAS alphabet C"],
   ["7a/45/0uhs3nQx","Weather at Rachel House","Weather in Aberdeen","Search CHAS","Google FB Workplace","Wiki Santa Claus","Beeb Blue Planet"],
   ["9a/f7/yRfMnV7i","Bazinga","Hangman","Pick a card","Toss a coin","Roll a dice","Magic 8"],
   ["0a/fe/WxsCGnFs","What’s a scrub","Is winter coming","My milkshake","Witness me","Is this the real life","I want the truth"],
   ["de/ff/4ZtuUqYX","Marvel codename Hulk","Execute Order 66","Beam me up","Open pod bay doors","Roll for initiative","Talk like Yoda"]
 ]; // images2 source
-var HELP_SEND = false;
-var CHASBOT_HELP_TRIGGER = false;
-var CHASBOT_HELP_INDEX = 0;
-// CHAS events
+var HELP_INDEX = 0;
+// Regular expressions
 const REGEX_START = '(?=.*\\b'; // Regular expression bits
 const REGEX_MIDDLE = '\\b)';
 const REGEX_END = '.+';
+// CHAS events
+var TRIGGER_CHAS_EVENTS = false;
 const CHAS_EVENTS_BLOCK_SIZE = 4;
-var CHAS_EVENTS_TRIGGER = false;
 var CHAS_EVENTS_CALENDAR = new Array();
 var CHAS_EVENTS_TOTAL = 0;
 var CHAS_EVENTS_INDEX = -1;
@@ -122,31 +129,27 @@ var CHAS_EVENTS_OOPS = [
 ];
 var CHAS_EVENTS_OOPS_INDEX = 0;
 // CHAS biographies
-const CHAS_BIOS_BLOCK_SIZE = 2;
-var CHAS_BIOS_VIABLE = false;
-var CHAS_BIOS_TRIGGER = false;
-var CHAS_BIOS = new Array();
-var CHAS_BIOS_TOTAL = 0;
-var CHAS_BIOS_INDEX = -1;
-var CHAS_BIOS_NAME = '';
+var TRIGGER_CHAS_BIOGS = false;
+const CHAS_BIOGS_BLOCK_SIZE = 2;
+var CHAS_BIOGS_VIABLE = false;
+var CHAS_BIOGS = new Array();
+var CHAS_BIOGS_TOTAL = 0;
+var CHAS_BIOGS_INDEX = -1;
+var CHAS_BIOGS_NAME = '';
 var CHAS_FR_CARD = "Contact your local Fundraising Team:" + "\n";
 // Slim Shady
-const TIME_TO_WAIT = 7200000; // 2 hours = 1000 * 60 * 120
 const IDS_BLOCK_SIZE = 2;
 var IDS_VIABLE = false;
 var IDS_TOTAL = 0;
 var IDS_LIST = new Array();
-var FB_WHO_ID = 0;
-var FB_WHO = '';
-var FB_WHO_ESTABLSIHED = false;
-var LAST_TIMESTAMP = null;
+var IDS_TIMESTAMP = new Array();
 var TIME_OF_DAY = [
   [22,"Getting late"],[19,"Good evening"],[18,"Time for tea"],[13,"Afternoon"],[12,"Lunch time"],
   [11,"Time for Elevenses"],[8,"Morning"],[7,"Breakfast time"],[6,"Another day another dollar"],
   [5,"Whoa, you're an early bird"],[4,"You're up early (or very late)"],[3,"Yawn, worst time to be awake"],
   [2,"You're up late"],[1,"Zzzzz, sorry"],[0,"It's the witching hour"]
 ];
-var RANDOMISED_COMPLIMENT = [
+var RANDOM_COMPLIMENT = [
   "Looking good.","You're more fun than bubblewrap.","I bet you do crossword puzzles in ink.",
   "You're like a breath of fresh air.","You're like sunshine on a rainy day.","On a scale from 1 to 10, you're an 11.",
   "Your smile is contagious.","You know how to find that silver lining.","You're inspiring.","I like your style.",
@@ -160,9 +163,9 @@ var GREETING_MESSAGE = [
 ];
 var GREETING_MESSAGE_INDEX = 0;
 // CHAS logo
-var CHAS_LOGO_TRIGGER = false;
+var TRIGGER_CHAS_LOGO = false;
 // CHAS alphabet
-var CHASABET_TRIGGER = 0;
+var TRIGGER_CHASABET = 0;
 var CHASABET_LETTER = ''; // Result
 var CHASABET_URL = ''; // Result
 var CHASABET = new Array();
@@ -193,9 +196,8 @@ CHASABET [23] = ["e9/0c/nB1EzCck","2e/60/2ETG0nZa"]; // X
 CHASABET [24] = ["2a/4a/9R5ZzF7V","d0/23/QDFnWi52"]; // Y
 CHASABET [25] = ["f6/89/4pwI187X","3c/4f/AguL64HL"]; // Z
 var CHASABET_INDEX = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-// For Marvel API
-// Keys above
-var MARVEL_TRIGGER = false;
+// Marvel
+var TRIGGER_MARVEL = false;
 var MARVEL_SEND = false;
 var HERO_WHO = ''; // Result
 var HERO_WHO_NOW = '';
@@ -211,8 +213,7 @@ var HERO_OOPS = [
 ];
 var HERO_OOPS_INDEX = 0;
 // Rock Paper Scissors Lizard Spock
-const RPSLS_INTRO = "💡 First to five is the champion. Scissors cuts Paper, Paper covers Rock, Rock crushes Lizard, Lizard poisons Spock, Spock smashes Scissors, Scissors decapitates Lizard, Lizard eats Paper, Paper disproves Spock, Spock vaporizes Rock, and Rock crushes Scissors!";
-const RPSLS_PROMPT = "Choose... Rock, Paper, Scissors, Lizard or Spock?";
+var TRIGGER_RPSLS = 0;
 var RPSLS_VALID = ["rock","paper","scissors","lizard","spock"];
 var RPSLS_OUTCOMES = ["cuts","covers","crushes","poisons","smashes","decapitates","eats","disproves","vaporizes","crushes"];
 var RPSLS_WIN = ["scissorspaper","paperrock","rocklizard","lizardspock","spockscissors","scissorslizard","lizardpaper","paperspock","spockrock","rockscissors"];
@@ -230,8 +231,6 @@ var RPSLS_INSTRUCT = 1;
 var RPSLS_IN_PLAY = 0;
 var RPSLS_SCORE_CHASBOT = 0;
 var RPSLS_SCORE_PLAYER = 0;
-var RPSLS_TRIGGER = 0;
-var LLAP_TRIGGER = 0;
 // Playing cards
 var CARD_PICK = '';
 var CARD_DECK  = [
@@ -243,8 +242,8 @@ var CARD_PROMPTS = [
   "I've picked... ","This time I've drawn... ","I've selected... ","You're card is... "];
 var CARD_PROMPT = 0;
 // Hangman
+var TRIGGER_HANGMAN = false;
 var HANGMAN_IN_PLAY = false;
-var HANGMAN_TRIGGER = false;
 var HANGMAN_REMAINING = 0;
 var HANGMAN_STRIKES = 0;
 var HANGMAN_GUESS = '';
@@ -252,19 +251,17 @@ var HANGMAN_WORD = '';
 var HANGMAN_ANSWER = '';
 var HANGMAN_ANSWER_ARRAY = [];
 var HANGMAN_STRIKE_STRING = ["👍👍👍","👍👍👎","👍👎👎","👎👎👎"];
-// survey
-var CHASBOT_SURVEY_IN_PLAY = false;
-var CHASBOT_SURVEY_TRIGGER = false;
-var CHASBOT_SURVEY_VIABLE  = true;
-var CHASBOT_SURVEY_NAME = ""; // Loaded from survey.txt 1st line
-var CHASBOT_SURVEY_QUESTIONS = [];
-var CHASBOT_SURVEY_QUESTION_NUMBER = 0;
-var CHASBOT_SURVEY_THANKS = "❤️ Thank you for finishing our little survey.";
+// Survey
+var SURVEY_IN_PLAY = false;
+var SURVEY_VIABLE  = true;
+var SURVEY_NAME = ''; // Loaded from survey.txt 1st line
+var SURVEY_QUESTIONS = [];
+var SURVEY_QUESTION_NUMBER = 0;
 
 // Encryption and decryption of biographies
 var enCrypt = function(text_plain) {
   var algorithm = 'aes-256-ctr';
-  var passkey = SECRET_CRYPTO;
+  var passkey = KEY_CRYPTO;
   var cipher = crypto.createCipher(algorithm,passkey)
   var crypted = cipher.update(text_plain,'utf-8','hex')
   crypted += cipher.final('hex');
@@ -272,16 +269,17 @@ var enCrypt = function(text_plain) {
 }
 var deCrypt = function(text_obscure) {
   var algorithm = 'aes-256-ctr';
-  var passkey = SECRET_CRYPTO;
+  var passkey = KEY_CRYPTO;
   var decipher = crypto.createDecipher(algorithm,passkey)
   var dec = decipher.update(text_obscure,'hex','utf-8')
   dec += decipher.final('utf-8');
   return dec;
 }
+
 function enCryptBios () {
-  var text_block = fs.readFileSync(SOURCE_BIOGRAPHIES, "utf-8");
+  var text_block = fs.readFileSync(FILE_BIOGS, "utf-8");
   var text_block_split = text_block.split("\n");
-  var stream = fs.createWriteStream(ENCRYPTED_IDS, "utf-8");
+  var stream = fs.createWriteStream(FILE_ENCRYPTED_IDS, "utf-8");
   stream.once('open', function(fd) {
     var stream_loop = 0;
     for (stream_loop = 0; stream_loop < text_block_split.length; stream_loop++) {
@@ -297,31 +295,32 @@ function enCryptBios () {
 }
 
 function deCryptContents () {
-  var text_block = fs.readFileSync(ENCRYPTED_BIOGRAPHIES, "utf-8");
+  var text_block = fs.readFileSync(FILE_ENCRYPTED_BIOS, "utf-8");
   var text_block_split_garbled = text_block.split("\n");
-  CHAS_BIOS = new Array();
+  CHAS_BIOGS = new Array();
   var decrypt_loop = 0;
   for (decrypt_loop = 0; decrypt_loop < text_block_split_garbled.length; decrypt_loop++) {
-    CHAS_BIOS[decrypt_loop] = deCrypt(text_block_split_garbled[decrypt_loop]);
+    CHAS_BIOGS[decrypt_loop] = deCrypt(text_block_split_garbled[decrypt_loop]);
   };
-  var number_bios_entries = CHAS_BIOS.length;
+  var number_bios_entries = CHAS_BIOGS.length;
   //console.log("DEBUG [deCryptContents]> Bios entries: " + number_bios_entries);
-  var remainder = number_bios_entries % CHAS_BIOS_BLOCK_SIZE;
+  var remainder = number_bios_entries % CHAS_BIOGS_BLOCK_SIZE;
   //console.log("DEBUG [deCryptContents]> Bios remainder (looking for 0): " + remainder);
-  CHAS_BIOS_TOTAL = number_bios_entries / CHAS_BIOS_BLOCK_SIZE;
-  //console.log("DEBUG [deCryptContents]> Events: " + CHAS_BIOS_TOTAL);
-  if ((remainder != 0)||(CHAS_BIOS_TOTAL == 0)) {
+  CHAS_BIOGS_TOTAL = number_bios_entries / CHAS_BIOGS_BLOCK_SIZE;
+  //console.log("DEBUG [deCryptContents]> Events: " + CHAS_BIOGS_TOTAL);
+  if ((remainder != 0)||(CHAS_BIOGS_TOTAL == 0)) {
     console.log("ERROR [deCryptContents]> Something funky going on with bios");
-    CHAS_BIOS_VIABLE = false;
+    CHAS_BIOGS_VIABLE = false;
   } else {
-    CHAS_BIOS_VIABLE = true;
+    CHAS_BIOGS_VIABLE = true;
   };
-  text_block = fs.readFileSync(ENCRYPTED_IDS, "utf-8");
+  text_block = fs.readFileSync(FILE_ENCRYPTED_IDS, "utf-8");
   text_block_split_garbled = text_block.split("\n");
-  IDS_LIST = new Array();
+  //IDS_LIST = new Array();
   decrypt_loop = 0;
   for (decrypt_loop = 0; decrypt_loop < text_block_split_garbled.length; decrypt_loop++) {
     IDS_LIST[decrypt_loop] = deCrypt(text_block_split_garbled[decrypt_loop]);
+    IDS_TIMESTAMP[decrypt_loop] = null;
   };
   var number_ids_entries = IDS_LIST.length;
   //console.log("DEBUG [deCryptContents]> ID entries: " + number_ids_entries);
@@ -335,7 +334,7 @@ function deCryptContents () {
   } else {
     IDS_VIABLE = true;
   };
-  text_block = fs.readFileSync(ENCRYPTED_FR_CARD, "utf-8");
+  text_block = fs.readFileSync(FILE_ENCRYPTED_FR_CARD, "utf-8");
   text_block_split_garbled = text_block.split("\n");
   decrypt_loop = 0;
   for (decrypt_loop = 0; decrypt_loop < text_block_split_garbled.length; decrypt_loop++) {
@@ -345,13 +344,13 @@ function deCryptContents () {
   //console.log("DEBUG [deCryptContents]> Contact Card: " + CHAS_FR_CARD);
 }
 
-// Load in encrypted biography information
+// Load in encrypted information
 //enCryptBios(); // Run once to encrypt biography CHAS file
 deCryptContents(); // Normal runtime configuration
 
 function loadCalendar() {
   // Load in calendar events
-  var text_block = fs.readFileSync(SOURCE_CALENDAR, "utf-8");
+  var text_block = fs.readFileSync(FILE_CALENDAR, "utf-8");
   CHAS_EVENTS_CALENDAR = text_block.split("\n");
   // Catch if the calendar list is funky i.e. isn't in blocks of four or missing at least one set
   var number_calendar_entries = CHAS_EVENTS_CALENDAR.length;
@@ -367,30 +366,30 @@ function loadCalendar() {
     return true;
   }
 }
-var CHASBOT_VIABLE = loadCalendar();
+var CHAS_EVENTS_VIABLE = loadCalendar();
 
 function loadSurvey() {
   var gone_funky = false;
   // Load in survey as a block
-  var text_block = fs.readFileSync(SOURCE_SURVEY, "utf-8");
+  var text_block = fs.readFileSync(FILE_SURVEY, "utf-8");
   // Populate a temp array
   var load_array = text_block.split("\n");
   // Configure the survey
   if (load_array.length > 1) {
     for (var i = 0; i < load_array.length; i++) {
-      CHASBOT_SURVEY_QUESTIONS[i] = load_array[i].split(","); // Split each row into arrays split by comma
-      if (i==0 && CHASBOT_SURVEY_QUESTIONS[0].length != 1) {
+      SURVEY_QUESTIONS[i] = load_array[i].split(","); // Split each row into arrays split by comma
+      if (i==0 && SURVEY_QUESTIONS[0].length != 1) {
         gone_funky = true; // First row has to be <survey_name> without commas
         break;
-      } else if (i==0 && CHASBOT_SURVEY_QUESTIONS[0].length == 1) {
-        CHASBOT_SURVEY_NAME = CHASBOT_SURVEY_QUESTIONS[0];
+      } else if (i==0 && SURVEY_QUESTIONS[0].length == 1) {
+        SURVEY_NAME = SURVEY_QUESTIONS[0];
         // Delete first row later ****************************
-      } else if (i>1 && CHASBOT_SURVEY_QUESTIONS[i].length > 6) {
+      } else if (i>1 && SURVEY_QUESTIONS[i].length > 6) {
         gone_funky = true; // Can't have more than 6 elements i.e. Question + 5 Answers
       }; // if/else
     }; // for
     if (!gone_funky) {
-      CHASBOT_SURVEY_QUESTIONS.shift(); // Removes <survey_name>
+      SURVEY_QUESTIONS.shift(); // Removes <survey_name>
     }
   } else {
     // Has to be at least 2 rows
@@ -403,10 +402,10 @@ function loadSurvey() {
     return true;
   };
 }
-var CHASBOT_SURVEY_VIABLE = loadSurvey();
+var SURVEY_VIABLE = loadSurvey();
 
-// ESTABLISH LISTENER
-/* Only for TESTING via local NGROK.IO
+/* ESTABLISH LISTENER
+// Only for TESTING via local NGROK.IO
 const server = CHASbot.listen(server_port, server_ip_address, () => {
   console.log("INFO [NGROK.IO]> Listening on " + server_ip_address + ", port " + server_port );
   console.log("INFO [NGROK.IO]>>>>>>>>>>>>>>>>>>> STARTED <<<<<<<<<<<<<<<<<");
@@ -418,10 +417,10 @@ const server = CHASbot.listen(server_port, () => {
 });
 
 // Facebook/workplace validation
-// Configure webhook in work chat integration - VERIFY_TOKEN matches code and app
+// Configure webhook in work chat integration - KEY_VERIFY matches code and app
 // Copy page access token and hard code for testing or set as server variable
 CHASbot.get('/webhook', (req, res) => {
-  if (req.query['hub.mode'] && req.query['hub.verify_token'] === VERIFY_TOKEN) {
+  if (req.query['hub.mode'] && req.query['hub.verify_token'] === KEY_VERIFY) {
     res.status(200).send(req.query['hub.challenge']);
   } else {
     res.status(403).end();
@@ -431,7 +430,7 @@ CHASbot.get('/webhook', (req, res) => {
 // Keep Heroku alive
 setInterval(function() {
     http.get("https://chasbot.herokuapp.com/");
-}, 900000); // every 15 minutes
+}, minsConvert(KEEP_ALIVE));
 
 // Handling all messenges in and processing special cases
 CHASbot.post('/webhook', (req, res) => {
@@ -440,58 +439,23 @@ CHASbot.post('/webhook', (req, res) => {
       entry.messaging.forEach((event) => {
         //if (event.read && event.read.watermark) { //console.log("DEBUG [postWebhook]> Receipt: " + event.read.watermark) };
         if (event.message && event.message.text) {
-          FB_WHO_ESTABLSIHED = false;
-          FB_WHO_ID = event.sender.id;
-          // Lookup ID
-          if (IDS_VIABLE) {
-            var find_index = 0;
-            var match_id = 0;
-            for (find_index = 0; find_index < IDS_TOTAL; find_index++) {
-              // 1,3,5 etc.
-              match_id = IDS_LIST[find_index * IDS_BLOCK_SIZE + 1];
-              //console.log("DEBUG [postWebhook]> Find match for ID (" + FB_WHO_ID + "): " + match_id);
-              if (FB_WHO_ID == match_id) {
-                FB_WHO = IDS_LIST[find_index * IDS_BLOCK_SIZE];
-                //console.log("DEBUG [postWebhook]> Matched to: " + FB_WHO);
-                FB_WHO_ESTABLSIHED = true;
-                break;
-              }
-            };
-          }
-          // Prime personalised response
-          if (LAST_TIMESTAMP == null||new Date().getTime() - LAST_TIMESTAMP > TIME_TO_WAIT) {
-            //console.log("DEBUG [postWebhook]> Interval since last message has been: " + TIME_TO_WAIT);
-            if (FB_WHO_ESTABLSIHED) {
-              var hr = new Date().getHours();
-              for (var loop_hour = 0; loop_hour < TIME_OF_DAY.length; loop_hour++) {
-                if (hr >= TIME_OF_DAY[loop_hour][0]) {
-                  messageTextExtra = TIME_OF_DAY[loop_hour][1];
-                  break;
-                }
-              };
-              messageTextExtra = messageTextExtra + ' ' + FB_WHO + '. ' + RANDOMISED_COMPLIMENT[Math.floor(Math.random()*RANDOMISED_COMPLIMENT.length)] + ' ';
-              //console.log("DEBUG [postWebhook]> Segue: " + messageTextExtra);
-            };
-            LAST_TIMESTAMP = new Date().getTime();
-          } else {
-            messageTextExtra = '';
-          }
+          var sender = event.sender.id;
           // Clean input
           analyse_text = event.message.text;
           analyse_text = analyse_text.toLowerCase();
           // Check for custom triggers
           // Survey
           var valid_choice = false;
-          if (CHASBOT_SURVEY_IN_PLAY) {
-            position_in_analyse_text = analyse_text.search(STOP_PHRASE) + 1;
+          if (SURVEY_IN_PLAY) {
+            position_in_analyse_text = analyse_text.search(TRIGGER_PHRASE_STOP) + 1;
             if (position_in_analyse_text > 0) {
               // Reset
-              CHASBOT_SURVEY_IN_PLAY = false;
-            } else if (CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER - 1].length == 1) { // Free text response
+              SURVEY_IN_PLAY = false;
+            } else if (SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER - 1].length == 1) { // Free text response
               valid_choice = true;
             } else {
-              for (var i = 1; i < CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER - 1].length; i++) {
-                position_in_analyse_text = event.message.text.search(CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER - 1][i]) + 1;
+              for (var i = 1; i < SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER - 1].length; i++) {
+                position_in_analyse_text = event.message.text.search(SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER - 1][i]) + 1;
                 if (position_in_analyse_text > 0) {
                   var xstr = event.message.text;
                   if (xLength(xstr) == 1) {event.message.text = i.toString()};
@@ -501,54 +465,54 @@ CHASbot.post('/webhook', (req, res) => {
               };
             };
             if (valid_choice) {
-              console.log('SURVEY [' + CHASBOT_SURVEY_NAME + '],' + FB_WHO_ID + ',' + CHASBOT_SURVEY_QUESTION_NUMBER + ',' + event.message.text);
+              console.log('SURVEY [' + SURVEY_NAME + '],' + sender + ',' + SURVEY_QUESTION_NUMBER + ',' + event.message.text);
             } else {
-              CHASBOT_SURVEY_QUESTION_NUMBER = CHASBOT_SURVEY_QUESTION_NUMBER - 1; // Repeat previous question
+              SURVEY_QUESTION_NUMBER = SURVEY_QUESTION_NUMBER - 1; // Repeat previous question
             }
           };
           // Trigger the survey
-          position_in_analyse_text = analyse_text.search(CHASBOT_SURVEY_TRIGGER_PHRASE) + 1;
-          if (position_in_analyse_text > 0 && CHASBOT_SURVEY_VIABLE) {
-            CHASBOT_SURVEY_IN_PLAY = true; // Initialise
-            CHASBOT_SURVEY_QUESTION_NUMBER = 0;
+          position_in_analyse_text = analyse_text.search(TRIGGER_PHRASE_SURVEY) + 1;
+          if (position_in_analyse_text > 0 && SURVEY_VIABLE) {
+            SURVEY_IN_PLAY = true; // Initialise
+            SURVEY_QUESTION_NUMBER = 0;
           }
           // Feeling lucky
-          position_in_analyse_text = analyse_text.search(CHASBOT_FEELING_LUCKY_TRIGGER_PHRASE) + 1;
-          //console.log("DEBUG [postWebhook]> " + CHASBOT_FEELING_LUCKY_TRIGGER_PHRASE + " search result: " + position_in_analyse_text);
+          position_in_analyse_text = analyse_text.search(TRIGGER_PHRASE_FEELING_LUCKY) + 1;
+          //console.log("DEBUG [postWebhook]> " + TRIGGER_PHRASE_FEELING_LUCKY + " search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
             // Math.floor(Math.random()*(max-min+1)+min);
             var cat = Math.floor(Math.random()*5); // 0 to 4
             var ind = Math.floor(Math.random()*6+1); // 1 to 6
-            event.message.text = CHASBOT_HELP_PROMPTS[cat][ind];
+            event.message.text = HELP_PROMPTS[cat][ind];
             analyse_text = event.message.text;
             analyse_text = analyse_text.toLowerCase();
             messageText = '*' + event.message.text + '*';
             sendTextDirect(event);
           }
           // Help
-          CHASBOT_HELP_TRIGGER = false;
-          position_in_analyse_text = analyse_text.search(CHASBOT_HELP_TRIGGER_PHRASE) + 1;
-          //console.log("DEBUG [postWebhook]> " + CHASBOT_HELP_TRIGGER_PHRASE + " search result: " + position_in_analyse_text);
+          TRIGGER_HELP = false;
+          position_in_analyse_text = analyse_text.search(TRIGGER_PHRASE_HELP) + 1;
+          //console.log("DEBUG [postWebhook]> " + TRIGGER_PHRASE_HELP + " search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
-            CHASBOT_HELP_TRIGGER = true;
+            TRIGGER_HELP = true;
             HELP_SEND = true;
-            var help_url = IMG_URL_PREFIX2 + CHASBOT_HELP_PROMPTS[CHASBOT_HELP_INDEX][0] + IMG_URL_SUFFIX;
+            var help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
             //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
             messageText = "Try some of these:";
             for (var i = 1; i < 7; i++) {
-              messageText = messageText + '\n' + CHASBOT_HELP_PROMPTS[CHASBOT_HELP_INDEX][i];
+              messageText = messageText + '\n' + HELP_PROMPTS[HELP_INDEX][i];
             };
             messageText = messageText + '\n' + "Type *help* for more or try *feeling lucky*";
             //console.log("DEBUG [postWebhook]> Help text: " + messageText);
-            CHASBOT_HELP_INDEX = CHASBOT_HELP_INDEX + 1;
-            if (CHASBOT_HELP_INDEX > 4) { CHASBOT_HELP_INDEX = 0 };
+            HELP_INDEX = HELP_INDEX + 1;
+            if (HELP_INDEX > 4) { HELP_INDEX = 0 };
           };
           // Hangman
-          HANGMAN_TRIGGER = false;
+          TRIGGER_HANGMAN = false;
           HANGMAN_GUESS = '';
           if (HANGMAN_IN_PLAY) { // Only check if we are playing
             //console.log("DEBUG [postWebhook]> Hangman in play.");
-            position_in_analyse_text = analyse_text.search(STOP_PHRASE) + 1;
+            position_in_analyse_text = analyse_text.search(TRIGGER_PHRASE_STOP) + 1;
             if (position_in_analyse_text > 0) {
               HANGMAN_IN_PLAY = false;
               //console.log("DEBUG [postWebhook]> Hangman: Player wants to end i.e. " + analyse_text);
@@ -565,14 +529,14 @@ CHASbot.post('/webhook', (req, res) => {
           };
           // If the word typed is another trigger then it trumps the game and sets HANGMAN_IN_PLAY = false;
           // Typing hangman mid-game will start a new game
-          position_in_analyse_text = analyse_text.search(HANGMAN_TRIGGER_PHRASE) + 1;
-          //console.log("DEBUG [postWebhook]> " + HANGMAN_TRIGGER_PHRASE + " search result: " + position_in_analyse_text);
-          if (CHAS_BIOS_VIABLE && position_in_analyse_text > 0) {
-            HANGMAN_TRIGGER = true;
+          position_in_analyse_text = analyse_text.search(TRIGGER_PHRASE_HANGMAN) + 1;
+          //console.log("DEBUG [postWebhook]> " + TRIGGER_PHRASE_HANGMAN + " search result: " + position_in_analyse_text);
+          if (CHAS_BIOGS_VIABLE && position_in_analyse_text > 0) {
+            TRIGGER_HANGMAN = true;
             HANGMAN_IN_PLAY = true;
             HANGMAN_STRIKES = 0;
             HANGMAN_ANSWER_ARRAY = [];
-            HANGMAN_WORD = CHAS_BIOS[Math.floor(Math.random() * CHAS_BIOS_TOTAL) * CHAS_BIOS_BLOCK_SIZE - 2];
+            HANGMAN_WORD = CHAS_BIOGS[Math.floor(Math.random() * CHAS_BIOGS_TOTAL) * CHAS_BIOGS_BLOCK_SIZE - 2];
             HANGMAN_WORD = HANGMAN_WORD.toLowerCase();
             //console.log("DEBUG [postWebhook]> Mystery name: " + HANGMAN_WORD);
             // swap out spaces for under_scores
@@ -598,22 +562,22 @@ CHASbot.post('/webhook', (req, res) => {
             //console.log("DEBUG [postWebhook]> Hangman Initialise: " + messageText);
           };
           // Search
-          SEARCH_TRIGGER = false;
+          TRIGGER_SEARCH = false;
           var rightmost_starting_point = -1;
           var trigger_loop = 0;
-          for (trigger_loop = 0; trigger_loop < SEARCH_METHODS.length; trigger_loop++) {
-            position_in_analyse_text = analyse_text.lastIndexOf(SEARCH_METHODS[trigger_loop]) + 1;
+          for (trigger_loop = 0; trigger_loop < TRIGGER_PHRASE_SEARCH.length; trigger_loop++) {
+            position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_PHRASE_SEARCH[trigger_loop]) + 1;
             if (position_in_analyse_text > 0) {
-              starting_point = position_in_analyse_text + SEARCH_METHODS[trigger_loop].length;
+              starting_point = position_in_analyse_text + TRIGGER_PHRASE_SEARCH[trigger_loop].length;
               if (starting_point > rightmost_starting_point) { // Find right-most search term
                 rightmost_starting_point = starting_point;
                 ending_point = analyse_text.length;
                 string_length = ending_point - starting_point;
-                SEARCH_METHOD = SEARCH_METHODS[trigger_loop];
+                SEARCH_METHOD = TRIGGER_PHRASE_SEARCH[trigger_loop];
                 //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
                 //console.log("DEBUG [postWebhook]> Search method found: " + SEARCH_METHOD);
                 if (string_length > 0) {
-                  SEARCH_TRIGGER = true;
+                  TRIGGER_SEARCH = true;
                   HANGMAN_IN_PLAY = false; // Cxl Hangman
                   SEARCH_TERM = analyse_text.slice(starting_point,ending_point);
                   //console.log("DEBUG [postWebhook]> Search term: " + SEARCH_TERM);
@@ -622,8 +586,8 @@ CHASbot.post('/webhook', (req, res) => {
             };
           };
           // Rock, Paper, Scissors, Lizard, Spock
-          RPSLS_TRIGGER = 0;
-          RPSLS_PICK_PLAYER = RPSLS_TRIGGER_PHRASE;
+          TRIGGER_RPSLS = 0;
+          RPSLS_PICK_PLAYER = TIRGGER_PHRASE_RPSLS;
           if (RPSLS_IN_PLAY == 1) { // Only check if we are playing
             RPSLS_IN_PLAY = 0;
             trigger_loop = 0;
@@ -632,54 +596,54 @@ CHASbot.post('/webhook', (req, res) => {
               if (position_in_analyse_text > 0) {
                 RPSLS_PICK_PLAYER = RPSLS_VALID[trigger_loop];
                 //console.log("DEBUG [postWebhook]> " + RPSLS_PICK_PLAYER + " search result: " + position_in_analyse_text);
-                RPSLS_TRIGGER = 3; // Evaluate the choice
+                TRIGGER_RPSLS = 3; // Evaluate the choice
                 RPSLS_IN_PLAY = 1; // Keep playing
                 break;
               };
             };
           };
-          position_in_analyse_text = analyse_text.search(RPSLS_TRIGGER_PHRASE) + 1;
-          //console.log("DEBUG [postWebhook]> " + RPSLS_TRIGGER_PHRASE + " search result: " + position_in_analyse_text);
+          position_in_analyse_text = analyse_text.search(TIRGGER_PHRASE_RPSLS) + 1;
+          //console.log("DEBUG [postWebhook]> " + TIRGGER_PHRASE_RPSLS + " search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
             HANGMAN_IN_PLAY = false; // Cxl Hangman
             if (RPSLS_INSTRUCT == 1) {
-              RPSLS_TRIGGER = 1; // Provide intsructions + prompt
+              TRIGGER_RPSLS = 1; // Provide intsructions + prompt
               RPSLS_INSTRUCT = 0; // Reset instructions
               RPSLS_IN_PLAY = 1;
             } else {
-              RPSLS_TRIGGER = 2; // Prompt only
+              TRIGGER_RPSLS = 2; // Prompt only
               RPSLS_IN_PLAY = 1;
             };
           };
           // Marvel
-          MARVEL_TRIGGER = false;
-          position_in_analyse_text = analyse_text.lastIndexOf(MARVEL_TIRGGER_PHRASE) + 1;
-          //console.log("DEBUG [postWebhook]> " + MARVEL_TIRGGER_PHRASE + " phrase search result: " + position_in_analyse_text);
+          TRIGGER_MARVEL = false;
+          position_in_analyse_text = analyse_text.lastIndexOf(TIRGGER_PHRASE_MARVEL) + 1;
+          //console.log("DEBUG [postWebhook]> " + TIRGGER_PHRASE_MARVEL + " phrase search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
-            starting_point = position_in_analyse_text + MARVEL_TIRGGER_PHRASE.length;
+            starting_point = position_in_analyse_text + TIRGGER_PHRASE_MARVEL.length;
             ending_point = analyse_text.length;
             string_length = ending_point - starting_point;
             //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
             if (string_length > 0) {
-              MARVEL_TRIGGER = true;
+              TRIGGER_MARVEL = true;
               HANGMAN_IN_PLAY = false; // Cxl Hangman
               HERO_WHO = analyse_text.slice(starting_point,ending_point);
               HERO_WHO = toTitleCase(HERO_WHO);
             };
           };
           // CHAS alphabet
-          CHASABET_TRIGGER = 0;
-          position_in_analyse_text = analyse_text.lastIndexOf(CHASABET_TIRGGER_PHRASE1) + 1;
+          TRIGGER_CHASABET = 0;
+          position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_PHRASE_CHASABET_1) + 1;
           if (position_in_analyse_text == 0) {
-            position_in_analyse_text = analyse_text.lastIndexOf(CHASABET_TIRGGER_PHRASE2) + 1;
-            CHASABET_TRIGGER = 2;
+            position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_PHRASE_CHASABET_2) + 1;
+            TRIGGER_CHASABET = 2;
           }
-          //console.log("DEBUG [postWebhook]> " + CHASABET_TIRGGER_PHRASE1 + " or " + CHASABET_TIRGGER_PHRASE2 + " phrase search result: " + position_in_analyse_text);
+          //console.log("DEBUG [postWebhook]> " + TRIGGER_PHRASE_CHASABET_1 + " or " + TRIGGER_PHRASE_CHASABET_2 + " phrase search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
-            if (CHASABET_TRIGGER == 0) {
-              starting_point = position_in_analyse_text + CHASABET_TIRGGER_PHRASE1.length;
+            if (TRIGGER_CHASABET == 0) {
+              starting_point = position_in_analyse_text + TRIGGER_PHRASE_CHASABET_1.length;
             } else {
-              starting_point = position_in_analyse_text + CHASABET_TIRGGER_PHRASE2.length;
+              starting_point = position_in_analyse_text + TRIGGER_PHRASE_CHASABET_2.length;
             }
             ending_point = analyse_text.length;
             string_length = ending_point - starting_point;
@@ -689,89 +653,89 @@ CHASbot.post('/webhook', (req, res) => {
               CHASABET_LETTER = analyse_text.slice(starting_point,ending_point);
               CHASABET_LETTER = firstAlpha(CHASABET_LETTER);
               if (CHASABET_LETTER != '') {
-                CHASABET_TRIGGER = 1;
+                TRIGGER_CHASABET = 1;
                 HANGMAN_IN_PLAY = false; // Cxl Hangman
               };
             };
           };
           // CHAS logo
-          CHAS_LOGO_TRIGGER = false;
-          position_in_analyse_text = analyse_text.search(CHAS_LOGO_TRIGGER_PHRASE) + 1;
-          //console.log("DEBUG [postWebhook]> " + CHAS_LOGO_TRIGGER_PHRASE + " search result: " + position_in_analyse_text);
+          TRIGGER_CHAS_LOGO = false;
+          position_in_analyse_text = analyse_text.search(TRIGGER_PHRASE_CHAS_LOGO) + 1;
+          //console.log("DEBUG [postWebhook]> " + TRIGGER_PHRASE_CHAS_LOGO + " search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
-            CHAS_LOGO_TRIGGER = true;
+            TRIGGER_CHAS_LOGO = true;
             HANGMAN_IN_PLAY = false; // Cxl Hangman
           };
           // CHAS Events
-          CHAS_EVENTS_TRIGGER = false;
-          position_in_analyse_text = analyse_text.lastIndexOf(CHAS_EVENTS_TIRGGER_PHRASE) + 1;
-          //console.log("DEBUG [postWebhook]> " + CHAS_EVENTS_TIRGGER_PHRASE + " phrase search result: " + position_in_analyse_text);
+          TRIGGER_CHAS_EVENTS = false;
+          position_in_analyse_text = analyse_text.lastIndexOf(TIRGGER_PHRASE_CHAS_EVENTS) + 1;
+          //console.log("DEBUG [postWebhook]> " + TIRGGER_PHRASE_CHAS_EVENTS + " phrase search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
-            starting_point = position_in_analyse_text + CHAS_EVENTS_TIRGGER_PHRASE.length;
+            starting_point = position_in_analyse_text + TIRGGER_PHRASE_CHAS_EVENTS.length;
             ending_point = analyse_text.length;
             string_length = ending_point - starting_point;
             //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
             if (string_length > 0) {
-              CHAS_EVENTS_TRIGGER = true;
+              TRIGGER_CHAS_EVENTS = true;
               HANGMAN_IN_PLAY = false; // Cxl Hangman
               CHAS_EVENTS_NAME = analyse_text.slice(starting_point,ending_point);
             };
           };
-          // CHAS Bios
-          CHAS_BIOS_TRIGGER = false;
-          position_in_analyse_text = analyse_text.lastIndexOf(CHAS_BIOS_TRIGGER_PHRASE) + 1;
-          //console.log("DEBUG [postWebhook]> " + CHAS_BIOS_TRIGGER_PHRASE + " phrase search result: " + position_in_analyse_text);
+          // CHAS Biogs
+          TRIGGER_CHAS_BIOGS = false;
+          position_in_analyse_text = analyse_text.lastIndexOf(TIRGGER_PHRASE_CHAS_BIOGS) + 1;
+          //console.log("DEBUG [postWebhook]> " + TIRGGER_PHRASE_CHAS_BIOGS + " phrase search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
-            starting_point = position_in_analyse_text + CHAS_BIOS_TRIGGER_PHRASE.length;
+            starting_point = position_in_analyse_text + TIRGGER_PHRASE_CHAS_BIOGS.length;
             ending_point = analyse_text.length;
             string_length = ending_point - starting_point;
             //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
             if (string_length > 0) {
-              CHAS_BIOS_TRIGGER = true;
+              TRIGGER_CHAS_BIOGS = true;
               HANGMAN_IN_PLAY = false; // Cxl Hangman
-              CHAS_BIOS_NAME = analyse_text.slice(starting_point,ending_point);
+              CHAS_BIOGS_NAME = analyse_text.slice(starting_point,ending_point);
             };
           };
           // Pick a response route
-          if (CHASBOT_SURVEY_IN_PLAY) {
+          if (SURVEY_IN_PLAY) {
             //console.log("DEBUG [postWebhook]> Survey);
             sendSurveyQuestion(event);
-          } else if (CHASBOT_HELP_TRIGGER) {
-            //console.log("DEBUG [postWebhook]> Help: " + CHASBOT_HELP_INDEX);
-            console.log("INFO [postWebhook]> Sender: " + FB_WHO_ID);
-            console.log("INFO [postWebhook]> Request: " + CHASBOT_FEELING_LUCKY_TRIGGER_PHRASE);
+          } else if (TRIGGER_HELP) {
+            //console.log("DEBUG [postWebhook]> Help: " + HELP_INDEX);
+            console.log("INFO [postWebhook]> Sender: " + sender);
+            console.log("INFO [postWebhook]> Request: " + TRIGGER_PHRASE_FEELING_LUCKY);
             console.log("INFO [postWebhook]> Action: postWebhook.postImage");
-            console.log("INFO [postWebhook]> Response: Help v." + CHASBOT_HELP_INDEX);
+            console.log("INFO [postWebhook]> Response: Help v." + HELP_INDEX);
             postImage(help_url,event);
-          } else if (MARVEL_TRIGGER) {
+          } else if (TRIGGER_MARVEL) {
             //console.log("DEBUG [postWebhook]> Marvel Character: " + HERO_WHO);
             getMarvelChar(HERO_WHO,event);
-          } else if (CHASABET_TRIGGER == 1) {
+          } else if (TRIGGER_CHASABET == 1) {
             //console.log("DEBUG [postWebhook]> CHAS alpahbet: " + CHASABET_LETTER);
             getAlphabetCHAS(CHASABET_LETTER,event);
-          } else if (CHAS_EVENTS_TRIGGER && CHAS_EVENTS_VIABLE) {
+          } else if (TRIGGER_CHAS_EVENTS && CHAS_EVENTS_VIABLE) {
             //console.log("DEBUG [postWebhook]> CHAS event: " + CHAS_EVENTS_NAME);
             getEventCHAS(CHAS_EVENTS_NAME,event);
-          } else if (CHAS_BIOS_TRIGGER && CHAS_BIOS_VIABLE) {
-            //console.log("DEBUG [postWebhook]> CHAS bios: " + CHAS_BIOS_NAME);
-            getBiosCHAS(CHAS_BIOS_NAME,event);
-          } else if (RPSLS_TRIGGER > 0) {
+          } else if (TRIGGER_CHAS_BIOGS && CHAS_BIOGS_VIABLE) {
+            //console.log("DEBUG [postWebhook]> CHAS bios: " + CHAS_BIOGS_NAME);
+            getBiosCHAS(CHAS_BIOGS_NAME,event);
+          } else if (TRIGGER_RPSLS > 0) {
             //console.log("DEBUG [postWebhook]> RPSLSpock: " + RPSLS_PICK_PLAYER);
             getRPSLS(event);
-          } else if (SEARCH_TRIGGER) {
+          } else if (TRIGGER_SEARCH) {
             //console.log("DEBUG [postWebhook]> Search: " + SEARCH_TERM);
             postSearch(event);
-          } else if (CHAS_LOGO_TRIGGER) {
+          } else if (TRIGGER_CHAS_LOGO) {
             //console.log("DEBUG [postWebhook]> Logo");
-            console.log("INFO [postWebhook]> Sender: " + FB_WHO_ID);
-            console.log("INFO [postWebhook]> Request: " + CHAS_LOGO_TRIGGER_PHRASE);
+            console.log("INFO [postWebhook]> Sender: " + sender);
+            console.log("INFO [postWebhook]> Request: " + TRIGGER_PHRASE_CHAS_LOGO);
             console.log("INFO [postWebhook]> Action: postWebhook.postImage");
-            console.log("INFO [postWebhook]> Response: IMG URL " + CHAS_THUMB);
-            postImage(CHAS_THUMB,event)
-          } else if (HANGMAN_TRIGGER) {
+            console.log("INFO [postWebhook]> Response: IMG URL " + URL_CHAS_THUMB);
+            postImage(URL_CHAS_THUMB,event)
+          } else if (TRIGGER_HANGMAN) {
             //console.log("DEBUG [postWebhook]> Hangman Initiated");
-            console.log("INFO [postWebhook]> Sender: " + FB_WHO_ID);
-            console.log("INFO [postWebhook]> Request: " + HANGMAN_TRIGGER_PHRASE);
+            console.log("INFO [postWebhook]> Sender: " + sender);
+            console.log("INFO [postWebhook]> Request: " + TRIGGER_PHRASE_HANGMAN);
             console.log("INFO [postWebhook]> Action: postWebhook.sendTextDirect");
             console.log("INFO [postWebhook]> Response: Hangman Mystery Name is " + HANGMAN_WORD);
             sendTextDirect(event)
@@ -789,23 +753,26 @@ CHASbot.post('/webhook', (req, res) => {
   }
 });
 
-// Strng handling functions
+// Strng and number handling functions
 function toTitleCase(inputString) {
   return inputString.replace(/\w\S*/g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
+
 function firstAlpha(inputString) {
   for (var i = 0; i < inputString.length; i += 1) {
     if ((inputString.charAt(i) >= 'A' && inputString.charAt(i) <= 'Z') ||
         (inputString.charAt(i) >= 'a' && inputString.charAt(i) <= 'z')) {
         return inputString.charAt(i);
-    }
-  }
+    };
+  };
   return '';
 }
+
 function trimTo(trim_length,inputString) {
   if (inputString.length > trim_length) {inputString = inputString.slice(0,trim_length-1) + "🤐"};
   return inputString;
 }
+
 function xLength(str) {
   //http://blog.jonnew.com/posts/poo-dot-length-equals-two
   const joiner = "\u{200D}";
@@ -815,18 +782,22 @@ function xLength(str) {
     //removing the variation selectors
     const num = Array.from(s.split(/[\ufe00-\ufe0f]/).join("")).length;
     count += num;
-  }
+  };
   //assuming the joiners are used appropriately
   return count / split.length;
+}
+
+function minsConvert(minsIn) {
+  return minsIn*60*1000;
 }
 
 // SENDING SECTION
 function sendTemplate(event) {
   // messageData set outside of function call
-  let sender = event.sender.id;
+  var sender = event.sender.id;
   request({
-    uri: FB_MESSENGER_ENDPOINT,
-    qs: {access_token: PAGE_ACCESS_TOKEN},
+    uri: URL_CHAT_ENDPOINT,
+    qs: {access_token: KEY_PAGE_ACCESS},
     method: 'POST',
     json: {
       recipient: {id: sender},
@@ -847,15 +818,15 @@ function sendTemplate(event) {
 }
 
 function sendSurveyQuestion(event) {
-  //console.log("SURVEY [" + CHASBOT_SURVEY_NAME + "]> In Progress");
-  let sender = event.sender.id;
-  if (CHASBOT_SURVEY_QUESTION_NUMBER == CHASBOT_SURVEY_QUESTIONS.length) {
+  //console.log("SURVEY [" + SURVEY_NAME + "]> In Progress");
+  var sender = event.sender.id;
+  if (SURVEY_QUESTION_NUMBER == SURVEY_QUESTIONS.length) {
     var rspns_items = 1; // Thanks
-    var qstn = CHASBOT_SURVEY_THANKS;
-    CHASBOT_SURVEY_IN_PLAY = false;
+    var qstn = MSG_SURVEY_THANKS;
+    SURVEY_IN_PLAY = false;
   } else { // Next question
-    var rspns_items = CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER].length;
-    var qstn = CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][0];
+    var rspns_items = SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER].length;
+    var qstn = SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][0];
   }
   switch (rspns_items) {
     case 1:
@@ -867,7 +838,7 @@ function sendSurveyQuestion(event) {
         text: trimTo(640,qstn),
         quick_replies:[
               { content_type:"text",
-                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][1],
+                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][1],
                 payload:"<POSTBACK_PAYLOAD>" }]};
       break;
     case 3:
@@ -875,10 +846,10 @@ function sendSurveyQuestion(event) {
         text: trimTo(640,qstn),
         quick_replies:[
               { content_type:"text",
-                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][1],
+                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][1],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][2],
+                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][2],
                 payload:"<POSTBACK_PAYLOAD>" }]};
       break;
     case 4:
@@ -886,13 +857,13 @@ function sendSurveyQuestion(event) {
         text: trimTo(640,qstn),
         quick_replies:[
               { content_type:"text",
-                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][1],
+                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][1],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][2],
+                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][2],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][3],
+                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][3],
                 payload:"<POSTBACK_PAYLOAD>" }]};
       break;
     case 5:
@@ -900,16 +871,16 @@ function sendSurveyQuestion(event) {
         text: trimTo(640,qstn),
         quick_replies:[
               { content_type:"text",
-                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][1],
+                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][1],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][2],
+                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][2],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][3],
+                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][3],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][4],
+                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][4],
                 payload:"<POSTBACK_PAYLOAD>" }]};
       break;
     case 6:
@@ -917,24 +888,24 @@ function sendSurveyQuestion(event) {
         text: trimTo(640,qstn),
         quick_replies:[
               { content_type:"text",
-                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][1],
+                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][1],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][2],
+                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][2],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][3],
+                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][3],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][4],
+                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][4],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: CHASBOT_SURVEY_QUESTIONS[CHASBOT_SURVEY_QUESTION_NUMBER][5],
+                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][5],
                 payload:"<POSTBACK_PAYLOAD>" }]};
   }; // Switch
   request({
-    uri: FB_MESSENGER_ENDPOINT,
-    qs: {access_token: PAGE_ACCESS_TOKEN},
+    uri: URL_CHAT_ENDPOINT,
+    qs: {access_token: KEY_PAGE_ACCESS},
     method: 'POST',
     json: {
       recipient: {id: sender},
@@ -947,19 +918,55 @@ function sendSurveyQuestion(event) {
       console.log("ERROR [sendSurveyQuestion]> Undefined: ", response.body.error);
     }
   }); // request
-  CHASBOT_SURVEY_QUESTION_NUMBER = CHASBOT_SURVEY_QUESTION_NUMBER + 1;
+  SURVEY_QUESTION_NUMBER = SURVEY_QUESTION_NUMBER + 1;
+}
+
+function customGreeting (senderID) {
+  console.log("DEBUG [customGreeting]> " + senderID);
+  var build_greeting = '';
+  var fb_who;
+  var fb_who_known = false;
+  var match_id = 0;
+  var id_index = 0;
+  for (var find_index = 0; find_index < IDS_TOTAL; find_index++) {
+    // 1,3,5 etc.
+    match_id = IDS_LIST[find_index * IDS_BLOCK_SIZE + 1];
+    console.log("DEBUG [customGreeting]> Find match for ID (" + senderID + "): " + match_id);
+    if (match_id == senderID) {
+      id_index = find_index; // Got our match
+      fb_who = IDS_LIST[find_index * IDS_BLOCK_SIZE];
+      //console.log("DEBUG [customGreeting]> Matched to: " + FB_WHO);
+      fb_who_known = true;
+      break;
+    }; // if
+  }; // for
+  // Prime personalised response
+  // if ( we know who the person is AND ( either they've not had a name check OR been a while since name check))
+  if (fb_who_known && (IDS_TIMESTAMP[id_index] == null||new Date().getTime() - IDS_TIMESTAMP[id_index] > minsConvert(TIME_TO_WAIT))) {
+    console.log("DEBUG [customGreeting]> Interval in mins since last message has been: " + minsConvert(TIME_TO_WAIT));
+    var hr = new Date().getHours();
+    for (var loop_hour = 0; loop_hour < TIME_OF_DAY.length; loop_hour++) {
+      if (hr >= TIME_OF_DAY[loop_hour][0]) {
+        build_greeting = TIME_OF_DAY[loop_hour][1];
+        break;
+      }; // for
+    }; // if
+    build_greeting = build_greeting + ' ' + fb_who + '. ' + RANDOM_COMPLIMENT[Math.floor(Math.random()*RANDOM_COMPLIMENT.length)] + ' ';
+    // Set the time the ID received a name check
+    IDS_TIMESTAMP[id_index] = new Date().getTime();
+    console.log("NAME CHECK: [customGreeting]> " + fb_who + ", ID: " + senderID + " @ " + IDS_TIMESTAMP[id_index]);
+  };
+  console.log("DEBUG [customGreeting]> Greeting: " + build_greeting);
+  return build_greeting;
 }
 
 function sendTextDirect(event) {
   // messageText set outside of function call
-  let sender = event.sender.id;
-  if (messageTextExtra != '') {
-    messageText = messageTextExtra + messageText;
-    messageTextExtra = '';
-  };
+  var sender = event.sender.id;
+  if (IDS_VIABLE) { messageText = customGreeting(sender) + messageText };
   request({
-    uri: FB_MESSENGER_ENDPOINT,
-    qs: {access_token: PAGE_ACCESS_TOKEN},
+    uri: URL_CHAT_ENDPOINT,
+    qs: {access_token: KEY_PAGE_ACCESS},
     method: 'POST',
     json: {
       recipient: {id: sender},
@@ -979,29 +986,26 @@ function sendTextDirect(event) {
 
 // Message request pinged off of API.AI for response
 function sendMessageViaAPIAI(event_dialog) {
-  let sender = event_dialog.sender.id;
+  var sender = event_dialog.sender.id;
   let text = event_dialog.message.text;
-  //if (CHASBOT_FEELING_LUCKY_TRIGGER) {
-  //  text =
-  //}
   let apiai = dialogFlow.textRequest(text, {
-    sessionId: 'chasbot_sessionID' // Arbitrary id
+    sessionId: 'sessionID' // Arbitrary id
   });
   apiai.on('response', (response) => {
     messageText = response.result.fulfillment.speech;
-    console.log("INFO [sendMessageViaAPIAI]> Sender: " + FB_WHO_ID);
+    console.log("INFO [sendMessageViaAPIAI]> Sender: " + sender);
     console.log("INFO [sendMessageViaAPIAI]> Request: " + response.result.resolvedQuery);
     if (response.result.action == '') {
       console.log("INFO [sendMessageViaAPIAI]> Action: " + response.result.metadata.intentName);
     } else {
       console.log("INFO [sendMessageViaAPIAI]> Action: " + response.result.action);
     }
-    if (DIALOGFLOW_ACTION_TEMPLATE) {
+    if (HOOK_TEMPLATE) {
       console.log("INFO [sendMessageViaAPIAI]> Response: Template");
       sendTemplate(event_dialog);
-      DIALOGFLOW_ACTION_TEMPLATE = false;
+      HOOK_TEMPLATE = false;
     } else {
-      console.log("INFO [sendMessageViaAPIAI]> Response: " + messageTextExtra + ' ' + messageText);
+      console.log("INFO [sendMessageViaAPIAI]> Response: " + messageText);
       sendTextDirect(event_dialog);
     }
   });
@@ -1014,7 +1018,7 @@ function sendMessageViaAPIAI(event_dialog) {
 // Webhook for API.ai to get response from the 3rd party API
 CHASbot.post('/heroku', (req, res) => {
   //console.log("DEBUG [postHeroku]> " + req.body.result);
-  if (req.body.result.action === DIALOGFLOW_ACTION_WEATHER) {
+  if (req.body.result.action === HOOK_WEATHER) {
     // Set a default weather location
     var city = 'Edinburgh';
     if (typeof req.body.result.parameters['geo-city-gb'] != 'undefined') {
@@ -1025,7 +1029,7 @@ CHASbot.post('/heroku', (req, res) => {
       city = req.body.result.parameters['hospice_places'];
       //console.log("DEBUG [postHeroku]> Hospice @ :" + city);
     };
-    let restUrl = WEATHER_API_URL + WEATHER_API_KEY + '&q=' + city;
+    let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
     //console.log("DEBUG [postHeroku]> Weather URL: " + restUrl);
     request.get(restUrl, (err, response, body) => {
       if (!err && response.statusCode == 200) {
@@ -1048,7 +1052,7 @@ CHASbot.post('/heroku', (req, res) => {
         });
       }
     })
-  } else if (req.body.result.action === DIALOGFLOW_ACTION_PICKCARD) {
+  } else if (req.body.result.action === HOOK_PICKCARD) {
     CARD_PICK = CARD_DECK[Math.floor(Math.random()*CARD_DECK.length)];
     messageText = CARD_PROMPTS[CARD_PROMPT] + CARD_PICK;
     CARD_PROMPT = CARD_PROMPT + 1;
@@ -1057,13 +1061,13 @@ CHASbot.post('/heroku', (req, res) => {
       speech: messageText,
       displayText: messageText
     });
-  } else if (req.body.result.action === DIALOGFLOW_ACTION_FUNDRAISING) {
+  } else if (req.body.result.action === HOOK_FUNDRAISING) {
     return res.json({
       speech: CHAS_FR_CARD,
       displayText: CHAS_FR_CARD
     });
     //console.log("DEBUG [postHeroku]> Send fundraising contact card");
-  } else if (req.body.result.action === DIALOGFLOW_ACTION_SLIM_SHADY) {
+  } else if (req.body.result.action === HOOK_SLIM_SHADY) {
     if (typeof req.body.result.parameters['given-name'] != 'undefined') {
       FB_WHO = req.body.result.parameters['given-name'];
       //console.log("DEBUG [postHeroku]> Slim shady: " + FB_WHO);
@@ -1074,16 +1078,16 @@ CHASbot.post('/heroku', (req, res) => {
       speech: messageText,
       displayText: messageText
     });
-  } else if (req.body.result.action === DIALOGFLOW_ACTION_GROUP_DOCS) {
-    DIALOGFLOW_ACTION_TEMPLATE = true;
-    primeLinkButton(GROUP_DOCS,GROUP_DOCS_TXT,'📚 Useful Documents');
+  } else if (req.body.result.action === HOOK_URL_GROUP_DOCS) {
+    HOOK_TEMPLATE = true;
+    primeLinkButton(URL_GROUP_DOCS,MSG_GROUP_DOC,'📚 Useful Documents');
     return res.json({
       speech: "Useful Documents Link",
       displayText: messageData
     });
-  } else if (req.body.result.action === DIALOGFLOW_ACTION_XMAS) {
-    DIALOGFLOW_ACTION_TEMPLATE = true;
-    primeLinkButton(CHAS_RETAIL,CHAS_RETAIL_TXT,'🛍️ CHAS Retail');
+  } else if (req.body.result.action === HOOK_XMAS) {
+    HOOK_TEMPLATE = true;
+    primeLinkButton(URL_CHAS_RETAIL,MSG_CHAS_RETAIL,'🛍️ CHAS Retail');
     return res.json({
       speech: "CHAS Retail Contact Link",
       displayText: messageData
@@ -1127,8 +1131,9 @@ function primeLinkButton(link_url,reponse_msg,btn_msg) {
 
 function postMarvelResults(pass_on_event,result_or_not) {
   //console.log("DEBUG [postMarvelResults]> Pass or Fail: " + result_or_not);
-  console.log("INFO [postMarvelResults]> Sender: " + FB_WHO_ID);
-  console.log("INFO [postMarvelResults]> Request: " + MARVEL_TIRGGER_PHRASE + " " + HERO_WHO);
+  var sender = pass_on_event.sender.id;
+  console.log("INFO [postMarvelResults]> Sender: " + sender);
+  console.log("INFO [postMarvelResults]> Request: " + TIRGGER_PHRASE_MARVEL + " " + HERO_WHO);
   console.log("INFO [postMarvelResults]> Action: getMarvelChar.postMarvelResults");
   if (result_or_not == 1) {
     console.log("INFO [postMarvelResults]> Reponse: Successful");
@@ -1166,8 +1171,9 @@ function postMarvelResults(pass_on_event,result_or_not) {
 
 function postResultsEventsCHAS(pass_on_event,result_or_not) {
   //console.log("DEBUG [postResultsEventsCHAS]> Pass or Fail: " + result_or_not);
-  console.log("INFO [postResultsEventsCHAS]> Sender: " + FB_WHO_ID);
-  console.log("INFO [postResultsEventsCHAS]> Request: " + CHAS_EVENTS_TIRGGER_PHRASE + " " + CHAS_EVENTS_NAME);
+  var sender = pass_on_event.sender.id;
+  console.log("INFO [postResultsEventsCHAS]> Sender: " + sender);
+  console.log("INFO [postResultsEventsCHAS]> Request: " + TIRGGER_PHRASE_CHAS_EVENTS + " " + CHAS_EVENTS_NAME);
   console.log("INFO [postResultsEventsCHAS]> Action: getEventCHAS.postResultsEventsCHAS");
   if (result_or_not == 1) {
     console.log("INFO [postResultsEventsCHAS]> Reponse: Successful");
@@ -1182,7 +1188,7 @@ function postResultsEventsCHAS(pass_on_event,result_or_not) {
           elements: [
             {
             title: CHAS_EVENTS_NAME,
-            image_url: CHAS_THUMB,
+            image_url: URL_CHAS_THUMB,
             default_action: {
               type: "web_url",
               url: CHAS_EVENTS_INFORMATION,
@@ -1208,14 +1214,15 @@ function postResultsEventsCHAS(pass_on_event,result_or_not) {
 
 function postResultsBiosCHAS(pass_on_event,result_or_not) {
   //console.log("DEBUG [postResultsBiosCHAS]> Input: " + pass_on_event);
-  console.log("INFO [postResultsBiosCHAS]> Sender: " + FB_WHO_ID);
-  console.log("INFO [postResultsBiosCHAS]> Request: " + CHAS_BIOS_TRIGGER_PHRASE + " " + CHAS_BIOS_NAME);
+  var sender = pass_on_event.sender.id;
+  console.log("INFO [postResultsBiosCHAS]> Sender: " + sender);
+  console.log("INFO [postResultsBiosCHAS]> Request: " + TIRGGER_PHRASE_CHAS_BIOGS + " " + CHAS_BIOGS_NAME);
   console.log("INFO [postResultsBiosCHAS]> Action: getBiosCHAS.postResultsBiosCHAS");
   if (result_or_not == 1) {
-    //console.log("DEBUG [postResultsBiosCHAS]> Index: " + CHAS_BIOS_INDEX);
+    //console.log("DEBUG [postResultsBiosCHAS]> Index: " + CHAS_BIOGS_INDEX);
     console.log("INFO [postResultsBiosCHAS]> Reponse: Successful");
-    messageText = CHAS_BIOS[CHAS_BIOS_INDEX + 1];
-    //console.log("DEBUG [postResultsBiosCHAS]> Result: " + CHAS_BIOS[CHAS_BIOS_INDEX + 1]);
+    messageText = CHAS_BIOGS[CHAS_BIOGS_INDEX + 1];
+    //console.log("DEBUG [postResultsBiosCHAS]> Result: " + CHAS_BIOGS[CHAS_BIOGS_INDEX + 1]);
     sendTextDirect(pass_on_event);
   } else {
     console.log("INFO [postResultsBiosCHAS]> Reponse: Unsuccessful");
@@ -1225,7 +1232,8 @@ function postResultsBiosCHAS(pass_on_event,result_or_not) {
 
 function postSearch(pass_on_event) {
   //console.log("DEBUG [postSearch]> Input: " + pass_on_event);
-  console.log("INFO [postSearch]> Sender: " + FB_WHO_ID);
+  var sender = pass_on_event.sender.id;
+  console.log("INFO [postSearch]> Sender: " + sender);
   console.log("INFO [postSearch]> Request: " + SEARCH_METHOD + ' ' + SEARCH_TERM);
   console.log("INFO [postSearch]> Action: postSearch.sendTemplate");
   var search_title = '';
@@ -1233,16 +1241,16 @@ function postSearch(pass_on_event) {
   var search_url = '';
   if (SEARCH_METHOD == "google") {
     search_title = 'Search Google';
-    search_image_url = URL_GOOGLE;
-    search_url = SEARCH_GOOGLE + SEARCH_TERM;
+    search_image_url = URL_GOOGLE_THUMB;
+    search_url = URL_SEARCH_GOOGLE + SEARCH_TERM;
   } else if (SEARCH_METHOD == "wiki") {
     search_title = 'Search Wikipedia';
-    search_image_url = URL_WIKI;
-    search_url = SEARCH_WIKI + SEARCH_TERM;
+    search_image_url = URL_WIKI_THUMB;
+    search_url = URL_SEARCH_WIKI + SEARCH_TERM;
   } else if (SEARCH_METHOD == "beeb") {
     search_title = 'Search BBC';
-    search_image_url = URL_BEEB;
-    search_url = SEARCH_BEEB + SEARCH_TERM;
+    search_image_url = URL_BEEB_THUMB;
+    search_url = URL_SEARCH_BEEB + SEARCH_TERM;
   }
   let search_template = {
     attachment: {
@@ -1270,28 +1278,28 @@ function postSearch(pass_on_event) {
         template_type: "generic",
         elements: [{
           title: "Search Google",
-          image_url: URL_GOOGLE,
+          image_url: URL_GOOGLE_THUMB,
           default_action: {
             type: "web_url",
-            url: SEARCH_GOOGLE + SEARCH_TERM,
+            url: URL_SEARCH_GOOGLE + SEARCH_TERM,
             messenger_extensions: false,
             webview_height_ratio: "tall"
           }
         },{
           title: "Search Wikipedia",
-          image_url: URL_WIKI,
+          image_url: URL_WIKI_THUMB,
           default_action: {
             type: "web_url",
-            url: SEARCH_WIKI + SEARCH_TERM,
+            url: URL_SEARCH_WIKI + SEARCH_TERM,
             messenger_extensions: false,
             webview_height_ratio: "tall"
           }
         },{
           title: "Search BBC",
-          image_url: URL_BEEB,
+          image_url: URL_BEEB_THUMB,
           default_action: {
             type: "web_url",
-            url: SEARCH_BEEB + SEARCH_TERM,
+            url: URL_SEARCH_BEEB + SEARCH_TERM,
             messenger_extensions: false,
             webview_height_ratio: "tall"
           }
@@ -1312,6 +1320,7 @@ function postSearch(pass_on_event) {
 
 function checkHangman(pass_on_event) {
   //console.log("DEBUG [checkHangman]> Input: " + pass_on_event);
+  var sender = pass_on_event.sender.id;
   if (messageText == '') {
     var got_one = false;
     var i = 0; // an indexer into the array
@@ -1360,7 +1369,7 @@ function checkHangman(pass_on_event) {
       };
     };
   };
-  console.log("INFO [checkHangman]> Sender: " + FB_WHO_ID);
+  console.log("INFO [checkHangman]> Sender: " + sender);
   console.log("INFO [checkHangman]> Request: Hangman guess was " + HANGMAN_GUESS);
   console.log("INFO [checkHangman]> Action: checkHangman.sendTextDirect");
   console.log("INFO [checkHangman]> Response: " + messageText);
@@ -1370,12 +1379,13 @@ function checkHangman(pass_on_event) {
 // Fetch back special queries
 function getAlphabetCHAS(LetterTile,pass_in_event) {
   //console.log("DEBUG [getAlphabetCHAS]> Input: " + LetterTile);
-  console.log("INFO [getAlphabetCHAS]> Sender: " + FB_WHO_ID);
-  console.log("INFO [getAlphabetCHAS]> Request: " + CHASABET_TIRGGER_PHRASE1 + " or " + CHASABET_TIRGGER_PHRASE2 + " " + LetterTile);
+  var sender = pass_in_event.sender.id;
+  console.log("INFO [getAlphabetCHAS]> Sender: " + sender);
+  console.log("INFO [getAlphabetCHAS]> Request: " + TRIGGER_PHRASE_CHASABET_1 + " or " + TRIGGER_PHRASE_CHASABET_2 + " " + LetterTile);
   console.log("INFO [getAlphabetCHAS]> Action: getAlphabetCHAS.postImage");
   var target_letter_code = LetterTile.charCodeAt(0) - 97;
   var target_version = CHASABET_INDEX[target_letter_code];
-  CHASABET_URL = IMG_URL_PREFIX + CHASABET[target_letter_code][target_version] + IMG_URL_SUFFIX;
+  CHASABET_URL = URL_IMG_PREFIX + CHASABET[target_letter_code][target_version] + URL_IMG_SUFFIX;
   console.log("INFO [getAlphabetCHAS]> Reponse: IMG URL " + CHASABET_URL);
   //console.log("DEBUG [getAlphabetCHAS]> IMAGE URL: " + CHASABET_URL);
   CHASABET_INDEX[target_letter_code] = target_version + 1;
@@ -1389,9 +1399,9 @@ function getMarvelChar(MarvelWho,pass_in_event) {
   //console.log("DEBUG [getMarvelChar]> Input: " + MarvelWho);
   // String together a URL using the provided keys and search parameters
   HERO_DESCRIPTION = '';
-  var url = MARVEL_API_URL + MarvelWho + "&apikey=" + MARVEL_PUBLIC_KEY;
+  var url = URL_API_MARVEL + MarvelWho + "&apikey=" + KEY_MARVEL_PUBLIC;
   var ts = new Date().getTime();
-  var hash = crypto.createHash('md5').update(ts + MARVEL_PRIVATE_KEY + MARVEL_PUBLIC_KEY).digest('hex');
+  var hash = crypto.createHash('md5').update(ts + KEY_MARVEL_PRIVATE + KEY_MARVEL_PUBLIC).digest('hex');
   url += "&ts=" + ts + "&hash=" + hash;
   //console.log("DEBUG [getMarvelChar]> Lookup: " + url);
   // Call on the URL to get a response
@@ -1540,8 +1550,8 @@ function getEventCHAS(EventName,pass_in_event) {
 
 function getBiosCHAS(PersonName,pass_in_event) {
   //console.log("DEBUG [getBiosCHAS]> Input: " + PersonName);
-  CHAS_BIOS_INDEX = -1;
-  CHAS_BIOS_NAME = PersonName;
+  CHAS_BIOGS_INDEX = -1;
+  CHAS_BIOGS_NAME = PersonName;
   // Take the input provded by the user...
   // ...convert to lowercase
   PersonName = PersonName.toLowerCase();
@@ -1565,10 +1575,10 @@ function getBiosCHAS(PersonName,pass_in_event) {
   var event_loop = 0;
   var keyword_loop = 0;
   // Here we go looping through each set of keywords
-  //console.log("DEBUG [getBiosCHAS]> Total: " + CHAS_BIOS_TOTAL);
-  for (event_loop = 0; event_loop < CHAS_BIOS_TOTAL; event_loop++) {
+  //console.log("DEBUG [getBiosCHAS]> Total: " + CHAS_BIOGS_TOTAL);
+  for (event_loop = 0; event_loop < CHAS_BIOGS_TOTAL; event_loop++) {
     // Break up the keywords into an array of individual words
-    var sentence_split = CHAS_BIOS[event_loop * CHAS_BIOS_BLOCK_SIZE].split(' ');
+    var sentence_split = CHAS_BIOGS[event_loop * CHAS_BIOGS_BLOCK_SIZE].split(' ');
     var sentence_length = sentence_split.length;
     //console.log("DEBUG [getBiosCHAS]> Number of words: " + sentence_length);
     // If there are no keywords at all, the skip the rest of this iteration
@@ -1595,9 +1605,9 @@ function getBiosCHAS(PersonName,pass_in_event) {
     //console.log("DEBUG [getBiosCHAS]> Match Check: " + zero_is_a_match);
     // If there is a match then a value of 0 is returned
     if (zero_is_a_match == 0) {
-      //console.log("DEBUG [getBiosCHAS]> Matched: " + (event_loop * CHAS_BIOS_BLOCK_SIZE));
+      //console.log("DEBUG [getBiosCHAS]> Matched: " + (event_loop * CHAS_BIOGS_BLOCK_SIZE));
       // Sets the index value for the name/keywords for the event
-      CHAS_BIOS_INDEX = event_loop * CHAS_BIOS_BLOCK_SIZE;
+      CHAS_BIOGS_INDEX = event_loop * CHAS_BIOGS_BLOCK_SIZE;
       found_bio = true;
       break;
     }
@@ -1616,18 +1626,19 @@ function getBiosCHAS(PersonName,pass_in_event) {
 
 function getRPSLS(pass_in_event) {
   //console.log("DEBUG [getRPSLS]> Round");
-  console.log("INFO [getRPSLS]> Sender: " + FB_WHO_ID);
-  if (RPSLS_TRIGGER == 1) { // Provide some instructions + prompt
-    console.log("INFO [getRPSLS]> Request: " + RPSLS_TRIGGER_PHRASE);
-    RPSLS_IMG_URL = IMG_URL_PREFIX + RPSLS_IMGS[0] + IMG_URL_SUFFIX;
+  var sender = pass_in_event.sender.id;
+  console.log("INFO [getRPSLS]> Sender: " + sender);
+  if (TRIGGER_RPSLS == 1) { // Provide some instructions + prompt
+    console.log("INFO [getRPSLS]> Request: " + TIRGGER_PHRASE_RPSLS);
+    RPSLS_IMG_URL = URL_IMG_PREFIX + RPSLS_IMGS[0] + URL_IMG_SUFFIX;
     postImage(RPSLS_IMG_URL,pass_in_event);
-    messageText = RPSLS_INTRO + "\n" + RPSLS_PROMPT; // Required within sendTextDirect
+    messageText = MSG_RPSLS_INTRO + "\n" + MSG_RPSLS_PROMPT; // Required within sendTextDirect
     console.log("INFO [getRPSLS]> Action: getRPSLS.postImage_sendTextDirect");
     console.log("INFO [getRPSLS]> Reponse: IMG URL "  + RPSLS_IMG_URL + '; Text: ' + messageText);
     sendTextDirect(pass_in_event);
-  } else if (RPSLS_TRIGGER == 2) { // Just prompt
-    console.log("INFO [getRPSLS]> Request: " + RPSLS_TRIGGER_PHRASE);
-    messageText = RPSLS_PROMPT; // Required within sendTextDirect
+  } else if (TRIGGER_RPSLS == 2) { // Just prompt
+    console.log("INFO [getRPSLS]> Request: " + TIRGGER_PHRASE_RPSLS);
+    messageText = MSG_RPSLS_PROMPT; // Required within sendTextDirect
     console.log("INFO [getRPSLS]> Action: getRPSLS.sendTextDirect");
     console.log("INFO [getRPSLS]> Reponse: " + messageText);
     sendTextDirect(pass_in_event);
@@ -1642,7 +1653,7 @@ function getRPSLS(pass_in_event) {
     for (find_index = 0; find_index < RPSLS_WIN.length; find_index++) {
       //console.log("DEBUG [getRPSLS]> Win check: " + RPSLS_WIN[find_index]);
       if (PLAYERvBOT == RPSLS_WIN[find_index]) {
-        RPSLS_IMG_URL = IMG_URL_PREFIX + RPSLS_IMGS[1 + find_index] + IMG_URL_SUFFIX;
+        RPSLS_IMG_URL = URL_IMG_PREFIX + RPSLS_IMGS[1 + find_index] + URL_IMG_SUFFIX;
         messageText = "You win. Your " + toTitleCase(RPSLS_PICK_PLAYER) + " ";
         messageText = messageText + RPSLS_OUTCOMES[find_index] + " my ";
         messageText = messageText + toTitleCase(RPSLS_PICK_CHASBOT) + ". ";
@@ -1656,7 +1667,7 @@ function getRPSLS(pass_in_event) {
       for (find_index = 0; find_index < RPSLS_LOSE.length; find_index++) {
         //console.log("DEBUG [getRPSLS]> Lose check: " + RPSLS_LOSE[find_index]);
         if (PLAYERvBOT == RPSLS_LOSE[find_index]) {
-          RPSLS_IMG_URL = IMG_URL_PREFIX + RPSLS_IMGS[11 + find_index] + IMG_URL_SUFFIX;
+          RPSLS_IMG_URL = URL_IMG_PREFIX + RPSLS_IMGS[11 + find_index] + URL_IMG_SUFFIX;
           messageText = "I win. My " + toTitleCase(RPSLS_PICK_CHASBOT) + " ";
           messageText = messageText + RPSLS_OUTCOMES[find_index] + " your ";
           messageText = messageText + toTitleCase(RPSLS_PICK_PLAYER) + ". ";
@@ -1671,7 +1682,7 @@ function getRPSLS(pass_in_event) {
       for (find_index = 0; find_index < RPSLS_DRAW.length; find_index++) {
         //console.log("DEBUG [getRPSLS]> Draw check: " + RPSLS_DRAW[find_index]);
         if (PLAYERvBOT == RPSLS_DRAW[find_index]) {
-          RPSLS_IMG_URL = IMG_URL_PREFIX2 + RPSLS_IMGS[21 + find_index] + IMG_URL_SUFFIX;
+          RPSLS_IMG_URL = URL_IMG_PREFIX2 + RPSLS_IMGS[21 + find_index] + URL_IMG_SUFFIX;
           messageText = "It's a draw. ";
           break;
         };
