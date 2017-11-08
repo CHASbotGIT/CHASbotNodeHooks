@@ -922,7 +922,7 @@ function sendSurveyQuestion(event) {
 }
 
 function customGreeting (senderID) {
-  console.log("DEBUG [customGreeting]> " + senderID);
+  //console.log("DEBUG [customGreeting]> " + senderID);
   var build_greeting = '';
   var fb_who;
   var fb_who_known = false;
