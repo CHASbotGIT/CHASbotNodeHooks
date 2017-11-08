@@ -106,7 +106,7 @@ var HELP_PROMPTS = [
   ["7a/45/0uhs3nQx","Weather at Rachel House","Weather in Aberdeen","Search CHAS","Google FB Workplace","Wiki Santa Claus","Beeb Blue Planet"],
   ["9a/f7/yRfMnV7i","Bazinga","Hangman","Pick a card","Toss a coin","Roll a dice","Magic 8"],
   ["0a/fe/WxsCGnFs","What’s a scrub","Is winter coming","My milkshake","Witness me","Is this the real life","I want the truth"],
-  ["de/ff/4ZtuUqYX","Marvel codename Hulk","Execute Order 66","Beam me up","Open pod bay doors","Roll for initiative","Talk like Yoda"]
+  ["de/ff/4ZtuUqYX","Marvel Hulk","Execute Order 66","Beam me up","Open pod bay doors","Roll for initiative","Talk like Yoda"]
 ]; // images2 source
 var HELP_INDEX = 0;
 // Regular expressions
