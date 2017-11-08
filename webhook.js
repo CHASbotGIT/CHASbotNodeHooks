@@ -931,7 +931,7 @@ function customGreeting (senderID) {
   for (var find_index = 0; find_index < IDS_TOTAL; find_index++) {
     // 1,3,5 etc.
     match_id = IDS_LIST[find_index * IDS_BLOCK_SIZE + 1];
-    console.log("DEBUG [customGreeting]> Find match for ID (" + senderID + "): " + match_id);
+    //console.log("DEBUG [customGreeting]> Find match for ID (" + senderID + "): " + match_id);
     if (match_id == senderID) {
       id_index = find_index; // Got our match
       fb_who = IDS_LIST[find_index * IDS_BLOCK_SIZE];
@@ -943,7 +943,7 @@ function customGreeting (senderID) {
   // Prime personalised response
   // if ( we know who the person is AND ( either they've not had a name check OR been a while since name check))
   if (fb_who_known && (IDS_TIMESTAMP[id_index] == null||new Date().getTime() - IDS_TIMESTAMP[id_index] > minsConvert(TIME_TO_WAIT))) {
-    console.log("DEBUG [customGreeting]> Interval in mins since last message has been: " + minsConvert(TIME_TO_WAIT));
+    //console.log("DEBUG [customGreeting]> Interval in mins since last message has been: " + minsConvert(TIME_TO_WAIT));
     var hr = new Date().getHours();
     for (var loop_hour = 0; loop_hour < TIME_OF_DAY.length; loop_hour++) {
       if (hr >= TIME_OF_DAY[loop_hour][0]) {
@@ -956,7 +956,7 @@ function customGreeting (senderID) {
     IDS_TIMESTAMP[id_index] = new Date().getTime();
     console.log("NAME CHECK: [customGreeting]> " + fb_who + ", ID: " + senderID + " @ " + IDS_TIMESTAMP[id_index]);
   };
-  console.log("DEBUG [customGreeting]> Greeting: " + build_greeting);
+  //console.log("DEBUG [customGreeting]> Greeting: " + build_greeting);
   return build_greeting;
 }
 
