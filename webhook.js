@@ -11,6 +11,7 @@ const KEY_PAGE_ACCESS = process.env.KEY_PAGE_ACCESS;
 const KEY_VERIFY = process.env.KEY_VERIFY;
 const KEY_DIALOGFLOW = process.env.KEY_DIALOGFLOW;
 const KEY_API_WEATHER = process.env.KEY_API_WEATHER;
+const KEY_API_MOVIEDB = process.env.KEY_API_MOVIEDB;
 const KEY_CRYPTO = process.env.KEY_CRYPTO;
 const KEY_MARVEL_PRIVATE = process.env.KEY_MARVEL_PRIVATE;
 const KEY_MARVEL_PUBLIC = process.env.KEY_MARVEL_PUBLIC;
@@ -45,6 +46,33 @@ const MSG_GROUP_DOC = "For an answer to this and other similar questions, visit 
 const MSG_SURVEY_THANKS = "❤️ Thank you for finishing our little survey.";
 const MSG_RPSLS_INTRO = "💡 First to five is the champion. Scissors cuts Paper, Paper covers Rock, Rock crushes Lizard, Lizard poisons Spock, Spock smashes Scissors, Scissors decapitates Lizard, Lizard eats Paper, Paper disproves Spock, Spock vaporizes Rock, and Rock crushes Scissors!";
 const MSG_RPSLS_PROMPT = "Choose... Rock, Paper, Scissors, Lizard or Spock?";
+var MSG_STAR_RATING = [
+  "Meh, in my book it's complete pants, all rotten tomatoes 🍅🍅🍅🍅🍅.",
+  "I'd be generous giving it ⭐🍅🍅🍅🍅, I watched it so you don't have to!",
+  "Wouldn't watch it again at ⭐⭐🍅🍅🍅, give it 20 mins and judge for yourself.",
+  "I'd give it a better than average ⭐⭐⭐🍅🍅. Pop it on.",
+  "Well worth the watching ⭐⭐⭐⭐🍅, give it a go.",
+  "Wow, a fantastic ⭐⭐⭐⭐⭐. In my humble opinion. you must watch."];
+var MSG_WEEKDAYS = [
+  "Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+var MSG_THUMBS = ["👍👍👍","👍👍👎","👍👎👎","👎👎👎"];
+var MSG_EVENTS_OOPS = [
+  "📆 Oops, that's not something I could find...",
+  "📆 Mmmm, not an event that I recognise...",
+  "📆 Not sure I'm able to help you with when that is..."];
+var MSG_RANDOM_COMPLIMENT = [
+  "Looking good.","You're more fun than bubblewrap.","I bet you do crossword puzzles in ink.",
+  "You're like a breath of fresh air.","You're like sunshine on a rainy day.","On a scale from 1 to 10, you're an 11.",
+  "Your smile is contagious.","You know how to find that silver lining.","You're inspiring.","I like your style.",
+  "You're a great listener.","I bet you sweat glitter.","You were cool way before hipsters.",
+  "Hanging out with you is always a blast.","You're one of a kind.","You always know just what to say.",
+  "There's ordinary, and then there's you."];
+var MSG_HERO_OOPS = [
+  "⚠️ Alert: Hydra stole this result from the S.H.I.E.L.D. database...",
+  "☠️ Warning: Hydra Infiltration. Result unavailable while under attack from enemy forces...",
+  "👁️ Not even the eye of Uatu sees your request...",
+  "💾 Program missing, exiting protocol...",
+  "💣 Danger: Energy Overload..."];
 // Triggers in lowercase - following phrases are handled in code
 const TRIGGER_PHRASE_SURVEY = 'survey';
 const TRIGGER_PHRASE_HELP = 'help';
@@ -58,7 +86,8 @@ const TIRGGER_PHRASE_CHAS_BIOGS = 'who is';
 const TIRGGER_PHRASE_RPSLS = 'bazinga';
 const TRIGGER_PHRASE_HANGMAN = 'hangman';
 const TRIGGER_PHRASE_STOP = 'stop';
-var TRIGGER_PHRASE_SEARCH = new Array ('search','google','wiki','beeb');
+var TRIGGER_PHRASE_SEARCH = ['search','google','wiki','beeb'];
+var TRIGGER_PHRASE_MOVIEDB = ['watched','watch','catch','seen','see'];
 // DialogFlow fulfillment hooks
 const HOOK_FUNDRAISING = 'fundraising';
 const HOOK_PICKCARD = 'cards';
@@ -105,8 +134,7 @@ var HELP_PROMPTS = [
   ["7a/45/0uhs3nQx","Weather at Rachel House","Weather in Aberdeen","Search CHAS","Google FB Workplace","Wiki Santa Claus","Beeb Blue Planet"],
   ["9a/f7/yRfMnV7i","Bazinga","Hangman","Pick a card","Toss a coin","Roll a dice","Magic 8"],
   ["0a/fe/WxsCGnFs","What’s a scrub","Is winter coming","My milkshake","Witness me","Is this the real life","I want the truth"],
-  ["de/ff/4ZtuUqYX","Marvel Hulk","Execute Order 66","Beam me up","Open pod bay doors","Roll for initiative","Talk like Yoda"]
-]; // images2 source
+  ["de/ff/4ZtuUqYX","Marvel codename Hulk","Execute Order 66","Beam me up","Open pod bay doors","Roll for initiative","Talk like Yoda"]]; // images2 source
 var HELP_INDEX = 0;
 // Regular expressions
 const REGEX_START = '(?=.*\\b'; // Regular expression bits
@@ -121,11 +149,6 @@ var CHAS_EVENTS_INDEX = -1;
 var CHAS_EVENTS_NAME = ''; // Result
 var CHAS_EVENTS_DETAILS = ''; // Result
 var CHAS_EVENTS_INFORMATION = ''; // Result
-var CHAS_EVENTS_OOPS = [
-  "📆 Oops, that's not something I could find...",
-  "📆 Mmmm, not an event that I recognise...",
-  "📆 Not sure I'm able to help you with when that is..."
-];
 var CHAS_EVENTS_OOPS_INDEX = 0;
 // CHAS biographies
 var TRIGGER_CHAS_BIOGS = false;
@@ -146,16 +169,7 @@ var TIME_OF_DAY = [
   [22,"Getting late"],[19,"Good evening"],[18,"Time for tea"],[13,"Afternoon"],[12,"Lunch time"],
   [11,"Time for Elevenses"],[8,"Morning"],[7,"Breakfast time"],[6,"Another day another dollar"],
   [5,"Whoa, you're an early bird"],[4,"You're up early (or very late)"],[3,"Yawn, worst time to be awake"],
-  [2,"You're up late"],[1,"Zzzzz, sorry"],[0,"It's the witching hour"]
-];
-var RANDOM_COMPLIMENT = [
-  "Looking good.","You're more fun than bubblewrap.","I bet you do crossword puzzles in ink.",
-  "You're like a breath of fresh air.","You're like sunshine on a rainy day.","On a scale from 1 to 10, you're an 11.",
-  "Your smile is contagious.","You know how to find that silver lining.","You're inspiring.","I like your style.",
-  "You're a great listener.","I bet you sweat glitter.","You were cool way before hipsters.",
-  "Hanging out with you is always a blast.","You're one of a kind.","You always know just what to say.",
-  "There's ordinary, and then there's you."
-];
+  [2,"You're up late"],[1,"Zzzzz, sorry"],[0,"It's the witching hour"]];
 // CHAS logo
 var TRIGGER_CHAS_LOGO = false;
 // CHAS alphabet
@@ -198,13 +212,6 @@ var HERO_WHO_NOW = '';
 var HERO_DESCRIPTION = ''; // Result
 var HERO_THUMB = ''; // Result
 var HERO_URL = ''; // Result
-var HERO_OOPS = [
-  "⚠️ Alert: Hydra stole this result from the S.H.I.E.L.D. database...",
-  "☠️ Warning: Hydra Infiltration. Result unavailable while under attack from enemy forces...",
-  "👁️ Not even the eye of Uatu sees your request...",
-  "💾 Program missing, exiting protocol...",
-  "💣 Danger: Energy Overload..."
-];
 var HERO_OOPS_INDEX = 0;
 // Rock Paper Scissors Lizard Spock
 var TRIGGER_RPSLS = 0;
@@ -244,13 +251,18 @@ var HANGMAN_GUESS = '';
 var HANGMAN_WORD = '';
 var HANGMAN_ANSWER = '';
 var HANGMAN_ANSWER_ARRAY = [];
-var HANGMAN_STRIKE_STRING = ["👍👍👍","👍👍👎","👍👎👎","👎👎👎"];
 // Survey
 var SURVEY_IN_PLAY = false;
 var SURVEY_VIABLE  = true;
 var SURVEY_NAME = ''; // Loaded from survey.txt 1st line
 var SURVEY_QUESTIONS = [];
 var SURVEY_QUESTION_NUMBER = 0;
+// Film and TV
+var TRIGGER_MOVIEDB = false;
+var MOVIEDB_METHOD = '';
+var MOVIEDB_RECORDS_INDEX = -1;
+var MOVIEDB_RECORDS = new Array();
+var MOVIEDB_TERM = '';
 
 // Encryption and decryption of biographies
 var enCrypt = function(text_plain) {
@@ -547,7 +559,7 @@ CHASbot.post('/webhook', (req, res) => {
             HANGMAN_ANSWER = HANGMAN_ANSWER_ARRAY.join(' ');
             messageText = "🤔 Figure out the mystery staff member name.\nType a letter to guess, or 'stop'.\nYour are allowed no more than 3 strikes.";
             messageText = messageText + "\n" + HANGMAN_ANSWER;
-            messageText = messageText + "\n" + HANGMAN_STRIKE_STRING[HANGMAN_STRIKES] + " (" + HANGMAN_STRIKES + " strike";
+            messageText = messageText + "\n" + MSG_THUMBS[HANGMAN_STRIKES] + " (" + HANGMAN_STRIKES + " strike";
             if (HANGMAN_STRIKES == 1) {
               messageText = messageText + ")";
             } else {
@@ -575,6 +587,30 @@ CHASbot.post('/webhook', (req, res) => {
                   HANGMAN_IN_PLAY = false; // Cxl Hangman
                   SEARCH_TERM = analyse_text.slice(starting_point,ending_point);
                   //console.log("DEBUG [postWebhook]> Search term: " + SEARCH_TERM);
+                };
+              };
+            };
+          };
+          // TV and film
+          TRIGGER_MOVIEDB = false;
+          rightmost_starting_point = -1;
+          trigger_loop = 0;
+          for (trigger_loop = 0; trigger_loop < TRIGGER_PHRASE_MOVIEDB.length; trigger_loop++) {
+            position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_PHRASE_MOVIEDB[trigger_loop]) + 1;
+            if (position_in_analyse_text > 0) {
+              starting_point = position_in_analyse_text + TRIGGER_PHRASE_MOVIEDB[trigger_loop].length;
+              if (starting_point > rightmost_starting_point) { // Find right-most search term
+                rightmost_starting_point = starting_point;
+                ending_point = analyse_text.length;
+                string_length = ending_point - starting_point;
+                MOVIEDB_METHOD = TRIGGER_PHRASE_MOVIEDB[trigger_loop];
+                //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
+                //console.log("DEBUG [postWebhook]> MovieDb key found: " + MOVIEDB_METHOD);
+                if (string_length > 0) {
+                  TRIGGER_MOVIEDB = true;
+                  HANGMAN_IN_PLAY = false; // Cxl Hangman
+                  MOVIEDB_TERM = analyse_text.slice(starting_point,ending_point);
+                  //console.log("DEBUG [postWebhook]> Movie or TV title: " + MOVIEDB_TERM);
                 };
               };
             };
@@ -719,6 +755,9 @@ CHASbot.post('/webhook', (req, res) => {
           } else if (TRIGGER_SEARCH) {
             //console.log("DEBUG [postWebhook]> Search: " + SEARCH_TERM);
             postSearch(event);
+          } else if (TRIGGER_MOVIEDB) {
+            //console.log("DEBUG [postWebhook]> Search: " + MOVIEDB_TERM);
+            queryFilmTV(MOVIEDB_TERM,event);
           } else if (TRIGGER_CHAS_LOGO) {
             //console.log("DEBUG [postWebhook]> Logo");
             console.log("INFO [postWebhook]> Sender: " + sender);
@@ -945,7 +984,7 @@ function customGreeting (senderID) {
         break;
       }; // for
     }; // if
-    build_greeting = build_greeting + ' ' + fb_who + '. ' + RANDOM_COMPLIMENT[Math.floor(Math.random()*RANDOM_COMPLIMENT.length)] + ' ';
+    build_greeting = build_greeting + ' ' + fb_who + '. ' + MSG_RANDOM_COMPLIMENT[Math.floor(Math.random()*MSG_RANDOM_COMPLIMENT.length)] + ' ';
     // Set the time the ID received a name check
     IDS_TIMESTAMP[id_index] = new Date().getTime();
     console.log("NAME CHECK: [customGreeting]> " + fb_who + ", ID: " + senderID + " @ " + IDS_TIMESTAMP[id_index]);
@@ -1145,9 +1184,9 @@ function postMarvelResults(pass_on_event,result_or_not) {
     sendTemplate(pass_on_event);
   } else {
     console.log("INFO [postMarvelResults]> Reponse: Unuccessful");
-    messageText = HERO_OOPS[HERO_OOPS_INDEX] + ' try something instead of ' + HERO_WHO + '?'; // Required within sendTextDirect
+    messageText = MSG_HERO_OOPS[HERO_OOPS_INDEX] + ' try something instead of ' + HERO_WHO + '?'; // Required within sendTextDirect
     HERO_OOPS_INDEX = HERO_OOPS_INDEX + 1;
-    if (HERO_OOPS_INDEX == HERO_OOPS.length) {HERO_OOPS_INDEX = 0};
+    if (HERO_OOPS_INDEX == MSG_HERO_OOPS.length) {HERO_OOPS_INDEX = 0};
     sendTextDirect(pass_on_event);
   };
 }
@@ -1188,9 +1227,9 @@ function postResultsEventsCHAS(pass_on_event,result_or_not) {
     sendTemplate(pass_on_event);
   } else {
     console.log("INFO [postResultsEventsCHAS]> Reponse: Unsuccessful");
-    messageText = CHAS_EVENTS_OOPS[CHAS_EVENTS_OOPS_INDEX] + ' try something instead of ' + toTitleCase(CHAS_EVENTS_NAME) + '?'; // Required within sendTextDirect
+    messageText = MSG_EVENTS_OOPS[CHAS_EVENTS_OOPS_INDEX] + ' try something instead of ' + toTitleCase(CHAS_EVENTS_NAME) + '?'; // Required within sendTextDirect
     CHAS_EVENTS_OOPS_INDEX = CHAS_EVENTS_OOPS_INDEX + 1;
-    if (CHAS_EVENTS_OOPS_INDEX == CHAS_EVENTS_OOPS.length) {CHAS_EVENTS_OOPS_INDEX = 0};
+    if (CHAS_EVENTS_OOPS_INDEX == MSG_EVENTS_OOPS.length) {CHAS_EVENTS_OOPS_INDEX = 0};
     sendTextDirect(pass_on_event);
   };
 }
@@ -1313,7 +1352,7 @@ function checkHangman(pass_on_event) {
         got_one = true;
         messageText = "Yes! " + HANGMAN_GUESS.toUpperCase() + " is in the answer.";
         messageText = messageText + "\n" + HANGMAN_ANSWER_ARRAY.join(' ');
-        messageText = messageText + "\n" + HANGMAN_STRIKE_STRING[HANGMAN_STRIKES] + " (" + HANGMAN_STRIKES + " strike";
+        messageText = messageText + "\n" + MSG_THUMBS[HANGMAN_STRIKES] + " (" + HANGMAN_STRIKES + " strike";
         if (HANGMAN_STRIKES == 1) {
           messageText = messageText + ")";
         } else {
@@ -1343,7 +1382,7 @@ function checkHangman(pass_on_event) {
         messageText = messageText + '\n' + 'The mystery staff member was ' + HANGMAN_WORD.toUpperCase() + '!'
       } else {
         messageText = messageText + "\n" + HANGMAN_ANSWER_ARRAY.join(' ');
-        messageText = messageText + "\n" + HANGMAN_STRIKE_STRING[HANGMAN_STRIKES] + " (" + HANGMAN_STRIKES + " strike";
+        messageText = messageText + "\n" + MSG_THUMBS[HANGMAN_STRIKES] + " (" + HANGMAN_STRIKES + " strike";
         if (HANGMAN_STRIKES == 1) {
           messageText = messageText + ")";
         } else {
@@ -1378,6 +1417,152 @@ function getAlphabetCHAS(LetterTile,pass_in_event) {
   postImage(CHASABET_URL,pass_in_event);
 }
 
+function getFilmTV(nameFilmTV,episode_find,tv_film,record_index,pass_on_event) {
+  //console.log("DEBUG [getFilmTV]> Input: " + nameFilmTV + ", " + episode_find + ", " + tv_film + ", " + record_index);
+  var epBlurb = ''; // return value
+  const base_url = "https://api.themoviedb.org/3/search/";
+  const params_url = "api_key=" + KEY_API_MOVIEDB;
+  const movie_url = "movie?";
+  const tv_url = "tv?";
+  var query_url = "&query=" + nameFilmTV;
+  // First pass * TV *
+  if (tv_film == 'tv') { var url = base_url + tv_url + params_url + query_url }
+  else if (tv_film == 'film') { var url = base_url + movie_url + params_url + query_url };
+  // e.g. https://api.themoviedb.org/3/search/movie?api_key={api_key}&query=Jack+Reacher
+  // id 1871 is Eastenders; Season 33 is 2017
+  if (episode_find) { url = "https://api.themoviedb.org/3/tv/1871/season/33?api_key=" + KEY_API_MOVIEDB + "&language=en-US" };
+  //console.log("DEBUG [getFilmTV]> URL: " + url);
+  http.get(url, function(res) {
+    //console.log("DEBUG [getFilmTV]> MovieDb Response Code: " + res.statusCode);
+    var body = "";
+    res.on('data', function (chunk) { body += chunk });
+    res.on('end', function() {
+      var movieDbData = JSON.parse(body);
+      //console.log("DEBUG [getFilmTV]> MovieDb Response: " + movieDbData);
+      if (res.statusCode === 200) {
+        if (episode_find) {
+          var tdyDate = new Date();
+          // Loop down from latest episode
+          for (var i = movieDbData.episodes.length-1; i > -1; i--) {
+            var epDate = new Date(movieDbData.episodes[i].air_date);
+            // Find the first in the past
+            if (tdyDate > epDate) {
+              epBlurb = movieDbData.episodes[i].overview;
+              var weekday_value = epDate.getDay();
+              epBlurb = "The last episode I saw was on " + MSG_WEEKDAYS[weekday_value] + ", it was the one where: " + epBlurb;
+              //console.log("DEBUG [getFilmTV]> Easties result: " + epBlurb);
+              MOVIEDB_RECORDS[record_index][0] = true;
+              MOVIEDB_RECORDS[record_index][1] = epBlurb;
+              MOVIEDB_RECORDS[record_index][3] = true;
+              MOVIEDB_RECORDS[record_index][4] = epBlurb;
+              postFilmTV(record_index,pass_on_event);
+              return;
+            };
+          };
+        } else if (typeof movieDbData.results != 'undefined' && movieDbData.total_results != 0) {
+          // Read the first result
+          var blurb = movieDbData.results[0].overview;
+          var rating = Math.round(movieDbData.results[0].vote_average / 2);
+          epBlurb = MSG_STAR_RATING[rating] + " That's the one where: " + blurb + " (theMovieDb)";
+          //console.log("DEBUG [getFilmTV]> TV result: " + epBlurb);
+          if (tv_film == 'tv') {
+            MOVIEDB_RECORDS[record_index][0] = true;
+            MOVIEDB_RECORDS[record_index][1] = epBlurb;
+            MOVIEDB_RECORDS[record_index][2] = rating;
+          } else if (tv_film == 'film') {
+            MOVIEDB_RECORDS[record_index][3] = true;
+            MOVIEDB_RECORDS[record_index][4] = epBlurb;
+            MOVIEDB_RECORDS[record_index][5] = rating;
+          };
+          postFilmTV(record_index,pass_on_event);
+          return;
+        } else {
+          //console.log("DEBUG [getFilmTV]> No " + tv_film + " result");
+          if (tv_film == 'tv') {
+            MOVIEDB_RECORDS[record_index][0] = true;
+            MOVIEDB_RECORDS[record_index][1] = 'No TV result';
+          } else if (tv_film == 'film') {
+            MOVIEDB_RECORDS[record_index][3] = true;
+            MOVIEDB_RECORDS[record_index][4] = 'No film result';
+          };
+          postFilmTV(record_index,pass_on_event);
+          return;
+        };
+      } else {
+        console.log("ERROR [getFilmTV]> Response Error");
+      }; // if (res.statusCode === 200)
+    }); // res.on('end', function()
+  }); // http.get(url, function(res)
+}
+
+function queryFilmTV(TargetName,pass_in_event) {
+  //console.log("DEBUG [queryFilmTV]> Input: " + TargetName);
+  MOVIEDB_RECORDS_INDEX = MOVIEDB_RECORDS_INDEX + 1;
+  var hold_index = MOVIEDB_RECORDS_INDEX;
+  //if (MOVIEDB_RECORDS_INDEX == 10) {MOVIEDB_RECORDS_INDEX = 0;};
+  MOVIEDB_RECORDS[hold_index] = [false,'',0,false,'',0,false];
+  TargetName = TargetName.replace(/\s/g, '+');
+  TargetName = TargetName.toLowerCase();
+  if (TargetName == 'easties'||TargetName == 'east+enders'||TargetName == 'eastenders') {
+    // id 1871 is Eastenders; Season 33 is 2017
+    getFilmTV(TargetName,true,'tv',hold_index,pass_in_event);
+  } else {
+    getFilmTV(TargetName,false,'tv',hold_index,pass_in_event);
+    getFilmTV(TargetName,false,'film',hold_index,pass_in_event);
+  };
+}
+
+function postFilmTV(record_index,pass_event) {
+  //console.log("DEBUG [postFilmTV]> Index: " + record_index + ", " + MOVIEDB_RECORDS[record_index][0] + ", " + MOVIEDB_RECORDS[record_index][3]+ ", " + MOVIEDB_RECORDS[record_index][6]);
+  var sender = pass_event.sender.id;
+  if (MOVIEDB_RECORDS[record_index][0] && MOVIEDB_RECORDS[record_index][3] && !MOVIEDB_RECORDS[record_index][6]) {
+    MOVIEDB_RECORDS[record_index][6] = true;
+    if (MOVIEDB_RECORDS[record_index][1] == 'No TV result' && MOVIEDB_RECORDS[record_index][4] == 'No film result') {
+      // No result
+      sendMessageViaAPIAI(pass_event);
+    } else if (MOVIEDB_RECORDS[record_index][1] != 'No TV result' && MOVIEDB_RECORDS[record_index][4] == 'No film result') {
+      // TV only
+      console.log("INFO [postFilmTV]> Sender: " + sender);
+      console.log("INFO [postFilmTV]> Request: MovieDb");
+      console.log("INFO [postFilmTV]> Action: postFilmTV.sendTextDirect");
+      messageText = "📺 " + MOVIEDB_RECORDS[record_index][1];
+      console.log("INFO [postFilmTV]> Reponse: " + messageText);
+      sendTextDirect(pass_event);
+    } else if (MOVIEDB_RECORDS[record_index][1] == 'No TV result' && MOVIEDB_RECORDS[record_index][4] != 'No film result') {
+      // Film only
+      console.log("INFO [postFilmTV]> Sender: " + sender);
+      console.log("INFO [postFilmTV]> Request: MovieDb");
+      console.log("INFO [postFilmTV]> Action: postFilmTV.sendTextDirect");
+      messageText = "📽️ " + MOVIEDB_RECORDS[record_index][4];
+      console.log("INFO [postFilmTV]> Reponse: " + messageText);
+      sendTextDirect(pass_event);
+    } else {
+      // Both
+      console.log("INFO [postFilmTV]> Sender: " + sender);
+      console.log("INFO [postFilmTV]> Request: MovieDb");
+      console.log("INFO [postFilmTV]> Action: postFilmTV.sendTextDirect");
+      if (MOVIEDB_RECORDS[record_index][2] > MOVIEDB_RECORDS[record_index][5]) {
+        messageText = "📺 " + MOVIEDB_RECORDS[record_index][1];
+        console.log("INFO [postFilmTV]> Reponse: " + messageText);
+        sendTextDirect(pass_event);
+      } else if (MOVIEDB_RECORDS[record_index][2] < MOVIEDB_RECORDS[record_index][5]) {
+        messageText = "📽️ " + MOVIEDB_RECORDS[record_index][4];
+        console.log("INFO [postFilmTV]> Reponse: " + messageText);
+        sendTextDirect(pass_event);
+      } else {
+        var pick_one = Math.floor(Math.random()*2);
+        if (pick_one == 0) {
+          messageText = "🎞️ " + MOVIEDB_RECORDS[record_index][1];
+        } else {
+          messageText = "🎞️ " + MOVIEDB_RECORDS[record_index][4];
+        };
+        console.log("INFO [postFilmTV]> Reponse: " + messageText);
+        sendTextDirect(pass_event);
+      };
+    };
+  };
+}
+
 function getMarvelChar(MarvelWho,pass_in_event) {
   //console.log("DEBUG [getMarvelChar]> Input: " + MarvelWho);
   // String together a URL using the provided keys and search parameters
@@ -1391,9 +1576,7 @@ function getMarvelChar(MarvelWho,pass_in_event) {
   http.get(url, function(res) {
     var body = "";
     // Data comes through in chunks
-    res.on('data', function (chunk) {
-        body += chunk;
-    });
+    res.on('data', function (chunk) { body += chunk });
     // When all the data is back, go on to query the full response
     res.on('end', function() {
         var characterData = JSON.parse(body);
@@ -1442,7 +1625,7 @@ function getEventCHAS(EventName,pass_in_event) {
   CHAS_EVENTS_INDEX = -1;
   CHAS_EVENTS_NAME = EventName;
   // Take the input provded by the user...
-  // ...convert to lowercase
+  // ...convert to case
   EventName = EventName.toLowerCase();
   // 5k special case
   EventName = EventName.replace(/5k/g, 'fivek');
