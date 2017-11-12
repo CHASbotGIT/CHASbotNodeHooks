@@ -87,7 +87,7 @@ const TIRGGER_PHRASE_RPSLS = 'bazinga';
 const TRIGGER_PHRASE_HANGMAN = 'hangman';
 const TRIGGER_PHRASE_STOP = 'stop';
 var TRIGGER_PHRASE_SEARCH = ['search','google','wiki','beeb'];
-var TRIGGER_PHRASE_MOVIEDB = ['watched','watch','catch','seen','see'];
+var TRIGGER_PHRASE_MOVIEDB = ['synopsis on','synopsis of','watched','info on','about','watch','catch','seen','see'];
 // DialogFlow fulfillment hooks
 const HOOK_FUNDRAISING = 'fundraising';
 const HOOK_PICKCARD = 'cards';
