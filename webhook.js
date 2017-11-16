@@ -1127,7 +1127,7 @@ CHASbot.post('/heroku', (req, res) => {
       speech: "CHAS Plan Link",
       displayText: messageData
     });
-  } else if (req.body.result.action === HOOK_WORK) {
+  } else if (req.body.result.action === HOOK_WORKPLACE) {
     HOOK_TEMPLATE = true;
     primeLinkButton(URL_GROUP_HELP,MSG_GROUP_HELP,'🆘 Workplace Help');
     return res.json({
