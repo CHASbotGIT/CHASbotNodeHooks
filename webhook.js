@@ -41,6 +41,8 @@ const FILE_ENCRYPTED_IDS = "./ids_public.txt";
 var server_port = process.env.PORT || 9000; //
 var server_ip_address = '127.0.0.1'; // Only for testing via local NGROK.IO
 // Messages
+const MSG_GROUP_HELP = "Come and join the Workplace Help Group, for answers to this and other questions.";
+const MSG_CHAS_PLAN = "The CHAS plan explains how we intend to reach every child and family in Scotland who needs our support. Please read it.";
 const MSG_CHAS_RETAIL = "🎄 Christmas cards and more are available now from our shops or by mail order.";
 const MSG_GROUP_DOC = "For an answer to this and other similar questions, visit and join the group that stores the library of all relevant CHAS forms, documents and policies.";
 const MSG_SURVEY_THANKS = "❤️ Thank you for finishing our little survey.";
@@ -90,9 +92,11 @@ var TRIGGER_PHRASE_SEARCH = ['search','google','wiki','beeb'];
 var TRIGGER_PHRASE_MOVIEDB = ['synopsis on','synopsis of','watched','info on','about','watch','catch','seen','see'];
 // DialogFlow fulfillment hooks
 const HOOK_FUNDRAISING = 'fundraising';
+const HOOK_WORKPLACE = 'workplace';
 const HOOK_PICKCARD = 'cards';
 const HOOK_WEATHER = 'weather';
 const HOOK_URL_GROUP_DOCS = 'group_docs';
+const HOOK_PLAN = 'plan';
 const HOOK_XMAS = 'xmas';
 var HOOK_TEMPLATE = false;
 // Timings
@@ -103,7 +107,9 @@ const URL_CHAT_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages";
 const URL_API_WEATHER = "http://api.openweathermap.org/data/2.5/weather?APPID=";
 const URL_API_MARVEL = "https://gateway.marvel.com/v1/public/characters?nameStartsWith="
 const URL_GROUP_DOCS = "https://work-" + KEY_ROOT + ".facebook.com/groups/1707079182933694";
+const URL_GROUP_HELP = "https://work-" + KEY_ROOT + ".facebook.com/groups/733856763459096/files/";
 const URL_CHAS_RETAIL = "https://www.chas.org.uk/contact_chas#retail";
+const URL_CHAS_PLAN = "https://s3-eu-west-1.amazonaws.com/chas-assets/downloads/3958+CHAS+Infographic-Plan-download.pdf"
 const URL_SEARCH_GOOGLE = "https://www.google.com/search?q=";
 const URL_SEARCH_WIKI = "https://en.wikipedia.org/w/index.php?search=";
 const URL_SEARCH_BEEB = "https://www.bbc.co.uk/search?q=";
@@ -410,8 +416,8 @@ function loadSurvey() {
 }
 var SURVEY_VIABLE = loadSurvey();
 
-/* ESTABLISH LISTENER
-// Only for TESTING via local NGROK.IO
+// ESTABLISH LISTENER
+/* Only for TESTING via local NGROK.IO
 const server = CHASbot.listen(server_port, server_ip_address, () => {
   console.log("INFO [NGROK.IO]> Listening on " + server_ip_address + ", port " + server_port );
   console.log("INFO [NGROK.IO]>>>>>>>>>>>>>>>>>>> STARTED <<<<<<<<<<<<<<<<<");
@@ -1114,7 +1120,21 @@ CHASbot.post('/heroku', (req, res) => {
       speech: "CHAS Retail Contact Link",
       displayText: messageData
     });
-  }
+  } else if (req.body.result.action === HOOK_PLAN) {
+    HOOK_TEMPLATE = true;
+    primeLinkButton(URL_CHAS_PLAN,MSG_CHAS_PLAN,'📖 CHAS Plan');
+    return res.json({
+      speech: "CHAS Plan Link",
+      displayText: messageData
+    });
+  } else if (req.body.result.action === HOOK_WORK) {
+    HOOK_TEMPLATE = true;
+    primeLinkButton(URL_GROUP_HELP,MSG_GROUP_HELP,'🆘 Workplace Help');
+    return res.json({
+      speech: "Workplace Help Group",
+      displayText: messageData
+    });
+  };
 });
 
 function postImage(image_url,pass_on_event) {
