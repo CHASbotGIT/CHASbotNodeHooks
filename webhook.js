@@ -560,7 +560,7 @@ CHASbot.post('/webhook', (req, res) => {
         if (sticker_path != '') {
           //console.log("DEBUG [postWebhook_route]> Hangman Initiated");
           console.log("INFO [postWebhook]> Sender: " + sender);
-          console.log("INFO [postWebhook]> Request: Sticker");
+          console.log("INFO [postWebhook]> Request: Non-text");
           console.log("INFO [postWebhook]> Action: postWebhook.sendTextDirect");
           console.log("INFO [postWebhook]> Response: " + sticker_path);
           sendTextDirect(event,sticker_path);
