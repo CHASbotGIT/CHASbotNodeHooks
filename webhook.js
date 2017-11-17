@@ -5,7 +5,7 @@
 
 // Make sure everything is properly defined
 'use strict';
-// Pick up variables from the server implimentation || Remove API keys
+// Pick up variables from the server implementation || Remove API keys
 // Source: https://github.com/CHASbotGIT/CHASbotNodeHooks
 const KEY_PAGE_ACCESS = process.env.KEY_PAGE_ACCESS;
 const KEY_VERIFY = process.env.KEY_VERIFY;
@@ -16,7 +16,7 @@ const KEY_CRYPTO = process.env.KEY_CRYPTO;
 const KEY_MARVEL_PRIVATE = process.env.KEY_MARVEL_PRIVATE;
 const KEY_MARVEL_PUBLIC = process.env.KEY_MARVEL_PUBLIC;
 const KEY_ROOT = process.env.KEY_ROOT;
-// Set-up dependecies for app
+// Set-up dependencies for app
 const express = require('express'); // https://expressjs.com
 const bodyParser = require('body-parser'); // https://github.com/expressjs/body-parser
 const request = require('request'); // https://github.com/request/request
@@ -31,7 +31,7 @@ CHASbot.use(bodyParser.json());
 CHASbot.use(bodyParser.urlencoded({ extended: true }));
 // Messenger templates can be found at:
 // https://developers.facebook.com/docs/messenger-platform/send-messages/templates
-// File dependecies
+// File dependencies
 const FILE_SURVEY = "./survey.txt"; // Same directory as source code
 const FILE_CALENDAR = "./calendar.txt"; // Same directory as source code
 const FILE_BIOGS = "./bios_private.txt"; // Same directory as source code // "./fundraising_private.txt" "./ids_private.txt"
@@ -75,22 +75,22 @@ var MSG_HERO_OOPS = [
   "👁️ Not even the eye of Uatu sees your request...",
   "💾 Program missing, exiting protocol...",
   "💣 Danger: Energy Overload..."];
-// Triggers in lowercase - following phrases are handled in code
-const TRIGGER_PHRASE_SURVEY = 'survey';
-const TRIGGER_PHRASE_HELP = 'help';
-const TRIGGER_PHRASE_FEELING_LUCKY = 'feeling lucky';
-const TRIGGER_PHRASE_CHAS_LOGO = 'chas logo';
-const TRIGGER_PHRASE_CHASABET_1 = 'chas alphabet';
-const TRIGGER_PHRASE_CHASABET_2 = 'chas letter';
-const TIRGGER_PHRASE_MARVEL = 'marvel';
-const TIRGGER_PHRASE_CHAS_EVENTS = 'when is';
-const TIRGGER_PHRASE_CHAS_BIOGS = 'who is';
-const TIRGGER_PHRASE_RPSLS = 'bazinga';
-const TRIGGER_PHRASE_HANGMAN = 'hangman';
-const TRIGGER_PHRASE_STOP = 'stop';
-var TRIGGER_PHRASE_SEARCH = ['search','google','wiki','beeb'];
-var TRIGGER_PHRASE_MOVIEDB = ['synopsis on','synopsis of','watched','info on','about','watch','catch','seen','see'];
-// DialogFlow fulfillment hooks
+// Triggers phrases in lowercase - following phrases are handled in code
+const TRIGGER_SURVEY = 'survey';
+const TRIGGER_HELP = 'help';
+const TRIGGER_FEELING_LUCKY = 'feeling lucky';
+const TRIGGER_CHAS_LOGO = 'chas logo';
+const TRIGGER_CHASABET_1 = 'chas alphabet';
+const TRIGGER_CHASABET_2 = 'chas letter';
+const TRIGGER_MARVEL = 'marvel';
+const TRIGGER_CHAS_EVENTS = 'when is';
+const TRIGGER_CHAS_BIOGS = 'who is';
+const TRIGGER_RPSLS = 'bazinga';
+const TRIGGER_HANGMAN = 'hangman';
+const TRIGGER_STOP = 'stop';
+var TRIGGER_SEARCH = ['search','google','wiki','beeb'];
+var TRIGGER_MOVIEDB = ['synopsis on','synopsis of','watched','info on','about','watch','catch','seen','see'];
+// DialogFlow fulfilment hooks
 const HOOK_FUNDRAISING = 'fundraising';
 const HOOK_WORKPLACE = 'workplace';
 const HOOK_PICKCARD = 'cards';
@@ -98,7 +98,6 @@ const HOOK_WEATHER = 'weather';
 const HOOK_URL_GROUP_DOCS = 'group_docs';
 const HOOK_PLAN = 'plan';
 const HOOK_XMAS = 'xmas';
-var HOOK_TEMPLATE = false;
 // Timings
 const KEEP_ALIVE = 25; // mins
 const TIME_TO_WAIT = 120; // mins
@@ -107,9 +106,7 @@ const URL_CHAT_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages";
 const URL_API_WEATHER = "http://api.openweathermap.org/data/2.5/weather?APPID=";
 const URL_API_MARVEL = "https://gateway.marvel.com/v1/public/characters?nameStartsWith="
 const URL_GROUP_DOCS = "https://work-" + KEY_ROOT + ".facebook.com/groups/1707079182933694";
-const URL_GROUP_HELP = "https://work-" + KEY_ROOT + ".facebook.com/groups/733856763459096/files/";
 const URL_CHAS_RETAIL = "https://www.chas.org.uk/contact_chas#retail";
-const URL_CHAS_PLAN = "https://s3-eu-west-1.amazonaws.com/chas-assets/downloads/3958+CHAS+Infographic-Plan-download.pdf"
 const URL_SEARCH_GOOGLE = "https://www.google.com/search?q=";
 const URL_SEARCH_WIKI = "https://en.wikipedia.org/w/index.php?search=";
 const URL_SEARCH_BEEB = "https://www.bbc.co.uk/search?q=";
@@ -120,20 +117,9 @@ const URL_BEEB_THUMB = "https://images.imgbox.com/59/f5/PFN3tfX5_o.png";
 const URL_IMG_PREFIX = "https://images.imgbox.com/";
 const URL_IMG_PREFIX2 = "https://images2.imgbox.com/";
 const URL_IMG_SUFFIX = "_o.png";
-// For message handling
-let messageData = '';
-let messageText = '';
-var analyse_text = '';
-var position_in_analyse_text = -1;
-var starting_point = 0;
-var ending_point = 0;
-var string_length = 0;
-// Search engine
-var TRIGGER_SEARCH = false;
-var SEARCH_METHOD = '';
-var SEARCH_TERM = '';
+// For keeping track of senders
+var SENDERS = new Array ();
 // CHASbot help
-var TRIGGER_HELP = false;
 var HELP_SEND = false;
 var HELP_PROMPTS = [
   ["ad/e9/ivBhjDXd","When is the Devil Dash","Who is Morven MacLean","Where can I get collecting cans","How do I claim expenses","How do I get Christmas cards","CHAS alphabet C"],
@@ -147,24 +133,16 @@ const REGEX_START = '(?=.*\\b'; // Regular expression bits
 const REGEX_MIDDLE = '\\b)';
 const REGEX_END = '.+';
 // CHAS events
-var TRIGGER_CHAS_EVENTS = false;
 const CHAS_EVENTS_BLOCK_SIZE = 4;
 var CHAS_EVENTS_CALENDAR = new Array();
 var CHAS_EVENTS_TOTAL = 0;
-var CHAS_EVENTS_INDEX = -1;
-var CHAS_EVENTS_NAME = ''; // Result
-var CHAS_EVENTS_DETAILS = ''; // Result
-var CHAS_EVENTS_INFORMATION = ''; // Result
 var CHAS_EVENTS_OOPS_INDEX = 0;
 // CHAS biographies
-var TRIGGER_CHAS_BIOGS = false;
 const CHAS_BIOGS_BLOCK_SIZE = 2;
 var CHAS_BIOGS_VIABLE = false;
 var CHAS_BIOGS = new Array();
 var CHAS_BIOGS_TOTAL = 0;
-var CHAS_BIOGS_INDEX = -1;
-var CHAS_BIOGS_NAME = '';
-var CHAS_FR_CARD = "Contact your local Fundraising Team:" + "\n";
+var CHAS_FR_LIST = "Contact your local Fundraising Team:" + "\n";
 // Slim Shady
 const IDS_BLOCK_SIZE = 2;
 var IDS_VIABLE = false;
@@ -176,12 +154,7 @@ var TIME_OF_DAY = [
   [11,"Time for Elevenses"],[8,"Morning"],[7,"Breakfast time"],[6,"Another day another dollar"],
   [5,"Whoa, you're an early bird"],[4,"You're up early (or very late)"],[3,"Yawn, worst time to be awake"],
   [2,"You're up late"],[1,"Zzzzz, sorry"],[0,"It's the witching hour"]];
-// CHAS logo
-var TRIGGER_CHAS_LOGO = false;
 // CHAS alphabet
-var TRIGGER_CHASABET = 0;
-var CHASABET_LETTER = ''; // Result
-var CHASABET_URL = ''; // Result
 var CHASABET = new Array();
 CHASABET [0] = ["b1/96/zO6mBcwI","a5/59/dH8YmE0D","28/ca/zIHlflOC"]; // A
 CHASABET [1] = ["a7/6b/ykRlRXQ4","35/79/3Fm87p1Z","69/18/7Jwe1SDT"]; // B
@@ -211,16 +184,8 @@ CHASABET [24] = ["2a/4a/9R5ZzF7V","d0/23/QDFnWi52"]; // Y
 CHASABET [25] = ["f6/89/4pwI187X","3c/4f/AguL64HL"]; // Z
 var CHASABET_INDEX = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 // Marvel
-var TRIGGER_MARVEL = false;
-var MARVEL_SEND = false;
-var HERO_WHO = ''; // Result
-var HERO_WHO_NOW = '';
-var HERO_DESCRIPTION = ''; // Result
-var HERO_THUMB = ''; // Result
-var HERO_URL = ''; // Result
 var HERO_OOPS_INDEX = 0;
 // Rock Paper Scissors Lizard Spock
-var TRIGGER_RPSLS = 0;
 var RPSLS_VALID = ["rock","paper","scissors","lizard","spock"];
 var RPSLS_OUTCOMES = ["cuts","covers","crushes","poisons","smashes","decapitates","eats","disproves","vaporizes","crushes"];
 var RPSLS_WIN = ["scissorspaper","paperrock","rocklizard","lizardspock","spockscissors","scissorslizard","lizardpaper","paperspock","spockrock","rockscissors"];
@@ -231,13 +196,7 @@ var RPSLS_IMGS = [
 "60/ab/GGWv7VGf","5b/aa/gX9yjh8W","de/9a/ZW4Y0A3c","9b/b0/jozAYCPJ","fc/69/9RIO0UnP","ae/96/fImaS52o","e6/d8/NZf7rjvm","ce/75/2lShOY7A","1c/c0/v4T6eRgk","39/85/kCcL35Wx",
 "7c/cc/6aXrZ3OR","57/e7/gXFlvW70","49/29/I58HCq4Z","ea/83/4oIJFaQX","35/46/6jfnQOWP","51/27/Mgd2xmkH","5b/43/75oya7i9","65/e5/J9Pi4L30","6d/76/wmyBvmzC","1c/dd/A1qkLRfu",
 "bc/5e/WXSBV3m7","7f/65/UufJXgwL","4b/4f/JO6B4jVX","5c/00/lLBYnA89","41/8b/iDCFzS5i"]; // Bottom row images2 source
-var RPSLS_IMG_URL = '';
-var RPSLS_PICK_CHASBOT = '';
-var RPSLS_PICK_PLAYER = '';
-var RPSLS_INSTRUCT = 1;
-var RPSLS_IN_PLAY = 0;
-var RPSLS_SCORE_CHASBOT = 0;
-var RPSLS_SCORE_PLAYER = 0;
+var rpsls_url = '';
 // Playing cards
 var CARD_PICK = '';
 var CARD_DECK  = [
@@ -248,52 +207,37 @@ var CARD_DECK  = [
 var CARD_PROMPTS = [
   "I've picked... ","This time I've drawn... ","I've selected... ","You're card is... "];
 var CARD_PROMPT = 0;
-// Hangman
-var TRIGGER_HANGMAN = false;
-var HANGMAN_IN_PLAY = false;
-var HANGMAN_REMAINING = 0;
-var HANGMAN_STRIKES = 0;
-var HANGMAN_GUESS = '';
-var HANGMAN_WORD = '';
-var HANGMAN_ANSWER = '';
-var HANGMAN_ANSWER_ARRAY = [];
 // Survey
-var SURVEY_IN_PLAY = false;
 var SURVEY_VIABLE  = true;
 var SURVEY_NAME = ''; // Loaded from survey.txt 1st line
 var SURVEY_QUESTIONS = [];
-var SURVEY_QUESTION_NUMBER = 0;
 // Film and TV
-var TRIGGER_MOVIEDB = false;
-var MOVIEDB_METHOD = '';
 var MOVIEDB_RECORDS_INDEX = -1;
 var MOVIEDB_RECORDS = new Array();
-var MOVIEDB_TERM = '';
 
-// Encryption and decryption of biographies
+// Encryption and decryption of files
 var enCrypt = function(text_plain) {
-  var algorithm = 'aes-256-ctr';
-  var passkey = KEY_CRYPTO;
-  var cipher = crypto.createCipher(algorithm,passkey)
-  var crypted = cipher.update(text_plain,'utf-8','hex')
+  let algorithm = 'aes-256-ctr';
+  let passkey = KEY_CRYPTO;
+  let cipher = crypto.createCipher(algorithm,passkey)
+  let crypted = cipher.update(text_plain,'utf-8','hex')
   crypted += cipher.final('hex');
   return crypted;
 }
 var deCrypt = function(text_obscure) {
-  var algorithm = 'aes-256-ctr';
-  var passkey = KEY_CRYPTO;
-  var decipher = crypto.createDecipher(algorithm,passkey)
-  var dec = decipher.update(text_obscure,'hex','utf-8')
+  let algorithm = 'aes-256-ctr';
+  let passkey = KEY_CRYPTO;
+  let decipher = crypto.createDecipher(algorithm,passkey)
+  let dec = decipher.update(text_obscure,'hex','utf-8')
   dec += decipher.final('utf-8');
   return dec;
 }
-
 function enCryptBios () {
-  var text_block = fs.readFileSync(FILE_BIOGS, "utf-8");
-  var text_block_split = text_block.split("\n");
-  var stream = fs.createWriteStream(FILE_ENCRYPTED_IDS, "utf-8");
+  let text_block = fs.readFileSync(FILE_BIOGS, "utf-8");
+  let text_block_split = text_block.split("\n");
+  let stream = fs.createWriteStream(FILE_ENCRYPTED_IDS, "utf-8");
   stream.once('open', function(fd) {
-    var stream_loop = 0;
+    let stream_loop = 0;
     for (stream_loop = 0; stream_loop < text_block_split.length; stream_loop++) {
       //console.log("DEBUG [enCryptBios]> " + text_block_split[stream_loop]);
       if (stream_loop == text_block_split.length - 1 ) {
@@ -305,18 +249,17 @@ function enCryptBios () {
     stream.end();
   });
 }
-
 function deCryptContents () {
-  var text_block = fs.readFileSync(FILE_ENCRYPTED_BIOS, "utf-8");
-  var text_block_split_garbled = text_block.split("\n");
+  let text_block = fs.readFileSync(FILE_ENCRYPTED_BIOS, "utf-8");
+  let text_block_split_garbled = text_block.split("\n");
   CHAS_BIOGS = new Array();
-  var decrypt_loop = 0;
+  let decrypt_loop = 0;
   for (decrypt_loop = 0; decrypt_loop < text_block_split_garbled.length; decrypt_loop++) {
     CHAS_BIOGS[decrypt_loop] = deCrypt(text_block_split_garbled[decrypt_loop]);
   };
-  var number_bios_entries = CHAS_BIOGS.length;
+  let number_bios_entries = CHAS_BIOGS.length;
   //console.log("DEBUG [deCryptContents]> Bios entries: " + number_bios_entries);
-  var remainder = number_bios_entries % CHAS_BIOGS_BLOCK_SIZE;
+  let remainder = number_bios_entries % CHAS_BIOGS_BLOCK_SIZE;
   //console.log("DEBUG [deCryptContents]> Bios remainder (looking for 0): " + remainder);
   CHAS_BIOGS_TOTAL = number_bios_entries / CHAS_BIOGS_BLOCK_SIZE;
   //console.log("DEBUG [deCryptContents]> Events: " + CHAS_BIOGS_TOTAL);
@@ -334,7 +277,7 @@ function deCryptContents () {
     IDS_LIST[decrypt_loop] = deCrypt(text_block_split_garbled[decrypt_loop]);
     IDS_TIMESTAMP[decrypt_loop] = null;
   };
-  var number_ids_entries = IDS_LIST.length;
+  let number_ids_entries = IDS_LIST.length;
   //console.log("DEBUG [deCryptContents]> ID entries: " + number_ids_entries);
   remainder = number_ids_entries % IDS_BLOCK_SIZE;
   //console.log("DEBUG [deCryptContents]> ID remainder (looking for 0): " + remainder);
@@ -350,10 +293,10 @@ function deCryptContents () {
   text_block_split_garbled = text_block.split("\n");
   decrypt_loop = 0;
   for (decrypt_loop = 0; decrypt_loop < text_block_split_garbled.length; decrypt_loop++) {
-    CHAS_FR_CARD = CHAS_FR_CARD + deCrypt(text_block_split_garbled[decrypt_loop]);
-    if (decrypt_loop != text_block_split_garbled.length) {CHAS_FR_CARD = CHAS_FR_CARD + "\n"};
+    CHAS_FR_LIST = CHAS_FR_LIST + deCrypt(text_block_split_garbled[decrypt_loop]);
+    if (decrypt_loop != text_block_split_garbled.length) {CHAS_FR_LIST = CHAS_FR_LIST + "\n"};
   };
-  //console.log("DEBUG [deCryptContents]> Contact Card: " + CHAS_FR_CARD);
+  //console.log("DEBUG [deCryptContents]> Contact Card: " + CHAS_FR_LIST);
 }
 
 // Load in encrypted information
@@ -362,12 +305,12 @@ deCryptContents(); // Normal runtime configuration
 
 function loadCalendar() {
   // Load in calendar events
-  var text_block = fs.readFileSync(FILE_CALENDAR, "utf-8");
+  let text_block = fs.readFileSync(FILE_CALENDAR, "utf-8");
   CHAS_EVENTS_CALENDAR = text_block.split("\n");
   // Catch if the calendar list is funky i.e. isn't in blocks of four or missing at least one set
-  var number_calendar_entries = CHAS_EVENTS_CALENDAR.length;
+  let number_calendar_entries = CHAS_EVENTS_CALENDAR.length;
   //console.log("DEBUG [loadCalendar]> Calendar entries: " + number_calendar_entries);
-  var remainder = number_calendar_entries % CHAS_EVENTS_BLOCK_SIZE;
+  let remainder = number_calendar_entries % CHAS_EVENTS_BLOCK_SIZE;
   //console.log("DEBUG [loadCalendar]> Calendar remainder (looking for 0): " + remainder);
   CHAS_EVENTS_TOTAL = number_calendar_entries / CHAS_EVENTS_BLOCK_SIZE;
   //console.log("DEBUG [loadCalendar]> Events: " + CHAS_EVENTS_TOTAL);
@@ -381,11 +324,11 @@ function loadCalendar() {
 var CHAS_EVENTS_VIABLE = loadCalendar();
 
 function loadSurvey() {
-  var gone_funky = false;
+  let gone_funky = false;
   // Load in survey as a block
-  var text_block = fs.readFileSync(FILE_SURVEY, "utf-8");
+  let text_block = fs.readFileSync(FILE_SURVEY, "utf-8");
   // Populate a temp array
-  var load_array = text_block.split("\n");
+  let load_array = text_block.split("\n");
   // Configure the survey
   if (load_array.length > 1) {
     for (var i = 0; i < load_array.length; i++) {
@@ -395,7 +338,7 @@ function loadSurvey() {
         break;
       } else if (i==0 && SURVEY_QUESTIONS[0].length == 1) {
         SURVEY_NAME = SURVEY_QUESTIONS[0];
-        // Delete first row later ****************************
+        // Delete first row later
       } else if (i>1 && SURVEY_QUESTIONS[i].length > 6) {
         gone_funky = true; // Can't have more than 6 elements i.e. Question + 5 Answers
       }; // if/else
@@ -444,359 +387,78 @@ setInterval(function() {
     http.get("https://chasbot.herokuapp.com/");
 }, minsConvert(KEEP_ALIVE));
 
-// Handling all messenges in and processing special cases
-CHASbot.post('/webhook', (req, res) => {
-  if (req.body.object === 'page') {
-    req.body.entry.forEach((entry) => {
-      entry.messaging.forEach((event) => {
-        //if (event.read && event.read.watermark) { //console.log("DEBUG [postWebhook]> Receipt: " + event.read.watermark) };
-        if (event.message && event.message.text) {
-          var sender = event.sender.id;
-          // Clean input
-          analyse_text = event.message.text;
-          analyse_text = analyse_text.toLowerCase();
-          // Check for custom triggers
-          // Survey
-          var valid_choice = false;
-          if (SURVEY_IN_PLAY) {
-            position_in_analyse_text = analyse_text.search(TRIGGER_PHRASE_STOP) + 1;
-            if (position_in_analyse_text > 0) {
-              // Reset
-              SURVEY_IN_PLAY = false;
-            } else if (SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER - 1].length == 1) { // Free text response
-              valid_choice = true;
-            } else {
-              for (var i = 1; i < SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER - 1].length; i++) {
-                position_in_analyse_text = event.message.text.search(SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER - 1][i]) + 1;
-                if (position_in_analyse_text > 0) {
-                  var xstr = event.message.text;
-                  if (xLength(xstr) == 1) {event.message.text = i.toString()};
-                  valid_choice = true;
-                  break;
-                };
-              };
-            };
-            if (valid_choice) {
-              console.log('SURVEY [' + SURVEY_NAME + '],' + sender + ',' + SURVEY_QUESTION_NUMBER + ',' + event.message.text);
-            } else {
-              SURVEY_QUESTION_NUMBER = SURVEY_QUESTION_NUMBER - 1; // Repeat previous question
-            }
-          };
-          // Trigger the survey
-          position_in_analyse_text = analyse_text.search(TRIGGER_PHRASE_SURVEY) + 1;
-          if (position_in_analyse_text > 0 && SURVEY_VIABLE) {
-            SURVEY_IN_PLAY = true; // Initialise
-            SURVEY_QUESTION_NUMBER = 0;
-          }
-          // Feeling lucky
-          position_in_analyse_text = analyse_text.search(TRIGGER_PHRASE_FEELING_LUCKY) + 1;
-          //console.log("DEBUG [postWebhook]> " + TRIGGER_PHRASE_FEELING_LUCKY + " search result: " + position_in_analyse_text);
-          if (position_in_analyse_text > 0) {
-            // Math.floor(Math.random()*(max-min+1)+min);
-            var cat = Math.floor(Math.random()*5); // 0 to 4
-            var ind = Math.floor(Math.random()*6+1); // 1 to 6
-            event.message.text = HELP_PROMPTS[cat][ind];
-            analyse_text = event.message.text;
-            analyse_text = analyse_text.toLowerCase();
-            messageText = '*' + event.message.text + '*';
-            sendTextDirect(event);
-          }
-          // Help
-          TRIGGER_HELP = false;
-          position_in_analyse_text = analyse_text.search(TRIGGER_PHRASE_HELP) + 1;
-          //console.log("DEBUG [postWebhook]> " + TRIGGER_PHRASE_HELP + " search result: " + position_in_analyse_text);
-          if (position_in_analyse_text > 0) {
-            TRIGGER_HELP = true;
-            HELP_SEND = true;
-            var help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
-            //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
-            messageText = "Try some of these:";
-            for (var i = 1; i < 7; i++) {
-              messageText = messageText + '\n' + HELP_PROMPTS[HELP_INDEX][i];
-            };
-            messageText = messageText + '\n' + "Type *help* for more or try *feeling lucky*";
-            //console.log("DEBUG [postWebhook]> Help text: " + messageText);
-            HELP_INDEX = HELP_INDEX + 1;
-            if (HELP_INDEX > 4) { HELP_INDEX = 0 };
-          };
-          // Hangman
-          TRIGGER_HANGMAN = false;
-          HANGMAN_GUESS = '';
-          if (HANGMAN_IN_PLAY) { // Only check if we are playing
-            //console.log("DEBUG [postWebhook]> Hangman in play.");
-            position_in_analyse_text = analyse_text.search(TRIGGER_PHRASE_STOP) + 1;
-            if (position_in_analyse_text > 0) {
-              HANGMAN_IN_PLAY = false;
-              //console.log("DEBUG [postWebhook]> Hangman: Player wants to end i.e. " + analyse_text);
-            } else if (analyse_text.length != 1) {
-              messageText = "😞 One letter at a time please.";
-              //console.log("DEBUG [postWebhook]> Hangman: Guess is too long i.e. " + analyse_text);
-            } else if (analyse_text.match(/[a-z]/i)) {
-              //console.log("DEBUG [postWebhook]> Hangman: Guess is valid i.e. " + analyse_text);
-              HANGMAN_GUESS = analyse_text;
-            } else { // Not an alpha
-              //console.log("DEBUG [postWebhook]> Hangman: Guess is not an alpha i.e. " + analyse_text);
-              messageText = "🔤 A letter would be nice.";
-            };
-          };
-          // If the word typed is another trigger then it trumps the game and sets HANGMAN_IN_PLAY = false;
-          // Typing hangman mid-game will start a new game
-          position_in_analyse_text = analyse_text.search(TRIGGER_PHRASE_HANGMAN) + 1;
-          //console.log("DEBUG [postWebhook]> " + TRIGGER_PHRASE_HANGMAN + " search result: " + position_in_analyse_text);
-          if (CHAS_BIOGS_VIABLE && position_in_analyse_text > 0) {
-            TRIGGER_HANGMAN = true;
-            HANGMAN_IN_PLAY = true;
-            HANGMAN_STRIKES = 0;
-            HANGMAN_ANSWER_ARRAY = [];
-            HANGMAN_WORD = CHAS_BIOGS[Math.floor(Math.random() * CHAS_BIOGS_TOTAL) * CHAS_BIOGS_BLOCK_SIZE - 2];
-            HANGMAN_WORD = HANGMAN_WORD.toLowerCase();
-            //console.log("DEBUG [postWebhook]> Mystery name: " + HANGMAN_WORD);
-            // swap out spaces for under_scores
-            HANGMAN_WORD = HANGMAN_WORD.replace(/\s/g, '_');
-            // Set up the answer array
-            HANGMAN_ANSWER_ARRAY = [];
-            for (var i = 0; i < HANGMAN_WORD.length; i++) {
-              if (HANGMAN_WORD[i] == '_') {
-                HANGMAN_ANSWER_ARRAY[i] = "_";
-              } else {
-                HANGMAN_ANSWER_ARRAY[i] = "?";
-              };
-            };
-            HANGMAN_ANSWER = HANGMAN_ANSWER_ARRAY.join(' ');
-            messageText = "🤔 Figure out the mystery staff member name.\nType a letter to guess, or 'stop'.\nYour are allowed no more than 3 strikes.";
-            messageText = messageText + "\n" + HANGMAN_ANSWER;
-            messageText = messageText + "\n" + MSG_THUMBS[HANGMAN_STRIKES] + " (" + HANGMAN_STRIKES + " strike";
-            if (HANGMAN_STRIKES == 1) {
-              messageText = messageText + ")";
-            } else {
-              messageText = messageText + "s)";
-            };
-            //console.log("DEBUG [postWebhook]> Hangman Initialise: " + messageText);
-          };
-          // Search
-          TRIGGER_SEARCH = false;
-          var rightmost_starting_point = -1;
-          var trigger_loop = 0;
-          for (trigger_loop = 0; trigger_loop < TRIGGER_PHRASE_SEARCH.length; trigger_loop++) {
-            position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_PHRASE_SEARCH[trigger_loop]) + 1;
-            if (position_in_analyse_text > 0) {
-              starting_point = position_in_analyse_text + TRIGGER_PHRASE_SEARCH[trigger_loop].length;
-              if (starting_point > rightmost_starting_point) { // Find right-most search term
-                rightmost_starting_point = starting_point;
-                ending_point = analyse_text.length;
-                string_length = ending_point - starting_point;
-                SEARCH_METHOD = TRIGGER_PHRASE_SEARCH[trigger_loop];
-                //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
-                //console.log("DEBUG [postWebhook]> Search method found: " + SEARCH_METHOD);
-                if (string_length > 0) {
-                  TRIGGER_SEARCH = true;
-                  HANGMAN_IN_PLAY = false; // Cxl Hangman
-                  SEARCH_TERM = analyse_text.slice(starting_point,ending_point);
-                  //console.log("DEBUG [postWebhook]> Search term: " + SEARCH_TERM);
-                };
-              };
-            };
-          };
-          // TV and film
-          TRIGGER_MOVIEDB = false;
-          rightmost_starting_point = -1;
-          trigger_loop = 0;
-          for (trigger_loop = 0; trigger_loop < TRIGGER_PHRASE_MOVIEDB.length; trigger_loop++) {
-            position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_PHRASE_MOVIEDB[trigger_loop]) + 1;
-            if (position_in_analyse_text > 0) {
-              starting_point = position_in_analyse_text + TRIGGER_PHRASE_MOVIEDB[trigger_loop].length;
-              if (starting_point > rightmost_starting_point) { // Find right-most search term
-                rightmost_starting_point = starting_point;
-                ending_point = analyse_text.length;
-                string_length = ending_point - starting_point;
-                MOVIEDB_METHOD = TRIGGER_PHRASE_MOVIEDB[trigger_loop];
-                //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
-                //console.log("DEBUG [postWebhook]> MovieDb key found: " + MOVIEDB_METHOD);
-                if (string_length > 0) {
-                  TRIGGER_MOVIEDB = true;
-                  HANGMAN_IN_PLAY = false; // Cxl Hangman
-                  MOVIEDB_TERM = analyse_text.slice(starting_point,ending_point);
-                  //console.log("DEBUG [postWebhook]> Movie or TV title: " + MOVIEDB_TERM);
-                };
-              };
-            };
-          };
-          // Rock, Paper, Scissors, Lizard, Spock
-          TRIGGER_RPSLS = 0;
-          RPSLS_PICK_PLAYER = TIRGGER_PHRASE_RPSLS;
-          if (RPSLS_IN_PLAY == 1) { // Only check if we are playing
-            RPSLS_IN_PLAY = 0;
-            trigger_loop = 0;
-            for (trigger_loop = 0; trigger_loop < RPSLS_VALID.length; trigger_loop++) {
-              position_in_analyse_text = analyse_text.search(RPSLS_VALID[trigger_loop]) + 1;
-              if (position_in_analyse_text > 0) {
-                RPSLS_PICK_PLAYER = RPSLS_VALID[trigger_loop];
-                //console.log("DEBUG [postWebhook]> " + RPSLS_PICK_PLAYER + " search result: " + position_in_analyse_text);
-                TRIGGER_RPSLS = 3; // Evaluate the choice
-                RPSLS_IN_PLAY = 1; // Keep playing
-                break;
-              };
-            };
-          };
-          position_in_analyse_text = analyse_text.search(TIRGGER_PHRASE_RPSLS) + 1;
-          //console.log("DEBUG [postWebhook]> " + TIRGGER_PHRASE_RPSLS + " search result: " + position_in_analyse_text);
-          if (position_in_analyse_text > 0) {
-            HANGMAN_IN_PLAY = false; // Cxl Hangman
-            if (RPSLS_INSTRUCT == 1) {
-              TRIGGER_RPSLS = 1; // Provide intsructions + prompt
-              RPSLS_INSTRUCT = 0; // Reset instructions
-              RPSLS_IN_PLAY = 1;
-            } else {
-              TRIGGER_RPSLS = 2; // Prompt only
-              RPSLS_IN_PLAY = 1;
-            };
-          };
-          // Marvel
-          TRIGGER_MARVEL = false;
-          position_in_analyse_text = analyse_text.lastIndexOf(TIRGGER_PHRASE_MARVEL) + 1;
-          //console.log("DEBUG [postWebhook]> " + TIRGGER_PHRASE_MARVEL + " phrase search result: " + position_in_analyse_text);
-          if (position_in_analyse_text > 0) {
-            starting_point = position_in_analyse_text + TIRGGER_PHRASE_MARVEL.length;
-            ending_point = analyse_text.length;
-            string_length = ending_point - starting_point;
-            //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
-            if (string_length > 0) {
-              TRIGGER_MARVEL = true;
-              HANGMAN_IN_PLAY = false; // Cxl Hangman
-              HERO_WHO = analyse_text.slice(starting_point,ending_point);
-              HERO_WHO = toTitleCase(HERO_WHO);
-            };
-          };
-          // CHAS alphabet
-          TRIGGER_CHASABET = 0;
-          position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_PHRASE_CHASABET_1) + 1;
-          if (position_in_analyse_text == 0) {
-            position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_PHRASE_CHASABET_2) + 1;
-            TRIGGER_CHASABET = 2;
-          }
-          //console.log("DEBUG [postWebhook]> " + TRIGGER_PHRASE_CHASABET_1 + " or " + TRIGGER_PHRASE_CHASABET_2 + " phrase search result: " + position_in_analyse_text);
-          if (position_in_analyse_text > 0) {
-            if (TRIGGER_CHASABET == 0) {
-              starting_point = position_in_analyse_text + TRIGGER_PHRASE_CHASABET_1.length;
-            } else {
-              starting_point = position_in_analyse_text + TRIGGER_PHRASE_CHASABET_2.length;
-            }
-            ending_point = analyse_text.length;
-            string_length = ending_point - starting_point;
-            //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
-            if (string_length > 0) {
-              // Strip string to first viable letter
-              CHASABET_LETTER = analyse_text.slice(starting_point,ending_point);
-              CHASABET_LETTER = firstAlpha(CHASABET_LETTER);
-              if (CHASABET_LETTER != '') {
-                TRIGGER_CHASABET = 1;
-                HANGMAN_IN_PLAY = false; // Cxl Hangman
-              };
-            };
-          };
-          // CHAS logo
-          TRIGGER_CHAS_LOGO = false;
-          position_in_analyse_text = analyse_text.search(TRIGGER_PHRASE_CHAS_LOGO) + 1;
-          //console.log("DEBUG [postWebhook]> " + TRIGGER_PHRASE_CHAS_LOGO + " search result: " + position_in_analyse_text);
-          if (position_in_analyse_text > 0) {
-            TRIGGER_CHAS_LOGO = true;
-            HANGMAN_IN_PLAY = false; // Cxl Hangman
-          };
-          // CHAS Events
-          TRIGGER_CHAS_EVENTS = false;
-          position_in_analyse_text = analyse_text.lastIndexOf(TIRGGER_PHRASE_CHAS_EVENTS) + 1;
-          //console.log("DEBUG [postWebhook]> " + TIRGGER_PHRASE_CHAS_EVENTS + " phrase search result: " + position_in_analyse_text);
-          if (position_in_analyse_text > 0) {
-            starting_point = position_in_analyse_text + TIRGGER_PHRASE_CHAS_EVENTS.length;
-            ending_point = analyse_text.length;
-            string_length = ending_point - starting_point;
-            //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
-            if (string_length > 0) {
-              TRIGGER_CHAS_EVENTS = true;
-              HANGMAN_IN_PLAY = false; // Cxl Hangman
-              CHAS_EVENTS_NAME = analyse_text.slice(starting_point,ending_point);
-            };
-          };
-          // CHAS Biogs
-          TRIGGER_CHAS_BIOGS = false;
-          position_in_analyse_text = analyse_text.lastIndexOf(TIRGGER_PHRASE_CHAS_BIOGS) + 1;
-          //console.log("DEBUG [postWebhook]> " + TIRGGER_PHRASE_CHAS_BIOGS + " phrase search result: " + position_in_analyse_text);
-          if (position_in_analyse_text > 0) {
-            starting_point = position_in_analyse_text + TIRGGER_PHRASE_CHAS_BIOGS.length;
-            ending_point = analyse_text.length;
-            string_length = ending_point - starting_point;
-            //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
-            if (string_length > 0) {
-              TRIGGER_CHAS_BIOGS = true;
-              HANGMAN_IN_PLAY = false; // Cxl Hangman
-              CHAS_BIOGS_NAME = analyse_text.slice(starting_point,ending_point);
-            };
-          };
-          // Pick a response route
-          if (SURVEY_IN_PLAY) {
-            //console.log("DEBUG [postWebhook]> Survey);
-            sendSurveyQuestion(event);
-          } else if (TRIGGER_HELP) {
-            //console.log("DEBUG [postWebhook]> Help: " + HELP_INDEX);
-            console.log("INFO [postWebhook]> Sender: " + sender);
-            console.log("INFO [postWebhook]> Request: " + TRIGGER_PHRASE_FEELING_LUCKY);
-            console.log("INFO [postWebhook]> Action: postWebhook.postImage");
-            console.log("INFO [postWebhook]> Response: Help v." + HELP_INDEX);
-            postImage(help_url,event);
-          } else if (TRIGGER_MARVEL) {
-            //console.log("DEBUG [postWebhook]> Marvel Character: " + HERO_WHO);
-            getMarvelChar(HERO_WHO,event);
-          } else if (TRIGGER_CHASABET == 1) {
-            //console.log("DEBUG [postWebhook]> CHAS alpahbet: " + CHASABET_LETTER);
-            getAlphabetCHAS(CHASABET_LETTER,event);
-          } else if (TRIGGER_CHAS_EVENTS && CHAS_EVENTS_VIABLE) {
-            //console.log("DEBUG [postWebhook]> CHAS event: " + CHAS_EVENTS_NAME);
-            getEventCHAS(CHAS_EVENTS_NAME,event);
-          } else if (TRIGGER_CHAS_BIOGS && CHAS_BIOGS_VIABLE) {
-            //console.log("DEBUG [postWebhook]> CHAS bios: " + CHAS_BIOGS_NAME);
-            getBiosCHAS(CHAS_BIOGS_NAME,event);
-          } else if (TRIGGER_RPSLS > 0) {
-            //console.log("DEBUG [postWebhook]> RPSLSpock: " + RPSLS_PICK_PLAYER);
-            getRPSLS(event);
-          } else if (TRIGGER_SEARCH) {
-            //console.log("DEBUG [postWebhook]> Search: " + SEARCH_TERM);
-            postSearch(event);
-          } else if (TRIGGER_MOVIEDB) {
-            //console.log("DEBUG [postWebhook]> Search: " + MOVIEDB_TERM);
-            queryFilmTV(MOVIEDB_TERM,event);
-          } else if (TRIGGER_CHAS_LOGO) {
-            //console.log("DEBUG [postWebhook]> Logo");
-            console.log("INFO [postWebhook]> Sender: " + sender);
-            console.log("INFO [postWebhook]> Request: " + TRIGGER_PHRASE_CHAS_LOGO);
-            console.log("INFO [postWebhook]> Action: postWebhook.postImage");
-            console.log("INFO [postWebhook]> Response: IMG URL " + URL_CHAS_THUMB);
-            postImage(URL_CHAS_THUMB,event)
-          } else if (TRIGGER_HANGMAN) {
-            //console.log("DEBUG [postWebhook]> Hangman Initiated");
-            console.log("INFO [postWebhook]> Sender: " + sender);
-            console.log("INFO [postWebhook]> Request: " + TRIGGER_PHRASE_HANGMAN);
-            console.log("INFO [postWebhook]> Action: postWebhook.sendTextDirect");
-            console.log("INFO [postWebhook]> Response: Hangman Mystery Name is " + HANGMAN_WORD);
-            sendTextDirect(event)
-          } else if (HANGMAN_IN_PLAY) {
-            //console.log("DEBUG [postWebhook]> Hangman Guess: " + HANGMAN_GUESS);
-            checkHangman(event);
-          } else {
-            //console.log("DEBUG [postWebhook]> No special cases, send via APIAI");
-            sendMessageViaAPIAI(event);
-          }
-        }
-      });
-    });
-    res.status(200).end();
-  }
-});
+// Sender handling and stacking functions
+// ======================================
+// 0:id_of_sender,
+// 1:survey_in_play,2:hangman_in_play,3:rpsls_in_play
+// 4:survey_question,
+// 5:hangman_strikes,6:hangman_word,7:hangman_array
+// 8.rpsls_action,9:issue_instructions,10:rpsls_player,11:rpsls_bot
+function inPlayNew(index_id,new_sender) {
+  SENDERS[index_id] = [new_sender,false,false,false,0,0,'',[],0,true,0,0];
+}
+function inPlay(in_play,index_id) {
+  let in_play_index = 0;
+  if (in_play == 'survey') { in_play_index = 1 }
+  else if (in_play == 'hangman') { in_play_index = 2 }
+  else if (in_play == 'rpsls') { in_play_index = 3 };
+  return SENDERS[index_id][in_play_index];
+}
+function inPlayClean(in_play,index_id) {
+  let in_play_index = 0;
+  if (in_play == 'survey') {
+    in_play_index = 1
+    SENDERS[index_id][4] = 0 }
+  else if (in_play == 'hangman') {
+    in_play_index = 2
+    SENDERS[index_id][5] = 0;
+    SENDERS[index_id][6] = '';
+    SENDERS[index_id][7] = [] }
+  else if (in_play == 'rpsls') {
+    in_play_index = 3;
+    SENDERS[index_id][8] = 0;
+    SENDERS[index_id][9] = true;
+    SENDERS[index_id][10] = 0;
+    SENDERS[index_id][11] = 0 };
+    SENDERS[index_id][in_play_index] = false;
+}
+function inPlaySet(in_play,index_id) {
+  let in_play_index = 0;
+  if (in_play == 'survey') { in_play_index = 1 }
+  else if (in_play == 'hangman') { in_play_index = 2; }
+  else if (in_play == 'rpsls') { in_play_index = 3 };
+  SENDERS[index_id][in_play_index] = true;
+}
+function inPlayUnset(in_play,index_id) {
+  let in_play_index = 0;
+  if (in_play == 'survey') { in_play_index = 1 }
+  else if (in_play == 'hangman') { in_play_index = 2; }
+  else if (in_play == 'rpsls') { in_play_index = 3 };
+  SENDERS[index_id][in_play_index] = false;
+}
+function inPlayPause(index_id) {
+  let refresh_sender = SENDERS[index_id][0];
+  SENDERS[index_id][1] = false;
+  SENDERS[index_id][2] = false;
+  SENDERS[index_id][3] = false;
+  SENDERS[index_id][8] = 0;
+}
+function inPlayID (id_to_find) {
+  let sender_index = -1;
+  for (var i=0; i < SENDERS.length; i++) {
+    if (SENDERS[i][0] == id_to_find) {
+	sender_index = i;
+	break;
+    };
+  };
+  return sender_index;
+}
 
 // Strng and number handling functions
+// ===================================
 function toTitleCase(inputString) {
   return inputString.replace(/\w\S*/g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
-
 function firstAlpha(inputString) {
   for (var i = 0; i < inputString.length; i += 1) {
     if ((inputString.charAt(i) >= 'A' && inputString.charAt(i) <= 'Z') ||
@@ -806,12 +468,10 @@ function firstAlpha(inputString) {
   };
   return '';
 }
-
 function trimTo(trim_length,inputString) {
   if (inputString.length > trim_length) {inputString = inputString.slice(0,trim_length-1) + "🤐"};
   return inputString;
 }
-
 function xLength(str) {
   //http://blog.jonnew.com/posts/poo-dot-length-equals-two
   const joiner = "\u{200D}";
@@ -825,148 +485,16 @@ function xLength(str) {
   //assuming the joiners are used appropriately
   return count / split.length;
 }
-
 function minsConvert(minsIn) {
   return minsIn*60*1000;
 }
-
-// SENDING SECTION
-function sendTemplate(event) {
-  // messageData set outside of function call
-  var sender = event.sender.id;
-  request({
-    uri: URL_CHAT_ENDPOINT,
-    qs: {access_token: KEY_PAGE_ACCESS},
-    method: 'POST',
-    json: {
-      recipient: {id: sender},
-      message: messageData
-    }
-  }, function (error, response) {
-    if (error) {
-        console.log("ERROR [sendTemplate]> Error sending template message: ", error);
-    } else if (response.body.error) {
-        console.log("ERROR [sendTemplate]> Undefined: ", response.body.error);
-    }
-  });
-  if (MARVEL_SEND || HELP_SEND) {
-    sendTextDirect(event);
-    MARVEL_SEND = false;
-    HELP_SEND = false;
-  }
-}
-
-function sendSurveyQuestion(event) {
-  //console.log("SURVEY [" + SURVEY_NAME + "]> In Progress");
-  var sender = event.sender.id;
-  if (SURVEY_QUESTION_NUMBER == SURVEY_QUESTIONS.length) {
-    var rspns_items = 1; // Thanks
-    var qstn = MSG_SURVEY_THANKS;
-    SURVEY_IN_PLAY = false;
-  } else { // Next question
-    var rspns_items = SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER].length;
-    var qstn = SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][0];
-  }
-  switch (rspns_items) {
-    case 1:
-      var surveyTemplate = {
-        text: trimTo(640,qstn)};
-      break;
-    case 2:
-      var surveyTemplate = {
-        text: trimTo(640,qstn),
-        quick_replies:[
-              { content_type:"text",
-                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][1],
-                payload:"<POSTBACK_PAYLOAD>" }]};
-      break;
-    case 3:
-      var surveyTemplate = {
-        text: trimTo(640,qstn),
-        quick_replies:[
-              { content_type:"text",
-                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][1],
-                payload:"<POSTBACK_PAYLOAD>" },
-              { content_type:"text",
-                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][2],
-                payload:"<POSTBACK_PAYLOAD>" }]};
-      break;
-    case 4:
-      var surveyTemplate = {
-        text: trimTo(640,qstn),
-        quick_replies:[
-              { content_type:"text",
-                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][1],
-                payload:"<POSTBACK_PAYLOAD>" },
-              { content_type:"text",
-                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][2],
-                payload:"<POSTBACK_PAYLOAD>" },
-              { content_type:"text",
-                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][3],
-                payload:"<POSTBACK_PAYLOAD>" }]};
-      break;
-    case 5:
-      var surveyTemplate = {
-        text: trimTo(640,qstn),
-        quick_replies:[
-              { content_type:"text",
-                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][1],
-                payload:"<POSTBACK_PAYLOAD>" },
-              { content_type:"text",
-                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][2],
-                payload:"<POSTBACK_PAYLOAD>" },
-              { content_type:"text",
-                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][3],
-                payload:"<POSTBACK_PAYLOAD>" },
-              { content_type:"text",
-                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][4],
-                payload:"<POSTBACK_PAYLOAD>" }]};
-      break;
-    case 6:
-      var surveyTemplate = {
-        text: trimTo(640,qstn),
-        quick_replies:[
-              { content_type:"text",
-                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][1],
-                payload:"<POSTBACK_PAYLOAD>" },
-              { content_type:"text",
-                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][2],
-                payload:"<POSTBACK_PAYLOAD>" },
-              { content_type:"text",
-                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][3],
-                payload:"<POSTBACK_PAYLOAD>" },
-              { content_type:"text",
-                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][4],
-                payload:"<POSTBACK_PAYLOAD>" },
-              { content_type:"text",
-                title: SURVEY_QUESTIONS[SURVEY_QUESTION_NUMBER][5],
-                payload:"<POSTBACK_PAYLOAD>" }]};
-  }; // Switch
-  request({
-    uri: URL_CHAT_ENDPOINT,
-    qs: {access_token: KEY_PAGE_ACCESS},
-    method: 'POST',
-    json: {
-      recipient: {id: sender},
-      message: surveyTemplate
-    }
-  }, function (error, response) {
-    if (error) {
-      console.log("ERROR [sendSurveyQuestion]> Error sending simple message: ", error);
-    } else if (response.body.error) {
-      console.log("ERROR [sendSurveyQuestion]> Undefined: ", response.body.error);
-    }
-  }); // request
-  SURVEY_QUESTION_NUMBER = SURVEY_QUESTION_NUMBER + 1;
-}
-
-function customGreeting (senderID) {
+function customGreeting(senderID) {
   //console.log("DEBUG [customGreeting]> " + senderID);
-  var build_greeting = '';
-  var fb_who;
-  var fb_who_known = false;
-  var match_id = 0;
-  var id_index = 0;
+  let build_greeting = '';
+  let fb_who;
+  let fb_who_known = false;
+  let match_id = 0;
+  let id_index = 0;
   for (var find_index = 0; find_index < IDS_TOTAL; find_index++) {
     // 1,3,5 etc.
     match_id = IDS_LIST[find_index * IDS_BLOCK_SIZE + 1];
@@ -974,7 +502,7 @@ function customGreeting (senderID) {
     if (match_id == senderID) {
       id_index = find_index; // Got our match
       fb_who = IDS_LIST[find_index * IDS_BLOCK_SIZE];
-      //console.log("DEBUG [customGreeting]> Matched to: " + FB_WHO);
+      //console.log("DEBUG [customGreeting]> Matched to: " + fb_who);
       fb_who_known = true;
       break;
     }; // if
@@ -983,7 +511,7 @@ function customGreeting (senderID) {
   // if ( we know who the person is AND ( either they've not had a name check OR been a while since name check))
   if (fb_who_known && (IDS_TIMESTAMP[id_index] == null||new Date().getTime() - IDS_TIMESTAMP[id_index] > minsConvert(TIME_TO_WAIT))) {
     //console.log("DEBUG [customGreeting]> Interval in mins since last message has been: " + minsConvert(TIME_TO_WAIT));
-    var hr = new Date().getHours();
+    let hr = new Date().getHours();
     for (var loop_hour = 0; loop_hour < TIME_OF_DAY.length; loop_hour++) {
       if (hr >= TIME_OF_DAY[loop_hour][0]) {
         build_greeting = TIME_OF_DAY[loop_hour][1];
@@ -999,10 +527,545 @@ function customGreeting (senderID) {
   return build_greeting;
 }
 
-function sendTextDirect(event) {
+// Sending template functions
+// ==========================
+// Handling all messages in and processing special cases
+CHASbot.post('/webhook', (req, res) => {
+  if (req.body.object === 'page') {
+    req.body.entry.forEach((entry) => {
+      entry.messaging.forEach((event) => {
+        //if (event.read && event.read.watermark) { //console.log("DEBUG [postWebhook]> Receipt: " + event.read.watermark) };
+        if (event.message && event.message.text) {
+          let sender = event.sender.id;
+          // Manage sender specific 'in-play' progress
+          let sender_index = inPlayID(sender);
+          if (sender_index == -1) {
+            sender_index = SENDERS.length;
+            inPlayNew(sender_index,sender);
+          };
+          // Clean input
+          let analyse_text = event.message.text;
+          analyse_text = analyse_text.toLowerCase();
+          let position_in_analyse_text = -1;
+          // *************************
+          // Check for custom triggers
+          // ***** HELP & SEARCH *****
+          // Feeling lucky - First in list - allows subsequent triggers
+          position_in_analyse_text = analyse_text.search(TRIGGER_FEELING_LUCKY) + 1;
+          //console.log("DEBUG [postWebhook]> " + TRIGGER_FEELING_LUCKY + " search result: " + position_in_analyse_text);
+          let chasbotText = '';
+          if (position_in_analyse_text > 0) {
+            // Math.floor(Math.random()*(max-min+1)+min);
+            let cat = Math.floor(Math.random()*5); // 0 to 4
+            let ind = Math.floor(Math.random()*6+1); // 1 to 6
+            event.message.text = HELP_PROMPTS[cat][ind];
+            analyse_text = event.message.text;
+            analyse_text = analyse_text.toLowerCase();
+            chasbotText = '*' + event.message.text + '*';
+            sendTextDirect(event,chasbotText); // Send a sudo-request
+            // FLOW: Sudo request replace 'feeling lucky'
+          };
+          // Help
+          position_in_analyse_text = analyse_text.search(TRIGGER_HELP) + 1;
+          //console.log("DEBUG [postWebhook]> " + TRIGGER_HELP + " search result: " + position_in_analyse_text);
+          let trigger_path = '';
+          let help_url = '';
+          if (position_in_analyse_text > 0) {
+            trigger_path = TRIGGER_HELP;
+            help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
+            //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
+            chasbotText = "Try typing any of these:";
+            for (var i = 1; i < 7; i++) {
+              chasbotText = chasbotText + '\n' + HELP_PROMPTS[HELP_INDEX][i];
+            };
+            chasbotText = chasbotText + '\n' + "Type *help* for more or try *feeling lucky*";
+            //console.log("DEBUG [postWebhook]> Help text: " + chasbotText);
+            HELP_INDEX++;
+            if (HELP_INDEX > 4) { HELP_INDEX = 0 };
+            // FLOW: 'help' trumps all
+            analyse_text = TRIGGER_HELP; // Clean extra
+            inPlayPause(sender_index); // Pause all in-play
+          };
+          // Search
+          let rightmost_starting_point = -1;
+          let trigger_loop = 0;
+          let starting_point = 0;
+          let ending_point = 0;
+          let string_length = 0;
+          let search_method = '';
+          let search_term = '';
+          for (trigger_loop = 0; trigger_loop < TRIGGER_SEARCH.length; trigger_loop++) {
+            position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_SEARCH[trigger_loop]) + 1;
+            if (position_in_analyse_text > 0) {
+              starting_point = position_in_analyse_text + TRIGGER_SEARCH[trigger_loop].length;
+              if (starting_point > rightmost_starting_point) { // Find right-most search term
+                rightmost_starting_point = starting_point;
+                ending_point = analyse_text.length;
+                string_length = ending_point - starting_point;
+                search_method = TRIGGER_SEARCH[trigger_loop];
+                //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
+                //console.log("DEBUG [postWebhook]> Search method found: " + search_method);
+                if (string_length > 0) {
+                  trigger_path = TRIGGER_SEARCH[0];
+                  search_term = analyse_text.slice(starting_point,ending_point);
+                  //console.log("DEBUG [postWebhook]> Search term: " + search_term);
+                  // FLOW: Seperate out search terms - pause all in-play
+                  analyse_text = search_method; // Clean extra
+                  inPlayPause(sender_index); // Pause all in-play
+                };
+              };
+            };
+          };
+          // ******** IN PLAY ********
+          // Survey
+          // 0:id_of_sender,1:survey_in_play,4:survey_question,
+          //console.log("DEBUG [postWebhook]> In play, survey: " + inPlay('survey',sender_index));
+          //console.log("DEBUG [postWebhook]> In play, rpsls: " + inPlay('rpsls',sender_index));
+          //console.log("DEBUG [postWebhook]> In play, hangman: " + inPlay('hangman',sender_index));
+          let valid_choice = false;
+          let survey_question_number = SENDERS[sender_index][4];
+          if (inPlay('survey',sender_index)) {
+            if (SURVEY_QUESTIONS[survey_question_number - 1].length == 1) { // Free text response
+              valid_choice = true;
+            } else {
+              for (var i = 1; i < SURVEY_QUESTIONS[survey_question_number - 1].length; i++) {
+                position_in_analyse_text = event.message.text.search(SURVEY_QUESTIONS[survey_question_number - 1][i]) + 1;
+                if (position_in_analyse_text > 0) {
+                  let xstr = event.message.text;
+                  if (xLength(xstr) == 1) {event.message.text = i.toString()};
+                  valid_choice = true;
+                  break;
+                };
+              };
+            };
+            if (valid_choice) {
+              console.log('SURVEY [' + SURVEY_NAME + '],' + sender + ',' + survey_question_number + ',' + event.message.text);
+            } else {
+              SENDERS[sender_index][4] = survey_question_number - 1; // Repeat previous question
+              // FLOW: Clear out invalid survey responses, 'stop' or 'survey' are still valid
+              position_in_analyse_text = analyse_text.search(TRIGGER_SURVEY) + 1;
+              if (position_in_analyse_text > 0) { analyse_text = TRIGGER_SURVEY };
+              position_in_analyse_text = analyse_text.search(TRIGGER_STOP) + 1;
+              if (position_in_analyse_text > 0) { analyse_text = TRIGGER_STOP };
+              if (analyse_text != TRIGGER_SURVEY && analyse_text != TRIGGER_STOP) { analyse_text = '' };
+            }
+          };
+          // Trigger the survey
+          position_in_analyse_text = analyse_text.search(TRIGGER_SURVEY) + 1;
+          //console.log("DEBUG [postWebhook]> " + TRIGGER_SURVEY + " search result: " + position_in_analyse_text);
+          if (position_in_analyse_text > 0 && SURVEY_VIABLE) {
+            // FLOW: Typing survey mid-survey, starts it again
+            if (inPlay('survey',sender_index)) { inPlayClean('survey',sender_index) };
+            inPlayPause(sender_index); // Pause all in-play...
+            inPlaySet('survey',sender_index); // ...then un-pause 'survey'
+            analyse_text = TRIGGER_SURVEY; // Clean extra
+          };
+          // Rock, Paper, Scissors, Lizard, Spock
+          // 0:id_of_sender,3:rpsls_in_play,8.rpsls_action,9:issue_instructions,10:rpsls_player,11:rpsls_bot
+          let pick_player = TRIGGER_RPSLS;
+          if (inPlay('rpsls',sender_index)) { // Only check if we are playing
+            // Presume no match unless found
+            SENDERS[sender_index][8] = 0;
+            inPlayUnset('rpsls',sender_index);
+            trigger_loop = 0;
+            for (trigger_loop = 0; trigger_loop < RPSLS_VALID.length; trigger_loop++) {
+              position_in_analyse_text = analyse_text.search(RPSLS_VALID[trigger_loop]) + 1;
+              if (position_in_analyse_text > 0) {
+                pick_player = RPSLS_VALID[trigger_loop];
+                analyse_text = pick_player; // Clean extra
+                //console.log("DEBUG [postWebhook]> " + pick_player + " search result: " + position_in_analyse_text);
+                inPlayPause(sender_index); // Pause all in-play...
+                inPlaySet('rpsls',sender_index); // ...then un-pause 'rpsls'
+                SENDERS[sender_index][8] = 3; // Evaluate the choice
+                break;
+              };
+            };
+          };
+          // Trigger RPSLS
+          position_in_analyse_text = analyse_text.search(TRIGGER_RPSLS) + 1;
+          //console.log("DEBUG [postWebhook]> " + TRIGGER_RPSLS + " search result: " + position_in_analyse_text);
+          if (position_in_analyse_text > 0) {
+            // FLOW: Typing rpsls mid-survey, starts it again
+            if (inPlay('rpsls',sender_index)) { inPlayClean('rpsls',sender_index) }; // Reset if already playing
+            inPlayPause(sender_index); // Pause all in-play...
+            inPlaySet('rpsls',sender_index); // ...then un-pause 'rpsls'
+            if (SENDERS[sender_index][9]) {
+              SENDERS[sender_index][8] = 1; // Provide intsructions + prompt
+              SENDERS[sender_index][9] = false; // Reset instructions
+            } else {
+              SENDERS[sender_index][8] = 2; // Prompt only
+            };
+          };
+          // Hangman
+          let hangman_guess = '';
+          if (inPlay('hangman',sender_index)) { // Only check if we are playing
+            //console.log("DEBUG [postWebhook]> Hangman in play.");
+            if (analyse_text.length != 1) {
+              hangman_guess = "😞 One letter at a time please.";
+              //console.log("DEBUG [postWebhook]> Hangman: Guess is too long i.e. " + analyse_text);
+            } else if (analyse_text.match(/[a-z]/i)) {
+              //console.log("DEBUG [postWebhook]> Hangman: Guess is valid i.e. " + analyse_text);
+              hangman_guess = analyse_text;
+            } else { // Not an alpha
+              //console.log("DEBUG [postWebhook]> Hangman: Guess is not an alpha i.e. " + analyse_text);
+              hangman_guess = "🔤 A letter would be nice.";
+            };
+          };
+          // FLOW: Typing hangman mid-survey, starts it again
+          // 0:id_of_sendery,2:hangman_in_play,5:hangman_strikes,6:hangman_word,7:hangman_array
+          position_in_analyse_text = analyse_text.search(TRIGGER_HANGMAN) + 1;
+          //console.log("DEBUG [postWebhook]> " + TRIGGER_HANGMAN + " search result: " + position_in_analyse_text);
+          let hangman_word = '';
+          let hangman_answer_array = [];
+          let hangman_answer = '';
+          if (CHAS_BIOGS_VIABLE && position_in_analyse_text > 0) {
+            trigger_path = TRIGGER_HANGMAN;
+            if (SENDERS[sender_index][6] == ''||inPlay('hangman',sender_index)) { // New game
+              hangman_word = CHAS_BIOGS[Math.floor(Math.random() * CHAS_BIOGS_TOTAL) * CHAS_BIOGS_BLOCK_SIZE - 2];
+              hangman_word = hangman_word.toLowerCase();
+              //console.log("DEBUG [postWebhook]> Mystery name: " + hangman_word);
+              // swap out spaces for under_scores
+              hangman_word = hangman_word.replace(/\s/g, '_');
+              // Set up the answer array
+              for (var i = 0; i < hangman_word.length; i++) {
+                if (hangman_word[i] == '_') {
+                  hangman_answer_array[i] = "_";
+                } else {
+                  hangman_answer_array[i] = "?";
+                };
+              };
+              hangman_answer = hangman_answer_array.join(' ');
+              chasbotText = "🤔 Figure out the mystery staff member name.\nType a letter to guess, or 'stop'.\nYour are allowed no more than 3 strikes.";
+              chasbotText = chasbotText + "\n" + hangman_answer;
+              chasbotText = chasbotText + "\n" + MSG_THUMBS[0] + " (0 strikes)";
+              SENDERS[sender_index][6] = hangman_word;
+              SENDERS[sender_index][7] = hangman_answer_array;
+              //console.log("DEBUG [postWebhook]> Hangman Initialise: " + chasbotText);
+            } else { // Resume existing game
+              hangman_word = SENDERS[sender_index][6];
+              hangman_answer_array = SENDERS[sender_index][7];
+              hangman_answer = hangman_answer_array.join(' ');
+              chasbotText = "🤔 Where were we... who is that!\nType a letter, or 'stop'.\nNo more than 3 strikes.";
+              chasbotText = chasbotText + "\n" + hangman_answer;
+              chasbotText = chasbotText + "\n" + MSG_THUMBS[SENDERS[sender_index][5]] + "(" + SENDERS[sender_index][5] + " strike";
+              if (SENDERS[sender_index][5] == 1) {
+                chasbotText = chasbotText + ")";
+              } else {
+                chasbotText = chasbotText + "s)";
+              };
+            };
+            inPlayPause(sender_index); // Pause all in-play...
+            inPlaySet('hangman',sender_index); // ...then un-pause 'hangman'
+          };
+          //console.log("DEBUG [postWebhook]> In play, survey: " + inPlay('survey',sender_index));
+          //console.log("DEBUG [postWebhook]> In play, rpsls: " + inPlay('rpsls',sender_index));
+          //console.log("DEBUG [postWebhook]> In play, hangman: " + inPlay('hangman',sender_index));
+          // FLOW: Remaining triggers each clean out analyse_text, so no other triggers fire
+          // ****** API LOOKUP *******
+          // TV and film
+          let moviedb_term = ''
+          for (trigger_loop = 0; trigger_loop < TRIGGER_MOVIEDB.length; trigger_loop++) {
+            position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_MOVIEDB[trigger_loop]) + 1;
+            if (position_in_analyse_text > 0) {
+              starting_point = position_in_analyse_text + TRIGGER_MOVIEDB[trigger_loop].length;
+              if (starting_point > rightmost_starting_point) { // Find right-most search term
+                rightmost_starting_point = starting_point;
+                ending_point = analyse_text.length;
+                string_length = ending_point - starting_point;
+                //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
+                //console.log("DEBUG [postWebhook]> MovieDb key found: " + TRIGGER_MOVIEDB[trigger_loop]);
+                if (string_length > 0) {
+                  trigger_path = TRIGGER_MOVIEDB[0];
+                  moviedb_term = analyse_text.slice(starting_point,ending_point);
+                  //console.log("DEBUG [postWebhook]> Movie or TV title: " + moviedb_term);
+                  analyse_text = trigger_path; // Clean extra
+                };
+              };
+            };
+          };
+          // Marvel
+          let hero_who = ''
+          position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_MARVEL) + 1;
+          //console.log("DEBUG [postWebhook]> " + TRIGGER_MARVEL + " phrase search result: " + position_in_analyse_text);
+          if (position_in_analyse_text > 0) {
+            starting_point = position_in_analyse_text + TRIGGER_MARVEL.length;
+            ending_point = analyse_text.length;
+            string_length = ending_point - starting_point;
+            //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
+            if (string_length > 0) {
+              trigger_path = TRIGGER_MARVEL;
+              hero_who = analyse_text.slice(starting_point,ending_point);
+              hero_who = toTitleCase(hero_who);
+              analyse_text = trigger_path; // Clean extra
+            };
+          };
+          // Trigger priority increases down list i.e. if multiple tirggers, lower ones trump higher
+          // ****** CHAS STUFF *******
+          // CHAS logo
+          position_in_analyse_text = analyse_text.search(TRIGGER_CHAS_LOGO) + 1;
+          //console.log("DEBUG [postWebhook]> " + TRIGGER_CHAS_LOGO + " search result: " + position_in_analyse_text);
+          if (position_in_analyse_text > 0) { trigger_path = TRIGGER_CHAS_LOGO };
+          // CHAS alphabet
+          let alpha = '';
+          let alpha_1st = true;
+          position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_CHASABET_1) + 1;
+          if (position_in_analyse_text == 0) { // i.e. first phrase not found
+            position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_CHASABET_2) + 1;
+            alpha_1st = false;
+          }
+          //console.log("DEBUG [postWebhook]> " + TRIGGER_CHASABET_1 + " or " + TRIGGER_CHASABET_2 + " phrase search result: " + position_in_analyse_text);
+          if (position_in_analyse_text > 0) {
+            if (alpha_1st) {
+              starting_point = position_in_analyse_text + TRIGGER_CHASABET_1.length;
+            } else {
+              starting_point = position_in_analyse_text + TRIGGER_CHASABET_2.length;
+            }
+            ending_point = analyse_text.length;
+            string_length = ending_point - starting_point;
+            //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
+            if (string_length > 0) {
+              // Strip string to first viable letter
+              alpha = analyse_text.slice(starting_point,ending_point);
+              alpha = firstAlpha(alpha);
+              if (alpha != '') {
+                trigger_path = TRIGGER_CHASABET_1;
+                analyse_text = trigger_path; // Clean extra
+              };
+            };
+          };
+          // CHAS Events
+          let event_name = '';
+          position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_CHAS_EVENTS) + 1;
+          //console.log("DEBUG [postWebhook]> " + TRIGGER_CHAS_EVENTS + " phrase search result: " + position_in_analyse_text);
+          if (position_in_analyse_text > 0) {
+            starting_point = position_in_analyse_text + TRIGGER_CHAS_EVENTS.length;
+            ending_point = analyse_text.length;
+            string_length = ending_point - starting_point;
+            //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
+            if (string_length > 0) {
+              trigger_path = TRIGGER_CHAS_EVENTS;
+              event_name = analyse_text.slice(starting_point,ending_point);
+              analyse_text = trigger_path; // Clean extra
+            };
+          };
+          // CHAS Biogs
+          position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_CHAS_BIOGS) + 1;
+          //console.log("DEBUG [postWebhook]> " + TRIGGER_CHAS_BIOGS + " phrase search result: " + position_in_analyse_text);
+          let biogs_name = '';
+          if (position_in_analyse_text > 0) {
+            starting_point = position_in_analyse_text + TRIGGER_CHAS_BIOGS.length;
+            ending_point = analyse_text.length;
+            string_length = ending_point - starting_point;
+            //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
+            if (string_length > 0) {
+              trigger_path = TRIGGER_CHAS_BIOGS;
+              biogs_name = analyse_text.slice(starting_point,ending_point);
+              analyse_text = trigger_path; // Clean extra
+            };
+          };
+          // Stop pauses all activity, regardless of context or other triggers
+          // i.e. must be queried last
+          position_in_analyse_text = analyse_text.search(TRIGGER_STOP) + 1;
+          if (position_in_analyse_text > 0) {
+            inPlayPause(sender_index);
+            trigger_path = ''; // Send via default else
+          };
+          // Pick a response route
+          if (inPlay('survey',sender_index)) { // Survey first - ignores
+            //console.log("DEBUG [postWebhook_route]> Survey");
+            // Pause other in_play?
+            sendQuestion_playSurvey(event);
+          } else if (trigger_path == TRIGGER_HELP) {
+            //console.log("DEBUG [postWebhook_route]> Help: " + HELP_INDEX);
+            console.log("INFO [postWebhook]> Sender: " + sender);
+            console.log("INFO [postWebhook]> Request: " + TRIGGER_HELP);
+            console.log("INFO [postWebhook]> Action: postWebhook.postImage");
+            console.log("INFO [postWebhook]> Response: Help v." + HELP_INDEX);
+            postImage(event,help_url,true,chasbotText);
+          } else if (trigger_path == TRIGGER_MARVEL) {
+            //console.log("DEBUG [postWebhook_route]> Marvel Character: " + hero_who);
+            apiMarvelChar(event,hero_who);
+          } else if (trigger_path == TRIGGER_CHASABET_1) {
+            //console.log("DEBUG [postWebhook_route]> CHAS alpahbet: " + alpha);
+            lookupAlpha(event,alpha);
+          } else if (trigger_path == TRIGGER_CHAS_EVENTS && CHAS_EVENTS_VIABLE) {
+            //console.log("DEBUG [postWebhook_route]> CHAS event: " + event_name);
+            lookupEntry(event,event_name);
+          } else if (trigger_path == TRIGGER_CHAS_BIOGS && CHAS_BIOGS_VIABLE) {
+            //console.log("DEBUG [postWebhook_route]> CHAS bios: " + biogs_name);
+            lookupBiogs(event,biogs_name);
+          } else if (SENDERS[sender_index][8] > 0) {
+            //console.log("DEBUG [postWebhook_route]> RPSLSpock: " + pick_player);
+            playRPSLS(event,pick_player);
+          } else if (trigger_path == TRIGGER_SEARCH[0]) {
+            //console.log("DEBUG [postWebhook_route]> Search: " + search_term);
+            postSearch(event,search_method,search_term);
+          } else if (trigger_path == TRIGGER_MOVIEDB[0]) {
+            //console.log("DEBUG [postWebhook_route]> Movie/TV: " + moviedb_term);
+            apiPrimeFilmTV(event,moviedb_term);
+          } else if (trigger_path == TRIGGER_CHAS_LOGO) {
+            //console.log("DEBUG [postWebhook_route]> Logo");
+            console.log("INFO [postWebhook]> Sender: " + sender);
+            console.log("INFO [postWebhook]> Request: " + TRIGGER_CHAS_LOGO);
+            console.log("INFO [postWebhook]> Action: postWebhook.postImage");
+            console.log("INFO [postWebhook]> Response: IMG URL " + URL_CHAS_THUMB);
+            postImage(event,URL_CHAS_THUMB,false,'');
+          } else if (trigger_path == TRIGGER_HANGMAN) {
+            //console.log("DEBUG [postWebhook_route]> Hangman Initiated");
+            console.log("INFO [postWebhook]> Sender: " + sender);
+            console.log("INFO [postWebhook]> Request: " + TRIGGER_HANGMAN);
+            console.log("INFO [postWebhook]> Action: postWebhook.sendTextDirect");
+            console.log("INFO [postWebhook]> Response: Hangman Mystery Name is " + hangman_word);
+            sendTextDirect(event,chasbotText);
+          } else if (inPlay('hangman',sender_index)) {
+            //console.log("DEBUG [postWebhook_route]> Hangman Guess: " + hangman_guess);
+            playHangman(event,hangman_guess);
+          } else {
+            //console.log("DEBUG [postWebhook_route]> No special cases, send via APIAI");
+            sendViaDialog(event);
+          }
+        }
+      });
+    });
+    res.status(200).end();
+  }
+});
+
+function sendTemplate(eventSend,messageData,plusText,messageText) {
+  // messageData set outside of function call
+  let sender = eventSend.sender.id;
+  request({
+    uri: URL_CHAT_ENDPOINT,
+    qs: {access_token: KEY_PAGE_ACCESS},
+    method: 'POST',
+    json: {
+      recipient: {id: sender},
+      message: messageData
+    }
+  }, function (error, response) {
+    if (error) {
+        console.log("ERROR [sendTemplate]> Error sending template message: ", error);
+    } else if (response.body.error) {
+        console.log("ERROR [sendTemplate]> Undefined: ", response.body.error);
+    }
+  });
+  if (plusText) { sendTextDirect(eventSend,messageText) };
+}
+
+function sendQuestion_playSurvey(eventSend) {
+  //console.log("DEBUG [sendQuestion_playSurvey]> " + SURVEY_NAME + "In Progress");
+  // 0:id_of_sender,1:survey_in_play,4:survey_question
+  let sender = eventSend.sender.id;
+  let custom_id = inPlayID(sender);
+  let survey_question_number = SENDERS[custom_id][4];
+  let rspns_items = 0;
+  let qstn = '';
+  let surveyTemplate = '';
+  if (survey_question_number == SURVEY_QUESTIONS.length) {
+    rspns_items = 1; // Thanks
+    qstn = MSG_SURVEY_THANKS;
+    inPlayClean('survey', custom_id);
+  } else { // Next question
+    rspns_items = SURVEY_QUESTIONS[survey_question_number].length;
+    qstn = SURVEY_QUESTIONS[survey_question_number][0];
+  }
+  switch (rspns_items) {
+    case 1:
+      surveyTemplate = {
+        text: trimTo(640,qstn)};
+      break;
+    case 2:
+      surveyTemplate = {
+        text: trimTo(640,qstn),
+        quick_replies:[
+              { content_type:"text",
+                title: SURVEY_QUESTIONS[survey_question_number][1],
+                payload:"<POSTBACK_PAYLOAD>" }]};
+      break;
+    case 3:
+      surveyTemplate = {
+        text: trimTo(640,qstn),
+        quick_replies:[
+              { content_type:"text",
+                title: SURVEY_QUESTIONS[survey_question_number][1],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: SURVEY_QUESTIONS[survey_question_number][2],
+                payload:"<POSTBACK_PAYLOAD>" }]};
+      break;
+    case 4:
+      surveyTemplate = {
+        text: trimTo(640,qstn),
+        quick_replies:[
+              { content_type:"text",
+                title: SURVEY_QUESTIONS[survey_question_number][1],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: SURVEY_QUESTIONS[survey_question_number][2],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: SURVEY_QUESTIONS[survey_question_number][3],
+                payload:"<POSTBACK_PAYLOAD>" }]};
+      break;
+    case 5:
+      surveyTemplate = {
+        text: trimTo(640,qstn),
+        quick_replies:[
+              { content_type:"text",
+                title: SURVEY_QUESTIONS[survey_question_number][1],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: SURVEY_QUESTIONS[survey_question_number][2],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: SURVEY_QUESTIONS[survey_question_number][3],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: SURVEY_QUESTIONS[survey_question_number][4],
+                payload:"<POSTBACK_PAYLOAD>" }]};
+      break;
+    case 6:
+      surveyTemplate = {
+        text: trimTo(640,qstn),
+        quick_replies:[
+              { content_type:"text",
+                title: SURVEY_QUESTIONS[survey_question_number][1],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: SURVEY_QUESTIONS[survey_question_number][2],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: SURVEY_QUESTIONS[survey_question_number][3],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: SURVEY_QUESTIONS[survey_question_number][4],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: SURVEY_QUESTIONS[survey_question_number][5],
+                payload:"<POSTBACK_PAYLOAD>" }]};
+  }; // Switch
+  request({
+    uri: URL_CHAT_ENDPOINT,
+    qs: {access_token: KEY_PAGE_ACCESS},
+    method: 'POST',
+    json: {
+      recipient: {id: sender},
+      message: surveyTemplate
+    }
+  }, function (error, response) {
+    if (error) {
+      console.log("ERROR [sendQuestion_playSurvey]> Error sending survey message: ", error);
+    } else if (response.body.error) {
+      console.log("ERROR [sendQuestion_playSurvey]> Undefined: ", response.body.error);
+    }
+  }); // request
+  if (inPlay('survey',custom_id)) { SENDERS[custom_id][4] = survey_question_number + 1 };
+}
+
+function sendTextDirect(eventSend,outbound_text) {
   // messageText set outside of function call
-  var sender = event.sender.id;
-  if (IDS_VIABLE) { messageText = customGreeting(sender) + messageText };
+  let sender = eventSend.sender.id;
+  if (IDS_VIABLE) { outbound_text = customGreeting(sender) + outbound_text };
   request({
     uri: URL_CHAT_ENDPOINT,
     qs: {access_token: KEY_PAGE_ACCESS},
@@ -1010,7 +1073,7 @@ function sendTextDirect(event) {
     json: {
       recipient: {id: sender},
       message: {
-        text: trimTo(640,messageText)
+        text: trimTo(640,outbound_text)
       }
     }
   }, function (error, response) {
@@ -1020,46 +1083,56 @@ function sendTextDirect(event) {
       console.log("ERROR [sendTextDirect]> Undefined: ", response.body.error);
     }
   }); // request
-  messageText = '';
 }
 
 // Message request pinged off of API.AI for response
-function sendMessageViaAPIAI(event_dialog) {
-  var sender = event_dialog.sender.id;
-  let text = event_dialog.message.text;
+function sendViaDialog(eventSend) {
+  let sender = eventSend.sender.id;
+  let text = eventSend.message.text;
   let apiai = dialogFlow.textRequest(text, {
     sessionId: 'sessionID' // Arbitrary id
   });
   apiai.on('response', (response) => {
-    messageText = response.result.fulfillment.speech;
-    console.log("INFO [sendMessageViaAPIAI]> Sender: " + sender);
-    console.log("INFO [sendMessageViaAPIAI]> Request: " + response.result.resolvedQuery);
+    let dialogFlowText = response.result.fulfillment.speech;
+    console.log("INFO [sendViaDialog]> Sender: " + sender);
+    console.log("INFO [sendViaDialog]> Request: " + response.result.resolvedQuery);
     if (response.result.action == '') {
-      console.log("INFO [sendMessageViaAPIAI]> Action: " + response.result.metadata.intentName);
+      console.log("INFO [sendViaDialog]> Action: " + response.result.metadata.intentName);
     } else {
-      console.log("INFO [sendMessageViaAPIAI]> Action: " + response.result.action);
-    }
-    if (HOOK_TEMPLATE) {
-      console.log("INFO [sendMessageViaAPIAI]> Response: Template");
-      sendTemplate(event_dialog);
-      HOOK_TEMPLATE = false;
+      console.log("INFO [sendViaDialog]> Action: " + response.result.action);
+    };
+    if (dialogFlowText == HOOK_XMAS) {
+      console.log("INFO [sendViaDialog]> Response: 🛍️ CHAS Retail");
+      postLinkButton(eventSend,URL_CHAS_RETAIL,MSG_CHAS_RETAIL,'🛍️ CHAS Retail');
+    } else if (dialogFlowText == HOOK_URL_GROUP_DOCS) {
+      console.log("INFO [sendViaDialog]> Response: 📚 Useful Documents");
+      postLinkButton(eventSend,URL_GROUP_DOCS,MSG_GROUP_DOC,'📚 Useful Documents');
+    } else if (dialogFlowText == HOOK_PLAN) {
+      console.log("INFO [sendViaDialog]> Response: 📖 CHAS Plan");
+      postLinkButton(eventSend,URL_CHAS_PLAN,MSG_CHAS_PLAN,'📖 CHAS Plan');
+    } else if (dialogFlowText == HOOK_WORKPLACE) {
+      console.log("INFO [sendViaDialog]> Response: 🆘 Workplace Help");
+      postLinkButton(eventSend,URL_GROUP_HELP,MSG_GROUP_HELP,'🆘 Workplace Help');
     } else {
-      console.log("INFO [sendMessageViaAPIAI]> Response: " + messageText);
-      sendTextDirect(event_dialog);
+      console.log("INFO [sendViaDialog]> Response: " + dialogFlowText);
+      sendTextDirect(eventSend,dialogFlowText);
     }
   });
   apiai.on('error', (error) => {
-    console.log("ERROR [sendMessageViaAPIAI]> Undefined: " + error);
+    console.log("ERROR [sendViaDialog]> Undefined: " + error);
   });
   apiai.end();
 }
 
-// Webhook for API.ai to get response from the 3rd party API
+// Posting functions
+// =================
+// Webhook for API.ai to get response from the 3rd party API or code
 CHASbot.post('/heroku', (req, res) => {
   //console.log("DEBUG [postHeroku]> " + req.body.result);
+  let hookText = '';
   if (req.body.result.action === HOOK_WEATHER) {
     // Set a default weather location
-    var city = 'Edinburgh';
+    let city = 'Edinburgh';
     if (typeof req.body.result.parameters['geo-city-gb'] != 'undefined') {
       city = req.body.result.parameters['geo-city-gb'];
       //console.log("DEBUG [postHeroku]> Location @ :" + city);
@@ -1076,10 +1149,10 @@ CHASbot.post('/heroku', (req, res) => {
         //console.log("DEBUG [postHeroku]> " + json);
         let tempF = ~~(json.main.temp * 9/5 - 459.67);
         let tempC = ~~(json.main.temp - 273.15);
-        messageText = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
+        hookText = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
         return res.json({
-          speech: messageText,
-          displayText: messageText
+          speech: hookText,
+          displayText: hookText
         });
       } else {
         let errorMessage = "Oops, I wasn't able to look up that place name.";
@@ -1092,54 +1165,51 @@ CHASbot.post('/heroku', (req, res) => {
       }
     })
   } else if (req.body.result.action === HOOK_PICKCARD) {
+    //console.log("DEBUG [postHeroku]> Pick a playing card");
     CARD_PICK = CARD_DECK[Math.floor(Math.random()*CARD_DECK.length)];
-    messageText = CARD_PROMPTS[CARD_PROMPT] + CARD_PICK;
-    CARD_PROMPT = CARD_PROMPT + 1;
+    hookText = CARD_PROMPTS[CARD_PROMPT] + CARD_PICK;
+    CARD_PROMPT++;
     if (CARD_PROMPT == CARD_PROMPTS.length) {CARD_PROMPT = 0};
     return res.json({
-      speech: messageText,
-      displayText: messageText
+      speech: hookText,
+      displayText: hookText
     });
   } else if (req.body.result.action === HOOK_FUNDRAISING) {
+    //console.log("DEBUG [postHeroku]> Send fundraising contact list");
     return res.json({
-      speech: CHAS_FR_CARD,
-      displayText: CHAS_FR_CARD
+      speech: CHAS_FR_LIST,
+      displayText: CHAS_FR_LIST
     });
-    //console.log("DEBUG [postHeroku]> Send fundraising contact card");
   } else if (req.body.result.action === HOOK_URL_GROUP_DOCS) {
-    HOOK_TEMPLATE = true;
-    primeLinkButton(URL_GROUP_DOCS,MSG_GROUP_DOC,'📚 Useful Documents');
+    //console.log("DEBUG [postHeroku]> Send link to Docs Group");
     return res.json({
-      speech: "Useful Documents Link",
-      displayText: messageData
+      speech: HOOK_URL_GROUP_DOCS,
+      displayText: HOOK_URL_GROUP_DOCS
     });
   } else if (req.body.result.action === HOOK_XMAS) {
-    HOOK_TEMPLATE = true;
-    primeLinkButton(URL_CHAS_RETAIL,MSG_CHAS_RETAIL,'🛍️ CHAS Retail');
+    //console.log("DEBUG [postHeroku]> Send link to CHAS retail");
     return res.json({
-      speech: "CHAS Retail Contact Link",
-      displayText: messageData
+      speech: HOOK_XMAS,
+      displayText: HOOK_XMAS
     });
   } else if (req.body.result.action === HOOK_PLAN) {
-    HOOK_TEMPLATE = true;
-    primeLinkButton(URL_CHAS_PLAN,MSG_CHAS_PLAN,'📖 CHAS Plan');
+    //console.log("DEBUG [postHeroku]> Send link to CHAS plan");
     return res.json({
-      speech: "CHAS Plan Link",
-      displayText: messageData
+      speech: HOOK_PLAN,
+      displayText: HOOK_PLAN
     });
   } else if (req.body.result.action === HOOK_WORKPLACE) {
-    HOOK_TEMPLATE = true;
-    primeLinkButton(URL_GROUP_HELP,MSG_GROUP_HELP,'🆘 Workplace Help');
+    //console.log("DEBUG [postHeroku]> Send link to Help Group");
     return res.json({
-      speech: "Workplace Help Group",
-      displayText: messageData
+      speech: HOOK_WORKPLACE,
+      displayText: HOOK_WORKPLACE
     });
   };
 });
 
-function postImage(image_url,pass_on_event) {
+function postImage(postEvent,image_url,plusText,passText) {
   //console.log("DEBUG [postImage]> Input: " + image_url);
-  let image_template = {
+  let imgTemplate = {
     attachment: {
       type: "image",
       payload: {
@@ -1148,13 +1218,16 @@ function postImage(image_url,pass_on_event) {
       } // payload
     } // attachment
   }; // template
-  messageData = image_template; // Required within sendTemplate
-  sendTemplate(pass_on_event);
+  if (plusText) {
+    sendTemplate(postEvent,imgTemplate,true,passText);
+  } else {
+    sendTemplate(postEvent,imgTemplate,false,'');
+  };
 }
 
-function primeLinkButton(link_url,reponse_msg,btn_msg) {
-  //console.log("DEBUG [primeLinkButton]> Input: " + reponse_msg);
-  let link_template = {
+function postLinkButton(postEvent,link_url,reponse_msg,btn_msg) {
+  //console.log("DEBUG [postLinkButton]> Input: " + reponse_msg);
+  let linkTemplate = {
     attachment: {
       type: "template",
       payload: {
@@ -1168,29 +1241,32 @@ function primeLinkButton(link_url,reponse_msg,btn_msg) {
       } // payload
     } // attachment
   }; // template
-  messageData = link_template;
+  sendTemplate(postEvent,linkTemplate,false,'');
 }
 
-function postMarvelResults(pass_on_event,result_or_not) {
-  //console.log("DEBUG [postMarvelResults]> Pass or Fail: " + result_or_not);
-  var sender = pass_on_event.sender.id;
-  console.log("INFO [postMarvelResults]> Sender: " + sender);
-  console.log("INFO [postMarvelResults]> Request: " + TIRGGER_PHRASE_MARVEL + " " + HERO_WHO);
-  console.log("INFO [postMarvelResults]> Action: getMarvelChar.postMarvelResults");
-  if (result_or_not == 1) {
-    console.log("INFO [postMarvelResults]> Reponse: Successful");
-    let marvel_template = {
+function postMarvel(postEvent,success_result,hero_array) {
+  //console.log("DEBUG [postMarvel]> Pass or Fail: " + success_result);
+  let sender = postEvent.sender.id;
+  let marvelTemplate = '';
+  let marvelText = '';
+  // hero_array = [marvelWho,marvelNote,marvelThumb,marvelURL];
+  console.log("INFO [postMarvel]> Sender: " + sender);
+  console.log("INFO [postMarvel]> Request: " + TRIGGER_MARVEL + " " + toTitleCase(hero_array[0]));
+  console.log("INFO [postMarvel]> Action: apiMarvelChar.postMarvel");
+  if (success_result) {
+    console.log("INFO [postMarvel]> Reponse: Successful");
+    marvelTemplate = {
       attachment: {
         type: "template",
         payload: {
           template_type: "generic",
           elements: [
             {
-            title: HERO_WHO_NOW,
-            image_url: HERO_THUMB,
+            title: toTitleCase(hero_array[0]),
+            image_url: hero_array[2],
             default_action: {
               type: "web_url",
-              url: HERO_URL,
+              url: hero_array[3],
               messenger_extensions: false,
               webview_height_ratio: "tall"
             } // default_action
@@ -1198,42 +1274,42 @@ function postMarvelResults(pass_on_event,result_or_not) {
         } // payload
       } // attachment
     }; // template
-    messageText = HERO_DESCRIPTION; // Required within sendTextDirect
-    messageData = marvel_template; // Required within sendTemplate
-    MARVEL_SEND = true;
-    sendTemplate(pass_on_event);
+    marvelText = hero_array[1]; // Required within sendTextDirect
+    sendTemplate(postEvent,marvelTemplate,true,marvelText);
   } else {
-    console.log("INFO [postMarvelResults]> Reponse: Unuccessful");
-    messageText = MSG_HERO_OOPS[HERO_OOPS_INDEX] + ' try something instead of ' + HERO_WHO + '?'; // Required within sendTextDirect
-    HERO_OOPS_INDEX = HERO_OOPS_INDEX + 1;
+    console.log("INFO [postMarvel]> Reponse: Unuccessful");
+    marvelText = MSG_HERO_OOPS[HERO_OOPS_INDEX] + ' try something instead of ' + toTitleCase(hero_array[0]) + '?'; // Required within sendTextDirect
+    HERO_OOPS_INDEX++;
     if (HERO_OOPS_INDEX == MSG_HERO_OOPS.length) {HERO_OOPS_INDEX = 0};
-    sendTextDirect(pass_on_event);
+    sendTextDirect(postEvent,marvelText);
   };
 }
 
-function postResultsEventsCHAS(pass_on_event,result_or_not) {
-  //console.log("DEBUG [postResultsEventsCHAS]> Pass or Fail: " + result_or_not);
-  var sender = pass_on_event.sender.id;
-  console.log("INFO [postResultsEventsCHAS]> Sender: " + sender);
-  console.log("INFO [postResultsEventsCHAS]> Request: " + TIRGGER_PHRASE_CHAS_EVENTS + " " + CHAS_EVENTS_NAME);
-  console.log("INFO [postResultsEventsCHAS]> Action: getEventCHAS.postResultsEventsCHAS");
-  if (result_or_not == 1) {
-    console.log("INFO [postResultsEventsCHAS]> Reponse: Successful");
-    CHAS_EVENTS_NAME = CHAS_EVENTS_CALENDAR[CHAS_EVENTS_INDEX + 1];
-    CHAS_EVENTS_DETAILS = CHAS_EVENTS_CALENDAR[CHAS_EVENTS_INDEX + 2];
-    CHAS_EVENTS_INFORMATION = CHAS_EVENTS_CALENDAR[CHAS_EVENTS_INDEX + 3];
-    let events_template = {
+function postEvents(postEvent,success_result,event_index,event_in) {
+  //console.log("DEBUG [postEvents]> Pass or Fail: " + success_result);
+  let sender = postEvent.sender.id;
+  let eventsText = '';
+  let eventsTemplate = '';
+  console.log("INFO [postEvents]> Sender: " + sender);
+  console.log("INFO [postEvents]> Request: " + TRIGGER_CHAS_EVENTS + " " + event_in);
+  console.log("INFO [postEvents]> Action: lookupEntry.postEvents");
+  if (success_result) {
+    console.log("INFO [postEvents]> Reponse: Successful");
+    let event_name = CHAS_EVENTS_CALENDAR[event_index + 1];
+    let event_detail = CHAS_EVENTS_CALENDAR[event_index + 2];
+    let event_info = CHAS_EVENTS_CALENDAR[event_index + 3];
+    eventsTemplate = {
       attachment: {
         type: "template",
         payload: {
           template_type: "generic",
           elements: [
             {
-            title: CHAS_EVENTS_NAME,
+            title: event_name,
             image_url: URL_CHAS_THUMB,
             default_action: {
               type: "web_url",
-              url: CHAS_EVENTS_INFORMATION,
+              url: event_info,
               messenger_extensions: false,
               webview_height_ratio: "tall"
             } // default_action
@@ -1241,60 +1317,58 @@ function postResultsEventsCHAS(pass_on_event,result_or_not) {
         } // payload
       } // attachment
     }; // template
-    messageText = CHAS_EVENTS_DETAILS; // Required within sendTextDirect
-    sendTextDirect(pass_on_event);
-    messageData = events_template; // Required within sendTemplate
-    sendTemplate(pass_on_event);
+    eventsText = event_detail; // Required within sendTextDirect
+    sendTemplate(postEvent,eventsTemplate,true,eventsText);
   } else {
-    console.log("INFO [postResultsEventsCHAS]> Reponse: Unsuccessful");
-    messageText = MSG_EVENTS_OOPS[CHAS_EVENTS_OOPS_INDEX] + ' try something instead of ' + toTitleCase(CHAS_EVENTS_NAME) + '?'; // Required within sendTextDirect
-    CHAS_EVENTS_OOPS_INDEX = CHAS_EVENTS_OOPS_INDEX + 1;
+    console.log("INFO [postEvents]> Reponse: Unsuccessful");
+    eventsText = MSG_EVENTS_OOPS[CHAS_EVENTS_OOPS_INDEX] + ' try something instead of ' + toTitleCase(event_in) + '?'; // Required within sendTextDirect
+    CHAS_EVENTS_OOPS_INDEX++;
     if (CHAS_EVENTS_OOPS_INDEX == MSG_EVENTS_OOPS.length) {CHAS_EVENTS_OOPS_INDEX = 0};
-    sendTextDirect(pass_on_event);
+    sendTextDirect(postEvent,eventsText);
   };
 }
 
-function postResultsBiosCHAS(pass_on_event,result_or_not) {
-  //console.log("DEBUG [postResultsBiosCHAS]> Input: " + pass_on_event);
-  var sender = pass_on_event.sender.id;
-  console.log("INFO [postResultsBiosCHAS]> Sender: " + sender);
-  console.log("INFO [postResultsBiosCHAS]> Request: " + TIRGGER_PHRASE_CHAS_BIOGS + " " + CHAS_BIOGS_NAME);
-  console.log("INFO [postResultsBiosCHAS]> Action: getBiosCHAS.postResultsBiosCHAS");
-  if (result_or_not == 1) {
-    //console.log("DEBUG [postResultsBiosCHAS]> Index: " + CHAS_BIOGS_INDEX);
-    console.log("INFO [postResultsBiosCHAS]> Reponse: Successful");
-    messageText = CHAS_BIOGS[CHAS_BIOGS_INDEX + 1];
-    //console.log("DEBUG [postResultsBiosCHAS]> Result: " + CHAS_BIOGS[CHAS_BIOGS_INDEX + 1]);
-    sendTextDirect(pass_on_event);
+function postBiogs(postEvent,success_result,biogs_index,biogs_name) {
+  //console.log("DEBUG [postBiogs]> Input: " + postEvent);
+  let sender = postEvent.sender.id;
+  console.log("INFO [postBiogs]> Sender: " + sender);
+  console.log("INFO [postBiogs]> Request: " + TRIGGER_CHAS_BIOGS + " " + biogs_name);
+  console.log("INFO [postBiogs]> Action: lookupBiogs.postBiogs");
+  if (success_result) {
+    //console.log("DEBUG [postBiogs]> Index: " + biogs_index);
+    console.log("INFO [postBiogs]> Reponse: Successful");
+    let biogsText = CHAS_BIOGS[biogs_index + 1];
+    //console.log("DEBUG [postBiogs]> Result: " + CHAS_BIOGS[biogs_index + 1]);
+    sendTextDirect(postEvent,biogsText);
   } else {
-    console.log("INFO [postResultsBiosCHAS]> Reponse: Unsuccessful");
-    sendMessageViaAPIAI(pass_on_event);
+    console.log("INFO [postBiogs]> Reponse: Unsuccessful");
+    sendViaDialog(postEvent);
   };
 }
 
-function postSearch(pass_on_event) {
-  //console.log("DEBUG [postSearch]> Input: " + pass_on_event);
-  var sender = pass_on_event.sender.id;
+function postSearch(postEvent,search_method,search_term) {
+  //console.log("DEBUG [postSearch]> Input: " + postEvent);
+  let sender = postEvent.sender.id;
   console.log("INFO [postSearch]> Sender: " + sender);
-  console.log("INFO [postSearch]> Request: " + SEARCH_METHOD + ' ' + SEARCH_TERM);
+  console.log("INFO [postSearch]> Request: " + search_method + ' ' + search_term);
   console.log("INFO [postSearch]> Action: postSearch.sendTemplate");
-  var search_title = '';
-  var search_image_url = '';
-  var search_url = '';
-  if (SEARCH_METHOD == "google") {
+  let search_title = '';
+  let search_image_url = '';
+  let search_url = '';
+  if (search_method == "google") {
     search_title = 'Search Google';
     search_image_url = URL_GOOGLE_THUMB;
-    search_url = URL_SEARCH_GOOGLE + SEARCH_TERM;
-  } else if (SEARCH_METHOD == "wiki") {
+    search_url = URL_SEARCH_GOOGLE + search_term;
+  } else if (search_method == "wiki") {
     search_title = 'Search Wikipedia';
     search_image_url = URL_WIKI_THUMB;
-    search_url = URL_SEARCH_WIKI + SEARCH_TERM;
-  } else if (SEARCH_METHOD == "beeb") {
+    search_url = URL_SEARCH_WIKI + search_term;
+  } else if (search_method == "beeb") {
     search_title = 'Search BBC';
     search_image_url = URL_BEEB_THUMB;
-    search_url = URL_SEARCH_BEEB + SEARCH_TERM;
+    search_url = URL_SEARCH_BEEB + search_term;
   }
-  let search_template = {
+  let searchTemplate = {
     attachment: {
       type: "template",
       payload: {
@@ -1313,7 +1387,7 @@ function postSearch(pass_on_event) {
       } // payload
     } // attachment
   }; // template
-  let carousel_template = {
+  let carouselTemplate = {
     attachment: {
       type: "template",
       payload: {
@@ -1323,7 +1397,7 @@ function postSearch(pass_on_event) {
           image_url: URL_GOOGLE_THUMB,
           default_action: {
             type: "web_url",
-            url: URL_SEARCH_GOOGLE + SEARCH_TERM,
+            url: URL_SEARCH_GOOGLE + search_term,
             messenger_extensions: false,
             webview_height_ratio: "tall"
           }
@@ -1332,7 +1406,7 @@ function postSearch(pass_on_event) {
           image_url: URL_WIKI_THUMB,
           default_action: {
             type: "web_url",
-            url: URL_SEARCH_WIKI + SEARCH_TERM,
+            url: URL_SEARCH_WIKI + search_term,
             messenger_extensions: false,
             webview_height_ratio: "tall"
           }
@@ -1341,7 +1415,7 @@ function postSearch(pass_on_event) {
           image_url: URL_BEEB_THUMB,
           default_action: {
             type: "web_url",
-            url: URL_SEARCH_BEEB + SEARCH_TERM,
+            url: URL_SEARCH_BEEB + search_term,
             messenger_extensions: false,
             webview_height_ratio: "tall"
           }
@@ -1349,142 +1423,117 @@ function postSearch(pass_on_event) {
       }
     }
   };
-  if (SEARCH_METHOD == "search") {
+  if (search_method == "search") {
     console.log("INFO [postSearch]> Reponse: Search Carousel");
-    messageData = carousel_template;
-    sendTemplate(pass_on_event);
+    sendTemplate(postEvent,carouselTemplate,false,'');
   } else {
     console.log("INFO [postSearch]> Reponse: Simple Search");
-    messageData = search_template;
-    sendTemplate(pass_on_event);
+    sendTemplate(postEvent,searchTemplate,false,'');
   };
 }
 
-function checkHangman(pass_on_event) {
-  //console.log("DEBUG [checkHangman]> Input: " + pass_on_event);
-  var sender = pass_on_event.sender.id;
-  if (messageText == '') {
-    var got_one = false;
-    var i = 0; // an indexer into the array
-    for (i = 0; i < HANGMAN_WORD.length; i++) {
-      if (HANGMAN_WORD[i] == HANGMAN_GUESS) {
-        HANGMAN_ANSWER_ARRAY[i] = HANGMAN_GUESS.toUpperCase(); // Swap the ? for the actual upper-case letter
-        got_one = true;
-        messageText = "Yes! " + HANGMAN_GUESS.toUpperCase() + " is in the answer.";
-        messageText = messageText + "\n" + HANGMAN_ANSWER_ARRAY.join(' ');
-        messageText = messageText + "\n" + MSG_THUMBS[HANGMAN_STRIKES] + " (" + HANGMAN_STRIKES + " strike";
-        if (HANGMAN_STRIKES == 1) {
-          messageText = messageText + ")";
-        } else {
-          messageText = messageText + "s)";
-        };
-      };
-    };
-    // Count the remaining letters
-    HANGMAN_REMAINING = 0;
-    for (i = 0; i < HANGMAN_WORD.length; i++) {
-      if (HANGMAN_ANSWER_ARRAY[i] == '?') {
-        HANGMAN_REMAINING = HANGMAN_REMAINING + 1;
-      };
-    };
-    // If no remaining letters, hurray, you won
-    if (HANGMAN_REMAINING == 0) {
-      HANGMAN_IN_PLAY = false;
-      messageText = "Yes! You guessed the mystery staff member, " + HANGMAN_WORD.toUpperCase() + '!';
-    };
-    // Otherwise, wrong guess
-    if (!got_one) {
-      messageText = "Sorry, no " + HANGMAN_GUESS.toUpperCase() + " to be found.";
-      HANGMAN_STRIKES = HANGMAN_STRIKES + 1;
-      // Game Over
-      if (HANGMAN_STRIKES == 4) {
-        HANGMAN_IN_PLAY = false;
-        messageText = messageText + '\n' + 'The mystery staff member was ' + HANGMAN_WORD.toUpperCase() + '!'
+function postFilmTV(postEvent,record_index) {
+  //console.log("DEBUG [postFilmTV]> Index: " + record_index + ", " + MOVIEDB_RECORDS[record_index][0] + ", " + MOVIEDB_RECORDS[record_index][3]+ ", " + MOVIEDB_RECORDS[record_index][6]);
+  let sender = postEvent.sender.id;
+  let filmText = '';
+  if (MOVIEDB_RECORDS[record_index][0] && MOVIEDB_RECORDS[record_index][3] && !MOVIEDB_RECORDS[record_index][6]) {
+    MOVIEDB_RECORDS[record_index][6] = true;
+    if (MOVIEDB_RECORDS[record_index][1] == 'No TV result' && MOVIEDB_RECORDS[record_index][4] == 'No film result') {
+      // No result
+      sendViaDialog(postEvent);
+    } else if (MOVIEDB_RECORDS[record_index][1] != 'No TV result' && MOVIEDB_RECORDS[record_index][4] == 'No film result') {
+      // TV only
+      console.log("INFO [postFilmTV]> Sender: " + sender);
+      console.log("INFO [postFilmTV]> Request: MovieDb");
+      console.log("INFO [postFilmTV]> Action: postFilmTV.sendTextDirect");
+      filmText = "📺 " + MOVIEDB_RECORDS[record_index][1];
+      console.log("INFO [postFilmTV]> Reponse: " + filmText);
+      sendTextDirect(postEvent,filmText);
+    } else if (MOVIEDB_RECORDS[record_index][1] == 'No TV result' && MOVIEDB_RECORDS[record_index][4] != 'No film result') {
+      // Film only
+      console.log("INFO [postFilmTV]> Sender: " + sender);
+      console.log("INFO [postFilmTV]> Request: MovieDb");
+      console.log("INFO [postFilmTV]> Action: postFilmTV.sendTextDirect");
+      filmText = "📽️ " + MOVIEDB_RECORDS[record_index][4];
+      console.log("INFO [postFilmTV]> Reponse: " + filmText);
+      sendTextDirect(postEvent,filmText);
+    } else {
+      // Both
+      console.log("INFO [postFilmTV]> Sender: " + sender);
+      console.log("INFO [postFilmTV]> Request: MovieDb");
+      console.log("INFO [postFilmTV]> Action: postFilmTV.sendTextDirect");
+      if (MOVIEDB_RECORDS[record_index][2] > MOVIEDB_RECORDS[record_index][5]) {
+        filmText = "📺 " + MOVIEDB_RECORDS[record_index][1];
+        console.log("INFO [postFilmTV]> Reponse: " + filmText);
+        sendTextDirect(postEvent,filmText);
+      } else if (MOVIEDB_RECORDS[record_index][2] < MOVIEDB_RECORDS[record_index][5]) {
+        filmText = "📽️ " + MOVIEDB_RECORDS[record_index][4];
+        console.log("INFO [postFilmTV]> Reponse: " + filmText);
+        sendTextDirect(postEvent,filmText);
       } else {
-        messageText = messageText + "\n" + HANGMAN_ANSWER_ARRAY.join(' ');
-        messageText = messageText + "\n" + MSG_THUMBS[HANGMAN_STRIKES] + " (" + HANGMAN_STRIKES + " strike";
-        if (HANGMAN_STRIKES == 1) {
-          messageText = messageText + ")";
+        let pick_one = Math.floor(Math.random()*2);
+        if (pick_one == 0) {
+          filmText = "🎞️ " + MOVIEDB_RECORDS[record_index][1];
         } else {
-          messageText = messageText + "s)";
+          filmText = "🎞️ " + MOVIEDB_RECORDS[record_index][4];
         };
+        console.log("INFO [postFilmTV]> Reponse: " + filmText);
+        sendTextDirect(postEvent,filmText);
       };
     };
   };
-  console.log("INFO [checkHangman]> Sender: " + sender);
-  console.log("INFO [checkHangman]> Request: Hangman guess was " + HANGMAN_GUESS);
-  console.log("INFO [checkHangman]> Action: checkHangman.sendTextDirect");
-  console.log("INFO [checkHangman]> Response: " + messageText);
-  sendTextDirect(pass_on_event);
 }
 
-// Fetch back special queries
-function getAlphabetCHAS(LetterTile,pass_in_event) {
-  //console.log("DEBUG [getAlphabetCHAS]> Input: " + LetterTile);
-  var sender = pass_in_event.sender.id;
-  console.log("INFO [getAlphabetCHAS]> Sender: " + sender);
-  console.log("INFO [getAlphabetCHAS]> Request: " + TRIGGER_PHRASE_CHASABET_1 + " or " + TRIGGER_PHRASE_CHASABET_2 + " " + LetterTile);
-  console.log("INFO [getAlphabetCHAS]> Action: getAlphabetCHAS.postImage");
-  var target_letter_code = LetterTile.charCodeAt(0) - 97;
-  var target_version = CHASABET_INDEX[target_letter_code];
-  CHASABET_URL = URL_IMG_PREFIX + CHASABET[target_letter_code][target_version] + URL_IMG_SUFFIX;
-  console.log("INFO [getAlphabetCHAS]> Reponse: IMG URL " + CHASABET_URL);
-  //console.log("DEBUG [getAlphabetCHAS]> IMAGE URL: " + CHASABET_URL);
-  CHASABET_INDEX[target_letter_code] = target_version + 1;
-  if (CHASABET_INDEX[target_letter_code] == CHASABET[target_letter_code].length) {
-    CHASABET_INDEX[target_letter_code] = 0;
-  };
-  postImage(CHASABET_URL,pass_in_event);
-}
-
-function getFilmTV(nameFilmTV,episode_find,tv_film,record_index,pass_on_event) {
-  //console.log("DEBUG [getFilmTV]> Input: " + nameFilmTV + ", " + episode_find + ", " + tv_film + ", " + record_index);
-  var epBlurb = ''; // return value
+// Remote search functions - API
+// =============================
+function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
+  //console.log("DEBUG [apiFilmTV]> Input: " + nameFilmTV + ", " + episode_find + ", " + tv_film + ", " + record_index);
+  let epBlurb = ''; // return value
   const base_url = "https://api.themoviedb.org/3/search/";
   const params_url = "api_key=" + KEY_API_MOVIEDB;
   const movie_url = "movie?";
   const tv_url = "tv?";
-  var query_url = "&query=" + nameFilmTV;
+  let query_url = "&query=" + nameFilmTV;
   // First pass * TV *
   if (tv_film == 'tv') { var url = base_url + tv_url + params_url + query_url }
   else if (tv_film == 'film') { var url = base_url + movie_url + params_url + query_url };
   // e.g. https://api.themoviedb.org/3/search/movie?api_key={api_key}&query=Jack+Reacher
   // id 1871 is Eastenders; Season 33 is 2017
   if (episode_find) { url = "https://api.themoviedb.org/3/tv/1871/season/33?api_key=" + KEY_API_MOVIEDB + "&language=en-US" };
-  //console.log("DEBUG [getFilmTV]> URL: " + url);
+  //console.log("DEBUG [apiFilmTV]> URL: " + url);
   http.get(url, function(res) {
-    //console.log("DEBUG [getFilmTV]> MovieDb Response Code: " + res.statusCode);
-    var body = "";
+    //console.log("DEBUG [apiFilmTV]> MovieDb Response Code: " + res.statusCode);
+    let body = "";
     res.on('data', function (chunk) { body += chunk });
     res.on('end', function() {
-      var movieDbData = JSON.parse(body);
-      //console.log("DEBUG [getFilmTV]> MovieDb Response: " + movieDbData);
+      let movieDbData = JSON.parse(body);
+      //console.log("DEBUG [apiFilmTV]> MovieDb Response: " + movieDbData);
       if (res.statusCode === 200) {
         if (episode_find) {
-          var tdyDate = new Date();
+          let tdyDate = new Date();
           // Loop down from latest episode
           for (var i = movieDbData.episodes.length-1; i > -1; i--) {
-            var epDate = new Date(movieDbData.episodes[i].air_date);
+            let epDate = new Date(movieDbData.episodes[i].air_date);
             // Find the first in the past
             if (tdyDate > epDate) {
               epBlurb = movieDbData.episodes[i].overview;
-              var weekday_value = epDate.getDay();
+              let weekday_value = epDate.getDay();
               epBlurb = "The last episode I saw was on " + MSG_WEEKDAYS[weekday_value] + ", it was the one where: " + epBlurb;
-              //console.log("DEBUG [getFilmTV]> Easties result: " + epBlurb);
+              //console.log("DEBUG [apiFilmTV]> Easties result: " + epBlurb);
               MOVIEDB_RECORDS[record_index][0] = true;
               MOVIEDB_RECORDS[record_index][1] = epBlurb;
               MOVIEDB_RECORDS[record_index][3] = true;
               MOVIEDB_RECORDS[record_index][4] = epBlurb;
-              postFilmTV(record_index,pass_on_event);
+              postFilmTV(eventFilmTV,record_index);
               return;
             };
           };
         } else if (typeof movieDbData.results != 'undefined' && movieDbData.total_results != 0) {
           // Read the first result
-          var blurb = movieDbData.results[0].overview;
-          var rating = Math.round(movieDbData.results[0].vote_average / 2);
+          let blurb = movieDbData.results[0].overview;
+          let rating = Math.round(movieDbData.results[0].vote_average / 2);
           epBlurb = MSG_STAR_RATING[rating] + " That's the one where: " + blurb + " (theMovieDb)";
-          //console.log("DEBUG [getFilmTV]> TV result: " + epBlurb);
+          //console.log("DEBUG [apiFilmTV]> TV result: " + epBlurb);
           if (tv_film == 'tv') {
             MOVIEDB_RECORDS[record_index][0] = true;
             MOVIEDB_RECORDS[record_index][1] = epBlurb;
@@ -1494,10 +1543,10 @@ function getFilmTV(nameFilmTV,episode_find,tv_film,record_index,pass_on_event) {
             MOVIEDB_RECORDS[record_index][4] = epBlurb;
             MOVIEDB_RECORDS[record_index][5] = rating;
           };
-          postFilmTV(record_index,pass_on_event);
+          postFilmTV(eventFilmTV,record_index);
           return;
         } else {
-          //console.log("DEBUG [getFilmTV]> No " + tv_film + " result");
+          //console.log("DEBUG [apiFilmTV]> No " + tv_film + " result");
           if (tv_film == 'tv') {
             MOVIEDB_RECORDS[record_index][0] = true;
             MOVIEDB_RECORDS[record_index][1] = 'No TV result';
@@ -1505,185 +1554,160 @@ function getFilmTV(nameFilmTV,episode_find,tv_film,record_index,pass_on_event) {
             MOVIEDB_RECORDS[record_index][3] = true;
             MOVIEDB_RECORDS[record_index][4] = 'No film result';
           };
-          postFilmTV(record_index,pass_on_event);
+          postFilmTV(eventFilmTV,record_index);
           return;
         };
       } else {
-        console.log("ERROR [getFilmTV]> Response Error");
+        console.log("ERROR [apiFilmTV]> Response Error");
       }; // if (res.statusCode === 200)
     }); // res.on('end', function()
   }); // http.get(url, function(res)
 }
 
-function queryFilmTV(TargetName,pass_in_event) {
-  //console.log("DEBUG [queryFilmTV]> Input: " + TargetName);
-  MOVIEDB_RECORDS_INDEX = MOVIEDB_RECORDS_INDEX + 1;
-  var hold_index = MOVIEDB_RECORDS_INDEX;
+function apiPrimeFilmTV(eventFilmTV,targetName) {
+  //console.log("DEBUG [apiPrimeFilmTV]> Input: " + targetName);
+  MOVIEDB_RECORDS_INDEX++;
+  let hold_index = MOVIEDB_RECORDS_INDEX;
   //if (MOVIEDB_RECORDS_INDEX == 10) {MOVIEDB_RECORDS_INDEX = 0;};
   MOVIEDB_RECORDS[hold_index] = [false,'',0,false,'',0,false];
-  TargetName = TargetName.replace(/\s/g, '+');
-  TargetName = TargetName.toLowerCase();
-  if (TargetName == 'easties'||TargetName == 'east+enders'||TargetName == 'eastenders') {
+  targetName = targetName.replace(/\s/g, '+');
+  targetName = targetName.toLowerCase();
+  if (targetName == 'easties'||targetName == 'east+enders'||targetName == 'eastenders') {
     // id 1871 is Eastenders; Season 33 is 2017
-    getFilmTV(TargetName,true,'tv',hold_index,pass_in_event);
+    apiFilmTV(eventFilmTV,targetName,true,'tv',hold_index);
   } else {
-    getFilmTV(TargetName,false,'tv',hold_index,pass_in_event);
-    getFilmTV(TargetName,false,'film',hold_index,pass_in_event);
+    apiFilmTV(eventFilmTV,targetName,false,'tv',hold_index,eventFilmTV);
+    apiFilmTV(eventFilmTV,targetName,false,'film',hold_index,eventFilmTV);
   };
 }
 
-function postFilmTV(record_index,pass_event) {
-  //console.log("DEBUG [postFilmTV]> Index: " + record_index + ", " + MOVIEDB_RECORDS[record_index][0] + ", " + MOVIEDB_RECORDS[record_index][3]+ ", " + MOVIEDB_RECORDS[record_index][6]);
-  var sender = pass_event.sender.id;
-  if (MOVIEDB_RECORDS[record_index][0] && MOVIEDB_RECORDS[record_index][3] && !MOVIEDB_RECORDS[record_index][6]) {
-    MOVIEDB_RECORDS[record_index][6] = true;
-    if (MOVIEDB_RECORDS[record_index][1] == 'No TV result' && MOVIEDB_RECORDS[record_index][4] == 'No film result') {
-      // No result
-      sendMessageViaAPIAI(pass_event);
-    } else if (MOVIEDB_RECORDS[record_index][1] != 'No TV result' && MOVIEDB_RECORDS[record_index][4] == 'No film result') {
-      // TV only
-      console.log("INFO [postFilmTV]> Sender: " + sender);
-      console.log("INFO [postFilmTV]> Request: MovieDb");
-      console.log("INFO [postFilmTV]> Action: postFilmTV.sendTextDirect");
-      messageText = "📺 " + MOVIEDB_RECORDS[record_index][1];
-      console.log("INFO [postFilmTV]> Reponse: " + messageText);
-      sendTextDirect(pass_event);
-    } else if (MOVIEDB_RECORDS[record_index][1] == 'No TV result' && MOVIEDB_RECORDS[record_index][4] != 'No film result') {
-      // Film only
-      console.log("INFO [postFilmTV]> Sender: " + sender);
-      console.log("INFO [postFilmTV]> Request: MovieDb");
-      console.log("INFO [postFilmTV]> Action: postFilmTV.sendTextDirect");
-      messageText = "📽️ " + MOVIEDB_RECORDS[record_index][4];
-      console.log("INFO [postFilmTV]> Reponse: " + messageText);
-      sendTextDirect(pass_event);
-    } else {
-      // Both
-      console.log("INFO [postFilmTV]> Sender: " + sender);
-      console.log("INFO [postFilmTV]> Request: MovieDb");
-      console.log("INFO [postFilmTV]> Action: postFilmTV.sendTextDirect");
-      if (MOVIEDB_RECORDS[record_index][2] > MOVIEDB_RECORDS[record_index][5]) {
-        messageText = "📺 " + MOVIEDB_RECORDS[record_index][1];
-        console.log("INFO [postFilmTV]> Reponse: " + messageText);
-        sendTextDirect(pass_event);
-      } else if (MOVIEDB_RECORDS[record_index][2] < MOVIEDB_RECORDS[record_index][5]) {
-        messageText = "📽️ " + MOVIEDB_RECORDS[record_index][4];
-        console.log("INFO [postFilmTV]> Reponse: " + messageText);
-        sendTextDirect(pass_event);
-      } else {
-        var pick_one = Math.floor(Math.random()*2);
-        if (pick_one == 0) {
-          messageText = "🎞️ " + MOVIEDB_RECORDS[record_index][1];
-        } else {
-          messageText = "🎞️ " + MOVIEDB_RECORDS[record_index][4];
-        };
-        console.log("INFO [postFilmTV]> Reponse: " + messageText);
-        sendTextDirect(pass_event);
-      };
-    };
-  };
-}
-
-function getMarvelChar(MarvelWho,pass_in_event) {
-  //console.log("DEBUG [getMarvelChar]> Input: " + MarvelWho);
+function apiMarvelChar(eventMarvel,marvelWho) {
+  //console.log("DEBUG [apiMarvelChar]> Input: " + marvelWho);
   // String together a URL using the provided keys and search parameters
-  HERO_DESCRIPTION = '';
-  var url = URL_API_MARVEL + MarvelWho + "&apikey=" + KEY_MARVEL_PUBLIC;
-  var ts = new Date().getTime();
-  var hash = crypto.createHash('md5').update(ts + KEY_MARVEL_PRIVATE + KEY_MARVEL_PUBLIC).digest('hex');
+  let marvelNote = '';
+  let marvelThumb = '';
+  let marvelURL = '';
+  let marvelPost = [];
+  let url = URL_API_MARVEL + marvelWho + "&apikey=" + KEY_MARVEL_PUBLIC;
+  let ts = new Date().getTime();
+  let hash = crypto.createHash('md5').update(ts + KEY_MARVEL_PRIVATE + KEY_MARVEL_PUBLIC).digest('hex');
   url += "&ts=" + ts + "&hash=" + hash;
-  //console.log("DEBUG [getMarvelChar]> Lookup: " + url);
+  //console.log("DEBUG [apiMarvelChar]> Lookup: " + url);
   // Call on the URL to get a response
   http.get(url, function(res) {
-    var body = "";
+    let body = "";
     // Data comes through in chunks
     res.on('data', function (chunk) { body += chunk });
     // When all the data is back, go on to query the full response
     res.on('end', function() {
-        var characterData = JSON.parse(body);
-        //console.log("DEBUG [getMarvelChar]> Character Code: " + characterData.code);
-        if (characterData.code === 200) { // Successful response from Marvel
-          if (characterData['data'].count == 0) { // A successful response doesn't mean there was a match
-            //console.log("DEBUG [getMarvelChar]> Valid URL but no results for " + toTitleCase(HERO_WHO));
-            postMarvelResults(pass_in_event,0);
-            return;
-          } else if (characterData['data'].results[0].description !== '') { // Assess the first result back
-            HERO_WHO_NOW = MarvelWho;
-            HERO_DESCRIPTION = characterData.data.results[0].description;
-            //console.log("DEBUG [getMarvelChar]> Description: " + HERO_DESCRIPTION);
-            HERO_THUMB = characterData.data.results[0].thumbnail.path + '/standard_xlarge.jpg';
-            //console.log("DEBUG [getMarvelChar]> Thumbnail: " + HERO_THUMB);
-            HERO_URL = characterData.data.results[0].urls[0].url;
-            //console.log("DEBUG [getMarvelChar]> Hero URL: " + HERO_URL);
-            postMarvelResults(pass_in_event,1);
-            return;
-          } else { // Assess the first result back when there isn't a description provided by Marvel
-            HERO_WHO_NOW = MarvelWho;
-            HERO_DESCRIPTION = "Find out more at Marvel.";
-            //console.log("DEBUG [getMarvelChar]> Description: " + HERO_DESCRIPTION);
-            HERO_THUMB = characterData.data.results[0].thumbnail.path + '/standard_xlarge.jpg';
-            //console.log("DEBUG [getMarvelChar]> Thumbnail: " + HERO_THUMB);
-            HERO_URL = characterData.data.results[0].urls[0].url;
-            //console.log("DEBUG [getMarvelChar]> Hero URL: " + HERO_URL);
-            postMarvelResults(pass_in_event,1);
-            return;
-          }
-        } else if (characterData.code === "RequestThrottled") {
-            console.log("ERROR [getMarvelChar]> RequestThrottled Error");
-            postMarvelResults(pass_in_event,0);
-            return;
-        } else {
-            console.log("ERROR [getMarvelChar]> Error: " + JSON.stringify(result));
-            postMarvelResults(pass_in_event,0);
-            return;
-        }
+      let characterData = JSON.parse(body);
+      //console.log("DEBUG [apiMarvelChar]> Character Code: " + characterData.code);
+      if (characterData.code === 200) { // Successful response from Marvel
+        if (characterData['data'].count == 0) { // A successful response doesn't mean there was a match
+          //console.log("DEBUG [apiMarvelChar]> Valid URL but no results for " + toTitleCase(hero_who));
+          marvelPost = [marvelWho,marvelNote,marvelThumb,marvelURL];
+          postMarvel(eventMarvel,false,marvelPost);
+          return;
+        } else if (characterData['data'].results[0].description !== '') { // Assess the first result back
+          marvelNote = characterData.data.results[0].description;
+          //console.log("DEBUG [apiMarvelChar]> Description: " + marvelNote);
+          marvelThumb = characterData.data.results[0].thumbnail.path + '/standard_xlarge.jpg';
+          //console.log("DEBUG [apiMarvelChar]> Thumbnail: " + marvelThumb);
+          marvelURL = characterData.data.results[0].urls[0].url;
+          //console.log("DEBUG [apiMarvelChar]> Hero URL: " + marvelURL);
+          marvelPost = [marvelWho,marvelNote,marvelThumb,marvelURL];
+          postMarvel(eventMarvel,true,marvelPost);
+          return;
+        } else { // Assess the first result back when there isn't a description provided by Marvel
+          marvelNote = "Find out more at Marvel.";
+          //console.log("DEBUG [apiMarvelChar]> Description: " + marvelNote);
+          marvelThumb = characterData.data.results[0].thumbnail.path + '/standard_xlarge.jpg';
+          //console.log("DEBUG [apiMarvelChar]> Thumbnail: " + marvelThumb);
+          marvelURL = characterData.data.results[0].urls[0].url;
+          //console.log("DEBUG [apiMarvelChar]> Hero URL: " + marvelURL);
+          marvelPost = [marvelWho,marvelNote,marvelThumb,marvelURL];
+          postMarvel(eventMarvel,true,marvelPost);
+          return;
+        };
+      } else if (characterData.code === "RequestThrottled") {
+          console.log("ERROR [apiMarvelChar]> RequestThrottled Error");
+          marvelPost = [marvelWho,marvelNote,marvelThumb,marvelURL];
+          postMarvel(eventMarvel,false,marvelPost);
+          return;
+      } else {
+          console.log("ERROR [apiMarvelChar]> Error: " + JSON.stringify(result));
+          marvelPost = [marvelWho,marvelNote,marvelThumb,marvelURL];
+          postMarvel(eventMarvel,false,marvelPost);
+          return;
+      };
     });
   });
 }
 
-function getEventCHAS(EventName,pass_in_event) {
-  //console.log("DEBUG [getEventCHAS]> Input: " + EventName);
-  CHAS_EVENTS_INDEX = -1;
-  CHAS_EVENTS_NAME = EventName;
+// Loaded/stored value search functions
+// ====================================
+function lookupAlpha(eventAlpha,letterTile) {
+  //console.log("DEBUG [lookupAlpha]> Input: " + letterTile);
+  let sender = eventAlpha.sender.id;
+  console.log("INFO [lookupAlpha]> Sender: " + sender);
+  console.log("INFO [lookupAlpha]> Request: " + TRIGGER_CHASABET_1 + " or " + TRIGGER_CHASABET_2 + " " + letterTile);
+  console.log("INFO [lookupAlpha]> Action: lookupAlpha.postImage");
+  let target_letter_code = letterTile.charCodeAt(0) - 97;
+  let target_version = CHASABET_INDEX[target_letter_code];
+  let chasabet_url = URL_IMG_PREFIX + CHASABET[target_letter_code][target_version] + URL_IMG_SUFFIX;
+  console.log("INFO [lookupAlpha]> Reponse: IMG URL " + chasabet_url);
+  //console.log("DEBUG [lookupAlpha]> IMAGE URL: " + chasabet_url);
+  CHASABET_INDEX[target_letter_code] = target_version + 1;
+  if (CHASABET_INDEX[target_letter_code] == CHASABET[target_letter_code].length) {
+    CHASABET_INDEX[target_letter_code] = 0;
+  };
+  postImage(eventAlpha,chasabet_url,false,'');
+}
+
+function lookupEntry(eventEntry,eventName) {
+  //console.log("DEBUG [lookupEntry]> Input: " + eventName);
+  let event_index = -1;
+  let eventIn = eventName;
   // Take the input provded by the user...
   // ...convert to case
-  EventName = EventName.toLowerCase();
+  eventName = eventName.toLowerCase();
   // 5k special case
-  EventName = EventName.replace(/5k/g, 'fivek');
+  eventName = eventName.replace(/5k/g, 'fivek');
   // 10k special case
-  EventName = EventName.replace(/10k/g, 'tenk');
+  eventName = eventName.replace(/10k/g, 'tenk');
   // Strip out anything that isn't an alpha or a space
-  EventName = EventName.replace(/[^A-Za-z\s]/g, '');
+  eventName = eventName.replace(/[^A-Za-z\s]/g, '');
   // Remove small words, 'the','in','at' and 'on'
-  EventName = EventName.replace(/ the /g, ' ');
-  EventName = EventName.replace(/ in /g, ' ');
-  EventName = EventName.replace(/ at /g, ' ');
-  EventName = EventName.replace(/ on /g, ' ');
-  var compare_to_string = EventName;
+  eventName = eventName.replace(/ the /g, ' ');
+  eventName = eventName.replace(/ in /g, ' ');
+  eventName = eventName.replace(/ at /g, ' ');
+  eventName = eventName.replace(/ on /g, ' ');
+  let compare_to_string = eventName;
   // Remove spaces just to check the final length of the alpha content
-  EventName = EventName.replace(/\s/g, '');
-  var stripped_sentence_length = EventName.length;
-  //console.log("DEBUG [getEventCHAS]> Cleaned message is: " + compare_to_string);
-  //console.log("DEBUG [getEventCHAS]> Length: " + stripped_sentence_length);
-  var error_caught = false; // Gets changed to true, if things go iffy before the end
+  eventName = eventName.replace(/\s/g, '');
+  let stripped_sentence_length = eventName.length;
+  //console.log("DEBUG [lookupEntry]> Cleaned message is: " + compare_to_string);
+  //console.log("DEBUG [lookupEntry]> Length: " + stripped_sentence_length);
+  let error_caught = false; // Gets changed to true, if things go iffy before the end
   if (stripped_sentence_length == 0) {
-    //console.log("DEBUG [getEventCHAS]> There is nothing left to compare");
+    //console.log("DEBUG [lookupEntry]> There is nothing left to compare");
     error_caught = true;
-  }
+  };
   // Variables
-  var stripped_message_count = 0;
-  var regex_builder = '';
-  var next_stripped_word = '';
-  var found_event = false;
-  var zero_is_a_match = -1;
-  var event_loop = 0;
-  var keyword_loop = 0;
+  let stripped_message_count = 0;
+  let regex_builder = '';
+  let next_stripped_word = '';
+  let found_event = false;
+  let zero_is_a_match = -1;
+  let event_loop = 0;
+  let keyword_loop = 0;
   // Here we go looping through each set of keywords
-  //console.log("DEBUG [getEventCHAS]> Total events: " + CHAS_EVENTS_TOTAL);
+  //console.log("DEBUG [lookupEntry]> Total events: " + CHAS_EVENTS_TOTAL);
   for (event_loop = 0; event_loop < CHAS_EVENTS_TOTAL; event_loop++) {
     // Break up the keywords into an array of individual words
-    var sentence_split = CHAS_EVENTS_CALENDAR[event_loop * CHAS_EVENTS_BLOCK_SIZE].split(' ');
-    var sentence_length = sentence_split.length;
-    //console.log("DEBUG [getEventCHAS]> Number of words: " + sentence_length);
+    let sentence_split = CHAS_EVENTS_CALENDAR[event_loop * CHAS_EVENTS_BLOCK_SIZE].split(' ');
+    let sentence_length = sentence_split.length;
+    //console.log("DEBUG [lookupEntry]> Number of words: " + sentence_length);
     // If there are no keywords at all, the skip the rest of this iteration
     if (sentence_length == 0) {continue};
     // Reset variables for the inner loop
@@ -1701,72 +1725,72 @@ function getEventCHAS(EventName,pass_in_event) {
       if (!((next_stripped_word == 'the') || (next_stripped_word == 'in') ||
             (next_stripped_word == 'at') || (next_stripped_word == 'on'))) {
         regex_builder = regex_builder + REGEX_START + next_stripped_word + REGEX_MIDDLE;
-        //console.log("DEBUG [getEventCHAS]> Next word: " + next_stripped_word);
-        stripped_message_count = stripped_message_count + 1;
-      }
-    }
+        //console.log("DEBUG [lookupEntry]> Next word: " + next_stripped_word);
+        stripped_message_count++;
+      };
+    };
     // Nothing left to compare because search terms have all been stripped out
     if (stripped_message_count == 0) {continue};
     // Complete the search terms regular expression
     regex_builder = regex_builder + REGEX_END;
-    //console.log("DEBUG [getEventCHAS]> Stripped number of words: " + stripped_message_count);
-    //console.log("DEBUG [getEventCHAS]> Regex search: " + regex_builder);
+    //console.log("DEBUG [lookupEntry]> Stripped number of words: " + stripped_message_count);
+    //console.log("DEBUG [lookupEntry]> Regex search: " + regex_builder);
     zero_is_a_match = compare_to_string.search(regex_builder);
-    //console.log("DEBUG [getEventCHAS]> Match Check: " + zero_is_a_match);
+    //console.log("DEBUG [lookupEntry]> Match Check: " + zero_is_a_match);
     // If there is a match then a value of 0 is returned
     if (zero_is_a_match == 0) {
-      //console.log("DEBUG [getEventCHAS]> Matched: " + (event_loop * CHAS_EVENTS_BLOCK_SIZE));
+      //console.log("DEBUG [lookupEntry]> Matched: " + (event_loop * CHAS_EVENTS_BLOCK_SIZE));
       // Sets the index value for the name/keywords for the event
-      CHAS_EVENTS_INDEX = event_loop * CHAS_EVENTS_BLOCK_SIZE;
+      event_index = event_loop * CHAS_EVENTS_BLOCK_SIZE;
       found_event = true;
       break;
-    }
-  }
+    };
+  };
   // If there is not an event found then things have gone funky
   if (!found_event) {
-    //console.log("DEBUG [getEventCHAS]> No matching event found");
+    //console.log("DEBUG [lookupEntry]> No matching event found");
     error_caught = true;
-  }
+  };
   if (error_caught) {
-    postResultsEventsCHAS(pass_in_event,0);
+    postEvents(eventEntry,false,event_index,eventIn);
   } else {
-    postResultsEventsCHAS(pass_in_event,1);
-  }
-}
+    postEvents(eventEntry,true,event_index,eventIn);
+  };
+};
 
-function getBiosCHAS(PersonName,pass_in_event) {
-  //console.log("DEBUG [getBiosCHAS]> Input: " + PersonName);
-  CHAS_BIOGS_INDEX = -1;
-  CHAS_BIOGS_NAME = PersonName;
+function lookupBiogs(eventBiogs,personName) {
+  //console.log("DEBUG [lookupBiogs]> Input: " + personName);
+  let biogs_index = -1;
+  let nameIn = personName;
   // Take the input provded by the user...
   // ...convert to lowercase
-  PersonName = PersonName.toLowerCase();
-  var compare_to_string = PersonName;
+  personName = personName.toLowerCase();
+  let compare_to_string = personName;
   // Remove spaces just to check the final length of the alpha content
-  PersonName = PersonName.replace(/\s/g, '');
-  var stripped_sentence_length = PersonName.length;
-  //console.log("DEBUG [getBiosCHAS]> Cleaned message is: " + compare_to_string);
-  //console.log("DEBUG [getBiosCHAS]> Length: " + stripped_sentence_length);
-  var error_caught = false; // Gets changed to true, if things go iffy before the end
+  personName = personName.replace(/\s/g, '');
+  let stripped_sentence_length = personName.length;
+  //console.log("DEBUG [lookupBiogs]> Cleaned message is: " + compare_to_string);
+  //console.log("DEBUG [lookupBiogs]> Length: " + stripped_sentence_length);
+  let error_caught = false; // Gets changed to true, if things go iffy before the end
   if (stripped_sentence_length == 0) {
-    //console.log("DEBUG [getBiosCHAS]> There is nothing left to compare");
+    //console.log("DEBUG [lookupBiogs]> There is nothing left to compare");
     error_caught = true;
   }
   // Variables
-  var stripped_message_count = 0;
-  var regex_builder = '';
-  var next_stripped_word = '';
-  var found_bio = false;
-  var zero_is_a_match = -1;
-  var event_loop = 0;
-  var keyword_loop = 0;
+  let stripped_message_count = 0;
+  let regex_builder = '';
+  let next_stripped_word = '';
+  let found_bio = false;
+  let zero_is_a_match = -1;
+  let event_loop = 0;
+  let keyword_loop = 0;
   // Here we go looping through each set of keywords
-  //console.log("DEBUG [getBiosCHAS]> Total: " + CHAS_BIOGS_TOTAL);
+  //console.log("DEBUG [lookupBiogs]> Total: " + CHAS_BIOGS_TOTAL);
   for (event_loop = 0; event_loop < CHAS_BIOGS_TOTAL; event_loop++) {
     // Break up the keywords into an array of individual words
-    var sentence_split = CHAS_BIOGS[event_loop * CHAS_BIOGS_BLOCK_SIZE].split(' ');
-    var sentence_length = sentence_split.length;
-    //console.log("DEBUG [getBiosCHAS]> Number of words: " + sentence_length);
+    let sentence_split = CHAS_BIOGS[event_loop * CHAS_BIOGS_BLOCK_SIZE].split(' ');
+    let sentence_length = sentence_split.length;
+    //console.log("DEBUG [lookupBiogs]> Number of words: " + sentence_length);
     // If there are no keywords at all, the skip the rest of this iteration
     if (sentence_length == 0) {continue};
     // Reset variables for the inner loop
@@ -1778,128 +1802,214 @@ function getBiosCHAS(PersonName,pass_in_event) {
       // Strip out all but letters from each keyword and skip small words
       next_stripped_word = next_stripped_word.replace(/[^A-Za-z]/g, '');
       regex_builder = regex_builder + REGEX_START + next_stripped_word + REGEX_MIDDLE;
-      //console.log("DEBUG [getBiosCHAS]> Next word: " + next_stripped_word);
-      stripped_message_count = stripped_message_count + 1;
+      //console.log("DEBUG [lookupBiogs]> Next word: " + next_stripped_word);
+      stripped_message_count++;
     }
     // Nothing left to compare because search terms have all been stripped out
     if (stripped_message_count == 0) {continue};
     // Complete the search terms regular expression
     regex_builder = regex_builder + REGEX_END;
-    //console.log("DEBUG [getBiosCHAS]> Stripped number of words: " + stripped_message_count);
-    //console.log("DEBUG [getBiosCHAS]> Regex search: " + regex_builder);
+    //console.log("DEBUG [lookupBiogs]> Stripped number of words: " + stripped_message_count);
+    //console.log("DEBUG [lookupBiogs]> Regex search: " + regex_builder);
     zero_is_a_match = compare_to_string.search(regex_builder);
-    //console.log("DEBUG [getBiosCHAS]> Match Check: " + zero_is_a_match);
+    //console.log("DEBUG [lookupBiogs]> Match Check: " + zero_is_a_match);
     // If there is a match then a value of 0 is returned
     if (zero_is_a_match == 0) {
-      //console.log("DEBUG [getBiosCHAS]> Matched: " + (event_loop * CHAS_BIOGS_BLOCK_SIZE));
+      //console.log("DEBUG [lookupBiogs]> Matched: " + (event_loop * CHAS_BIOGS_BLOCK_SIZE));
       // Sets the index value for the name/keywords for the event
-      CHAS_BIOGS_INDEX = event_loop * CHAS_BIOGS_BLOCK_SIZE;
+      biogs_index = event_loop * CHAS_BIOGS_BLOCK_SIZE;
       found_bio = true;
       break;
-    }
-  }
+    };
+  };
   // If there is not a name found then things have gone funky
   if (!found_bio) {
-    //console.log("DEBUG [getBiosCHAS]> No matching name found");
+    //console.log("DEBUG [lookupBiogs]> No matching name found");
     error_caught = true;
-  }
+  };
   if (error_caught) {
-    postResultsBiosCHAS(pass_in_event,0);
+    postBiogs(eventBiogs,false,biogs_index,nameIn);
   } else {
-    postResultsBiosCHAS(pass_in_event,1);
-  }
+    postBiogs(eventBiogs,true,biogs_index,nameIn);
+  };
 }
 
-function getRPSLS(pass_in_event) {
-  //console.log("DEBUG [getRPSLS]> Round");
-  var sender = pass_in_event.sender.id;
-  console.log("INFO [getRPSLS]> Sender: " + sender);
-  if (TRIGGER_RPSLS == 1) { // Provide some instructions + prompt
-    console.log("INFO [getRPSLS]> Request: " + TIRGGER_PHRASE_RPSLS);
-    RPSLS_IMG_URL = URL_IMG_PREFIX + RPSLS_IMGS[0] + URL_IMG_SUFFIX;
-    postImage(RPSLS_IMG_URL,pass_in_event);
-    messageText = MSG_RPSLS_INTRO + "\n" + MSG_RPSLS_PROMPT; // Required within sendTextDirect
-    console.log("INFO [getRPSLS]> Action: getRPSLS.postImage_sendTextDirect");
-    console.log("INFO [getRPSLS]> Reponse: IMG URL "  + RPSLS_IMG_URL + '; Text: ' + messageText);
-    sendTextDirect(pass_in_event);
-  } else if (TRIGGER_RPSLS == 2) { // Just prompt
-    console.log("INFO [getRPSLS]> Request: " + TIRGGER_PHRASE_RPSLS);
-    messageText = MSG_RPSLS_PROMPT; // Required within sendTextDirect
-    console.log("INFO [getRPSLS]> Action: getRPSLS.sendTextDirect");
-    console.log("INFO [getRPSLS]> Reponse: " + messageText);
-    sendTextDirect(pass_in_event);
+// 'In-play' functions
+// ===================
+// Note sendQuestion_playSurvey is also an in-play function
+function playHangman(postEvent,hangman_guess) {
+  // 0:id_of_sender,2:hangman_in_play,3:rpsls_in_play,5:hangman_strikes,6:hangman_word,7:hangman_array
+  //console.log("DEBUG [playHangman]> Input: " + postEvent);
+  let sender = postEvent.sender.id;
+  let hangmanText = hangman_guess;
+  let custom_id = inPlayID(sender);
+  let hangman_strikes = SENDERS[custom_id][5];
+  let hangman_word = SENDERS[custom_id][6];
+  let hangman_answer_array = SENDERS[custom_id][7];
+  let clean = false;
+  if (hangman_guess.length == 1) {
+    var got_one = false;
+    let i = 0; // an indexer into the array
+    for (i = 0; i < hangman_word.length; i++) {
+      if (hangman_word[i] == hangman_guess) {
+        hangman_answer_array[i] = hangman_guess.toUpperCase(); // Swap the ? for the actual upper-case letter
+        got_one = true;
+        hangmanText = "Yes! " + hangman_guess.toUpperCase() + " is in the answer.";
+        hangmanText = hangmanText + "\n" + hangman_answer_array.join(' ');
+        hangmanText = hangmanText + "\n" + MSG_THUMBS[hangman_strikes] + " (" + hangman_strikes + " strike";
+        if (hangman_strikes == 1) {
+          hangmanText = hangmanText + ")";
+        } else {
+          hangmanText = hangmanText + "s)";
+        };
+      };
+    };
+    // Count the remaining letters
+    let hangman_remaining = 0;
+    for (i = 0; i < hangman_word.length; i++) {
+      if (hangman_answer_array[i] == '?') {
+        hangman_remaining++;
+      };
+    };
+    // If no remaining letters, hurray, you won
+    if (hangman_remaining == 0) {
+      clean = true;
+      hangmanText = "Yes! You guessed the mystery staff member, " + hangman_word.toUpperCase() + '!';
+    };
+    // Otherwise, wrong guess
+    if (!got_one) {
+      hangmanText = "Sorry, no " + hangman_guess.toUpperCase() + " to be found.";
+      hangman_strikes++;
+      // Game Over
+      if (hangman_strikes == 4) {
+        clean = true;
+        hangmanText = hangmanText + '\n' + 'The mystery staff member was ' + hangman_word.toUpperCase() + '!'
+      } else {
+        hangmanText = hangmanText + "\n" + hangman_answer_array.join(' ');
+        hangmanText = hangmanText + "\n" + MSG_THUMBS[hangman_strikes] + " (" + hangman_strikes + " strike";
+        if (hangman_strikes == 1) {
+          hangmanText = hangmanText + ")";
+        } else {
+          hangmanText = hangmanText + "s)";
+        };
+      };
+    };
+  };
+  if (clean) {
+    inPlayClean('hangman',custom_id);
+  } else {
+    SENDERS[custom_id][5] = hangman_strikes;
+    SENDERS[custom_id][6] = hangman_word;
+    SENDERS[custom_id][7] = hangman_answer_array;
+  };
+  console.log("INFO [playHangman]> Sender: " + sender);
+  console.log("INFO [playHangman]> Request: Hangman guess was " + hangman_guess);
+  console.log("INFO [playHangman]> Action: playHangman.sendTextDirect");
+  console.log("INFO [playHangman]> Response: " + hangmanText);
+  sendTextDirect(postEvent,hangmanText);
+}
+
+function playRPSLS(eventRPSLS,pickPlayer) {
+  // 0:id_of_sender,3:rpsls_in_play,8.rpsls_action,9:issue_instructions,10:rpsls_player,11:rpsls_bot
+  //console.log("DEBUG [playRPSLS]> Round");
+  let sender = eventRPSLS.sender.id;
+  let custom_id = inPlayID(sender);
+  let rpslsText = '';
+  let rpsls_url = '';
+  let pick_chasbot = '';
+  let rpsls_action = SENDERS[custom_id][8];
+  let issue_instructions = SENDERS[custom_id][9];
+  let score_player = SENDERS[custom_id][10];
+  let score_bot = SENDERS[custom_id][11];
+  console.log("INFO [playRPSLS]> Sender: " + sender);
+  if (rpsls_action == 1) { // Provide some instructions + prompt
+    console.log("INFO [playRPSLS]> Request: " + TRIGGER_RPSLS);
+    rpsls_url = URL_IMG_PREFIX + RPSLS_IMGS[0] + URL_IMG_SUFFIX;
+    rpslsText = MSG_RPSLS_INTRO + "\n" + MSG_RPSLS_PROMPT; // Required within sendTextDirect
+    console.log("INFO [playRPSLS]> Action: playRPSLS.postImage_sendTextDirect");
+    console.log("INFO [playRPSLS]> Reponse: IMG URL "  + rpsls_url + '; Text: ' + rpslsText);
+    postImage(eventRPSLS,rpsls_url,true,rpslsText);
+  } else if (rpsls_action == 2) { // Just prompt
+    console.log("INFO [playRPSLS]> Request: " + TRIGGER_RPSLS);
+    rpslsText = MSG_RPSLS_PROMPT; // Required within sendTextDirect
+    console.log("INFO [playRPSLS]> Action: playRPSLS.sendTextDirect");
+    console.log("INFO [playRPSLS]> Reponse: " + rpslsText);
+    sendTextDirect(eventRPSLS,rpslsText);
   } else { // Compare results and show outcome
-    console.log("INFO [getRPSLS]> Request: " + RPSLS_PICK_PLAYER);
-    RPSLS_PICK_CHASBOT = RPSLS_VALID[Math.floor(Math.random()*RPSLS_VALID.length)];
-    var PLAYERvBOT = RPSLS_PICK_PLAYER + RPSLS_PICK_CHASBOT;
-    messageText = '';
-    //console.log("DEBUG [getRPSLS]> PLAYERvBOT: " + PLAYERvBOT);
+    console.log("INFO [playRPSLS]> Request: " + pickPlayer);
+    pick_chasbot = RPSLS_VALID[Math.floor(Math.random()*RPSLS_VALID.length)];
+    let PLAYERvBOT = pickPlayer + pick_chasbot;
+    rpslsText = '';
+    //console.log("DEBUG [playRPSLS]> PLAYERvBOT: " + PLAYERvBOT);
     // Check WIN
-    var find_index = 0;
+    let find_index = 0;
     for (find_index = 0; find_index < RPSLS_WIN.length; find_index++) {
-      //console.log("DEBUG [getRPSLS]> Win check: " + RPSLS_WIN[find_index]);
+      //console.log("DEBUG [playRPSLS]> Win check: " + RPSLS_WIN[find_index]);
       if (PLAYERvBOT == RPSLS_WIN[find_index]) {
-        RPSLS_IMG_URL = URL_IMG_PREFIX + RPSLS_IMGS[1 + find_index] + URL_IMG_SUFFIX;
-        messageText = "You win. Your " + toTitleCase(RPSLS_PICK_PLAYER) + " ";
-        messageText = messageText + RPSLS_OUTCOMES[find_index] + " my ";
-        messageText = messageText + toTitleCase(RPSLS_PICK_CHASBOT) + ". ";
-        RPSLS_SCORE_PLAYER++;
+        rpsls_url = URL_IMG_PREFIX + RPSLS_IMGS[1 + find_index] + URL_IMG_SUFFIX;
+        rpslsText = "You win. Your " + toTitleCase(pickPlayer) + " ";
+        rpslsText = rpslsText + RPSLS_OUTCOMES[find_index] + " my ";
+        rpslsText = rpslsText + toTitleCase(pick_chasbot) + ". ";
+        score_player++;
         break;
       };
     };
     // Check LOSE
-    if (messageText == '') {
+    if (rpslsText == '') {
       find_index = 0;
       for (find_index = 0; find_index < RPSLS_LOSE.length; find_index++) {
-        //console.log("DEBUG [getRPSLS]> Lose check: " + RPSLS_LOSE[find_index]);
+        //console.log("DEBUG [playRPSLS]> Lose check: " + RPSLS_LOSE[find_index]);
         if (PLAYERvBOT == RPSLS_LOSE[find_index]) {
-          RPSLS_IMG_URL = URL_IMG_PREFIX + RPSLS_IMGS[11 + find_index] + URL_IMG_SUFFIX;
-          messageText = "I win. My " + toTitleCase(RPSLS_PICK_CHASBOT) + " ";
-          messageText = messageText + RPSLS_OUTCOMES[find_index] + " your ";
-          messageText = messageText + toTitleCase(RPSLS_PICK_PLAYER) + ". ";
-          RPSLS_SCORE_CHASBOT++;
+          rpsls_url = URL_IMG_PREFIX + RPSLS_IMGS[11 + find_index] + URL_IMG_SUFFIX;
+          rpslsText = "I win. My " + toTitleCase(pick_chasbot) + " ";
+          rpslsText = rpslsText + RPSLS_OUTCOMES[find_index] + " your ";
+          rpslsText = rpslsText + toTitleCase(pickPlayer) + ". ";
+          score_bot++;
           break;
         };
       };
     };
     // Check DRAW
-    if (messageText == '') {
+    if (rpslsText == '') {
       find_index = 0;
       for (find_index = 0; find_index < RPSLS_DRAW.length; find_index++) {
-        //console.log("DEBUG [getRPSLS]> Draw check: " + RPSLS_DRAW[find_index]);
+        //console.log("DEBUG [playRPSLS]> Draw check: " + RPSLS_DRAW[find_index]);
         if (PLAYERvBOT == RPSLS_DRAW[find_index]) {
-          RPSLS_IMG_URL = URL_IMG_PREFIX2 + RPSLS_IMGS[21 + find_index] + URL_IMG_SUFFIX;
-          messageText = "It's a draw. ";
+          rpsls_url = URL_IMG_PREFIX2 + RPSLS_IMGS[21 + find_index] + URL_IMG_SUFFIX;
+          rpslsText = "It's a draw. ";
           break;
         };
       };
     };
     // Script message
-    if (RPSLS_SCORE_CHASBOT == 5) {
-      messageText = messageText + "😁 Soz, I'm the Champion! (Score: CHASbot " + RPSLS_SCORE_CHASBOT ;
-      messageText = messageText + ", you " + RPSLS_SCORE_PLAYER + ").";
-      RPSLS_SCORE_CHASBOT = 0;
-      RPSLS_SCORE_PLAYER = 0;
-      RPSLS_INSTRUCT = 1;
-    } else if (RPSLS_SCORE_PLAYER == 5) {
-      messageText = messageText + "😡 Whoop, your're the Champion! (Score: CHASbot " + RPSLS_SCORE_CHASBOT ;
-      messageText = messageText + ", you " + RPSLS_SCORE_PLAYER + ").";
-      RPSLS_SCORE_CHASBOT = 0;
-      RPSLS_SCORE_PLAYER = 0;
-      RPSLS_INSTRUCT = 1;
-    } else if (RPSLS_SCORE_CHASBOT > RPSLS_SCORE_PLAYER) {
-      messageText = messageText + "😉 I'm ahead for now but you could turn it around! (Score: CHASbot " + RPSLS_SCORE_CHASBOT ;
-      messageText = messageText + ", you " + RPSLS_SCORE_PLAYER + ").";
-    } else if (RPSLS_SCORE_PLAYER > RPSLS_SCORE_CHASBOT) {
-      messageText = messageText + "😏 You're leading the way, for now! (Score: CHASbot " + RPSLS_SCORE_CHASBOT ;
-      messageText = messageText + ", you " + RPSLS_SCORE_PLAYER + ").";
+    if (score_bot == 5) {
+      rpslsText = rpslsText + "😁 Soz, I'm the Champion! (Score: CHASbot " + score_bot ;
+      rpslsText = rpslsText + ", you " + score_player + ").";
+      score_bot = 0;
+      score_player = 0;
+      issue_instructions = true;
+    } else if (score_player == 5) {
+      rpslsText = rpslsText + "😡 Whoop, your're the Champion! (Score: CHASbot " + score_bot ;
+      rpslsText = rpslsText + ", you " + score_player + ").";
+      score_bot = 0;
+      score_player = 0;
+      issue_instructions = true;
+    } else if (score_bot > score_player) {
+      rpslsText = rpslsText + "😉 I'm ahead for now but you could turn it around! (Score: CHASbot " + score_bot ;
+      rpslsText = rpslsText + ", you " + score_player + ").";
+    } else if (score_player > score_bot) {
+      rpslsText = rpslsText + "😏 You're leading the way, for now! (Score: CHASbot " + score_bot ;
+      rpslsText = rpslsText + ", you " + score_player + ").";
     } else {
-      messageText = messageText + "🙂 Level pegging. (Score: CHASbot " + RPSLS_SCORE_CHASBOT ;
-      messageText = messageText + ", you " + RPSLS_SCORE_PLAYER + ").";
+      rpslsText = rpslsText + "🙂 Level pegging. (Score: CHASbot " + score_bot ;
+      rpslsText = rpslsText + ", you " + score_player + ").";
     };
-    console.log("INFO [getRPSLS]> Action: getRPSLS.postImage_sendTextDirect");
-    console.log("INFO [getRPSLS]> Reponse: IMG URL "  + RPSLS_IMG_URL + '; Text: ' + messageText);
-    postImage(RPSLS_IMG_URL,pass_in_event);
-    sendTextDirect(pass_in_event);
+    SENDERS[custom_id][8] = rpsls_action;
+    SENDERS[custom_id][9] = issue_instructions;
+    SENDERS[custom_id][10] = score_player;
+    SENDERS[custom_id][11] = score_bot;
+    console.log("INFO [playRPSLS]> Action: playRPSLS.postImage_sendTextDirect");
+    console.log("INFO [playRPSLS]> Reponse: IMG URL "  + rpsls_url + '; Text: ' + rpslsText);
+    postImage(eventRPSLS,rpsls_url,true,rpslsText);
   };
 }
