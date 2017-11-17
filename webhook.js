@@ -106,7 +106,9 @@ const URL_CHAT_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages";
 const URL_API_WEATHER = "http://api.openweathermap.org/data/2.5/weather?APPID=";
 const URL_API_MARVEL = "https://gateway.marvel.com/v1/public/characters?nameStartsWith="
 const URL_GROUP_DOCS = "https://work-" + KEY_ROOT + ".facebook.com/groups/1707079182933694";
+const URL_GROUP_HELP = "https://work-" + KEY_ROOT + ".facebook.com/groups/733856763459096/files/";
 const URL_CHAS_RETAIL = "https://www.chas.org.uk/contact_chas#retail";
+const URL_CHAS_PLAN = "https://s3-eu-west-1.amazonaws.com/chas-assets/downloads/3958+CHAS+Infographic-Plan-download.pdf"
 const URL_SEARCH_GOOGLE = "https://www.google.com/search?q=";
 const URL_SEARCH_WIKI = "https://en.wikipedia.org/w/index.php?search=";
 const URL_SEARCH_BEEB = "https://www.bbc.co.uk/search?q=";
