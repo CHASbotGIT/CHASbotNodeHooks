@@ -126,7 +126,7 @@ var HELP_SEND = false;
 var HELP_PROMPTS = [
   ["ad/e9/ivBhjDXd","When is the Devil Dash","Who is Morven MacLean","Where can I get collecting cans","How do I claim expenses","How do I get Christmas cards","CHAS alphabet C"],
   ["7a/45/0uhs3nQx","Weather at Rachel House","Weather in Aberdeen","Search CHAS","Google FB Workplace","Wiki Santa Claus","Beeb Blue Planet"],
-  ["9a/f7/yRfMnV7i","Bazinga","Hangman","Pick a card","Toss a coin","Roll a dice","Magic 8"],
+  ["9a/f7/yRfMnV7i","Bazinga","Hangman","Pick a card","Toss a coin","Roll a dice","Mystic 8"],
   ["0a/fe/WxsCGnFs","What’s a scrub","Is winter coming","My milkshake","Have you seen Moana","Is this the real life","I want the truth"],
   ["de/ff/4ZtuUqYX","Marvel codename Hulk","Execute Order 66","Beam me up","Open pod bay doors","Roll for initiative","Talk like Yoda"]]; // images2 source
 var HELP_INDEX = 0;
@@ -361,12 +361,12 @@ function loadSurvey() {
 }
 var SURVEY_VIABLE = loadSurvey();
 
-// ESTABLISH LISTENER
-/* Only for TESTING via local NGROK.IO
+/* ESTABLISH LISTENER
+// Only for TESTING via local NGROK.IO
 const server = CHASbot.listen(server_port, server_ip_address, () => {
   console.log("INFO [NGROK.IO]> Listening on " + server_ip_address + ", port " + server_port );
   console.log("INFO [NGROK.IO]>>>>>>>>>>>>>>>>>>> STARTED <<<<<<<<<<<<<<<<<");
-});*/
+})*/;
 // Only for PRODUCTION hosting on HEROKU
 const server = CHASbot.listen(server_port, () => {
  console.log("INFO [HEROKU]> Listening on ", + server_port);
@@ -537,8 +537,35 @@ CHASbot.post('/webhook', (req, res) => {
     req.body.entry.forEach((entry) => {
       entry.messaging.forEach((event) => {
         //if (event.read && event.read.watermark) { //console.log("DEBUG [postWebhook]> Receipt: " + event.read.watermark) };
+        let sticker_path = '';
+        let sender = event.sender.id;
+        // Pick up on non-text messages
+        if (event.message && event.message.attachments) {
+           sticker_path = "While it's always nice to receive a gift, I'm not sure what you want me to do with that ";
+           sticker_path = sticker_path + event.message.attachments[0].type + ". Sorry, try just words.";
+        };
+        // Pick up on stickers - identify degrees of like
+        if (event.message && event.message.sticker_id) {
+          let sticker_code = event.message.sticker_id;
+          if ( sticker_code == 369239263222822 ) {
+            sticker_path = "I'm so glad you like it.";
+          } else if ( sticker_code == 369239343222814 ) {
+            sticker_path = "You are very pleased, press for even longer next time!";
+          } else if (sticker_code == 369239383222810 ) {
+            sticker_path = "Wow, that good is it! I'm ecstatic too!!";
+          } else {
+            sticker_path = "I do like a nice sticker though I'm not sure that gets us anywhere.";
+          };
+        };
+        if (sticker_path != '') {
+          //console.log("DEBUG [postWebhook_route]> Hangman Initiated");
+          console.log("INFO [postWebhook]> Sender: " + sender);
+          console.log("INFO [postWebhook]> Request: Sticker");
+          console.log("INFO [postWebhook]> Action: postWebhook.sendTextDirect");
+          console.log("INFO [postWebhook]> Response: " + sticker_path);
+          sendTextDirect(event,sticker_path);
+        };
         if (event.message && event.message.text) {
-          let sender = event.sender.id;
           // Manage sender specific 'in-play' progress
           let sender_index = inPlayID(sender);
           if (sender_index == -1) {
