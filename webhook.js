@@ -1608,6 +1608,8 @@ function postFilmTV(postEvent,record_index) {
   };
 }
 
+// Remote search functions - API
+// =============================
 function apiGIPHY(eventGiphy,giphy_tag,giphy_rating,passText) {
 // Ratings are Y; G; PG; PG-13; R
   const base_url = URL_GIPHY;
@@ -1642,8 +1644,6 @@ function apiGIPHY(eventGiphy,giphy_tag,giphy_rating,passText) {
   }); // http.get(url, function(res)
 }
 
-// Remote search functions - API
-// =============================
 function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
   //console.log("DEBUG [apiFilmTV]> Input: " + nameFilmTV + ", " + episode_find + ", " + tv_film + ", " + record_index);
   let epBlurb = ''; // return value
@@ -1657,7 +1657,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
   else if (tv_film == 'film') { var url = base_url + movie_url + params_url + query_url };
   // e.g. https://api.themoviedb.org/3/search/movie?api_key={api_key}&query=Jack+Reacher
   // id 1871 is Eastenders; Season 33 is 2017
-  if (episode_find) { url = URL_MOVIEDB + "/tv/1871/season/33?api_key=" + KEY_API_MOVIEDB + "&language=en-US" };
+  if (episode_find) { url = URL_MOVIEDB + "tv/1871/season/33?api_key=" + KEY_API_MOVIEDB + "&language=en-US" };
   //console.log("DEBUG [apiFilmTV]> URL: " + url);
   http.get(url, function(res) {
     //console.log("DEBUG [apiFilmTV]> MovieDb Response Code: " + res.statusCode);
