@@ -1717,6 +1717,12 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
         };
       } else {
         console.log("ERROR [apiFilmTV]> Response Error");
+        MOVIEDB_RECORDS[record_index][0] = true;
+        MOVIEDB_RECORDS[record_index][1] = 'No TV result';
+        MOVIEDB_RECORDS[record_index][3] = true;
+        MOVIEDB_RECORDS[record_index][4] = 'No film result';
+        postFilmTV(eventFilmTV,record_index);
+        return;
       }; // if (res.statusCode === 200)
     }); // res.on('end', function()
   }); // http.get(url, function(res)
