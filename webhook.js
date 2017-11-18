@@ -12,6 +12,7 @@ const KEY_VERIFY = process.env.KEY_VERIFY;
 const KEY_DIALOGFLOW = process.env.KEY_DIALOGFLOW;
 const KEY_API_WEATHER = process.env.KEY_API_WEATHER;
 const KEY_API_MOVIEDB = process.env.KEY_API_MOVIEDB;
+const KEY_API_GIPHY = process.env.KEY_API_GIPHY;
 const KEY_CRYPTO = process.env.KEY_CRYPTO;
 const KEY_MARVEL_PRIVATE = process.env.KEY_MARVEL_PRIVATE;
 const KEY_MARVEL_PUBLIC = process.env.KEY_MARVEL_PUBLIC;
@@ -102,6 +103,8 @@ const HOOK_XMAS = 'xmas';
 const KEEP_ALIVE = 25; // mins
 const TIME_TO_WAIT = 120; // mins
 // End-points
+const URL_GIPHY = "https://api.giphy.com/v1/gifs/random";
+const URL_MOVIEDB = "https://api.themoviedb.org/3/";
 const URL_CHAT_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages";
 const URL_API_WEATHER = "http://api.openweathermap.org/data/2.5/weather?APPID=";
 const URL_API_MARVEL = "https://gateway.marvel.com/v1/public/characters?nameStartsWith="
@@ -119,8 +122,22 @@ const URL_BEEB_THUMB = "https://images.imgbox.com/59/f5/PFN3tfX5_o.png";
 const URL_IMG_PREFIX = "https://images.imgbox.com/";
 const URL_IMG_PREFIX2 = "https://images2.imgbox.com/";
 const URL_IMG_SUFFIX = "_o.png";
+// Regular expressions
+const REGEX_START = '(?=.*\\b'; // Regular expression bits
+const REGEX_MIDDLE = '\\b)';
+const REGEX_END = '.+';
 // For keeping track of senders
 var SENDERS = new Array ();
+// Functional
+var TIME_OF_DAY = [
+  [22,"Getting late"],[19,"Good evening"],[18,"Time for tea"],[13,"Afternoon"],[12,"Lunch time"],
+  [11,"Time for Elevenses"],[8,"Morning"],[7,"Breakfast time"],[6,"Another day another dollar"],
+  [5,"Whoa, you're an early bird"],[4,"You're up early (or very late)"],[3,"Yawn, worst time to be awake"],
+  [2,"You're up late"],[1,"Zzzzz, sorry"],[0,"It's the witching hour"]];
+var EMOTICON_UP = ["🙂","😊","😀","😁","😃","😆","😍","😎","😉","😜","😘","😂","😉","😜","😘","😛","😝","🤑",
+                  ":)",":]","8)","=)",":D","=D",";)",":P",":p","=p",":-*",":*"];
+var EMOTICON_DOWN = ["☹️","🙁","😠","😡","😞","😣","😖","😢","😭","😨","😧","😦","😱","😫","😩","😐","😑","🤔","😕","😟",
+                  ":'(",":O",":o",">:O",":|",":/","=/"];
 // CHASbot help
 var HELP_SEND = false;
 var HELP_PROMPTS = [
@@ -130,10 +147,6 @@ var HELP_PROMPTS = [
   ["0a/fe/WxsCGnFs","What’s a scrub","Is winter coming","My milkshake","Have you seen Moana","Is this the real life","I want the truth"],
   ["de/ff/4ZtuUqYX","Marvel codename Hulk","Execute Order 66","Beam me up","Open pod bay doors","Roll for initiative","Talk like Yoda"]]; // images2 source
 var HELP_INDEX = 0;
-// Regular expressions
-const REGEX_START = '(?=.*\\b'; // Regular expression bits
-const REGEX_MIDDLE = '\\b)';
-const REGEX_END = '.+';
 // CHAS events
 const CHAS_EVENTS_BLOCK_SIZE = 4;
 var CHAS_EVENTS_CALENDAR = new Array();
@@ -145,17 +158,12 @@ var CHAS_BIOGS_VIABLE = false;
 var CHAS_BIOGS = new Array();
 var CHAS_BIOGS_TOTAL = 0;
 var CHAS_FR_LIST = "Contact your local Fundraising Team:" + "\n";
-// Slim Shady
+// Slim shady
 const IDS_BLOCK_SIZE = 2;
 var IDS_VIABLE = false;
 var IDS_TOTAL = 0;
 var IDS_LIST = new Array();
 var IDS_TIMESTAMP = new Array();
-var TIME_OF_DAY = [
-  [22,"Getting late"],[19,"Good evening"],[18,"Time for tea"],[13,"Afternoon"],[12,"Lunch time"],
-  [11,"Time for Elevenses"],[8,"Morning"],[7,"Breakfast time"],[6,"Another day another dollar"],
-  [5,"Whoa, you're an early bird"],[4,"You're up early (or very late)"],[3,"Yawn, worst time to be awake"],
-  [2,"You're up late"],[1,"Zzzzz, sorry"],[0,"It's the witching hour"]];
 // CHAS alphabet
 var CHASABET = new Array();
 CHASABET [0] = ["b1/96/zO6mBcwI","a5/59/dH8YmE0D","28/ca/zIHlflOC"]; // A
@@ -361,12 +369,12 @@ function loadSurvey() {
 }
 var SURVEY_VIABLE = loadSurvey();
 
-/* ESTABLISH LISTENER
-// Only for TESTING via local NGROK.IO
+// ESTABLISH LISTENER
+/* Only for TESTING via local NGROK.IO
 const server = CHASbot.listen(server_port, server_ip_address, () => {
   console.log("INFO [NGROK.IO]> Listening on " + server_ip_address + ", port " + server_port );
   console.log("INFO [NGROK.IO]>>>>>>>>>>>>>>>>>>> STARTED <<<<<<<<<<<<<<<<<");
-})*/;
+});*/
 // Only for PRODUCTION hosting on HEROKU
 const server = CHASbot.listen(server_port, () => {
  console.log("INFO [HEROKU]> Listening on ", + server_port);
@@ -458,6 +466,12 @@ function inPlayID (id_to_find) {
 
 // Strng and number handling functions
 // ===================================
+function escapeRegExp(str) {
+    return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+}
+function replaceAll(str, find, replace) {
+    return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+}
 function toTitleCase(inputString) {
   return inputString.replace(/\w\S*/g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
@@ -490,6 +504,7 @@ function xLength(str) {
 function minsConvert(minsIn) {
   return minsIn*60*1000;
 }
+
 function customGreeting(senderID) {
   //console.log("DEBUG [customGreeting]> " + senderID);
   let build_greeting = '';
@@ -529,6 +544,34 @@ function customGreeting(senderID) {
   return build_greeting;
 }
 
+function cleanInput(inboundText) {
+  let emoticon_up_count = 0;
+  for (var i = 0; i < EMOTICON_UP.length; i++) {
+    var pos = inboundText.indexOf(EMOTICON_UP[i]);
+    while(pos > -1){
+        ++emoticon_up_count;
+        pos = inboundText.indexOf(EMOTICON_UP[i], ++pos);
+    }; // Count +ve emoticons
+    inboundText = replaceAll(inboundText, EMOTICON_UP[i], ''); // Then remove them
+  };
+  let emoticon_down_count = 0;
+  for (var i = 0; i < EMOTICON_DOWN.length; i++) {
+    var pos = inboundText.indexOf(EMOTICON_DOWN[i]);
+    while(pos > -1){
+        ++emoticon_down_count;
+        pos = inboundText.indexOf(EMOTICON_DOWN[i], ++pos);
+    }; // Count -ve emoticons
+    inboundText = replaceAll(inboundText, EMOTICON_DOWN[i], ''); // Then remove them
+  };
+  // Lowercase
+  inboundText = inboundText.toLowerCase();
+  // Strip out none alphanumeric
+  inboundText = inboundText.replace(/[^A-Za-z0-9\s]/g,'');
+  // Contract white space
+  let outboundText = inboundText.replace(/\s\s+/g, ' ');
+  return [outboundText,emoticon_up_count,emoticon_down_count];
+}
+
 // Sending template functions
 // ==========================
 // Handling all messages in and processing special cases
@@ -539,14 +582,17 @@ CHASbot.post('/webhook', (req, res) => {
         //if (event.read && event.read.watermark) { //console.log("DEBUG [postWebhook]> Receipt: " + event.read.watermark) };
         let sticker_path = '';
         let sender = event.sender.id;
+        let alt_message_type = '';
         // Pick up on non-text messages
         if (event.message && event.message.attachments) {
            sticker_path = "While it's always nice to receive a gift, I'm not sure what you want me to do with that ";
-           sticker_path = sticker_path + event.message.attachments[0].type + ". Sorry, try just words.";
+           alt_message_type = event.message.attachments[0].type;
+           sticker_path = sticker_path + alt_message_type + ". Sorry, try just words.";
         };
         // Pick up on stickers - identify degrees of like
         if (event.message && event.message.sticker_id) {
           let sticker_code = event.message.sticker_id;
+          alt_message_type = 'sticker';
           if ( sticker_code == 369239263222822 ) {
             sticker_path = "I'm so glad you like it.";
           } else if ( sticker_code == 369239343222814 ) {
@@ -563,7 +609,11 @@ CHASbot.post('/webhook', (req, res) => {
           console.log("INFO [postWebhook]> Request: Non-text");
           console.log("INFO [postWebhook]> Action: postWebhook.sendTextDirect");
           console.log("INFO [postWebhook]> Response: " + sticker_path);
-          sendTextDirect(event,sticker_path);
+          if (alt_message_type == 'image') {
+            apiGIPHY(event,'robot','G',sticker_path);
+          } else {
+            sendTextDirect(event,sticker_path);
+          };
         };
         if (event.message && event.message.text) {
           // Manage sender specific 'in-play' progress
@@ -572,18 +622,37 @@ CHASbot.post('/webhook', (req, res) => {
             sender_index = SENDERS.length;
             inPlayNew(sender_index,sender);
           };
-          // Clean input
-          let analyse_text = event.message.text;
-          analyse_text = analyse_text.toLowerCase();
-          let position_in_analyse_text = -1;
+          // CLEAN INPUT
+          let analyse_text = '';
+          let cleanResults = cleanInput(event.message.text);
+          analyse_text = cleanResults[0];
+          if (analyse_text == '') {analyse_text = 'help'} // Clean response woud otherwise be empty
+          if (!inPlay('survey',sender_index)) { event.message.text = analyse_text };
+          //console.log("DEBUG [postWebhook]> Cleaned input: " + cleanResults[0] + ' (Emoji +ve ' + cleanResults[1] + ',-ve ' + cleanResults[2] + ')');
+          // Feel the vibe
+          sendThinking(event,'on');
+          let vibeText = '';
+          let good_vibe = cleanResults[1];
+          let bad_vibe = cleanResults[2];
+          if (good_vibe > ((bad_vibe+2)*3)-2) { //
+            vibeText = "I’m not too good at reading emotions but that is a power of positivity you are beaming out.";
+          } else if (bad_vibe > ((good_vibe+2)*3)-2) {
+            vibeText = "Bots may not be big on reading people but I’m picking up a negative vibe.";
+          } else if (good_vibe + bad_vibe > 4 && good_vibe + bad_vibe < 10) {
+            vibeText = "I’m either not picking you up very well or you’ve got quite mixed feelings.";
+          } else if (good_vibe + bad_vibe > 9) {
+            vibeText = "That’s an awful lot of emoticons you crammed in there, hard to find what you are saying.";
+          };
+          if (vibeText != '') { sendTextDirect(event,vibeText) };
           // *************************
           // Check for custom triggers
           // ***** HELP & SEARCH *****
           // Feeling lucky - First in list - allows subsequent triggers
+          let position_in_analyse_text = -1;
           position_in_analyse_text = analyse_text.search(TRIGGER_FEELING_LUCKY) + 1;
           //console.log("DEBUG [postWebhook]> " + TRIGGER_FEELING_LUCKY + " search result: " + position_in_analyse_text);
           let chasbotText = '';
-          if (position_in_analyse_text > 0) {
+          if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
             // Math.floor(Math.random()*(max-min+1)+min);
             let cat = Math.floor(Math.random()*5); // 0 to 4
             let ind = Math.floor(Math.random()*6+1); // 1 to 6
@@ -599,7 +668,7 @@ CHASbot.post('/webhook', (req, res) => {
           //console.log("DEBUG [postWebhook]> " + TRIGGER_HELP + " search result: " + position_in_analyse_text);
           let trigger_path = '';
           let help_url = '';
-          if (position_in_analyse_text > 0) {
+          if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
             trigger_path = TRIGGER_HELP;
             help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
             //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
@@ -625,7 +694,7 @@ CHASbot.post('/webhook', (req, res) => {
           let search_term = '';
           for (trigger_loop = 0; trigger_loop < TRIGGER_SEARCH.length; trigger_loop++) {
             position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_SEARCH[trigger_loop]) + 1;
-            if (position_in_analyse_text > 0) {
+            if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
               starting_point = position_in_analyse_text + TRIGGER_SEARCH[trigger_loop].length;
               if (starting_point > rightmost_starting_point) { // Find right-most search term
                 rightmost_starting_point = starting_point;
@@ -653,9 +722,10 @@ CHASbot.post('/webhook', (req, res) => {
           //console.log("DEBUG [postWebhook]> In play, hangman: " + inPlay('hangman',sender_index));
           let valid_choice = false;
           let survey_question_number = SENDERS[sender_index][4];
-          if (inPlay('survey',sender_index)) {
+          if (inPlay('survey',sender_index)) { // Review un-parsed text
             if (SURVEY_QUESTIONS[survey_question_number - 1].length == 1) { // Free text response
               valid_choice = true;
+              event.message.text = cleanResults[0] + ' (Emoji +ve ' + cleanResults[1] + ',-ve ' + cleanResults[2] + ')';
             } else {
               for (var i = 1; i < SURVEY_QUESTIONS[survey_question_number - 1].length; i++) {
                 position_in_analyse_text = event.message.text.search(SURVEY_QUESTIONS[survey_question_number - 1][i]) + 1;
@@ -672,9 +742,9 @@ CHASbot.post('/webhook', (req, res) => {
             } else {
               SENDERS[sender_index][4] = survey_question_number - 1; // Repeat previous question
               // FLOW: Clear out invalid survey responses, 'stop' or 'survey' are still valid
-              position_in_analyse_text = analyse_text.search(TRIGGER_SURVEY) + 1;
+              position_in_analyse_text = event.message.text.search(TRIGGER_SURVEY) + 1;
               if (position_in_analyse_text > 0) { analyse_text = TRIGGER_SURVEY };
-              position_in_analyse_text = analyse_text.search(TRIGGER_STOP) + 1;
+              position_in_analyse_text = event.message.text.search(TRIGGER_STOP) + 1;
               if (position_in_analyse_text > 0) { analyse_text = TRIGGER_STOP };
               if (analyse_text != TRIGGER_SURVEY && analyse_text != TRIGGER_STOP) { analyse_text = '' };
             }
@@ -962,12 +1032,14 @@ CHASbot.post('/webhook', (req, res) => {
 
 function sendTemplate(eventSend,messageData,plusText,messageText) {
   // messageData set outside of function call
+  sendThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   request({
     uri: URL_CHAT_ENDPOINT,
     qs: {access_token: KEY_PAGE_ACCESS},
     method: 'POST',
     json: {
+      messaging_type: 'RESPONSE',
       recipient: {id: sender},
       message: messageData
     }
@@ -984,6 +1056,7 @@ function sendTemplate(eventSend,messageData,plusText,messageText) {
 function sendQuestion_playSurvey(eventSend) {
   //console.log("DEBUG [sendQuestion_playSurvey]> " + SURVEY_NAME + "In Progress");
   // 0:id_of_sender,1:survey_in_play,4:survey_question
+  sendThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   let custom_id = inPlayID(sender);
   let survey_question_number = SENDERS[custom_id][4];
@@ -1078,6 +1151,7 @@ function sendQuestion_playSurvey(eventSend) {
     qs: {access_token: KEY_PAGE_ACCESS},
     method: 'POST',
     json: {
+      messaging_type: 'RESPONSE',
       recipient: {id: sender},
       message: surveyTemplate
     }
@@ -1091,8 +1165,28 @@ function sendQuestion_playSurvey(eventSend) {
   if (inPlay('survey',custom_id)) { SENDERS[custom_id][4] = survey_question_number + 1 };
 }
 
+function sendThinking(eventThink,on_off) {
+  let sender = eventThink.sender.id;
+  request({
+    uri: URL_CHAT_ENDPOINT,
+    qs: {access_token: KEY_PAGE_ACCESS},
+    method: 'POST',
+    json: {
+      messaging_type: 'RESPONSE',
+      recipient: {id: sender},
+      sender_action: 'typing_' + on_off
+    }
+  }, function (error, response) {
+    if (error) {
+      console.log("ERROR [sendThinking]> Error sending simple message: ", error);
+    } else if (response.body.error) {
+      console.log("ERROR [sendThinking]> Undefined: ", response.body.error);
+    };
+  }); // request
+}
+
 function sendTextDirect(eventSend,outbound_text) {
-  // messageText set outside of function call
+  sendThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   if (IDS_VIABLE) { outbound_text = customGreeting(sender) + outbound_text };
   request({
@@ -1100,6 +1194,7 @@ function sendTextDirect(eventSend,outbound_text) {
     qs: {access_token: KEY_PAGE_ACCESS},
     method: 'POST',
     json: {
+      messaging_type: 'RESPONSE',
       recipient: {id: sender},
       message: {
         text: trimTo(640,outbound_text)
@@ -1110,7 +1205,7 @@ function sendTextDirect(eventSend,outbound_text) {
       console.log("ERROR [sendTextDirect]> Error sending simple message: ", error);
     } else if (response.body.error) {
       console.log("ERROR [sendTextDirect]> Undefined: ", response.body.error);
-    }
+    };
   }); // request
 }
 
@@ -1145,7 +1240,7 @@ function sendViaDialog(eventSend) {
     } else {
       console.log("INFO [sendViaDialog]> Response: " + dialogFlowText);
       sendTextDirect(eventSend,dialogFlowText);
-    }
+    };
   });
   apiai.on('error', (error) => {
     console.log("ERROR [sendViaDialog]> Undefined: " + error);
@@ -1513,12 +1608,46 @@ function postFilmTV(postEvent,record_index) {
   };
 }
 
+function apiGIPHY(eventGiphy,giphy_tag,giphy_rating,passText) {
+// Ratings are Y; G; PG; PG-13; R
+  const base_url = URL_GIPHY;
+  const params_url = "?api_key=" + KEY_API_GIPHY + "&tag=" + giphy_tag + "&rating=" + giphy_rating;
+  let url = base_url + params_url;
+  // e.g. https://api.giphy.com/v1/gifs/random?api_key=5LqK0fRD8cNeyelbovZKnuBVGcEGHytv&tag=robot&rating=G
+  console.log("DEBUG [apiGIPHY]> URL: " + url);
+  http.get(url, function(res) {
+    console.log("DEBUG [apiGIPHY]> GIPHY Response Code: " + res.statusCode);
+    let body = "";
+    res.on('data', function (chunk) { body += chunk });
+    res.on('end', function() {
+      let giphyData = JSON.parse(body);
+      console.log("DEBUG [apiGIPHY]> GIPHY Response: " + giphyData);
+      if (res.statusCode === 200) {
+        if (typeof giphyData.data != 'undefined') {
+          let giphy_url = giphyData.data.fixed_height_downsampled_url;
+          console.log("DEBUG [apiGIPHY]> URL: " + giphy_url);
+          postImage(eventGiphy,giphy_url,false,'');
+          return;
+        } else {
+          console.log("ERROR [apiGIPHY]> No Results");
+          sendTextDirect(eventGiphy,passText)
+          return;
+        };
+      } else {
+        console.log("ERROR [apiGIPHY]> Response Error");
+        sendTextDirect(eventGiphy,passText)
+        return;
+      }; // if (res.statusCode === 200)
+    }); // res.on('end', function()
+  }); // http.get(url, function(res)
+}
+
 // Remote search functions - API
 // =============================
 function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
   //console.log("DEBUG [apiFilmTV]> Input: " + nameFilmTV + ", " + episode_find + ", " + tv_film + ", " + record_index);
   let epBlurb = ''; // return value
-  const base_url = "https://api.themoviedb.org/3/search/";
+  const base_url = URL_MOVIEDB + "search/";
   const params_url = "api_key=" + KEY_API_MOVIEDB;
   const movie_url = "movie?";
   const tv_url = "tv?";
@@ -1528,7 +1657,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
   else if (tv_film == 'film') { var url = base_url + movie_url + params_url + query_url };
   // e.g. https://api.themoviedb.org/3/search/movie?api_key={api_key}&query=Jack+Reacher
   // id 1871 is Eastenders; Season 33 is 2017
-  if (episode_find) { url = "https://api.themoviedb.org/3/tv/1871/season/33?api_key=" + KEY_API_MOVIEDB + "&language=en-US" };
+  if (episode_find) { url = URL_MOVIEDB + "/tv/1871/season/33?api_key=" + KEY_API_MOVIEDB + "&language=en-US" };
   //console.log("DEBUG [apiFilmTV]> URL: " + url);
   http.get(url, function(res) {
     //console.log("DEBUG [apiFilmTV]> MovieDb Response Code: " + res.statusCode);
