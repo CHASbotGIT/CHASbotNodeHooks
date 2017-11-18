@@ -1611,23 +1611,24 @@ function postFilmTV(postEvent,record_index) {
 // Remote search functions - API
 // =============================
 function apiGIPHY(eventGiphy,giphy_tag,giphy_rating,passText) {
-// Ratings are Y; G; PG; PG-13; R
+  //console.log("DEBUG [apiGIPHY]> Input: " + giphy_tag + ", " + giphy_rating + ", " passText);
+  // Ratings are Y; G; PG; PG-13; R
   const base_url = URL_GIPHY;
   const params_url = "?api_key=" + KEY_API_GIPHY + "&tag=" + giphy_tag + "&rating=" + giphy_rating;
   let url = base_url + params_url;
   // e.g. https://api.giphy.com/v1/gifs/random?api_key=5LqK0fRD8cNeyelbovZKnuBVGcEGHytv&tag=robot&rating=G
-  console.log("DEBUG [apiGIPHY]> URL: " + url);
+  //console.log("DEBUG [apiGIPHY]> URL: " + url);
   http.get(url, function(res) {
     console.log("DEBUG [apiGIPHY]> GIPHY Response Code: " + res.statusCode);
     let body = "";
     res.on('data', function (chunk) { body += chunk });
     res.on('end', function() {
       let giphyData = JSON.parse(body);
-      console.log("DEBUG [apiGIPHY]> GIPHY Response: " + giphyData);
+      //console.log("DEBUG [apiGIPHY]> GIPHY Response: " + giphyData);
       if (res.statusCode === 200) {
         if (typeof giphyData.data != 'undefined') {
           let giphy_url = giphyData.data.fixed_height_downsampled_url;
-          console.log("DEBUG [apiGIPHY]> URL: " + giphy_url);
+          //console.log("DEBUG [apiGIPHY]> URL: " + giphy_url);
           postImage(eventGiphy,giphy_url,false,'');
           return;
         } else {
