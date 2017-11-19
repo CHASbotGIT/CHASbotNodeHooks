@@ -49,7 +49,7 @@ const MSG_GROUP_DOC = "For an answer to this and other similar questions, visit 
 const MSG_SURVEY_THANKS = "❤️ Thank you for finishing our little survey.";
 const MSG_RPSLS_INTRO = "💡 First to five is the champion. Scissors cuts Paper, Paper covers Rock, Rock crushes Lizard, Lizard poisons Spock, Spock smashes Scissors, Scissors decapitates Lizard, Lizard eats Paper, Paper disproves Spock, Spock vaporizes Rock, and Rock crushes Scissors!";
 const MSG_RPSLS_PROMPT = "Choose... Rock, Paper, Scissors, Lizard or Spock?";
-const MSG_HANGMAN_INTRO = "🤔 Figure out the mystery staff member name.\nType a letter to guess, or 'stop'.\nYour are allowed no more than 3 strikes.";
+const MSG_HANGMAN_INTRO = "🤔 Figure out the mystery staff member name.\nType a letter to guess, or 'stop'.\nYou are allowed no more than 3 strikes.";
 const MSG_HANGMAN_PROMPT = "🤔 Where were we... who is that!\nType a letter, or 'stop'.\nNo more than 3 strikes.";
 var MSG_STAR_RATING = [
   "Meh, in my book it's complete pants, all rotten tomatoes 🍅🍅🍅🍅🍅.",
