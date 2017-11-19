@@ -49,6 +49,8 @@ const MSG_GROUP_DOC = "For an answer to this and other similar questions, visit 
 const MSG_SURVEY_THANKS = "❤️ Thank you for finishing our little survey.";
 const MSG_RPSLS_INTRO = "💡 First to five is the champion. Scissors cuts Paper, Paper covers Rock, Rock crushes Lizard, Lizard poisons Spock, Spock smashes Scissors, Scissors decapitates Lizard, Lizard eats Paper, Paper disproves Spock, Spock vaporizes Rock, and Rock crushes Scissors!";
 const MSG_RPSLS_PROMPT = "Choose... Rock, Paper, Scissors, Lizard or Spock?";
+const MSG_HANGMAN_INTRO = "🤔 Figure out the mystery staff member name.\nType a letter to guess, or 'stop'.\nYour are allowed no more than 3 strikes.";
+const MSG_HANGMAN_PROMPT = "🤔 Where were we... who is that!\nType a letter, or 'stop'.\nNo more than 3 strikes.";
 var MSG_STAR_RATING = [
   "Meh, in my book it's complete pants, all rotten tomatoes 🍅🍅🍅🍅🍅.",
   "I'd be generous giving it ⭐🍅🍅🍅🍅, I watched it so you don't have to!",
@@ -76,6 +78,27 @@ var MSG_HERO_OOPS = [
   "👁️ Not even the eye of Uatu sees your request...",
   "💾 Program missing, exiting protocol...",
   "💣 Danger: Energy Overload..."];
+var MSG_INTERCEPTS = [
+  ["🎁 While it's always nice to receive a gift, I'm not sure what you want me to do with that ",
+   "🎁 I do appreaciate a nice present, so thank you for the lovely ",
+   "🎁 I'm far better at understanding regular text, but it is good of you to send me the "],
+  ["👍 I'm so glad you like it.",
+   "👍 I'm pleased too."],
+  ["👍👍 You are very pleased, press for even longer next time!",
+   "👍👍 Nice that you are so very chuffed!"],
+  ["👍👍👍 Wow, that good is it! I'm ecstatic too!!",
+   "👍👍👍 Gosh, you are completely over the moon!!"],
+  ["🐰 I do like a nice sticker though I'm not sure that gets us anywhere.",
+   "🐰 Stickers are just great, they really brighten up a conversation."],
+  ["😃 I’m not too good at reading emotions but that is a power of positivity you are sending out.",
+   "😃 You are totally beaming out the sunshine with those happy emojis."],
+  ["😭 Bots may not be big on reading people but I’m picking up a negative vibe.",
+   "😭 I'm picking up on a lot of unhappy emojis but maybe you just like them."],
+  ["🤔 I’m either not picking you up very well or you’ve got quite mixed feelings.",
+   "🤔 I’m not sure from that mix of emojis, whether you are up or down."],
+  ["💥 That’s an awful lot of emoticons you crammed in there, hard to find what you are saying.",
+   "💥 Wow, that's a lot more emojis than I can make sense of."]
+];
 // Triggers phrases in lowercase - following phrases are handled in code
 const TRIGGER_SURVEY = 'survey';
 const TRIGGER_HELP = 'help';
@@ -139,7 +162,6 @@ var EMOTICON_UP = ["🙂","😊","😀","😁","😃","😆","😍","😎","😉
 var EMOTICON_DOWN = ["☹️","🙁","😠","😡","😞","😣","😖","😢","😭","😨","😧","😦","😱","😫","😩","😐","😑","🤔","😕","😟",
                   ":'(",":O",":o",">:O",":|",":/","=/"];
 // CHASbot help
-var HELP_SEND = false;
 var HELP_PROMPTS = [
   ["ad/e9/ivBhjDXd","When is the Devil Dash","Who is Morven MacLean","Where can I get collecting cans","How do I claim expenses","How do I get Christmas cards","CHAS alphabet C"],
   ["7a/45/0uhs3nQx","Weather at Rachel House","Weather in Aberdeen","Search CHAS","Google FB Workplace","Wiki Santa Claus","Beeb Blue Planet"],
@@ -193,8 +215,6 @@ CHASABET [23] = ["e9/0c/nB1EzCck","2e/60/2ETG0nZa"]; // X
 CHASABET [24] = ["2a/4a/9R5ZzF7V","d0/23/QDFnWi52"]; // Y
 CHASABET [25] = ["f6/89/4pwI187X","3c/4f/AguL64HL"]; // Z
 var CHASABET_INDEX = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-// Marvel
-var HERO_OOPS_INDEX = 0;
 // Rock Paper Scissors Lizard Spock
 var RPSLS_VALID = ["rock","paper","scissors","lizard","spock"];
 var RPSLS_OUTCOMES = ["cuts","covers","crushes","poisons","smashes","decapitates","eats","disproves","vaporizes","crushes"];
@@ -206,7 +226,6 @@ var RPSLS_IMGS = [
 "60/ab/GGWv7VGf","5b/aa/gX9yjh8W","de/9a/ZW4Y0A3c","9b/b0/jozAYCPJ","fc/69/9RIO0UnP","ae/96/fImaS52o","e6/d8/NZf7rjvm","ce/75/2lShOY7A","1c/c0/v4T6eRgk","39/85/kCcL35Wx",
 "7c/cc/6aXrZ3OR","57/e7/gXFlvW70","49/29/I58HCq4Z","ea/83/4oIJFaQX","35/46/6jfnQOWP","51/27/Mgd2xmkH","5b/43/75oya7i9","65/e5/J9Pi4L30","6d/76/wmyBvmzC","1c/dd/A1qkLRfu",
 "bc/5e/WXSBV3m7","7f/65/UufJXgwL","4b/4f/JO6B4jVX","5c/00/lLBYnA89","41/8b/iDCFzS5i"]; // Bottom row images2 source
-var rpsls_url = '';
 // Playing cards
 var CARD_PICK = '';
 var CARD_DECK  = [
@@ -216,9 +235,8 @@ var CARD_DECK  = [
 "♣A","♣2","♣3","♣4","♣5","♣6","♣7","♣8","♣9","♣10","♣J","♣Q","♣K"];
 var CARD_PROMPTS = [
   "I've picked... ","This time I've drawn... ","I've selected... ","You're card is... "];
-var CARD_PROMPT = 0;
 // Survey
-var SURVEY_VIABLE  = true;
+var SURVEY_VIABLE = true;
 var SURVEY_NAME = ''; // Loaded from survey.txt 1st line
 var SURVEY_QUESTIONS = [];
 // Film and TV
@@ -504,6 +522,9 @@ function xLength(str) {
 function minsConvert(minsIn) {
   return minsIn*60*1000;
 }
+function randomBetween(min,max) {
+  return Math.floor(Math.random()*(max-min+1)+min);
+}
 
 function customGreeting(senderID) {
   //console.log("DEBUG [customGreeting]> " + senderID);
@@ -535,7 +556,7 @@ function customGreeting(senderID) {
         break;
       }; // for
     }; // if
-    build_greeting = build_greeting + ' ' + fb_who + '. ' + MSG_RANDOM_COMPLIMENT[Math.floor(Math.random()*MSG_RANDOM_COMPLIMENT.length)] + ' ';
+    build_greeting = build_greeting + ' ' + fb_who + '. ' + MSG_RANDOM_COMPLIMENT[randomBetween(0,MSG_RANDOM_COMPLIMENT.length-1)] + ' ';
     // Set the time the ID received a name check
     IDS_TIMESTAMP[id_index] = new Date().getTime();
     console.log("NAME CHECK: [customGreeting]> " + fb_who + ", ID: " + senderID + " @ " + IDS_TIMESTAMP[id_index]);
@@ -585,22 +606,22 @@ CHASbot.post('/webhook', (req, res) => {
         let alt_message_type = '';
         // Pick up on non-text messages
         if (event.message && event.message.attachments) {
-           sticker_path = "While it's always nice to receive a gift, I'm not sure what you want me to do with that ";
+           sticker_path = MSG_INTERCEPTS[0][randomBetween(0,MSG_INTERCEPTS[0].length-1)];
            alt_message_type = event.message.attachments[0].type;
-           sticker_path = sticker_path + alt_message_type + ". Sorry, try just words.";
+           sticker_path = sticker_path + alt_message_type + ". Try just words instead.";
         };
         // Pick up on stickers - identify degrees of like
         if (event.message && event.message.sticker_id) {
           let sticker_code = event.message.sticker_id;
           alt_message_type = 'sticker';
           if ( sticker_code == 369239263222822 ) {
-            sticker_path = "I'm so glad you like it.";
+            sticker_path = MSG_INTERCEPTS[1][randomBetween(0,MSG_INTERCEPTS[1].length-1)];
           } else if ( sticker_code == 369239343222814 ) {
-            sticker_path = "You are very pleased, press for even longer next time!";
+            sticker_path = MSG_INTERCEPTS[2][randomBetween(0,MSG_INTERCEPTS[2].length-1)];
           } else if (sticker_code == 369239383222810 ) {
-            sticker_path = "Wow, that good is it! I'm ecstatic too!!";
+            sticker_path = MSG_INTERCEPTS[3][randomBetween(0,MSG_INTERCEPTS[3].length-1)];
           } else {
-            sticker_path = "I do like a nice sticker though I'm not sure that gets us anywhere.";
+            sticker_path = MSG_INTERCEPTS[4][randomBetween(0,MSG_INTERCEPTS[4].length-1)];
           };
         };
         if (sticker_path != '') {
@@ -635,13 +656,13 @@ CHASbot.post('/webhook', (req, res) => {
           let good_vibe = cleanResults[1];
           let bad_vibe = cleanResults[2];
           if (good_vibe > ((bad_vibe+2)*3)-2) { //
-            vibeText = "I’m not too good at reading emotions but that is a power of positivity you are beaming out.";
+            vibeText = MSG_INTERCEPTS[5][randomBetween(0,MSG_INTERCEPTS[5].length-1)];
           } else if (bad_vibe > ((good_vibe+2)*3)-2) {
-            vibeText = "Bots may not be big on reading people but I’m picking up a negative vibe.";
+            vibeText = MSG_INTERCEPTS[6][randomBetween(0,MSG_INTERCEPTS[6].length-1)];
           } else if (good_vibe + bad_vibe > 4 && good_vibe + bad_vibe < 10) {
-            vibeText = "I’m either not picking you up very well or you’ve got quite mixed feelings.";
+            vibeText = MSG_INTERCEPTS[7][randomBetween(0,MSG_INTERCEPTS[7].length-1)];
           } else if (good_vibe + bad_vibe > 9) {
-            vibeText = "That’s an awful lot of emoticons you crammed in there, hard to find what you are saying.";
+            vibeText = MSG_INTERCEPTS[8][randomBetween(0,MSG_INTERCEPTS[8].length-1)];
           };
           if (vibeText != '') { sendTextDirect(event,vibeText) };
           // *************************
@@ -653,14 +674,14 @@ CHASbot.post('/webhook', (req, res) => {
           //console.log("DEBUG [postWebhook]> " + TRIGGER_FEELING_LUCKY + " search result: " + position_in_analyse_text);
           let chasbotText = '';
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
-            // Math.floor(Math.random()*(max-min+1)+min);
-            let cat = Math.floor(Math.random()*5); // 0 to 4
-            let ind = Math.floor(Math.random()*6+1); // 1 to 6
+            let cat = randomBetween(0,4); // 0 to 4
+            let ind = randomBetween(1,6); // 1 to 6
             event.message.text = HELP_PROMPTS[cat][ind];
             analyse_text = event.message.text;
             analyse_text = analyse_text.toLowerCase();
             chasbotText = '*' + event.message.text + '*';
             sendTextDirect(event,chasbotText); // Send a sudo-request
+            inPlayPause(sender_index); // Pause all in-play
             // FLOW: Sudo request replace 'feeling lucky'
           };
           // Help
@@ -797,19 +818,7 @@ CHASbot.post('/webhook', (req, res) => {
           };
           // Hangman
           let hangman_guess = '';
-          if (inPlay('hangman',sender_index)) { // Only check if we are playing
-            //console.log("DEBUG [postWebhook]> Hangman in play.");
-            if (analyse_text.length != 1) {
-              hangman_guess = "😞 One letter at a time please.";
-              //console.log("DEBUG [postWebhook]> Hangman: Guess is too long i.e. " + analyse_text);
-            } else if (analyse_text.match(/[a-z]/i)) {
-              //console.log("DEBUG [postWebhook]> Hangman: Guess is valid i.e. " + analyse_text);
-              hangman_guess = analyse_text;
-            } else { // Not an alpha
-              //console.log("DEBUG [postWebhook]> Hangman: Guess is not an alpha i.e. " + analyse_text);
-              hangman_guess = "🔤 A letter would be nice.";
-            };
-          };
+          if (inPlay('hangman',sender_index)) { hangman_guess = analyse_text };
           // FLOW: Typing hangman mid-survey, starts it again
           // 0:id_of_sendery,2:hangman_in_play,5:hangman_strikes,6:hangman_word,7:hangman_array
           position_in_analyse_text = analyse_text.search(TRIGGER_HANGMAN) + 1;
@@ -820,7 +829,7 @@ CHASbot.post('/webhook', (req, res) => {
           if (CHAS_BIOGS_VIABLE && position_in_analyse_text > 0) {
             trigger_path = TRIGGER_HANGMAN;
             if (SENDERS[sender_index][6] == ''||inPlay('hangman',sender_index)) { // New game
-              hangman_word = CHAS_BIOGS[Math.floor(Math.random() * CHAS_BIOGS_TOTAL) * CHAS_BIOGS_BLOCK_SIZE - 2];
+              hangman_word = CHAS_BIOGS[randomBetween(1,CHAS_BIOGS_TOTAL) * CHAS_BIOGS_BLOCK_SIZE - 2];
               hangman_word = hangman_word.toLowerCase();
               //console.log("DEBUG [postWebhook]> Mystery name: " + hangman_word);
               // swap out spaces for under_scores
@@ -834,7 +843,7 @@ CHASbot.post('/webhook', (req, res) => {
                 };
               };
               hangman_answer = hangman_answer_array.join(' ');
-              chasbotText = "🤔 Figure out the mystery staff member name.\nType a letter to guess, or 'stop'.\nYour are allowed no more than 3 strikes.";
+              chasbotText = MSG_HANGMAN_INTRO;
               chasbotText = chasbotText + "\n" + hangman_answer;
               chasbotText = chasbotText + "\n" + MSG_THUMBS[0] + " (0 strikes)";
               SENDERS[sender_index][6] = hangman_word;
@@ -844,7 +853,7 @@ CHASbot.post('/webhook', (req, res) => {
               hangman_word = SENDERS[sender_index][6];
               hangman_answer_array = SENDERS[sender_index][7];
               hangman_answer = hangman_answer_array.join(' ');
-              chasbotText = "🤔 Where were we... who is that!\nType a letter, or 'stop'.\nNo more than 3 strikes.";
+              chasbotText = MSG_HANGMAN_PROMPT;
               chasbotText = chasbotText + "\n" + hangman_answer;
               chasbotText = chasbotText + "\n" + MSG_THUMBS[SENDERS[sender_index][5]] + "(" + SENDERS[sender_index][5] + " strike";
               if (SENDERS[sender_index][5] == 1) {
@@ -1290,10 +1299,8 @@ CHASbot.post('/heroku', (req, res) => {
     })
   } else if (req.body.result.action === HOOK_PICKCARD) {
     //console.log("DEBUG [postHeroku]> Pick a playing card");
-    CARD_PICK = CARD_DECK[Math.floor(Math.random()*CARD_DECK.length)];
-    hookText = CARD_PROMPTS[CARD_PROMPT] + CARD_PICK;
-    CARD_PROMPT++;
-    if (CARD_PROMPT == CARD_PROMPTS.length) {CARD_PROMPT = 0};
+    CARD_PICK = CARD_DECK[randomBetween(0,CARD_DECK.length-1)];
+    hookText = CARD_PROMPTS[randomBetween(0,CARD_PROMPTS.length-1)] + CARD_PICK;
     return res.json({
       speech: hookText,
       displayText: hookText
@@ -1402,9 +1409,7 @@ function postMarvel(postEvent,success_result,hero_array) {
     sendTemplate(postEvent,marvelTemplate,true,marvelText);
   } else {
     console.log("INFO [postMarvel]> Reponse: Unuccessful");
-    marvelText = MSG_HERO_OOPS[HERO_OOPS_INDEX] + ' try something instead of ' + toTitleCase(hero_array[0]) + '?'; // Required within sendTextDirect
-    HERO_OOPS_INDEX++;
-    if (HERO_OOPS_INDEX == MSG_HERO_OOPS.length) {HERO_OOPS_INDEX = 0};
+    marvelText = MSG_HERO_OOPS[randomBetween(0,MSG_HERO_OOPS.length-1)] + ' try something instead of ' + toTitleCase(hero_array[0]) + '?'; // Required within sendTextDirect
     sendTextDirect(postEvent,marvelText);
   };
 }
@@ -1595,7 +1600,7 @@ function postFilmTV(postEvent,record_index) {
         console.log("INFO [postFilmTV]> Reponse: " + filmText);
         sendTextDirect(postEvent,filmText);
       } else {
-        let pick_one = Math.floor(Math.random()*2);
+        let pick_one = Math.floor(randomBetween(0,1));
         if (pick_one == 0) {
           filmText = "🎞️ " + MOVIEDB_RECORDS[record_index][1];
         } else {
@@ -1608,18 +1613,16 @@ function postFilmTV(postEvent,record_index) {
   };
 }
 
-// Remote search functions - API
-// =============================
 function apiGIPHY(eventGiphy,giphy_tag,giphy_rating,passText) {
-  //console.log("DEBUG [apiGIPHY]> Input: " + giphy_tag + ", " + giphy_rating + ", " passText);
   // Ratings are Y; G; PG; PG-13; R
+  //console.log("DEBUG [apiGIPHY]> Input: " + giphy_tag + ", " + giphy_rating + ", " passText);
   const base_url = URL_GIPHY;
   const params_url = "?api_key=" + KEY_API_GIPHY + "&tag=" + giphy_tag + "&rating=" + giphy_rating;
   let url = base_url + params_url;
   // e.g. https://api.giphy.com/v1/gifs/random?api_key=5LqK0fRD8cNeyelbovZKnuBVGcEGHytv&tag=robot&rating=G
   //console.log("DEBUG [apiGIPHY]> URL: " + url);
   http.get(url, function(res) {
-    console.log("DEBUG [apiGIPHY]> GIPHY Response Code: " + res.statusCode);
+    //console.log("DEBUG [apiGIPHY]> GIPHY Response Code: " + res.statusCode);
     let body = "";
     res.on('data', function (chunk) { body += chunk });
     res.on('end', function() {
@@ -1645,6 +1648,8 @@ function apiGIPHY(eventGiphy,giphy_tag,giphy_rating,passText) {
   }); // http.get(url, function(res)
 }
 
+// Remote search functions - API
+// =============================
 function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
   //console.log("DEBUG [apiFilmTV]> Input: " + nameFilmTV + ", " + episode_find + ", " + tv_film + ", " + record_index);
   let epBlurb = ''; // return value
@@ -1834,7 +1839,7 @@ function lookupEntry(eventEntry,eventName) {
   let event_index = -1;
   let eventIn = eventName;
   // Take the input provded by the user...
-  // ...convert to case
+  // ...convert to lower case
   eventName = eventName.toLowerCase();
   // 5k special case
   eventName = eventName.replace(/5k/g, 'fivek');
@@ -2006,12 +2011,27 @@ function playHangman(postEvent,hangman_guess) {
   // 0:id_of_sender,2:hangman_in_play,3:rpsls_in_play,5:hangman_strikes,6:hangman_word,7:hangman_array
   //console.log("DEBUG [playHangman]> Input: " + postEvent);
   let sender = postEvent.sender.id;
+  // Take out some possible prefixes
+  hangman_guess = hangman_guess.replace(/is it /g, '');
+  hangman_guess = hangman_guess.replace(/is there an /g, '');
+  hangman_guess = hangman_guess.replace(/is there a /g, '');
+  hangman_guess = hangman_guess.replace(/\s/g, '_'); // Swap spaces for under under_scores
   let hangmanText = hangman_guess;
   let custom_id = inPlayID(sender);
   let hangman_strikes = SENDERS[custom_id][5];
   let hangman_word = SENDERS[custom_id][6];
   let hangman_answer_array = SENDERS[custom_id][7];
   let clean = false;
+  if (hangman_guess == hangman_word) { // Correct answer
+    hangman_guess = "Yes! You guessed the mystery staff member, " + hangman_word.toUpperCase() + '!';
+    hangmanText = hangman_guess;
+    clean = true;
+  } else if (hangman_guess.length != 1) { // Long answer that isn't correct
+    hangman_guess = '0'; // Make sure it fails on processing
+  } else if (!hangman_guess.match(/[a-z]/i)||hangman_guess.length == 0) {
+    hangman_guess = "🔤 Single letters only would be nice. I won't give you a strike for that." ;
+    hangmanText = hangman_guess;
+  };
   if (hangman_guess.length == 1) {
     var got_one = false;
     let i = 0; // an indexer into the array
@@ -2043,7 +2063,11 @@ function playHangman(postEvent,hangman_guess) {
     };
     // Otherwise, wrong guess
     if (!got_one) {
-      hangmanText = "Sorry, no " + hangman_guess.toUpperCase() + " to be found.";
+      if (hangman_guess == '0') {
+        hangmanText = "Bad guess, try a letter at a time until you are closer.";
+      } else {
+        hangmanText = "Sorry, no " + hangman_guess.toUpperCase() + " to be found.";
+      }
       hangman_strikes++;
       // Game Over
       if (hangman_strikes == 4) {
@@ -2102,7 +2126,7 @@ function playRPSLS(eventRPSLS,pickPlayer) {
     sendTextDirect(eventRPSLS,rpslsText);
   } else { // Compare results and show outcome
     console.log("INFO [playRPSLS]> Request: " + pickPlayer);
-    pick_chasbot = RPSLS_VALID[Math.floor(Math.random()*RPSLS_VALID.length)];
+    pick_chasbot = RPSLS_VALID[randomBetween(0,4)];
     let PLAYERvBOT = pickPlayer + pick_chasbot;
     rpslsText = '';
     //console.log("DEBUG [playRPSLS]> PLAYERvBOT: " + PLAYERvBOT);
