@@ -239,7 +239,7 @@ var CARD_DECK  = [
 var CARD_PROMPTS = [
   "I've picked... ","This time I've drawn... ","I've selected... ","You're card is... "];
 // Survey/Quiz
-const PRIZES = ["🎉","🎈","💰","🎁","👏","🌹","💐","🍹","🍸","🍺,","🍷","🍾","🍰","💋","🎖️","🍀"];
+const PRIZES = ["🎉","🎈","💰","🎁","👏","🌹","💐","🍹","🍸","🍺","🍷","🍾","🍰","💋","🎖️","🍀"];
 var SURVEY_VIABLE = true;
 var SURVEY_NAME = ''; // Loaded from survey.txt 1st line
 var SURVEY_QUESTIONS = [];
