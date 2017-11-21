@@ -1,4 +1,4 @@
-SimpleTestSurvey
+SimpleTestQuiz,1,1,2,pink,4,2,1
 Welcome to this little survey. 1. Are you having fun yet?,😄,😊,😐,😟,😩
 2. On balance are you up or down?,👍,👎
 3. Pick where you volunteer?,Robin,Rachel,Retail,Fundraising
