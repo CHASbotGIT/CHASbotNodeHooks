@@ -16,12 +16,15 @@ const KEY_API_GIPHY = process.env.KEY_API_GIPHY;
 const KEY_CRYPTO = process.env.KEY_CRYPTO;
 const KEY_MARVEL_PRIVATE = process.env.KEY_MARVEL_PRIVATE;
 const KEY_MARVEL_PUBLIC = process.env.KEY_MARVEL_PUBLIC;
-const KEY_ROOT = process.env.KEY_ROOT;
+const KEY_ROOT = process.env.KEY_ROOT || "75777966";
+const URL_POSTGRES = process.env.DATABASE_URL;
+const URL_CHASBOT = process.env.APP_URL;
 // Set-up dependencies for app
 const express = require('express'); // https://expressjs.com
 const bodyParser = require('body-parser'); // https://github.com/expressjs/body-parser
 const request = require('request'); // https://github.com/request/request
 const dialogFlow = require('apiai')(KEY_DIALOGFLOW); // https://www.npmjs.com/package/apiai
+const pg = require('pg'); // https://www.npmjs.com/package/pg
 // Node.js libraries used
 const http = require('https'); // https://nodejs.org/api/https.html
 const crypto = require('crypto'); // https://nodejs.org/api/crypto.html
@@ -360,12 +363,6 @@ function loadCalendar() {
 var CHAS_EVENTS_VIABLE = loadCalendar();
 //console.log("DEBUG [postloadCalendar]> Viable? " + CHAS_EVENTS_VIABLE);
 
-// Load first line into array
-// If it is of length 1 then we have a survey
-// If it is longer than 1, then it must be the same dimension as the questions
-// i.e. if there are 6 questions, then array will run [0] to [6] so length 7, so first entry [0][7]
-// Each answer has to be in range of selections, free text must be an exact match so can be any length
-// event though there are 'no' pre-selected answers
 function loadSurvey() {
   //console.log("DEBUG [loadSurvey]> Reading: " + FILE_SURVEY);
   let gone_funky = false;
@@ -462,31 +459,6 @@ function loadSurvey() {
 var SURVEY_VIABLE = loadSurvey();
 //console.log("DEBUG [postloadSurvey]> Viable? " + SURVEY_VIABLE);
 
-function highScore(read_write) {
-  if (read_write == 'read') { // Load from file
-    let high_scorer = '';
-    let high_score = 0;
-    let text_block = fs.readFileSync(FILE_HIGH, "utf-8");
-
-    let load_array = text_block.split("\n");
-    load_array = load_array[0].split(","); // Only Want first line
-    if (load_array.length>1) {
-      high_scorer = load_array[0];
-      if (!isNaN(parseInt(load_array[1]))) { high_score = parseInt(load_array[1]) };
-    };
-    if (high_scorer == '') { high_scorer = 'CHASbot' };
-    HIGH_SCORE[0]=high_scorer;
-    HIGH_SCORE[1]=high_score;
-  } else if (read_write == 'write') { // Save to file
-    let stream = fs.createWriteStream(FILE_HIGH, "utf-8");
-    stream.once('open', function(fd) {
-      stream.write(HIGH_SCORE[0] + "," + HIGH_SCORE[1]); // Comma seperate
-      stream.end();
-    });
-  };
-}
-highScore('read');
-
 // ESTABLISH LISTENER
 /* Only for TESTING via local NGROK.IO
 const server = CHASbot.listen(server_port, server_ip_address, () => {
@@ -510,9 +482,35 @@ CHASbot.get('/webhook', (req, res) => {
   }
 });
 
+function highScore(read_write) {
+  let client = new pg.Client(URL_POSTGRES);
+  if (read_write == 'read') { // Load from file
+    client.connect(function(err) {
+      if (err) { return console.error('could not connect to read postgres', err) };
+      client.query('SELECT high_scorer,high_score FROM quiz WHERE id = 0', function(err, result) {
+        if (err) { return console.error('error running query', err) };
+        HIGH_SCORE[0]=result.rows[0].high_scorer;
+        HIGH_SCORE[1]=result.rows[0].high_score;
+        console.log('who: ' + HIGH_SCORE[0] + ' what: ' + HIGH_SCORE[1]);
+        client.end();
+      });
+    });
+  } else if (read_write == 'write') { // Save to file
+    client.connect(function(err) {
+      if (err) { return console.error('could not connect to update postgres', err) };
+      let sql_update = "UPDATE quiz SET high_scorer = '" + HIGH_SCORE[0] + "', high_score = " + HIGH_SCORE[1] + " WHERE id = 0";
+      client.query(sql_update, function(err, result) {
+        if (err) { return console.error('error running query', err) };
+        client.end();
+      });
+    });
+  };
+};
+highScore('read');
+
 // Keep Heroku alive
 setInterval(function() {
-    http.get("https://chasbot.herokuapp.com/");
+    http.get("APP_URL");
 }, minsConvert(KEEP_ALIVE));
 
 // Sender handling and stacking functions
