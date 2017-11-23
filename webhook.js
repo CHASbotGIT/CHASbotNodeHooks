@@ -510,7 +510,7 @@ highScore('read');
 
 // Keep Heroku alive
 setInterval(function() {
-    http.get("APP_URL");
+    http.get(APP_URL);
 }, minsConvert(KEEP_ALIVE));
 
 // Sender handling and stacking functions
@@ -581,8 +581,8 @@ function inPlayID (id_to_find) {
   return sender_index;
 }
 
-// Strng and number handling functions
-// ===================================
+// String and number handling functions
+// ====================================
 function escapeRegExp(str) {
     return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
 }
