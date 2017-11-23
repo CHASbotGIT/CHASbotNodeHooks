@@ -486,21 +486,21 @@ function highScore(read_write) {
   let client = new pg.Client(URL_POSTGRES);
   if (read_write == 'read') { // Load from file
     client.connect(function(err) {
-      if (err) { return console.error('could not connect to read postgres', err) };
+      if (err) { return console.error("ERROR [highScore]> Could not connect to read postgres: ", err) };
       client.query('SELECT high_scorer,high_score FROM quiz WHERE id = 0', function(err, result) {
-        if (err) { return console.error('error running query', err) };
+        if (err) { return console.error("ERROR [highScore]> Error running read query: ", err) };
         HIGH_SCORE[0]=result.rows[0].high_scorer;
         HIGH_SCORE[1]=result.rows[0].high_score;
-        console.log('who: ' + HIGH_SCORE[0] + ' what: ' + HIGH_SCORE[1]);
+        console.log("DEBUG [highScore]> Who: " + HIGH_SCORE[0] + " Score: " + HIGH_SCORE[1]);
         client.end();
       });
     });
   } else if (read_write == 'write') { // Save to file
     client.connect(function(err) {
-      if (err) { return console.error('could not connect to update postgres', err) };
+      if (err) { return console.log("ERROR [highScore]> Could not connect to update postgres: ", err) };
       let sql_update = "UPDATE quiz SET high_scorer = '" + HIGH_SCORE[0] + "', high_score = " + HIGH_SCORE[1] + " WHERE id = 0";
       client.query(sql_update, function(err, result) {
-        if (err) { return console.error('error running query', err) };
+        if (err) { return console.error("ERROR [highScore]> Error running update query: ", err) };
         client.end();
       });
     });
