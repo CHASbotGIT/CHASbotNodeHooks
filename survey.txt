@@ -2,7 +2,7 @@ QuizCHASbot1,2,cars,5,1,2,4,1,babe,3,4,1,4,1,et,3,1,1,3,2,up,1,2,3,2
 Welcome to 🤖 CHASbot's mega-quiz (type 'stop' to exit; 'quiz' starts again while playing or starts where you left off after 'stop'). 1. Category: CHAS. In August of what year was Robin House opened?,2004,2005,2006,2007,2008
 2. Category: Movies. Name the film represented by 🚘🚘🚘?
 3. Category: Sport. The Cincinnati Reds play with what?,🏈,🏀,⚽,🏒,⚾
-4. Category: Science. Discovered by Marie Curie?,*Ra*(dium),*C*(arbon),*He*(lium),*L*(atinum)
+4. Category: Science. Discovered by Marie Curie?,Ra-dium,C-arbon,He-lium,L-atinum
 5. Category: No 1s. Who had the 1️⃣ hit *Maggie May* in 1971?,Elton John,Rod Stewart,Lionel Richie
 6. Category: Puzzle. How many f's in... finished files are the result of years of scientific study combined with the experience of years?,0,3,4,5,6
 7. Category: CHAS. In March of which year was Rachel House opened?,1996,1997,1998,1999,2000
@@ -10,16 +10,16 @@ Welcome to 🤖 CHASbot's mega-quiz (type 'stop' to exit; 'quiz' starts again wh
 9. Category: Sport. The New York Red Bulls play with what?,🏈,🏀,⚽,🏒,⚾
 10. Category: Science. What genus of animal is helix?,🐻,🐔,🐝,🐌
 11. Category: No 1s. Who had the 1️⃣ hit *Can't Buy Me Love* in 1964?,The Beatles,The Animals,The Monkees
-12. Category: Puzzle. Divide 30 by 1/2 and add 10?25,35,50,70
+12. Category: Puzzle. Divide 30 by 1/2 and add 10?,25,35,50,70
 13. Category: CHAS. Ewan McGregor helped cut the turf at which hospice site?,Balloch,Kinross
 14. Category: Movies. Name the film represented by 👽👦🚲🌕?
 15. Category: Sport. The San Jose Earthquakes play with what?,🏈,🏀,⚽,🏒,⚾
 16. Category: Science. What genus of animal is ursus?,🐻,🐔,🐝,🐌
 17. Category: No 1s. Who had the 1️⃣ hit "I Gotta Feeling" in 2009?,Black Eyed Peas,REM,Bruno Mars
-18. Category: Puzzle. What day would tomorrow be if... yesterday was five days before the day after Sunday's tomorrow?Thu,Fri,Sat,Sun,Mon
+18. Category: Puzzle. What day would tomorrow be if... yesterday was five days before the day after Sunday's tomorrow?,Thu,Fri,Sat,Sun,Mon
 19. Category: CHAS. Philip Schofield cut the turf at which hospice site?,Balloch,Kinross
 20. Category: Movies. Name the film represented by 🎈🎈🏠🎈🎈?
 21. Category: Sport. The Chicago Bears play with what?,🏈,🏀,⚽,🏒,⚾
-22. Category: Science. Found in many compounds that form the basis of life?,*Ra*(dium),*C*(arbon),*He*(lium),*L*(atinum)
+22. Category: Science. Found in many compounds that form the basis of life?,Ra-dium,C-arbon,He-lium,L-atinum
 23. Category: No 1s. Who had the 1️⃣ hit *Grenade* in 2011?,REM,Black Eyed Peas,Bruno Mars
 24. Category: Puzzle. In the final stretch of a road race you pass the 2nd-place runner right before crossing the finish line... which medal will you receive?,🥇,🥈,🥉
