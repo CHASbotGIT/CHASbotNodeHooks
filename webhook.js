@@ -16,8 +16,8 @@ const KEY_API_GIPHY = process.env.KEY_API_GIPHY;
 const KEY_CRYPTO = process.env.KEY_CRYPTO;
 const KEY_MARVEL_PRIVATE = process.env.KEY_MARVEL_PRIVATE;
 const KEY_MARVEL_PUBLIC = process.env.KEY_MARVEL_PUBLIC;
-const KEY_ROOT = process.env.KEY_ROOT || "75777966";
-const URL_POSTGRES = process.env.DATABASE_URL;
+const KEY_ROOT = process.env.KEY_ROOT;
+const URL_POSTGRES = process.env.DATABASE_UR;
 const URL_CHASBOT = process.env.APP_URL;
 // Set-up dependencies for app
 const express = require('express'); // https://expressjs.com
@@ -364,7 +364,7 @@ var CHAS_EVENTS_VIABLE = loadCalendar();
 //console.log("DEBUG [postloadCalendar]> Viable? " + CHAS_EVENTS_VIABLE);
 
 function loadSurvey() {
-  //console.log("DEBUG [loadSurvey]> Reading: " + FILE_SURVEY);
+ //console.log("DEBUG [loadSurvey]> Reading: " + FILE_SURVEY);
   let gone_funky = false;
   // Load in survey as a block
   let text_block = fs.readFileSync(FILE_SURVEY, "utf-8");
@@ -376,57 +376,57 @@ function loadSurvey() {
       SURVEY_QUESTIONS[i] = load_array[i].split(","); // Split each row into arrays split by comma
       if (i>0 && SURVEY_QUESTIONS[i].length > 6) {
         gone_funky = true; // Can't have more than 6 elements i.e. Question + 5 Answers
-        //console.log("DEBUG [loadSurvey]> " + (SURVEY_QUESTIONS[i].length - 1) + " is too many response elements for Q." + i);
+       //console.log("DEBUG [loadSurvey]> " + (SURVEY_QUESTIONS[i].length - 1) + " is too many response elements for Q." + i);
         break;
       }; // if
     }; // for (break)
     if (SURVEY_QUESTIONS[0].length != 1) { // Has to be a quiz
       QUIZ = SURVEY_QUESTIONS[0]; // Load name and responses into array
-      //console.log("DEBUG [loadSurvey]> Answers: " + QUIZ);
-      //console.log("DEBUG [loadSurvey]> Number of questions is " + (SURVEY_QUESTIONS.length-1));
-      //console.log("DEBUG [loadSurvey]> Number of answers is " + (QUIZ.length-1));
+     //console.log("DEBUG [loadSurvey]> Answers: " + QUIZ);
+     //console.log("DEBUG [loadSurvey]> Number of questions is " + (SURVEY_QUESTIONS.length-1));
+     //console.log("DEBUG [loadSurvey]> Number of answers is " + (QUIZ.length-1));
       if (QUIZ.length != SURVEY_QUESTIONS.length) { // Both dimensions are not the same
         gone_funky = true;
-        //console.log("DEBUG [loadSurvey]> Number of questions doesn't match answers" + i);
+       //console.log("DEBUG [loadSurvey]> Number of questions doesn't match answers" + i);
       } else { // Both dimensions are the same
         for (var i = 0; i < QUIZ.length; i++) {
           if (i == 0) { // First element
             QUIZ_NAME = QUIZ[0];
-            //console.log("DEBUG [loadSurvey]> Quiz Name: " + QUIZ_NAME);
+           //console.log("DEBUG [loadSurvey]> Quiz Name: " + QUIZ_NAME);
             if (QUIZ_NAME=='') {
               gone_funky = true;
-              //console.log("DEBUG [loadSurvey]> Quiz name can't be empty");
+             //console.log("DEBUG [loadSurvey]> Quiz name can't be empty");
               break;
             };
           } else {
-            //console.log("DEBUG [loadSurvey]> Question: " + SURVEY_QUESTIONS[i].join(","));
+           //console.log("DEBUG [loadSurvey]> Question: " + SURVEY_QUESTIONS[i].join(","));
             let potential_number = 0;
             let known_string = '';
             if (!isNaN(QUIZ[i])) {
               // Check that there is a pick question, and that the response is within the range of answers
               // OR number reponse could be a string
               potential_number = parseInt(QUIZ[i],10);
-              //console.log("DEBUG [loadSurvey]> Value = " + potential_number + " Parse (should be number) = " + typeof(potential_number));
+             //console.log("DEBUG [loadSurvey]> Value = " + potential_number + " Parse (should be number) = " + typeof(potential_number));
               if (SURVEY_QUESTIONS[i].length == 1) { // Matching question has free-text response
                 known_string = QUIZ[i];
-                //console.log("DEBUG [loadSurvey]> Over-rule number value = " + known_string + " Parse (should be number string) = " + typeof(known_string));
+               //console.log("DEBUG [loadSurvey]> Over-rule number value = " + known_string + " Parse (should be number string) = " + typeof(known_string));
                 if (known_string.length == 0) { // Can't be empty
                   gone_funky = true;
-                  //console.log("DEBUG [loadSurvey]> Funky answer value of <" + known_string + "> where index is " + SURVEY_QUESTIONS[i].length);
+                 //console.log("DEBUG [loadSurvey]> Funky answer value of <" + known_string + "> where index is " + SURVEY_QUESTIONS[i].length);
                   break;
                 }
               } else if (potential_number == 0||potential_number > (SURVEY_QUESTIONS[i].length-1)) { // Check against range
                 gone_funky = true;
-                //console.log("DEBUG [loadSurvey]> Funky answer value of " + potential_number + " where index is " + SURVEY_QUESTIONS[i].length);
+               //console.log("DEBUG [loadSurvey]> Funky answer value of " + potential_number + " where index is " + SURVEY_QUESTIONS[i].length);
                 break;
               };
             } else {
               // Check that there is a free text question and that the correct answer is not empty
               known_string = QUIZ[i];
-              //console.log('DEBUG [loadSurvey]> Value = ' + known_string + ' Parse (should be string) = ' + typeof(known_string));
+              //console.log("DEBUG [loadSurvey]> Value = " + known_string + " Parse (should be string) = " + typeof(known_string));
               if (SURVEY_QUESTIONS[i].length > 1||known_string.length == 0) {
                 gone_funky = true;
-                //console.log("DEBUG [loadSurvey]> Funky answer value of <" + known_string + "> where index is " + SURVEY_QUESTIONS[i].length);
+               //console.log("DEBUG [loadSurvey]> Funky answer value of <" + known_string + "> where index is " + SURVEY_QUESTIONS[i].length);
                 break;
               }; // if: funky text response
             }; // if/else: index answer OR free text answer
@@ -437,7 +437,7 @@ function loadSurvey() {
       SURVEY_NAME = SURVEY_QUESTIONS[0];
       if (SURVEY_NAME=='') {
         gone_funky = true;
-        //console.log("DEBUG [loadSurvey]> Survey name can't be empty");
+       //console.log("DEBUG [loadSurvey]> Survey name can't be empty");
       };
     };
     if (!gone_funky) {
@@ -447,7 +447,7 @@ function loadSurvey() {
   } else {
     // Has to be at least 2 rows i.e. header row plus 1 question minimum
     gone_funky = true;
-    c//onsole.log("DEBUG [loadSurvey]> There are not enough rows (must header + question at least): " + load_array.length);
+   //console.log("DEBUG [loadSurvey]> There are not enough rows (must header + question at least): " + load_array.length);
   };
   if (gone_funky) {
     console.log("ERROR [loadSurvey]> Something funky going on with survey");
@@ -459,8 +459,8 @@ function loadSurvey() {
 var SURVEY_VIABLE = loadSurvey();
 //console.log("DEBUG [postloadSurvey]> Viable? " + SURVEY_VIABLE);
 
-// ESTABLISH LISTENER
-/* Only for TESTING via local NGROK.IO
+/* ESTABLISH LISTENER
+// Only for TESTING via local NGROK.IO
 const server = CHASbot.listen(server_port, server_ip_address, () => {
   console.log("INFO [NGROK.IO]> Listening on " + server_ip_address + ", port " + server_port );
   console.log("INFO [NGROK.IO]>>>>>>>>>>>>>>>>>>> STARTED <<<<<<<<<<<<<<<<<");
@@ -491,7 +491,7 @@ function highScore(read_write) {
         if (err) { return console.error("ERROR [highScore]> Error running read query: ", err) };
         HIGH_SCORE[0]=result.rows[0].high_scorer;
         HIGH_SCORE[1]=result.rows[0].high_score;
-        console.log("DEBUG [highScore]> Who: " + HIGH_SCORE[0] + " Score: " + HIGH_SCORE[1]);
+        //console.log("DEBUG [highScore]> Who: " + HIGH_SCORE[0] + " Score: " + HIGH_SCORE[1]);
         client.end();
       });
     });
@@ -857,7 +857,6 @@ CHASbot.post('/webhook', (req, res) => {
                 position_in_analyse_text = event.message.text.search(SURVEY_QUESTIONS[survey_question_number - 1][i]) + 1;
                 if (position_in_analyse_text > 0) {
                   let xstr = event.message.text;
-                  //if (xLength(xstr) == 1) {event.message.text = i.toString()};
                   event.message.text = i.toString();
                   valid_choice = true;
                   break;
@@ -880,8 +879,11 @@ CHASbot.post('/webhook', (req, res) => {
                 console.log('QUIZ [' + QUIZ_NAME + '],' + sender + ',' + survey_question_number + ',' + event.message.text);
               };
               let check_winner = event.message.text;
-              check_winner = check_winner.toLowerCase();
-              let winner = QUIZ[survey_question_number-1].toLowerCase();
+              check_winner = cleanInput(check_winner)
+              //check_winner = check_winner.toLowerCase();
+              //let winner = QUIZ[survey_question_number-1].toLowerCase();
+              let winner = cleanInput(QUIZ[survey_question_number-1]);
+              console.log("DEBUG [postWebhook]> Check input: " + check_winner + " Against answer: " + winner);
               if (check_winner == winner) {
                 SENDERS[sender_index][5] = SENDERS[sender_index][5] + 1; // Add a point
               };
