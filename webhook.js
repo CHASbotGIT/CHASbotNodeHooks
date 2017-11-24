@@ -510,7 +510,7 @@ highScore('read');
 
 // Keep Heroku alive
 setInterval(function() {
-    http.get(APP_URL);
+    http.get(URL_CHASBOT);
 }, minsConvert(KEEP_ALIVE));
 
 // Sender handling and stacking functions
