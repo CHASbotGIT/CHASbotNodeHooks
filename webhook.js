@@ -1370,7 +1370,7 @@ function sendViaDialog(eventSend) {
   let sender = eventSend.sender.id;
   let text = eventSend.message.text;
   let apiai = dialogFlow.textRequest(text, {
-    sessionId: 'sessionID' // Arbitrary id
+    sessionId: 'sessionID' + sender // Arbitrary id
   });
   apiai.on('response', (response) => {
     let dialogFlowText = response.result.fulfillment.speech;
