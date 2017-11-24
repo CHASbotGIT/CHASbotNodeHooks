@@ -879,12 +879,13 @@ CHASbot.post('/webhook', (req, res) => {
                 console.log('QUIZ [' + QUIZ_NAME + '],' + sender + ',' + survey_question_number + ',' + event.message.text);
               };
               let check_winner = event.message.text;
-              check_winner = cleanInput(check_winner)
+              check_winner = cleanInput(check_winner)[0];
               //check_winner = check_winner.toLowerCase();
               //let winner = QUIZ[survey_question_number-1].toLowerCase();
-              let winner = cleanInput(QUIZ[survey_question_number-1]);
+              let winner = cleanInput(QUIZ[survey_question_number-1])[0];
               console.log("DEBUG [postWebhook]> Check input: " + check_winner + " Against answer: " + winner);
               if (check_winner == winner) {
+		console.log("DEBUG [postWebhook]> Won a point"); 
                 SENDERS[sender_index][5] = SENDERS[sender_index][5] + 1; // Add a point
               };
             } else {
