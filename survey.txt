@@ -15,7 +15,7 @@ Welcome to 🤖 CHASbot's mega-quiz (type 'stop' to exit; 'quiz' starts again wh
 14. Category: Movies. Name the film represented by 👽👦🚲🌕?
 15. Category: Sport. The San Jose Earthquakes play with what?,🏈,🏀,⚽,🏒,⚾
 16. Category: Science. What genus of animal is ursus?,🐻,🐔,🐝,🐌
-17. Category: No 1s. Who had the 1️⃣ hit "I Gotta Feeling" in 2009?,Black Eyed Peas,REM,Bruno Mars
+17. Category: No 1s. Who had the 1️⃣ hit *I Gotta Feeling* in 2009?,Black Eyed Peas,REM,Bruno Mars
 18. Category: Puzzle. What day would tomorrow be if... yesterday was five days before the day after Sunday's tomorrow?,Thu,Fri,Sat,Sun,Mon
 19. Category: CHAS. Philip Schofield cut the turf at which hospice site?,Balloch,Kinross
 20. Category: Movies. Name the film represented by 🎈🎈🏠🎈🎈?
