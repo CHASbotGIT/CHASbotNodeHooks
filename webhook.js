@@ -17,7 +17,7 @@ const KEY_CRYPTO = process.env.KEY_CRYPTO;
 const KEY_MARVEL_PRIVATE = process.env.KEY_MARVEL_PRIVATE;
 const KEY_MARVEL_PUBLIC = process.env.KEY_MARVEL_PUBLIC;
 const KEY_ROOT = process.env.KEY_ROOT;
-const URL_POSTGRES = process.env.DATABASE_UR;
+const URL_POSTGRES = process.env.DATABASE_URL;
 const URL_CHASBOT = process.env.APP_URL;
 // Set-up dependencies for app
 const express = require('express'); // https://expressjs.com
