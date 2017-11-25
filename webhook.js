@@ -745,27 +745,36 @@ CHASbot.post('/webhook', (req, res) => {
             inPlayNew(sender_index,sender);
           };
           // CLEAN INPUT
-          let analyse_text = '';
           let cleanResults = cleanInput(event.message.text);
-          analyse_text = cleanResults[0];
-          if (analyse_text == '') {analyse_text = 'help'} // Clean response woud otherwise be empty
+          let analyse_text = cleanResults[0];
+          let good_vibe = cleanResults[1];
+          let bad_vibe = cleanResults[2];
+          let empty_input = false;
+          if (analyse_text == '') { // Clean response woud otherwise be empty
+            empty_input = true;
+            if (good_vibe > bad_vibe) {
+              analyse_text = "i'm happy"; // More happy emojis than not
+            } else if (bad_vibe > good_vibe) {
+              analyse_text = "i'm sad"; // More sad emojis than not
+            } else {
+              analyse_text = "help"; // Nothing to go on
+            };
+          };
           if (!inPlay('survey',sender_index)) { event.message.text = analyse_text };
           //console.log("DEBUG [postWebhook]> Cleaned input: " + cleanResults[0] + ' (Emoji +ve ' + cleanResults[1] + ',-ve ' + cleanResults[2] + ')');
           // Feel the vibe
           sendThinking(event,'on');
           let vibeText = '';
-          let good_vibe = cleanResults[1];
-          let bad_vibe = cleanResults[2];
-          if (good_vibe > ((bad_vibe+2)*3)-2) { //
+          if (good_vibe > ((bad_vibe+2)*3)-2) { // Minimum 5 = +ve
             vibeText = MSG_INTERCEPTS[5][randomBetween(0,MSG_INTERCEPTS[5].length-1)];
-          } else if (bad_vibe > ((good_vibe+2)*3)-2) {
+          } else if (bad_vibe > ((good_vibe+2)*3)-2) { // Minimum 5 = -ve
             vibeText = MSG_INTERCEPTS[6][randomBetween(0,MSG_INTERCEPTS[6].length-1)];
-          } else if (good_vibe + bad_vibe > 4 && good_vibe + bad_vibe < 10) {
+          } else if (good_vibe + bad_vibe > 4 && good_vibe + bad_vibe < 10) { // Minimum 5 = mixed
             vibeText = MSG_INTERCEPTS[7][randomBetween(0,MSG_INTERCEPTS[7].length-1)];
-          } else if (good_vibe + bad_vibe > 9) {
+          } else if (good_vibe + bad_vibe > 9) { // Minimum 10 = lots
             vibeText = MSG_INTERCEPTS[8][randomBetween(0,MSG_INTERCEPTS[8].length-1)];
           };
-          if (vibeText != '') { sendTextDirect(event,vibeText) };
+          if (vibeText != '' && !empty_input) { sendTextDirect(event,vibeText) };
           // *************************
           // Check for custom triggers
           // ***** HELP & SEARCH *****
