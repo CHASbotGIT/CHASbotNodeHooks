@@ -19,6 +19,8 @@ const KEY_MARVEL_PUBLIC = process.env.KEY_MARVEL_PUBLIC;
 const KEY_ROOT = process.env.KEY_ROOT;
 const URL_POSTGRES = process.env.DATABASE_URL;
 const URL_CHASBOT = process.env.APP_URL;
+const KEY_ADMIN = process.env.KEY_ADMIN;
+const KEY_ADMIN_TRIGGER = process.env.KEY_ADMIN_TRIGGER;
 // Set-up dependencies for app
 const express = require('express'); // https://expressjs.com
 const bodyParser = require('body-parser'); // https://github.com/expressjs/body-parser
@@ -459,8 +461,8 @@ function loadSurvey() {
 var SURVEY_VIABLE = loadSurvey();
 //console.log("DEBUG [postloadSurvey]> Viable? " + SURVEY_VIABLE);
 
-/* ESTABLISH LISTENER
-// Only for TESTING via local NGROK.IO
+// ESTABLISH LISTENER
+/* Only for TESTING via local NGROK.IO
 const server = CHASbot.listen(server_port, server_ip_address, () => {
   console.log("INFO [NGROK.IO]> Listening on " + server_ip_address + ", port " + server_port );
   console.log("INFO [NGROK.IO]>>>>>>>>>>>>>>>>>>> STARTED <<<<<<<<<<<<<<<<<");
@@ -535,19 +537,19 @@ function inPlayClean(in_play,index_id) {
     in_play_index = 1
     SENDERS[index_id][4] = 0;
     SENDERS[index_id][5] = 0;
-  }
-  else if (in_play == 'hangman') {
+  } else if (in_play == 'hangman') {
     in_play_index = 2
     SENDERS[index_id][6] = 0;
     SENDERS[index_id][7] = '';
-    SENDERS[index_id][8] = [] }
-  else if (in_play == 'rpsls') {
+    SENDERS[index_id][8] = [];
+  } else if (in_play == 'rpsls') {
     in_play_index = 3;
     SENDERS[index_id][9] = 0;
     SENDERS[index_id][10] = true;
     SENDERS[index_id][11] = 0;
-    SENDERS[index_id][12] = 0 };
-    SENDERS[index_id][in_play_index] = false;
+    SENDERS[index_id][12] = 0;
+  };
+  SENDERS[index_id][in_play_index] = false;
 }
 function inPlaySet(in_play,index_id) {
   let in_play_index = 0;
@@ -559,7 +561,7 @@ function inPlaySet(in_play,index_id) {
 function inPlayUnset(in_play,index_id) {
   let in_play_index = 0;
   if (in_play == 'survey') { in_play_index = 1 }
-  else if (in_play == 'hangman') { in_play_index = 2; }
+  else if (in_play == 'hangman') { in_play_index = 2 }
   else if (in_play == 'rpsls') { in_play_index = 3 };
   SENDERS[index_id][in_play_index] = false;
 }
@@ -574,8 +576,8 @@ function inPlayID (id_to_find) {
   let sender_index = -1;
   for (var i=0; i < SENDERS.length; i++) {
     if (SENDERS[i][0] == id_to_find) {
-	sender_index = i;
-	break;
+    	sender_index = i;
+    	break;
     };
   };
   return sender_index;
@@ -744,6 +746,7 @@ CHASbot.post('/webhook', (req, res) => {
             sender_index = SENDERS.length;
             inPlayNew(sender_index,sender);
           };
+          let hold_that_thought = event.message.text;
           // CLEAN INPUT
           let cleanResults = cleanInput(event.message.text);
           let analyse_text = cleanResults[0];
@@ -777,9 +780,25 @@ CHASbot.post('/webhook', (req, res) => {
           if (vibeText != '' && !empty_input) { sendTextDirect(event,vibeText) };
           // *************************
           // Check for custom triggers
+          let position_in_analyse_text = -1;
+          let trigger_path = '';
+          position_in_analyse_text = hold_that_thought.search(KEY_ADMIN_TRIGGER) + 1;
+          let route_to = '';
+          let adminMessage = '';
+          let routeEvent = event;
+          if (position_in_analyse_text > 0 && sender == KEY_ADMIN) {
+            sendThinking(event,'off');
+            route_to = hold_that_thought.slice(KEY_ADMIN_TRIGGER.length,KEY_ADMIN_TRIGGER.length+15);
+            adminMessage = hold_that_thought;
+            adminMessage = adminMessage.slice(KEY_ADMIN_TRIGGER.length+15,adminMessage.length);
+            console.log("ADMIN [postWebhook]> [" + route_to + "]: " + adminMessage);
+            routeEvent.sender.id = route_to;
+            sendThinking(routeEvent,'on');
+            trigger_path = KEY_ADMIN_TRIGGER;
+            analyse_text = trigger_path;
+          };
           // ***** HELP & SEARCH *****
           // Feeling lucky - First in list - allows subsequent triggers
-          let position_in_analyse_text = -1;
           position_in_analyse_text = analyse_text.search(TRIGGER_FEELING_LUCKY) + 1;
           //console.log("DEBUG [postWebhook]> " + TRIGGER_FEELING_LUCKY + " search result: " + position_in_analyse_text);
           let chasbotText = '';
@@ -797,7 +816,6 @@ CHASbot.post('/webhook', (req, res) => {
           // Help
           position_in_analyse_text = analyse_text.search(TRIGGER_HELP) + 1;
           //console.log("DEBUG [postWebhook]> " + TRIGGER_HELP + " search result: " + position_in_analyse_text);
-          let trigger_path = '';
           let help_url = '';
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
             trigger_path = TRIGGER_HELP;
@@ -892,7 +910,7 @@ CHASbot.post('/webhook', (req, res) => {
               let winner = cleanInput(QUIZ[survey_question_number-1])[0];
               //console.log("DEBUG [postWebhook]> Check input: " + check_winner + " Against answer: " + winner);
               if (check_winner == winner) {
-		//console.log("DEBUG [postWebhook]> Won a point"); 
+		            //console.log("DEBUG [postWebhook]> Won a point");
                 SENDERS[sender_index][5] = SENDERS[sender_index][5] + 1; // Add a point
               };
             } else {
@@ -1119,7 +1137,15 @@ CHASbot.post('/webhook', (req, res) => {
             trigger_path = ''; // Send via default else
           };
           // Pick a response route
-          if (inPlay('survey',sender_index)) { // Survey first - ignores
+
+
+          //WIP
+          if (trigger_path == KEY_ADMIN_TRIGGER) {
+            sendTextDirect(routeEvent,adminMessage);
+
+
+
+          } else if (inPlay('survey',sender_index)) { // Survey first - ignores
             //console.log("DEBUG [postWebhook_route]> Survey");
             // Pause other in_play?
             sendQuestion_playSurvey(event);
@@ -1405,6 +1431,14 @@ function sendViaDialog(eventSend) {
     } else {
       console.log("INFO [sendViaDialog]> Response: " + dialogFlowText);
       sendTextDirect(eventSend,dialogFlowText);
+      // Look out for unknown response and cc. admin
+      if (response.result.action == 'input.unknown'||response.result.action.slice(0,21)=='DefaultFallbackIntent') {
+        let loopbackText = sender + ">>" + customGreeting(sender,false) + ">>" + response.result.resolvedQuery;
+        console.log("ADMIN [sendViaDialog]> Feedback: " + loopbackText);
+        let eventLoopback = eventSend;
+        eventLoopback.sender.id = KEY_ADMIN;
+        sendTextDirect(eventLoopback,loopbackText);
+      };
     };
   });
   apiai.on('error', (error) => {
