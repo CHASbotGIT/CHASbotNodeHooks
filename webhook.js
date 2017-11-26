@@ -793,7 +793,6 @@ CHASbot.post('/webhook', (req, res) => {
             adminMessage = adminMessage.slice(KEY_ADMIN_TRIGGER.length+15,adminMessage.length);
             console.log("ADMIN [postWebhook]> [" + route_to + "]: " + adminMessage);
             routeEvent.sender.id = route_to;
-            sendThinking(routeEvent,'on');
             trigger_path = KEY_ADMIN_TRIGGER;
             analyse_text = trigger_path;
           };
