@@ -122,6 +122,13 @@ const TRIGGER_STOP = 'stop';
 var TRIGGER_SEARCH = ['search','google','wiki','beeb'];
 var TRIGGER_MOVIEDB = ['synopsis on','synopsis of','watched','info on','about','watch','catch','seen','see'];
 // DialogFlow fulfilment hooks
+const HOOK_MORVEN = 'morven';
+const MSG_MORVEN = "That's an easy one. It has got to be her ever growing relationship with this little fellow...";
+const URL_THUMB_MORVEN = "https://images2.imgbox.com/77/0d/uN93I7u8_o.jpg";
+const HOOK_WILL = 'will';
+const MSG_WILL = "Well, I hear he has been working with Stacey quite a lot even though she is surely covered in Winston's hair. 🐱❤️  Are Winston and Will now friends?";
+const URL_THUMB_WILL = "https://images2.imgbox.com/2d/d4/x7TVjJ9R_o.jpg";
+
 const HOOK_FUNDRAISING = 'fundraising';
 const HOOK_WORKPLACE = 'workplace';
 const HOOK_PICKCARD = 'cards';
@@ -461,8 +468,8 @@ function loadSurvey() {
 var SURVEY_VIABLE = loadSurvey();
 //console.log("DEBUG [postloadSurvey]> Viable? " + SURVEY_VIABLE);
 
-// ESTABLISH LISTENER
-/* Only for TESTING via local NGROK.IO
+/* ESTABLISH LISTENER
+// Only for TESTING via local NGROK.IO
 const server = CHASbot.listen(server_port, server_ip_address, () => {
   console.log("INFO [NGROK.IO]> Listening on " + server_ip_address + ", port " + server_port );
   console.log("INFO [NGROK.IO]>>>>>>>>>>>>>>>>>>> STARTED <<<<<<<<<<<<<<<<<");
@@ -1415,7 +1422,13 @@ function sendViaDialog(eventSend) {
     } else {
       console.log("INFO [sendViaDialog]> Action: " + response.result.action);
     };
-    if (dialogFlowText == HOOK_XMAS) {
+    if (dialogFlowText == HOOK_WILL) {
+      postImage(eventSend,URL_THUMB_WILL,true,MSG_WILL);
+      console.log("INFO [sendViaDialog]> Response: Will Template");
+    } else if (dialogFlowText == HOOK_MORVEN) {
+      postImage(eventSend,URL_THUMB_MORVEN,true,MSG_MORVEN);
+      console.log("INFO [sendViaDialog]> Response: Morven Template");
+    } else if (dialogFlowText == HOOK_XMAS) {
       console.log("INFO [sendViaDialog]> Response: 🛍️ CHAS Retail");
       postLinkButton(eventSend,URL_CHAS_RETAIL,MSG_CHAS_RETAIL,'🛍️ CHAS Retail');
     } else if (dialogFlowText == HOOK_URL_GROUP_DOCS) {
