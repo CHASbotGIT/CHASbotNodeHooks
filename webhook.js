@@ -1231,7 +1231,7 @@ function sendTemplate(eventSend,messageData,plusText,messageText) {
         console.log("ERROR [sendTemplate]> Undefined: ", response.body.error);
     }
   });
-  //if (plusText) { sendTextDirect(eventSend,messageText) };
+  if (plusText) { sendTextDirect(eventSend,messageText) };
 }
 
 function sendQuestion_playSurvey(eventSend) {
