@@ -7,55 +7,75 @@
 'use strict';
 // Pick up variables from the server implementation || Remove API keys
 // Source: https://github.com/CHASbotGIT/CHASbotNodeHooks
-const KEY_PAGE_ACCESS = process.env.KEY_PAGE_ACCESS;
+const KEY_ROOT = process.env.KEY_ROOT;
+const KEY_ADMIN = process.env.KEY_ADMIN;
 const KEY_VERIFY = process.env.KEY_VERIFY;
+const KEY_CRYPTO = process.env.KEY_CRYPTO;
+const URL_CHASBOT = process.env.APP_URL;
+const URL_POSTGRES = process.env.DATABASE_URL;
+const KEY_API_GIPHY = process.env.KEY_API_GIPHY;
 const KEY_DIALOGFLOW = process.env.KEY_DIALOGFLOW;
+const KEY_PAGE_ACCESS = process.env.KEY_PAGE_ACCESS;
 const KEY_API_WEATHER = process.env.KEY_API_WEATHER;
 const KEY_API_MOVIEDB = process.env.KEY_API_MOVIEDB;
-const KEY_API_GIPHY = process.env.KEY_API_GIPHY;
-const KEY_CRYPTO = process.env.KEY_CRYPTO;
-const KEY_MARVEL_PRIVATE = process.env.KEY_MARVEL_PRIVATE;
 const KEY_MARVEL_PUBLIC = process.env.KEY_MARVEL_PUBLIC;
-const KEY_ROOT = process.env.KEY_ROOT;
-const URL_POSTGRES = process.env.DATABASE_URL;
-const URL_CHASBOT = process.env.APP_URL;
-const KEY_ADMIN = process.env.KEY_ADMIN;
 const KEY_ADMIN_TRIGGER = process.env.KEY_ADMIN_TRIGGER;
+const KEY_MARVEL_PRIVATE = process.env.KEY_MARVEL_PRIVATE;
 // Set-up dependencies for app
+const pg = require('pg'); // https://www.npmjs.com/package/pg
+const request = require('request'); // https://github.com/request/request
 const express = require('express'); // https://expressjs.com
 const bodyParser = require('body-parser'); // https://github.com/expressjs/body-parser
-const request = require('request'); // https://github.com/request/request
 const dialogFlow = require('apiai')(KEY_DIALOGFLOW); // https://www.npmjs.com/package/apiai
-const pg = require('pg'); // https://www.npmjs.com/package/pg
 // Node.js libraries used
+const fs = require("fs"); // https://nodejs.org/api/fs.html
 const http = require('https'); // https://nodejs.org/api/https.html
 const crypto = require('crypto'); // https://nodejs.org/api/crypto.html
-const fs = require("fs"); // https://nodejs.org/api/fs.html
 // Initialise CHASbot
 const CHASbot = express();
 CHASbot.use(bodyParser.json());
 CHASbot.use(bodyParser.urlencoded({ extended: true }));
+var server_port = process.env.PORT || 9000; //
+var server_ip_address = '127.0.0.1'; // Only for testing via local NGROK.IO
+
+// ********************************************************************************************
+// ********************************************************************************************
+// ESTABLISH LISTENER
+/* Only for TESTING via local NGROK.IO
+const server = CHASbot.listen(server_port, server_ip_address, () => {
+  console.log("INFO [NGROK.IO]> Listening on " + server_ip_address + ", port " + server_port );
+  console.log("INFO [NGROK.IO]>>>>>>>>>>>>>>>>>>> STARTED <<<<<<<<<<<<<<<<<");
+});*/
+// Only for PRODUCTION hosting on HEROKU
+const server = CHASbot.listen(server_port, () => {
+ console.log("INFO [HEROKU]> Listening on ", + server_port);
+ console.log("INFO [HEROKU]>>>>>>>>>>>>>>>>>> STARTED <<<<<<<<<<<<<<<<<<");
+});
+
+// Keep Heroku alive
+setInterval(function() {
+    http.get(URL_CHASBOT);
+}, minsConvert(KEEP_ALIVE));
+// ********************************************************************************************
+// ********************************************************************************************
+
 // Messenger templates can be found at:
 // https://developers.facebook.com/docs/messenger-platform/send-messages/templates
 // File dependencies
 const FILE_HIGH = "./high_score.txt"; // Same directory as source code
+const FILE_BIOGS = "./bios_private.txt"; // "./fundraising_private.txt" "./ids_private.txt"
+const FILE_HOOKS = "./hooks.txt";
 const FILE_SURVEY = "./survey.txt";
 const FILE_CALENDAR = "./calendar.txt";
-const FILE_BIOGS = "./bios_private.txt"; // "./fundraising_private.txt" "./ids_private.txt"
+const FILE_ENCRYPTED_IDS = "./ids_public.txt";
 const FILE_ENCRYPTED_BIOS = "./bios_public.txt";
 const FILE_ENCRYPTED_FR_CARD = "./fundraising_public.txt";
-const FILE_ENCRYPTED_IDS = "./ids_public.txt";
-var server_port = process.env.PORT || 9000; //
-var server_ip_address = '127.0.0.1'; // Only for testing via local NGROK.IO
 // Messages
-const MSG_GROUP_HELP = "Come and join the Workplace Help Group, for answers to this and other questions.";
-const MSG_CHAS_PLAN = "The CHAS plan explains how we intend to reach every child and family in Scotland who needs our support. Please read it.";
-const MSG_CHAS_RETAIL = "🎄 Christmas cards and more are available now from our shops or by mail order.";
-const MSG_GROUP_DOC = "For an answer to this and other similar questions, visit and join the group that stores the library of all relevant CHAS forms, documents and policies.";
-const MSG_SURVEY_THANKS = "❤️ Thank you for finishing our little survey.";
+const MSG_NO_HOOK = "🐞 Any other day, that might have worked but not today, sorry!";
 const MSG_RPSLS_INTRO = "💡 First to five is the champion. Scissors cuts Paper, Paper covers Rock, Rock crushes Lizard, Lizard poisons Spock, Spock smashes Scissors, Scissors decapitates Lizard, Lizard eats Paper, Paper disproves Spock, Spock vaporizes Rock, and Rock crushes Scissors!";
 const MSG_RPSLS_PROMPT = "Choose... Rock, Paper, Scissors, Lizard or Spock?";
 const MSG_HANGMAN_INTRO = "🤔 Figure out the mystery staff member name.\nType a letter to guess, or 'stop'.\nYou are allowed no more than 3 strikes.";
+const MSG_SURVEY_THANKS = "❤️ Thank you for finishing our little survey.";
 const MSG_HANGMAN_PROMPT = "🤔 Where were we... who is that!\nType a letter, or 'stop'.\nNo more than 3 strikes.";
 var MSG_STAR_RATING = [
   "Meh, in my book it's complete pants, all rotten tomatoes 🍅🍅🍅🍅🍅.",
@@ -121,21 +141,16 @@ const TRIGGER_HANGMAN = 'hangman';
 const TRIGGER_STOP = 'stop';
 var TRIGGER_SEARCH = ['search','google','wiki','beeb'];
 var TRIGGER_MOVIEDB = ['synopsis on','synopsis of','watched','info on','about','watch','catch','seen','see'];
-// DEMO
-const HOOK_MORVEN = 'morven';
-const MSG_MORVEN = "That's an easy one. It has got to be her ever growing relationship with this little fellow...";
-const URL_THUMB_MORVEN = "https://images2.imgbox.com/77/0d/uN93I7u8_o.jpg";
-const HOOK_WILL = 'will';
-const MSG_WILL = "Well, I hear he has been working with Stacey quite a lot even though she is surely covered in Winston's hair. 🐱❤️  Are Winston and Will now friends?";
-const URL_THUMB_WILL = "https://images2.imgbox.com/2d/d4/x7TVjJ9R_o.jpg";
 // DialogFlow fulfilment hooks
 const HOOK_FUNDRAISING = 'fundraising';
-const HOOK_WORKPLACE = 'workplace';
 const HOOK_PICKCARD = 'cards';
 const HOOK_WEATHER = 'weather';
+/*const HOOK_WORKPLACE = 'workplace';
 const HOOK_URL_GROUP_DOCS = 'group_docs';
 const HOOK_PLAN = 'plan';
-const HOOK_XMAS = 'xmas';
+const HOOK_XMAS = 'xmas';*/
+var HOOKS = ['fundraising','cards','weather'];
+var HOOKS_CUSTOM = [];
 // Timings
 const KEEP_ALIVE = 25; // mins
 const TIME_TO_WAIT = 120; // mins
@@ -145,10 +160,6 @@ const URL_MOVIEDB = "https://api.themoviedb.org/3/";
 const URL_CHAT_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages";
 const URL_API_WEATHER = "http://api.openweathermap.org/data/2.5/weather?APPID=";
 const URL_API_MARVEL = "https://gateway.marvel.com/v1/public/characters?nameStartsWith="
-const URL_GROUP_DOCS = "https://work-" + KEY_ROOT + ".facebook.com/groups/1707079182933694";
-const URL_GROUP_HELP = "https://work-" + KEY_ROOT + ".facebook.com/groups/733856763459096/files/";
-const URL_CHAS_RETAIL = "https://www.chas.org.uk/contact_chas#retail";
-const URL_CHAS_PLAN = "https://s3-eu-west-1.amazonaws.com/chas-assets/downloads/3958+CHAS+Infographic-Plan-download.pdf";
 const URL_SEARCH_GOOGLE = "https://www.google.com/search?q=";
 const URL_SEARCH_WIKI = "https://en.wikipedia.org/w/index.php?search=";
 const URL_SEARCH_BEEB = "https://www.bbc.co.uk/search?q=";
@@ -262,6 +273,14 @@ var HIGH_SCORE = ["CHASbot",0];
 var MOVIEDB_RECORDS_INDEX = -1;
 var MOVIEDB_RECORDS = new Array();
 
+// Valdate a URL
+function urlExists(url, cb) {
+  request({ url: url, method: 'HEAD' }, function(err, res) {
+    if (err) return cb(null, false);
+    cb(null, /4\d\d/.test(res.statusCode) === false);
+  });
+}
+
 // Encryption and decryption of files
 var enCrypt = function(text_plain) {
   let algorithm = 'aes-256-ctr';
@@ -347,9 +366,66 @@ function deCryptContents () {
   //console.log("DEBUG [deCryptContents]> Contact Card: " + CHAS_FR_LIST);
 }
 
-// Load in encrypted information
-//enCryptBios(); // Run once to encrypt biography CHAS file
-deCryptContents(); // Normal runtime configuration
+function loadHooks() {
+  // Load in hooks
+  let text_block = fs.readFileSync(FILE_HOOKS, "utf-8");
+  let hook_lines = text_block.split("\n");
+  let hook_line = 0;
+  if (hook_lines.length > 0) {
+    for (var i = 0; i < hook_lines.length; i++) {
+      if (hook_lines[i].slice(0,2)=='//') { continue }; // Skip comments
+      //onsole.log("DEBUG [loadHooks]> Possible hook: " + hook_lines[i]);
+      let poss_hook = hook_lines[i].split("$");
+      if (poss_hook.length < 2 || poss_hook.length > 4) { continue }; // Skip where not 2,3 or 4 items
+      let poss_hook_name = poss_hook[0];
+      //console.log("DEBUG [loadHooks]> Valid items in hook: " + poss_hook.length);
+      if (!poss_hook_name.match(/^[a-z_]+$/)) { continue }; // Skip hook name not lowercase + underscore
+      let skip_hook = false;
+      for (var j = 0; j < HOOKS.length; j++) {
+        if (HOOKS[j] == poss_hook_name) { // New hook can't be same as another hook
+          skip_hook = true; // Disqualifies this hook
+          break;
+        }; // if
+      }; // for
+      if (skip_hook) { continue };
+      //console.log("DEBUG [loadHooks]> Poss hook name: " + skip_hook);
+      let poss_hook_url = poss_hook[1];
+      if (poss_hook_url.slice(0,8) != "https://") { continue }; // Simple check for SSL URL
+      if (poss_hook_url.slice(8,14) == "groups") {
+        poss_hook_url = "https://work-" + KEY_ROOT + ".facebook.com/" + poss_hook_url.slice(8,poss_hook_url.length);
+      };
+      //console.log("DEBUG [loadHooks]> Poss URL: " + poss_hook_url);
+      let poss_hook_blurb = '';
+      let poss_hook_btn = '';
+      let hook_type = 'image';
+      if (poss_hook.length > 2) {
+        poss_hook_blurb = trimTo(640,poss_hook[2]); // Limit
+        if (poss_hook_blurb == '') { continue }; // There should be message text
+        hook_type = 'image_text';
+      };
+      if (poss_hook.length > 3) {
+        poss_hook_btn = trimTo(20,poss_hook[3]); // Limit
+        if (poss_hook_btn == '') { continue }; // There should be button text
+        hook_type = 'button';
+      };
+      HOOKS_CUSTOM[HOOKS_CUSTOM.length] = [true,hook_type,poss_hook_name,poss_hook_url,poss_hook_blurb,poss_hook_btn];
+      //console.log("DEBUG [loadHooks]> Valid Hook[" + (HOOKS_CUSTOM.length - 1) + "]: " + HOOKS_CUSTOM[HOOKS_CUSTOM.length - 1]);
+      // More compreheinsice URL check
+      urlExists(poss_hook_url, function(err, exists) {
+        //console.log("DEBUG [loadHooks]> URL check: " + poss_hook_url + ' = ' + exists);
+        if (!exists) {
+          for (var j = 0; j < HOOKS_CUSTOM.length; j++) {
+            if (HOOKS_CUSTOM[j][3] == poss_hook_url) { // Callback delay requires fresh search
+              HOOKS_CUSTOM[j][0] = false; // Disables the hook
+              //console.log("DEBUG [loadHooks]> Disabled Hook[" + j + "]: " + HOOKS_CUSTOM[j]);
+              break;
+            }; // if
+          }; // for
+        }; // if (!exists)
+      }); // urlExists
+    }; // for
+  }; // if
+}
 
 function loadCalendar() {
   // Load in calendar events
@@ -369,8 +445,6 @@ function loadCalendar() {
     return true;
   }
 }
-var CHAS_EVENTS_VIABLE = loadCalendar();
-//console.log("DEBUG [postloadCalendar]> Viable? " + CHAS_EVENTS_VIABLE);
 
 function loadSurvey() {
  //console.log("DEBUG [loadSurvey]> Reading: " + FILE_SURVEY);
@@ -465,31 +539,6 @@ function loadSurvey() {
     return true;
   };
 }
-var SURVEY_VIABLE = loadSurvey();
-//console.log("DEBUG [postloadSurvey]> Viable? " + SURVEY_VIABLE);
-
-// ESTABLISH LISTENER
-/* Only for TESTING via local NGROK.IO
-const server = CHASbot.listen(server_port, server_ip_address, () => {
-  console.log("INFO [NGROK.IO]> Listening on " + server_ip_address + ", port " + server_port );
-  console.log("INFO [NGROK.IO]>>>>>>>>>>>>>>>>>>> STARTED <<<<<<<<<<<<<<<<<");
-});*/
-// Only for PRODUCTION hosting on HEROKU
-const server = CHASbot.listen(server_port, () => {
- console.log("INFO [HEROKU]> Listening on ", + server_port);
- console.log("INFO [HEROKU]>>>>>>>>>>>>>>>>>> STARTED <<<<<<<<<<<<<<<<<<");
-});
-
-// Facebook/workplace validation
-// Configure webhook in work chat integration - KEY_VERIFY matches code and app
-// Copy page access token and hard code for testing or set as server variable
-CHASbot.get('/webhook', (req, res) => {
-  if (req.query['hub.mode'] && req.query['hub.verify_token'] === KEY_VERIFY) {
-    res.status(200).send(req.query['hub.challenge']);
-  } else {
-    res.status(403).end();
-  }
-});
 
 function highScore(read_write) {
   let client = new pg.Client(URL_POSTGRES);
@@ -515,12 +564,28 @@ function highScore(read_write) {
     });
   };
 };
+
+// LOAD
+loadHooks();
+// Load in encrypted information
+//enCryptBios(); // Run once to encrypt biography CHAS file
+deCryptContents(); // Normal runtime configuration
+var CHAS_EVENTS_VIABLE = loadCalendar();
+//console.log("DEBUG [postloadCalendar]> Viable? " + CHAS_EVENTS_VIABLE);
+var SURVEY_VIABLE = loadSurvey();
+//console.log("DEBUG [postloadSurvey]> Viable? " + SURVEY_VIABLE);
 highScore('read');
 
-// Keep Heroku alive
-setInterval(function() {
-    http.get(URL_CHASBOT);
-}, minsConvert(KEEP_ALIVE));
+// Facebook/workplace validation
+// Configure webhook in work chat integration - KEY_VERIFY matches code and app
+// Copy page access token and hard code for testing or set as server variable
+CHASbot.get('/webhook', (req, res) => {
+  if (req.query['hub.mode'] && req.query['hub.verify_token'] === KEY_VERIFY) {
+    res.status(200).send(req.query['hub.challenge']);
+  } else {
+    res.status(403).end();
+  }
+});
 
 // Sender handling and stacking functions
 // ======================================
@@ -1417,25 +1482,24 @@ function sendViaDialog(eventSend) {
     } else {
       console.log("INFO [sendViaDialog]> Action: " + response.result.action);
     };
-    if (dialogFlowText == HOOK_WILL) { // DEMO
-      postImage(eventSend,URL_THUMB_WILL,true,MSG_WILL);
-      console.log("INFO [sendViaDialog]> Response: Will Template");
-    } else if (dialogFlowText == HOOK_MORVEN) { // DEMO
-      postImage(eventSend,URL_THUMB_MORVEN,true,MSG_MORVEN);
-      console.log("INFO [sendViaDialog]> Response: Morven Template");
-    } else if (dialogFlowText == HOOK_XMAS) {
-      console.log("INFO [sendViaDialog]> Response: 🛍️ CHAS Retail");
-      postLinkButton(eventSend,URL_CHAS_RETAIL,MSG_CHAS_RETAIL,'🛍️ CHAS Retail');
-    } else if (dialogFlowText == HOOK_URL_GROUP_DOCS) {
-      console.log("INFO [sendViaDialog]> Response: 📚 Useful Documents");
-      postLinkButton(eventSend,URL_GROUP_DOCS,MSG_GROUP_DOC,'📚 Useful Documents');
-    } else if (dialogFlowText == HOOK_PLAN) {
-      console.log("INFO [sendViaDialog]> Response: 📖 CHAS Plan");
-      postLinkButton(eventSend,URL_CHAS_PLAN,MSG_CHAS_PLAN,'📖 CHAS Plan');
-    } else if (dialogFlowText == HOOK_WORKPLACE) {
-      console.log("INFO [sendViaDialog]> Response: 🆘 Workplace Help");
-      postLinkButton(eventSend,URL_GROUP_HELP,MSG_GROUP_HELP,'🆘 Workplace Help');
-    } else {
+    let hooked = false;
+    if (HOOKS_CUSTOM.length > 0) { // Have custom hooks to check
+      for (var i = 0; i < HOOKS_CUSTOM.length; i++) {
+        if (HOOKS_CUSTOM[i][0] && dialogFlowText == HOOKS_CUSTOM[i][2]) { // Found custom
+          console.log("INFO [sendViaDialog]> Response: Template " + HOOKS_CUSTOM[i][2] + " (" + HOOKS_CUSTOM[i][1] + ")");
+          if (HOOKS_CUSTOM[i][1] == 'image') {
+            postImage(eventSend,HOOKS_CUSTOM[i][3],false,'');
+          } else if (HOOKS_CUSTOM[i][1] == 'image_text') {
+            postImage(eventSend,HOOKS_CUSTOM[i][3],true,HOOKS_CUSTOM[i][4]);
+          } else if (HOOKS_CUSTOM[i][1] == 'button') {
+            postLinkButton(eventSend,HOOKS_CUSTOM[i][3],HOOKS_CUSTOM[i][4],HOOKS_CUSTOM[i][5]);
+          };
+          hooked = true;
+          break;
+        }; // if
+      }; // for
+    }; // if
+    if (!hooked) { // No hook
       console.log("INFO [sendViaDialog]> Response: " + dialogFlowText);
       sendTextDirect(eventSend,dialogFlowText);
       // Look out for unknown response and cc. admin
@@ -1494,18 +1558,6 @@ CHASbot.post('/heroku', (req, res) => {
         });
       }
     })
-  } else if (req.body.result.action === HOOK_MORVEN) { // DEMO
-    //console.log("DEBUG [postHeroku]> Send Highlights for M");
-    return res.json({
-      speech: HOOK_MORVEN,
-      displayText: HOOK_MORVEN
-    });
-  } else if (req.body.result.action === HOOK_WILL) { // DEMO
-    //console.log("DEBUG [postHeroku]> Send Highlight for W");
-    return res.json({
-      speech: HOOK_WILL,
-      displayText: HOOK_WILL
-    });
   } else if (req.body.result.action === HOOK_PICKCARD) {
     //console.log("DEBUG [postHeroku]> Pick a playing card");
     CARD_PICK = CARD_DECK[randomBetween(0,CARD_DECK.length-1)];
@@ -1520,31 +1572,24 @@ CHASbot.post('/heroku', (req, res) => {
       speech: CHAS_FR_LIST,
       displayText: CHAS_FR_LIST
     });
-  } else if (req.body.result.action === HOOK_URL_GROUP_DOCS) {
-    //console.log("DEBUG [postHeroku]> Send link to Docs Group");
-    return res.json({
-      speech: HOOK_URL_GROUP_DOCS,
-      displayText: HOOK_URL_GROUP_DOCS
-    });
-  } else if (req.body.result.action === HOOK_XMAS) {
-    //console.log("DEBUG [postHeroku]> Send link to CHAS retail");
-    return res.json({
-      speech: HOOK_XMAS,
-      displayText: HOOK_XMAS
-    });
-  } else if (req.body.result.action === HOOK_PLAN) {
-    //console.log("DEBUG [postHeroku]> Send link to CHAS plan");
-    return res.json({
-      speech: HOOK_PLAN,
-      displayText: HOOK_PLAN
-    });
-  } else if (req.body.result.action === HOOK_WORKPLACE) {
-    //console.log("DEBUG [postHeroku]> Send link to Help Group");
-    return res.json({
-      speech: HOOK_WORKPLACE,
-      displayText: HOOK_WORKPLACE
-    });
   };
+  if (HOOKS_CUSTOM.length > 0) { // Have custom hooks to check
+    for (var i = 0; i < HOOKS_CUSTOM.length; i++) {
+      if (HOOKS_CUSTOM[i][0] && req.body.result.action === HOOKS_CUSTOM[i][2]) { // Found custom
+        //console.log("DEBUG [postHeroku]> Send custom hook " + HOOKS_CUSTOM[i][2]);
+        return res.json({
+          speech: HOOKS_CUSTOM[i][2],
+          displayText: HOOKS_CUSTOM[i][2]
+        }); // return
+      } else if (!HOOKS_CUSTOM[i][0] && req.body.result.action === HOOKS_CUSTOM[i][2]) { // Should be a hook
+        //console.log("DEBUG [postHeroku]> Disqualified custom hook " + HOOKS_CUSTOM[i][2]);
+        return res.json({
+          speech: MSG_NO_HOOK,
+          displayText: MSG_NO_HOOK
+        }); // return
+      }; // if
+    }; // for
+  }; // if
 });
 
 function postImage(postEvent,image_url,plusText,passText) {
