@@ -37,6 +37,9 @@ CHASbot.use(bodyParser.json());
 CHASbot.use(bodyParser.urlencoded({ extended: true }));
 var server_port = process.env.PORT || 9000; //
 var server_ip_address = '127.0.0.1'; // Only for testing via local NGROK.IO
+// Timings
+const KEEP_ALIVE = 25; // mins
+const TIME_TO_WAIT = 120; // mins
 
 // ********************************************************************************************
 // ********************************************************************************************
@@ -151,9 +154,6 @@ const HOOK_PLAN = 'plan';
 const HOOK_XMAS = 'xmas';*/
 var HOOKS = ['fundraising','cards','weather'];
 var HOOKS_CUSTOM = [];
-// Timings
-const KEEP_ALIVE = 25; // mins
-const TIME_TO_WAIT = 120; // mins
 // End-points
 const URL_GIPHY = "https://api.giphy.com/v1/gifs/random";
 const URL_MOVIEDB = "https://api.themoviedb.org/3/";
