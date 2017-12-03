@@ -1,0 +1,24 @@
+// Hook template options:
+// =====================
+// (1) [required] Is the name of the 'hook' lower_case with no spaces, as set as the action in dialogflow;
+// (2) [required] The https URL to the image or the link to a webpage e.g. could be a link to a website, workplace group*, or just a picture;
+// (3) [optional/required with button] The text to be sent along with the URL; and
+// (4) [optional/required with button] If the URL in (2) is a link for a button, not just a picture, then the text for the button is also required.
+// *treat groups with special care
+// Use a line for each 'hook', seperate each of the values on the line with a $ dollar symbol, and otherwise don't use the $ symbol
+// Use double forward slashes for lines that are ignored AND don't leave any blank lines
+// e.g. picture only:
+// pic_only_hook$https://www.linktopic.co.uk
+// e.g. picture with text:
+// pic_with_text_hook$https://www.anotherlinktopic.co.uk$This is some text to go with the picture
+// e.g. button with text:
+// button_hook$https://www.alinktoawebpage.co.uk$This is some text to go with the button$text on the button
+// HOOKS
+// Image with Text
+will$https://images2.imgbox.com/2d/d4/x7TVjJ9R_o.jpg$Well, I hear he has been working with Stacey quite a lot even though she is surely covered in Winston's hair. 🐱❤️  Are Winston and Will now friends?
+morven$https://images2.imgbox.com/77/0d/uN93I7u8_o.jpg$That's an easy one. It has got to be her ever growing relationship with this little fellow...
+// URL Button
+xmas$https://www.chas.org.uk/about-us/contact-us#shops$🎄 Christmas cards and more are available now from our shops or by mail order.$🛍️ CHAS Retail
+group_docs$https://groups/1707079182933694$For an answer to this and other similar questions, visit and join the group that stores the library of all relevant CHAS forms, documents and policies.$📚 Useful Documents
+workplace$https://groups/733856763459096/files/$Come and join the Workplace Help Group, for answers to this and other questions.$🆘 Workplace Help
+plan$https://s3-eu-west-1.amazonaws.com/chas-assets/downloads/3958+CHAS+Infographic-Plan-download.pdf$The CHAS plan explains how we intend to reach every child and family in Scotland who needs our support. Please read it.$📖 CHAS Plan
