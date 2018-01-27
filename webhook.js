@@ -1185,19 +1185,25 @@ CHASbot.post('/webhook', (req, res) => {
               analyse_text = trigger_path; // Clean extra
             };
           };
-          // CHAS Biogs
+	  // CHAS Biogs
           position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_CHAS_BIOGS) + 1;
-          //console.log("DEBUG [postWebhook]> " + TRIGGER_CHAS_BIOGS + " phrase search result: " + position_in_analyse_text);
+          console.log("DEBUG [postWebhook]> " + TRIGGER_CHAS_BIOGS + " phrase search result: " + position_in_analyse_text);
           let biogs_name = '';
           if (position_in_analyse_text > 0) {
             starting_point = position_in_analyse_text + TRIGGER_CHAS_BIOGS.length;
             ending_point = analyse_text.length;
             string_length = ending_point - starting_point;
-            //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
+            console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
             if (string_length > 0) {
-              trigger_path = TRIGGER_CHAS_BIOGS;
-              biogs_name = analyse_text.slice(starting_point,ending_point);
-              analyse_text = trigger_path; // Clean extra
+              let catch_fundraising = analyse_text.lastIndexOf('fundraising');
+              if (catch_fundraising > 0) {
+                // Swap input text to be caught by hook instead
+                analyse_text = 'who is my fundraising contact';
+              } else {
+                trigger_path = TRIGGER_CHAS_BIOGS;
+                biogs_name = analyse_text.slice(starting_point,ending_point);
+                analyse_text = trigger_path; // Clean extra
+              };
             };
           };
           // Stop pauses all activity, regardless of context or other triggers
