@@ -90,7 +90,3 @@ sahara
 The CHAS 2019 Challenge: Sahara Desert Trek, Morocco
 Thursday, 31st October 2019
 https://www.chas.org.uk/events/the-chas-2019-challenge-sahara-desert-trek-morocco
-test
-description
-Time and Date
-URL
