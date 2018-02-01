@@ -374,7 +374,7 @@ function loadHooks() {
   if (hook_lines.length > 0) {
     for (var i = 0; i < hook_lines.length; i++) {
       if (hook_lines[i].slice(0,2)=='//') { continue }; // Skip comments
-      //onsole.log("DEBUG [loadHooks]> Possible hook: " + hook_lines[i]);
+      //console.log("DEBUG [loadHooks]> Possible hook: " + hook_lines[i]);
       let poss_hook = hook_lines[i].split("$");
       if (poss_hook.length < 2 || poss_hook.length > 4) { continue }; // Skip where not 2,3 or 4 items
       let poss_hook_name = poss_hook[0];
@@ -1187,13 +1187,13 @@ CHASbot.post('/webhook', (req, res) => {
           };
 	  // CHAS Biogs
           position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_CHAS_BIOGS) + 1;
-          console.log("DEBUG [postWebhook]> " + TRIGGER_CHAS_BIOGS + " phrase search result: " + position_in_analyse_text);
+          //console.log("DEBUG [postWebhook]> " + TRIGGER_CHAS_BIOGS + " phrase search result: " + position_in_analyse_text);
           let biogs_name = '';
           if (position_in_analyse_text > 0) {
             starting_point = position_in_analyse_text + TRIGGER_CHAS_BIOGS.length;
             ending_point = analyse_text.length;
             string_length = ending_point - starting_point;
-            console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
+            //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
             if (string_length > 0) {
               let catch_fundraising = analyse_text.lastIndexOf('fundraising');
               if (catch_fundraising > 0) {
