@@ -14,9 +14,8 @@
 // e.g. button with text:
 // button_hook$https://www.alinktoawebpage.co.uk$This is some text to go with the button$text on the button
 // HOOKS
-//Picture with text
-fruit$https://thumbs2.imgbox.com/58/82/YKJP1RFI_t.jpg" alt="image host"/></a>$It's one of my favourite fruits🍌
 // URL Button
 group_docs$https://groups/1707079182933694$For an answer to this and other similar questions, visit and join the group that stores the library of all relevant CHAS forms, documents and policies.$📚 Useful Documents
 workplace$https://groups/733856763459096/files/$Come and join the Workplace Help Group, for answers to this and other questions.$🆘 Workplace Help
 plan$https://s3-eu-west-1.amazonaws.com/chas-assets/downloads/3958+CHAS+Infographic-Plan-download.pdf$The CHAS plan explains how we intend to reach every child and family in Scotland who needs our support. Please read it.$📖 CHAS Plan
+vol_opportunities$https://www.chas.org.uk/get-involved/volunteer/volunteer-opportunities$If you check the CHAS website you are able to search all available volunteering opportunities around Scotland. If you need any further details you can contact volunteering@chas.org.uk$ℹ️CHAS Website
