@@ -1506,8 +1506,8 @@ function sendViaDialog(eventSend) {
       }; // for
     }; // if
     if (!hooked) { // No hook
+      if (dialogFlowText == '') {dialogFlowText = MSG_NO_HOOK}; // Catch empty dialogflow responses
       console.log("INFO [sendViaDialog]> Response: " + dialogFlowText);
-      if (dialogFlowText == '') {dialogFlowText = MSG_NO_HOOK};
       sendTextDirect(eventSend,dialogFlowText);
       // Look out for unknown response and cc. admin
       if (response.result.action == 'input.unknown'||response.result.action.slice(0,21)=='DefaultFallbackIntent') {
