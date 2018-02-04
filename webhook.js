@@ -1583,13 +1583,13 @@ CHASbot.post('/heroku', (req, res) => {
   if (HOOKS_CUSTOM.length > 0) { // Have custom hooks to check
     for (var i = 0; i < HOOKS_CUSTOM.length; i++) {
       if (HOOKS_CUSTOM[i][0] && req.body.result.action === HOOKS_CUSTOM[i][2]) { // Found custom
-        console.log("DEBUG [postHeroku]> Send custom hook " + HOOKS_CUSTOM[i][2]);
+        //console.log("DEBUG [postHeroku]> Send custom hook " + HOOKS_CUSTOM[i][2]);
         return res.json({
           speech: HOOKS_CUSTOM[i][2],
           displayText: HOOKS_CUSTOM[i][2]
         }); // return
       } else if (!HOOKS_CUSTOM[i][0] && req.body.result.action === HOOKS_CUSTOM[i][2]) { // Should be a hook
-        console.log("DEBUG [postHeroku]> Disqualified custom hook " + HOOKS_CUSTOM[i][2]);
+        //console.log("DEBUG [postHeroku]> Disqualified custom hook " + HOOKS_CUSTOM[i][2]);
         return res.json({
           speech: MSG_NO_HOOK,
           displayText: MSG_NO_HOOK
