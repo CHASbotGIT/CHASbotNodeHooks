@@ -19,5 +19,6 @@ group_docs$https://groups/1707079182933694$For an answer to this and other simil
 workplace$https://groups/733856763459096/files/$Come and join the Workplace Help Group, for answers to this and other questions.$🆘 Workplace Help
 plan$https://s3-eu-west-1.amazonaws.com/chas-assets/downloads/3958+CHAS+Infographic-Plan-download.pdf$The CHAS plan explains how we intend to reach every child and family in Scotland who needs our support. Please read it.$📖 CHAS Plan
 vol_opportunities$https://www.chas.org.uk/get-involved/volunteer/volunteer-opportunities$If you check the CHAS website you are able to search all available volunteering opportunities around Scotland. If you need any further details you can contact volunteering@chas.org.uk$CHAS Volunteering
+contact_info$https://www.chas.org.uk/about-us/contact-us$If you check the CHAS website you will find contact details for all our offices, shops, and care services.$CHAS Contact Info
 // Pic Only
 spam$https://images2.imgbox.com/f4/a4/mdAOZIGl_o.png
