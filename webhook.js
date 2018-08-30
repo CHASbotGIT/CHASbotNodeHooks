@@ -151,7 +151,8 @@ const HOOK_WEATHER = 'weather';
 /*const HOOK_WORKPLACE = 'workplace';
 const HOOK_URL_GROUP_DOCS = 'group_docs';
 const HOOK_PLAN = 'plan';
-const HOOK_XMAS = 'xmas';*/
+const HOOK_XMAS = 'xmas';
+const HOOK_CONTACT_INFO = 'contact_info';*/
 var HOOKS = ['fundraising','cards','weather'];
 var HOOKS_CUSTOM = [];
 // End-points
@@ -333,7 +334,7 @@ function deCryptContents () {
     console.log("ERROR [deCryptContents]> Something funky going on with bios");
     CHAS_BIOGS_VIABLE = false;
   } else {
-    CHAS_BIOGS_VIABLE = true;
+    CHAS_BIOGS_VIABLE = true;0
   };
   text_block = fs.readFileSync(FILE_ENCRYPTED_IDS, "utf-8");
   text_block_split_garbled = text_block.split("\n");
