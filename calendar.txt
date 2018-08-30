@@ -2,26 +2,6 @@ christmas day
 Christmas Day
 It's the 25th December, hope you've been good?
 https://en.wikipedia.org/wiki/Christmas
-zip slide
-Zip Slide Across the Clyde!
-Saturday, 16th June 2018, River Clyde, Glasgow City
-https://www.chas.org.uk/events/zip-slide-across-the-clyde
-night ride
-Edinburgh Night Ride 2018
-Saturday, 16th June 2018, City of Edinburgh
-https://www.chas.org.uk/events/edinburgh-night-ride-2018
-abseil
-Forth Rail Bridge Abseil - 2018
-Sunday, 1st July 2018, City of Edinburgh
-https://www.chas.org.uk/events/forth-rail-bridge-abseil-2018
-swim
-Great Scottish Swim
-Saturday, 4th August 2018, Loch Lomond, West Dunbartonshire
-https://www.chas.org.uk/events/great-scottish-swim-is-go
-kiltwalk dundee
-Dundee Kiltwalk
-Sunday, 19 August 2018, Dundee City
-https://www.chas.org.uk/events/dundee-kiltwalk
 aberdeen ladies lunch
 CHAS Aberdeen Ladies Lunch
 Thursday, 30 August 2018, 12:00-17:00: at the Marcliffe Hotel
@@ -38,6 +18,10 @@ kiltwalk edinburgh
 Edinburgh Kiltwalk
 Sunday, 16 September 2018, City of Edinburgh
 https://www.chas.org.uk/events/edinburgh-kiltwalk-2018
+hamilten
+HamilTen 10K
+Saturday, 22 September 2018, South Lanarkshire
+https://www.chas.org.uk/events/hamilten-new-10k-run
 half marathon
 Scottish Half Marathon and 10K
 Sunday, 23 September 2018, East Lothian
@@ -62,6 +46,22 @@ masquerade
 Winter Masquerade Ball
 Saturday, 24 November 2018, Fife
 https://www.chas.org.uk/events/winter-masquerade-ball
+wonderland
+CHAS Winter Wonderland - Afternoon Tea 2018
+Sunday, 2 December 2018, Edinburgh
+https://www.chas.org.uk/events/chas-winter-wonderland-afternoon-tea-2018
+sci fi
+Capital Sci-Fi Con 2019
+Friday, 15 February 2019, Edinburgh
+https://www.chas.org.uk/events/capital-sci-fi-con-2019
+emf
+EMF Edinburgh Marathon Festival 2019
+Saturday, 25 May 2019, Edinburgh
+https://www.chas.org.uk/events/emf-edinburgh-marathon-festival-2019
+rocking horse
+CHAS Rocking Horse Ball 2019
+Friday, 7 June 2019, Edinburgh
+https://www.chas.org.uk/events/chas-rocking-horse-ball-2019
 sahara
 The CHAS 2019 Challenge: Sahara Desert Trek, Morocco
 Thursday, 31st October 2019
