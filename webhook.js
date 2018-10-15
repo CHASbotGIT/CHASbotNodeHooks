@@ -1481,13 +1481,13 @@ function sendViaDialog(eventSend) {
     sessionId: 'sessionID' + sender // Arbitrary id
   });
   apiai.on('response', (response) => {
-    let dialogFlowText = response.result.fulfillment.speech;
+    let dialogFlowText = response.queryResult.fulfillment.text;
     console.log("INFO [sendViaDialog]> Sender: " + sender);
-    console.log("INFO [sendViaDialog]> Request: " + response.result.resolvedQuery);
+    console.log("INFO [sendViaDialog]> Request: " + response.queryResult.queryText);
     if (response.result.action == '') {
-      console.log("INFO [sendViaDialog]> Action: " + response.result.metadata.intentName);
+      console.log("INFO [sendViaDialog]> Action: " + response.queryResult.intent.displayName);
     } else {
-      console.log("INFO [sendViaDialog]> Action: " + response.result.action);
+      console.log("INFO [sendViaDialog]> Action: " + response.queryResult.action);
     };
     let hooked = false;
     if (HOOKS_CUSTOM.length > 0) { // Have custom hooks to check
@@ -1511,8 +1511,8 @@ function sendViaDialog(eventSend) {
       console.log("INFO [sendViaDialog]> Response: " + dialogFlowText);
       sendTextDirect(eventSend,dialogFlowText);
       // Look out for unknown response and cc. admin
-      if (response.result.action == 'input.unknown'||response.result.action.slice(0,21)=='DefaultFallbackIntent') {
-        let loopbackText = sender + ">>" + customGreeting(sender,false) + ">>" + response.result.resolvedQuery;
+      if (response.queryResult.action == 'input.unknown'||response.result.queryResult.action.slice(0,21)=='DefaultFallbackIntent') {
+        let loopbackText = sender + ">>" + customGreeting(sender,false) + ">>" + response.queryResult.queryText;
         console.log("ADMIN [sendViaDialog]> Feedback: " + loopbackText);
         let eventLoopback = eventSend;
         eventLoopback.sender.id = KEY_ADMIN;
