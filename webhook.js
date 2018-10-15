@@ -1482,13 +1482,13 @@ function sendViaDialog(eventSend) {
   });
   apiai.on('response', (response) => {
     // V2 Migration https://dialogflow.com/docs/reference/v1-v2-migration-guide-api#intents_to_intents
-    let dialogFlowText = response.queryResult.fulfillment.text // V1 result.fulfillment.speech;
+    let dialogFlowText = response.queryResult.fulfillment.text;
     console.log("INFO [sendViaDialog]> Sender: " + sender);
-    console.log("INFO [sendViaDialog]> Request: " + response.queryResult.queryText // V1 result.resolvedQuery);
+    console.log("INFO [sendViaDialog]> Request: " + response.queryResult.queryText;
     if (response.result.action == '') {
-      console.log("INFO [sendViaDialog]> Action: " + response.queryResult.intent.displayName //V1 result.metadata.intentName);
+      console.log("INFO [sendViaDialog]> Action: " + response.queryResult.intent.displayName;
     } else {
-      console.log("INFO [sendViaDialog]> Action: " + response.queryResult.action //V1 result.action);
+      console.log("INFO [sendViaDialog]> Action: " + response.queryResult.action;
     };
     let hooked = false;
     if (HOOKS_CUSTOM.length > 0) { // Have custom hooks to check
