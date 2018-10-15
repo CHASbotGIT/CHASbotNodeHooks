@@ -26,14 +26,7 @@ const pg = require('pg'); // https://www.npmjs.com/package/pg
 const request = require('request'); // https://github.com/request/request
 const express = require('express'); // https://expressjs.com
 const bodyParser = require('body-parser'); // https://github.com/expressjs/body-parser
-//const dialogFlow = require('apiai')(KEY_DIALOGFLOW); // https://www.npmjs.com/package/apiai
-//https://github.com/googleapis/nodejs-dialogflow
-const projectId = 'chasbot-c43d7'; //https://dialogflow.com/docs/agents#settings
-const sessionId = 'quickstart-session-id';
-const languageCode = 'en-UK';
-const dialogFlow = require('dialogflow')
-const sessionClient = new dialogFlow.SessionsClient();
-const sessionPath = sessionClient.sessionPath(projectId, sessionId);
+const dialogFlow = require('apiai')(KEY_DIALOGFLOW); // https://www.npmjs.com/package/apiai
 // Node.js libraries used
 const fs = require("fs"); // https://nodejs.org/api/fs.html
 const http = require('https'); // https://nodejs.org/api/https.html
@@ -1483,86 +1476,54 @@ function sendTextDirect(eventSend,outbound_text) {
 // Message request pinged off of API.AI for response
 function sendViaDialog(eventSend) {
   let sender = eventSend.sender.id;
-  let dialogflow_text = eventSend.message.text;
-  //let apiai = dialogFlow.textRequest(text, {
-  //  sessionId: 'sessionID' + sender // Arbitrary id
-  //});
-
-  // The text query request.
-  const dialogflow_request = {
-    session: sessionPath,
-    queryInput: {
-      text: {
-        text: dialogflow_text,
-        languageCode: languageCode,
-      },
-    },
-  };
-
-  // Send request and log result
-  sessionClient
-    .detectIntent(dialogflow_request)
-    .then(responses => {
-      console.log('Detected intent');
-      const result = responses[0].queryResult;
-      console.log(`  Query: ${result.queryText}`);
-      console.log(`  Response: ${result.fulfillmentText}`);
-      if (result.intent) {
-        console.log(`  Intent: ${result.intent.displayName}`);
-      } else {
-        console.log(`  No intent matched.`);
-      }
-    })
-    .catch(err => {
-      //console.error('ERROR:', err);
-      console.log("ERROR [sendViaDialog]> Undefined: " + err);
-    });
-
-  
-  //apiai.on('response', (response) => {
-  //  let dialogFlowText = response.queryResult.fulfillment.text;
-  //  console.log("INFO [sendViaDialog]> Sender: " + sender);
-  //  console.log("INFO [sendViaDialog]> Request: " + response.queryResult.queryText);
-  //  if (response.result.action == '') {
-  //    console.log("INFO [sendViaDialog]> Action: " + response.queryResult.intent.displayName);
-  //  } else {
-  //    console.log("INFO [sendViaDialog]> Action: " + response.queryResult.action);
-  //  };
-  //  let hooked = false;
-  //  if (HOOKS_CUSTOM.length > 0) { // Have custom hooks to check
-  //    for (var i = 0; i < HOOKS_CUSTOM.length; i++) {
-  //      if (HOOKS_CUSTOM[i][0] && dialogFlowText == HOOKS_CUSTOM[i][2]) { // Found custom
-  //        console.log("INFO [sendViaDialog]> Response: Template " + HOOKS_CUSTOM[i][2] + " (" + HOOKS_CUSTOM[i][1] + ")");
-  //        if (HOOKS_CUSTOM[i][1] == 'image') {
-  //          postImage(eventSend,HOOKS_CUSTOM[i][3],false,'');
-  //        } else if (HOOKS_CUSTOM[i][1] == 'image_text') {
-  //          postImage(eventSend,HOOKS_CUSTOM[i][3],true,HOOKS_CUSTOM[i][4]);
-  //        } else if (HOOKS_CUSTOM[i][1] == 'button') {
-  //          postLinkButton(eventSend,HOOKS_CUSTOM[i][3],HOOKS_CUSTOM[i][4],HOOKS_CUSTOM[i][5]);
-  //        };
-  //        hooked = true;
-  //        break;
-  //      }; // if
-  //    }; // for
-  //  }; // if
-  //  if (!hooked) { // No hook
-  //    if (dialogFlowText == '') {dialogFlowText = MSG_NO_HOOK}; // Catch empty dialogflow responses
-  //    console.log("INFO [sendViaDialog]> Response: " + dialogFlowText);
-  //    sendTextDirect(eventSend,dialogFlowText);
-  //    // Look out for unknown response and cc. admin
-  //    if (response.queryResult.action == 'input.unknown'||response.result.queryResult.action.slice(0,21)=='DefaultFallbackIntent') {
-  //      let loopbackText = sender + ">>" + customGreeting(sender,false) + ">>" + response.queryResult.queryText;
-  //      console.log("ADMIN [sendViaDialog]> Feedback: " + loopbackText);
-  //      let eventLoopback = eventSend;
-  //      eventLoopback.sender.id = KEY_ADMIN;
-  //      sendTextDirect(eventLoopback,loopbackText);
-  //    };
-  //  };
-  //});
-  //apiai.on('error', (error) => {
-  //  console.log("ERROR [sendViaDialog]> Undefined: " + error);
-  //});
-  //apiai.end();
+  let text = eventSend.message.text;
+  let apiai = dialogFlow.textRequest(text, {
+    sessionId: 'sessionID' + sender // Arbitrary id
+  });
+  apiai.on('response', (response) => {
+    let dialogFlowText = response.result.fulfillment.speech;
+    console.log("INFO [sendViaDialog]> Sender: " + sender);
+    console.log("INFO [sendViaDialog]> Request: " + response.result.resolvedQuery);
+    if (response.result.action == '') {
+      console.log("INFO [sendViaDialog]> Action: " + response.result.metadata.intentName);
+    } else {
+      console.log("INFO [sendViaDialog]> Action: " + response.result.action);
+    };
+    let hooked = false;
+    if (HOOKS_CUSTOM.length > 0) { // Have custom hooks to check
+      for (var i = 0; i < HOOKS_CUSTOM.length; i++) {
+        if (HOOKS_CUSTOM[i][0] && dialogFlowText == HOOKS_CUSTOM[i][2]) { // Found custom
+          console.log("INFO [sendViaDialog]> Response: Template " + HOOKS_CUSTOM[i][2] + " (" + HOOKS_CUSTOM[i][1] + ")");
+          if (HOOKS_CUSTOM[i][1] == 'image') {
+            postImage(eventSend,HOOKS_CUSTOM[i][3],false,'');
+          } else if (HOOKS_CUSTOM[i][1] == 'image_text') {
+            postImage(eventSend,HOOKS_CUSTOM[i][3],true,HOOKS_CUSTOM[i][4]);
+          } else if (HOOKS_CUSTOM[i][1] == 'button') {
+            postLinkButton(eventSend,HOOKS_CUSTOM[i][3],HOOKS_CUSTOM[i][4],HOOKS_CUSTOM[i][5]);
+          };
+          hooked = true;
+          break;
+        }; // if
+      }; // for
+    }; // if
+    if (!hooked) { // No hook
+      if (dialogFlowText == '') {dialogFlowText = MSG_NO_HOOK}; // Catch empty dialogflow responses
+      console.log("INFO [sendViaDialog]> Response: " + dialogFlowText);
+      sendTextDirect(eventSend,dialogFlowText);
+      // Look out for unknown response and cc. admin
+      if (response.result.action == 'input.unknown'||response.result.action.slice(0,21)=='DefaultFallbackIntent') {
+        let loopbackText = sender + ">>" + customGreeting(sender,false) + ">>" + response.result.resolvedQuery;
+        console.log("ADMIN [sendViaDialog]> Feedback: " + loopbackText);
+        let eventLoopback = eventSend;
+        eventLoopback.sender.id = KEY_ADMIN;
+        sendTextDirect(eventLoopback,loopbackText);
+      };
+    };
+  });
+  apiai.on('error', (error) => {
+    console.log("ERROR [sendViaDialog]> Undefined: " + error);
+  });
+  apiai.end();
 }
 
 // Posting functions
