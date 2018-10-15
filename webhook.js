@@ -1481,14 +1481,13 @@ function sendViaDialog(eventSend) {
     sessionId: 'sessionID' + sender // Arbitrary id
   });
   apiai.on('response', (response) => {
-    // V2 Migration https://dialogflow.com/docs/reference/v1-v2-migration-guide-api#intents_to_intents
-    let dialogFlowText = response.queryResult.fulfillment.text;
+    let dialogFlowText = response.result.fulfillment.speech;
     console.log("INFO [sendViaDialog]> Sender: " + sender);
-    console.log("INFO [sendViaDialog]> Request: " + response.queryResult.queryText;
+    console.log("INFO [sendViaDialog]> Request: " + response.result.resolvedQuery);
     if (response.result.action == '') {
-      console.log("INFO [sendViaDialog]> Action: " + response.queryResult.intent.displayName;
+      console.log("INFO [sendViaDialog]> Action: " + response.result.metadata.intentName);
     } else {
-      console.log("INFO [sendViaDialog]> Action: " + response.queryResult.action;
+      console.log("INFO [sendViaDialog]> Action: " + response.result.action);
     };
     let hooked = false;
     if (HOOKS_CUSTOM.length > 0) { // Have custom hooks to check
@@ -1512,11 +1511,8 @@ function sendViaDialog(eventSend) {
       console.log("INFO [sendViaDialog]> Response: " + dialogFlowText);
       sendTextDirect(eventSend,dialogFlowText);
       // Look out for unknown response and cc. admin
-      // V1 replacements:
-      // response.queryResult.action
-      // result.resolvedQuery
-      if (response.queryResult.action == 'input.unknown'||response.queryResult.action.slice(0,21)=='DefaultFallbackIntent') {
-        let loopbackText = sender + ">>" + customGreeting(sender,false) + ">>" + response.queryResult.queryText;
+      if (response.result.action == 'input.unknown'||response.result.action.slice(0,21)=='DefaultFallbackIntent') {
+        let loopbackText = sender + ">>" + customGreeting(sender,false) + ">>" + response.result.resolvedQuery;
         console.log("ADMIN [sendViaDialog]> Feedback: " + loopbackText);
         let eventLoopback = eventSend;
         eventLoopback.sender.id = KEY_ADMIN;
