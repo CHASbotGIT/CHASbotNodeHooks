@@ -1926,7 +1926,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
   // e.g. https://api.themoviedb.org/3/search/movie?api_key={api_key}&query=Jack+Reacher
   // id 1871 is Eastenders; Season 33 is 2017
   if (episode_find) { url = URL_MOVIEDB + "tv/1871/season/33?api_key=" + KEY_API_MOVIEDB + "&language=en-US" };
-  console.log("DEBUG [apiFilmTV]> URL: " + url);
+  //console.log("DEBUG [apiFilmTV]> URL: " + url);
   http.get(url, function(res) {
     //console.log("DEBUG [apiFilmTV]> MovieDb Response Code: " + res.statusCode);
     let body = "";
