@@ -1929,7 +1929,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
   console.log("DEBUG [apiFilmTV]> URL: " + url);
   http.get(url, function(res) {
     console.log("DEBUG [apiFilmTV]> MovieDb Response Code: " + res.statusCode);
-    if (res.StatusCode === 512) {
+    if (res.StatusCode === 503) {
       console.log("OOOOOOOPPPPPPPPPSSSSSSS " + res.statusCode);
       if (tv_film == 'tv') {
         MOVIEDB_RECORDS[record_index][0] = true;
