@@ -1928,7 +1928,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
   if (episode_find) { url = URL_MOVIEDB + "tv/1871/season/33?api_key=" + KEY_API_MOVIEDB + "&language=en-US" };
   console.log("DEBUG [apiFilmTV]> URL: " + url);
   http.get(url, function(res) {
-    console.log("DEBUG [apiFilmTV]> MovieDb Response Code: " + res.statusCode);
+    console.log("DEBUG [apiFilmTV]> MovieDb Response Code: " + res.statusCode + " " + record_index);
     return;
 	  
     let body = "";
