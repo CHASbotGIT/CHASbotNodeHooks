@@ -1929,8 +1929,16 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
   console.log("DEBUG [apiFilmTV]> URL: " + url);
   http.get(url, function(res) {
     console.log("DEBUG [apiFilmTV]> MovieDb Response Code: " + res.statusCode);
+    // In the event of API reporting down i.e. 503, then return null results on one pass and exit on other
     if (res.statusCode === 503) {
       console.log("DEBUG [apiFilmTV]> MovieDb Oops " + tv_film);
+      if (tv_film == 'tv') {
+	MOVIEDB_RECORDS[record_index][0] = true;
+        MOVIEDB_RECORDS[record_index][1] = 'No TV result';
+        MOVIEDB_RECORDS[record_index][3] = true;
+        MOVIEDB_RECORDS[record_index][4] = 'No film result';
+        postFilmTV(eventFilmTV,record_index);
+      };
       return;
     };  
     let body = "";
