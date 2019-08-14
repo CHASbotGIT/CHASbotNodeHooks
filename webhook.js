@@ -1930,7 +1930,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
   http.get(url, function(res) {
     console.log("DEBUG [apiFilmTV]> MovieDb Response Code: " + res.statusCode);
     if (res.statusCode === 503) {
-      console.log("DEBUG [apiFilmTV]> MovieDb Oops");
+      console.log("DEBUG [apiFilmTV]> MovieDb Oops " + tv_film);
       return;
     };  
     let body = "";
