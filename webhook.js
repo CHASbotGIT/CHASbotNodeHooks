@@ -1913,7 +1913,7 @@ function apiGIPHY(eventGiphy,giphy_tag,giphy_rating,passText) {
 // Remote search functions - API
 // =============================
 function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
-  console.log("DEBUG [apiFilmTV]> Input: " + nameFilmTV + ", " + episode_find + ", " + tv_film + ", " + record_index);
+  //console.log("DEBUG [apiFilmTV]> Input: " + nameFilmTV + ", " + episode_find + ", " + tv_film + ", " + record_index);
   let epBlurb = ''; // return value
   const base_url = URL_MOVIEDB + "search/";
   const params_url = "api_key=" + KEY_API_MOVIEDB;
@@ -1926,12 +1926,12 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
   // e.g. https://api.themoviedb.org/3/search/movie?api_key={api_key}&query=Jack+Reacher
   // id 1871 is Eastenders; Season 33 is 2017
   if (episode_find) { url = URL_MOVIEDB + "tv/1871/season/33?api_key=" + KEY_API_MOVIEDB + "&language=en-US" };
-  console.log("DEBUG [apiFilmTV]> URL: " + url);
+  //console.log("DEBUG [apiFilmTV]> URL: " + url);
   http.get(url, function(res) {
-    console.log("DEBUG [apiFilmTV]> MovieDb Response Code: " + res.statusCode);
+    //console.log("DEBUG [apiFilmTV]> MovieDb Response Code: " + res.statusCode);
     // In the event of API reporting down i.e. 503, then return null results on one pass and exit on other
     if (res.statusCode === 503) {
-      console.log("DEBUG [apiFilmTV]> MovieDb Oops " + tv_film);
+      console.log("ERROR [apiFilmTV]> 503 Response Error for " + tv_film);
       if (tv_film == 'tv') {
 	MOVIEDB_RECORDS[record_index][0] = true;
         MOVIEDB_RECORDS[record_index][1] = 'No TV result';
@@ -1945,7 +1945,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
     res.on('data', function (chunk) { body += chunk });
     res.on('end', function() {
       let movieDbData = JSON.parse(body);
-      console.log("DEBUG [apiFilmTV]> MovieDb Response: " + movieDbData);
+      //console.log("DEBUG [apiFilmTV]> MovieDb Response: " + movieDbData);
       if (res.statusCode === 200) {
         if (episode_find) {
           let tdyDate = new Date();
@@ -1956,7 +1956,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
             if (tdyDate > epDate) {
               epBlurb = movieDbData.episodes[i].overview;
               let weekday_value = epDate.getDay();
-              epBlurb = "The last episode I saw was on " + MSG_WEEKDAYS[weekday_value] + ", it was the one where: " + epBlurb;
+              //epBlurb = "The last episode I saw was on " + MSG_WEEKDAYS[weekday_value] + ", it was the one where: " + epBlurb;
               console.log("DEBUG [apiFilmTV]> Easties result: " + epBlurb);
               MOVIEDB_RECORDS[record_index][0] = true;
               MOVIEDB_RECORDS[record_index][1] = epBlurb;
@@ -1971,7 +1971,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
           let blurb = movieDbData.results[0].overview;
           let rating = Math.round(movieDbData.results[0].vote_average / 2);
           epBlurb = MSG_STAR_RATING[rating] + " That's the one where: " + blurb + " (theMovieDb)";
-          console.log("DEBUG [apiFilmTV]> TV result: " + epBlurb);
+          //console.log("DEBUG [apiFilmTV]> TV result: " + epBlurb);
           if (tv_film == 'tv') {
             MOVIEDB_RECORDS[record_index][0] = true;
             MOVIEDB_RECORDS[record_index][1] = epBlurb;
@@ -1984,7 +1984,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
           postFilmTV(eventFilmTV,record_index);
           return;
         } else {
-          console.log("DEBUG [apiFilmTV]> No " + tv_film + " result");
+          //console.log("DEBUG [apiFilmTV]> No " + tv_film + " result");
           if (tv_film == 'tv') {
             MOVIEDB_RECORDS[record_index][0] = true;
             MOVIEDB_RECORDS[record_index][1] = 'No TV result';
@@ -2009,7 +2009,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
 }
 
 function apiPrimeFilmTV(eventFilmTV,targetName) {
-  console.log("DEBUG [apiPrimeFilmTV]> Input: " + targetName);
+  //console.log("DEBUG [apiPrimeFilmTV]> Input: " + targetName);
   MOVIEDB_RECORDS_INDEX++;
   let hold_index = MOVIEDB_RECORDS_INDEX;
   //if (MOVIEDB_RECORDS_INDEX == 10) {MOVIEDB_RECORDS_INDEX = 0;};
