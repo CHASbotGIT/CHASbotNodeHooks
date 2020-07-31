@@ -10,7 +10,7 @@
 const KEY_ROOT = process.env.KEY_ROOT;
 const KEY_ADMIN = process.env.KEY_ADMIN;
 const KEY_VERIFY = process.env.KEY_VERIFY;
-const KEY_CRYPTO = process.env.KEY_CRYPTO;
+//const KEY_CRYPTO = process.env.KEY_CRYPTO;
 const URL_CHASBOT = process.env.APP_URL;
 const URL_POSTGRES = process.env.DATABASE_URL;
 const KEY_API_GIPHY = process.env.KEY_API_GIPHY;
@@ -32,6 +32,10 @@ const fs = require("fs"); // https://nodejs.org/api/fs.html
 const http = require('https'); // https://nodejs.org/api/https.html
 const crypto = require('crypto'); // https://nodejs.org/api/crypto.html
 const iv = crypto.randomBytes(16);
+const KEY_CRYPTO = crypto.randomBytes(32);
+console.log("DEBUG [Crypto]> iv: " + iv);
+console.log("DEBUG [Crypto]> KEY_CRYPTO: " + KEY_CRYPTO);
+
 // Initialise CHASbot
 const CHASbot = express();
 CHASbot.use(bodyParser.json());
@@ -285,7 +289,7 @@ function urlExists(url, cb) {
 
 // Encryption and decryption of files
 var enCrypt = function(text_plain) {
-  let algorithm = 'aes-256-ctr';
+  let algorithm = 'aes-256-cbc';
   let passkey = KEY_CRYPTO;
   let cipher = crypto.createCipheriv(algorithm,passkey,iv)
   let crypted = cipher.update(text_plain,'utf-8','hex')
@@ -293,7 +297,7 @@ var enCrypt = function(text_plain) {
   return crypted;
 }
 var deCrypt = function(text_obscure) {
-  let algorithm = 'aes-256-ctr';
+  let algorithm = 'aes-256-cbc';
   let passkey = KEY_CRYPTO;
   let decipher = crypto.createDecipheriv(algorithm,passkey,iv)
   let dec = decipher.update(text_obscure,'hex','utf-8')
