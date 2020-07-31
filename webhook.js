@@ -31,10 +31,12 @@ const dialogFlow = require('apiai')(KEY_DIALOGFLOW); // https://www.npmjs.com/pa
 const fs = require("fs"); // https://nodejs.org/api/fs.html
 const http = require('https'); // https://nodejs.org/api/https.html
 const crypto = require('crypto'); // https://nodejs.org/api/crypto.html
+// Difining algorithm
+const algorithm = 'aes-256-cbc';
+// Defining key
+const key = crypto.randomBytes(32);
+// Defining iv
 const iv = crypto.randomBytes(16);
-const KEY_CRYPTO = crypto.randomBytes(32);
-console.log("DEBUG [Crypto]> iv: " + iv);
-console.log("DEBUG [Crypto]> KEY_CRYPTO: " + KEY_CRYPTO);
 
 // Initialise CHASbot
 const CHASbot = express();
@@ -289,20 +291,16 @@ function urlExists(url, cb) {
 
 // Encryption and decryption of files
 var enCrypt = function(text_plain) {
-  let algorithm = 'aes-256-cbc';
-  let passkey = KEY_CRYPTO;
-  let cipher = crypto.createCipheriv(algorithm,passkey,iv)
-  let crypted = cipher.update(text_plain,'utf-8','hex')
-  crypted += cipher.final('hex');
-  return crypted;
+  let cipher = crypto.createCipheriv(algorithm,Buffer.from(key),iv);
+  let crypted = cipher.update(text_plain);
+  crypted = Buffer.concat([crypted, cipher.final()]);
+  return crypted.toString('hex');
 }
 var deCrypt = function(text_obscure) {
-  let algorithm = 'aes-256-cbc';
-  let passkey = KEY_CRYPTO;
-  let decipher = crypto.createDecipheriv(algorithm,passkey,iv)
-  let dec = decipher.update(text_obscure,'hex','utf-8')
-  dec += decipher.final('utf-8');
-  return dec;
+  let decipher = crypto.createDecipheriv(algorithm,Buffer.from(key),iv);
+  let dec = decipher.update(text_obscure);
+  dec = Buffer.concat([dec, decipher.final()]);
+  return dec.toString();
 }
 function enCryptBios () {
   let text_block = fs.readFileSync(FILE_BIOGS, "utf-8");
