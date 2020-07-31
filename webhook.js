@@ -584,7 +584,7 @@ highScore('read');
 // Configure webhook in work chat integration - KEY_VERIFY matches code and app
 // Copy page access token and hard code for testing or set as server variable
 CHASbot.get('/webhook', (req, res) => {
-  if (req.query['hub.mode'] && req.query['hub.verify_token'] === KEY_VERIFY) {
+  if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === KEY_VERIFY) {
     res.status(200).send(req.query['hub.challenge']);
   } else {
     res.status(403).end();
