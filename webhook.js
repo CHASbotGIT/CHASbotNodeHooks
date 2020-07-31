@@ -36,7 +36,7 @@ const ALGO = 'aes-256-cbc';
 // Defining iv length
 const IV_LENGTH = 16; // For AES, this is always 16
 const IV_RUNTIME = crypto.randomBytes(IV_LENGTH);
-var IV_RETRIEVED = "";
+var IV_RETRIEVED = IV_RUNTIME;
 console.log("DEBUG [Constant]> IV_RUNTIME: " + IV_RUNTIME.toString('hex'));
 
 // Initialise CHASbot
@@ -291,6 +291,18 @@ function urlExists(url, cb) {
   });
 }
 
+
+function hexStringToByte(str) {
+  if (!str) {
+    return new Uint8Array();
+  }
+  var a = [];
+  for (var i = 0, len = str.length; i < len; i+=2) {
+    a.push(parseInt(str.substr(i,2),16));
+  }
+  return new Uint8Array(a);
+}
+
 // Encryption and decryption of files
 var enCrypt = function(text_plain) {
   let cipher = crypto.createCipheriv(ALGO,Buffer.from(KEY_CRYPTO),IV_RUNTIME);
@@ -326,7 +338,7 @@ function enCryptFileContents () {
 function deCryptContents () {
   let text_block = fs.readFileSync(FILE_ENCRYPTED_BIOS, "utf-8");
   let strip_iv_from_block = text_block.split(":");
-  IV_RETRIEVED = strip_iv_from_block[0];
+  IV_RETRIEVED = hexStringToByte(strip_iv_from_block[0]);
   let text_block_split_garbled = strip_iv_from_block[1].split("\n");
   CHAS_BIOGS = new Array();
   let decrypt_loop = 0;
