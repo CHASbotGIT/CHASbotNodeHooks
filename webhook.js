@@ -573,7 +573,7 @@ function highScore(read_write) {
 loadHooks();
 // Load in encrypted information
 //enCryptBios(); // Run once to encrypt biography CHAS file
-deCryptContents(); // Normal runtime configuration
+//deCryptContents(); // Normal runtime configuration
 var CHAS_EVENTS_VIABLE = loadCalendar();
 //console.log("DEBUG [postloadCalendar]> Viable? " + CHAS_EVENTS_VIABLE);
 var SURVEY_VIABLE = loadSurvey();
