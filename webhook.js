@@ -299,7 +299,7 @@ var enCrypt = function(text_plain) {
   return crypted.toString('hex');
 }
 var deCrypt = function(text_obscure) {
-  let decipher = crypto.createDecipheriv(algorithm,Buffer.from(key),iv);
+  let decipher = crypto.createDecipheriv(ALGO,Buffer.from(KEY_CRYPTO),IV_RETRIEVED);
   let dec = decipher.update(text_obscure);
   dec = Buffer.concat([dec, decipher.final()]);
   return dec.toString();
@@ -325,25 +325,27 @@ function enCryptFileContents () {
 }
 function deCryptContents () {
   let text_block = fs.readFileSync(FILE_ENCRYPTED_BIOS, "utf-8");
-  let text_block_split_garbled = text_block.split("\n");
+  let strip_iv_from_block = text_block.split(":");
+  IV_RETRIEVED = strip_iv_from_block[0];
+  let text_block_split_garbled = strip_iv_from_block[1].split("\n");
   CHAS_BIOGS = new Array();
   let decrypt_loop = 0;
   for (decrypt_loop = 0; decrypt_loop < text_block_split_garbled.length; decrypt_loop++) {
     CHAS_BIOGS[decrypt_loop] = deCrypt(text_block_split_garbled[decrypt_loop]);
   };
   let number_bios_entries = CHAS_BIOGS.length;
-  //console.log("DEBUG [deCryptContents]> Bios entries: " + number_bios_entries);
+  console.log("DEBUG [deCryptContents]> Bios entries: " + number_bios_entries);
   let remainder = number_bios_entries % CHAS_BIOGS_BLOCK_SIZE;
-  //console.log("DEBUG [deCryptContents]> Bios remainder (looking for 0): " + remainder);
+  console.log("DEBUG [deCryptContents]> Bios remainder (looking for 0): " + remainder);
   CHAS_BIOGS_TOTAL = number_bios_entries / CHAS_BIOGS_BLOCK_SIZE;
-  //console.log("DEBUG [deCryptContents]> Events: " + CHAS_BIOGS_TOTAL);
+  console.log("DEBUG [deCryptContents]> Events: " + CHAS_BIOGS_TOTAL);
   if ((remainder != 0)||(CHAS_BIOGS_TOTAL == 0)) {
     console.log("ERROR [deCryptContents]> Something funky going on with bios");
     CHAS_BIOGS_VIABLE = false;
   } else {
     CHAS_BIOGS_VIABLE = true;0
   };
-  text_block = fs.readFileSync(FILE_ENCRYPTED_IDS, "utf-8");
+  /*text_block = fs.readFileSync(FILE_ENCRYPTED_IDS, "utf-8");
   text_block_split_garbled = text_block.split("\n");
   //IDS_LIST = new Array();
   decrypt_loop = 0;
@@ -371,7 +373,7 @@ function deCryptContents () {
     CHAS_FR_LIST = CHAS_FR_LIST + deCrypt(text_block_split_garbled[decrypt_loop]);
     if (decrypt_loop != text_block_split_garbled.length) {CHAS_FR_LIST = CHAS_FR_LIST + "\n"};
   };
-  //console.log("DEBUG [deCryptContents]> Contact Card: " + CHAS_FR_LIST);
+  //console.log("DEBUG [deCryptContents]> Contact Card: " + CHAS_FR_LIST);*/
 }
 
 function loadHooks() {
@@ -577,8 +579,8 @@ function highScore(read_write) {
 loadHooks();
 // Load in encrypted information
 // Update Constants FILE_TO_BE_ENCRYPTED (input) and FILE_ENCRYPTED (output)
-enCryptFileContents(); // Run once to encrypt files
-//deCryptContents(); // Normal runtime configuration
+//enCryptFileContents(); // Run once to encrypt files
+deCryptContents(); // Normal runtime configuration
 var CHAS_EVENTS_VIABLE = loadCalendar();
 //console.log("DEBUG [postloadCalendar]> Viable? " + CHAS_EVENTS_VIABLE);
 var SURVEY_VIABLE = loadSurvey();
