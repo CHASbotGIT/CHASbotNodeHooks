@@ -286,7 +286,7 @@ function urlExists(url, cb) {
 var enCrypt = function(text_plain) {
   let algorithm = 'aes-256-ctr';
   let passkey = KEY_CRYPTO;
-  let cipher = crypto.createCipher(algorithm,passkey)
+  let cipher = crypto.createCipheriv(algorithm,passkey,)
   let crypted = cipher.update(text_plain,'utf-8','hex')
   crypted += cipher.final('hex');
   return crypted;
@@ -294,7 +294,7 @@ var enCrypt = function(text_plain) {
 var deCrypt = function(text_obscure) {
   let algorithm = 'aes-256-ctr';
   let passkey = KEY_CRYPTO;
-  let decipher = crypto.createDecipher(algorithm,passkey)
+  let decipher = crypto.createDecipheriv(algorithm,passkey,)
   let dec = decipher.update(text_obscure,'hex','utf-8')
   dec += decipher.final('utf-8');
   return dec;
@@ -1940,7 +1940,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
         postFilmTV(eventFilmTV,record_index);
       };
       return;
-    };  
+    };
     let body = "";
     res.on('data', function (chunk) { body += chunk });
     res.on('end', function() {
