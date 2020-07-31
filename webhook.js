@@ -37,7 +37,8 @@ const ALGO = 'aes-256-cbc';
 const IV_LENGTH = 16; // For AES, this is always 16
 const IV_RUNTIME = crypto.randomBytes(IV_LENGTH);
 var IV_RETRIEVED = IV_RUNTIME;
-console.log("DEBUG [Constant]> IV_RUNTIME: " + IV_RUNTIME.toString('hex'));
+console.log("DEBUG [Constant]> IV_RUNTIME (raw): " + IV_RUNTIME);
+console.log("DEBUG [Constant]> IV_RUNTIME (hex): " + IV_RUNTIME.toString('hex'));
 
 // Initialise CHASbot
 const CHASbot = express();
@@ -311,6 +312,7 @@ var enCrypt = function(text_plain) {
   return crypted.toString('hex');
 }
 var deCrypt = function(text_obscure) {
+  console.log("DEBUG [deCrypt]> text_obscure: " + text_obscure);
   let decipher = crypto.createDecipheriv(ALGO,Buffer.from(KEY_CRYPTO),IV_RETRIEVED);
   let dec = decipher.update(text_obscure);
   dec = Buffer.concat([dec, decipher.final()]);
