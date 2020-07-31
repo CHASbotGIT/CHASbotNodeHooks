@@ -37,7 +37,7 @@ const ALGO = 'aes-256-cbc';
 const IV_LENGTH = 16; // For AES, this is always 16
 const IV_RUNTIME = crypto.randomBytes(IV_LENGTH);
 var IV_RETRIEVED = "";
-console.log("DEBUG [Constant]> IV_RUNTIME: " + IV_RUNTIME.toString('hex');
+console.log("DEBUG [Constant]> IV_RUNTIME: " + IV_RUNTIME.toString('hex'));
 
 // Initialise CHASbot
 const CHASbot = express();
