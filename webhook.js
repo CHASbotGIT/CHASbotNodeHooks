@@ -31,6 +31,7 @@ const dialogFlow = require('apiai')(KEY_DIALOGFLOW); // https://www.npmjs.com/pa
 const fs = require("fs"); // https://nodejs.org/api/fs.html
 const http = require('https'); // https://nodejs.org/api/https.html
 const crypto = require('crypto'); // https://nodejs.org/api/crypto.html
+const iv = crypto.randomBytes(16);
 // Initialise CHASbot
 const CHASbot = express();
 CHASbot.use(bodyParser.json());
@@ -286,7 +287,7 @@ function urlExists(url, cb) {
 var enCrypt = function(text_plain) {
   let algorithm = 'aes-256-ctr';
   let passkey = KEY_CRYPTO;
-  let cipher = crypto.createCipheriv(algorithm,passkey,"patch")
+  let cipher = crypto.createCipheriv(algorithm,passkey,iv)
   let crypted = cipher.update(text_plain,'utf-8','hex')
   crypted += cipher.final('hex');
   return crypted;
@@ -294,7 +295,7 @@ var enCrypt = function(text_plain) {
 var deCrypt = function(text_obscure) {
   let algorithm = 'aes-256-ctr';
   let passkey = KEY_CRYPTO;
-  let decipher = crypto.createDecipheriv(algorithm,passkey,"patch")
+  let decipher = crypto.createDecipheriv(algorithm,passkey,iv)
   let dec = decipher.update(text_obscure,'hex','utf-8')
   dec += decipher.final('utf-8');
   return dec;
