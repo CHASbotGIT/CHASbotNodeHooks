@@ -296,6 +296,7 @@ var enCrypt = function(text_plain) {
   let cipher = crypto.createCipheriv(ALGO,Buffer.from(KEY_CRYPTO),IV_RUNTIME);
   let crypted = cipher.update(text_plain);
   crypted = Buffer.concat([crypted, cipher.final()]);
+  console.log(crypted.toString('hex'));
   return crypted.toString('hex');
 }
 var deCrypt = function(text_obscure) {
@@ -310,10 +311,10 @@ function enCryptFileContents () {
   let stream = fs.createWriteStream(FILE_ENCRYPTED, "utf-8");
   stream.once('open', function(fd) {
     // Start the file dynamic key
-    stream.write(IV_RUNTIME + ':')
+    stream.write(IV_RUNTIME + ':');
     let stream_loop = 0;
     for (stream_loop = 0; stream_loop < text_block_split.length; stream_loop++) {
-      console.log("DEBUG [enCryptFileContents]> " + text_block_split[stream_loop]);
+      //console.log("DEBUG [enCryptFileContents]> " + text_block_split[stream_loop]);
       if (stream_loop == text_block_split.length - 1 ) {
         stream.write(enCrypt(text_block_split[stream_loop])); // Last line
       } else {
