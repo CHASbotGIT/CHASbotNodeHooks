@@ -10,7 +10,7 @@
 const KEY_ROOT = process.env.KEY_ROOT;
 const KEY_ADMIN = process.env.KEY_ADMIN;
 const KEY_VERIFY = process.env.KEY_VERIFY;
-//const KEY_CRYPTO = process.env.KEY_CRYPTO;
+const KEY_CRYPTO = process.env.KEY_CRYPTO;
 const URL_CHASBOT = process.env.APP_URL;
 const URL_POSTGRES = process.env.DATABASE_URL;
 const KEY_API_GIPHY = process.env.KEY_API_GIPHY;
@@ -32,11 +32,12 @@ const fs = require("fs"); // https://nodejs.org/api/fs.html
 const http = require('https'); // https://nodejs.org/api/https.html
 const crypto = require('crypto'); // https://nodejs.org/api/crypto.html
 // Difining algorithm
-const algorithm = 'aes-256-cbc';
-// Defining key
-const key = crypto.randomBytes(32);
-// Defining iv
-const iv = crypto.randomBytes(16);
+const ALGO = 'aes-256-cbc';
+// Defining iv length
+const IV_LENGTH = 16; // For AES, this is always 16
+const IV_RUNTIME = crypto.randomBytes(IV_LENGTH);
+var IV_RETRIEVED = "";
+console.log("DEBUG [Constant]> IV_RUNTIME: " + IV_RUNTIME.toString('hex');
 
 // Initialise CHASbot
 const CHASbot = express();
@@ -73,13 +74,14 @@ setInterval(function() {
 // https://developers.facebook.com/docs/messenger-platform/send-messages/templates
 // File dependencies
 const FILE_HIGH = "./high_score.txt"; // Same directory as source code
-const FILE_BIOGS = "./bios_private.txt"; // "./fundraising_private.txt" "./ids_private.txt"
 const FILE_HOOKS = "./hooks.txt";
 const FILE_SURVEY = "./survey.txt";
 const FILE_CALENDAR = "./calendar.txt";
 const FILE_ENCRYPTED_IDS = "./ids_public.txt";
 const FILE_ENCRYPTED_BIOS = "./bios_public.txt";
+const FILE_TO_BE_ENCRYPTED = "./bios_private.txt"; // "./fundraising_private.txt" "./ids_private.txt"
 const FILE_ENCRYPTED_FR_CARD = "./fundraising_public.txt";
+const FILE_ENCRYPTED = FILE_ENCRYPTED_BIOS // FILE_ENCRYPTED_IDS FILE_ENCRYPTED_FR_CARD
 // Messages
 const MSG_NO_HOOK = "🐞 Any other day, that might have worked but not today, sorry!";
 const MSG_RPSLS_INTRO = "💡 First to five is the champion. Scissors cuts Paper, Paper covers Rock, Rock crushes Lizard, Lizard poisons Spock, Spock smashes Scissors, Scissors decapitates Lizard, Lizard eats Paper, Paper disproves Spock, Spock vaporizes Rock, and Rock crushes Scissors!";
@@ -291,7 +293,7 @@ function urlExists(url, cb) {
 
 // Encryption and decryption of files
 var enCrypt = function(text_plain) {
-  let cipher = crypto.createCipheriv(algorithm,Buffer.from(key),iv);
+  let cipher = crypto.createCipheriv(ALGO,Buffer.from(KEY_CRYPTO),IV_RUNTIME);
   let crypted = cipher.update(text_plain);
   crypted = Buffer.concat([crypted, cipher.final()]);
   return crypted.toString('hex');
@@ -302,14 +304,16 @@ var deCrypt = function(text_obscure) {
   dec = Buffer.concat([dec, decipher.final()]);
   return dec.toString();
 }
-function enCryptBios () {
-  let text_block = fs.readFileSync(FILE_BIOGS, "utf-8");
+function enCryptFileContents () {
+  let text_block = fs.readFileSync(FILE_TO_BE_ENCRYPTED, "utf-8");
   let text_block_split = text_block.split("\n");
-  let stream = fs.createWriteStream(FILE_ENCRYPTED_IDS, "utf-8");
+  let stream = fs.createWriteStream(FILE_ENCRYPTED, "utf-8");
   stream.once('open', function(fd) {
+    // Start the file dynamic key
+    stream.write(IV_RUNTIME + ':')
     let stream_loop = 0;
     for (stream_loop = 0; stream_loop < text_block_split.length; stream_loop++) {
-      //console.log("DEBUG [enCryptBios]> " + text_block_split[stream_loop]);
+      console.log("DEBUG [enCryptFileContents]> " + text_block_split[stream_loop]);
       if (stream_loop == text_block_split.length - 1 ) {
         stream.write(enCrypt(text_block_split[stream_loop])); // Last line
       } else {
@@ -572,7 +576,8 @@ function highScore(read_write) {
 // LOAD
 loadHooks();
 // Load in encrypted information
-//enCryptBios(); // Run once to encrypt biography CHAS file
+// Update Constants FILE_TO_BE_ENCRYPTED (input) and FILE_ENCRYPTED (output)
+enCryptFileContents(); // Run once to encrypt files
 //deCryptContents(); // Normal runtime configuration
 var CHAS_EVENTS_VIABLE = loadCalendar();
 //console.log("DEBUG [postloadCalendar]> Viable? " + CHAS_EVENTS_VIABLE);
