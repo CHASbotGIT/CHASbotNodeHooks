@@ -301,10 +301,11 @@ var enCrypt = function(text_plain) {
   return crypted.toString('hex');
 }
 var deCrypt = function(text_obscure) {
-  console.log("DEBUG [deCrypt]> text_obscure: " + text_obscure);
-  let decipher = crypto.createDecipheriv(ALGO,Buffer.from(KEY_CRYPTO),IV_RETRIEVED);
+  console.log("DEBUG [deCrypt]> obscured: " + text_obscure);
+  let decipher = crypto.createDecipheriv(ALGO,Buffer.from(KEY_CRYPTO),Buffer.from(KEY_IV,'hex'));
   let dec = decipher.update(text_obscure);
   dec = Buffer.concat([dec, decipher.final()]);
+  console.log("DEBUG [deCrypt]> transparent: " + text_obscure);
   return dec.toString();
 }
 function enCryptFileContents () {
@@ -327,10 +328,10 @@ function enCryptFileContents () {
 function deCryptContents () {
   let text_block = fs.readFileSync(FILE_ENCRYPTED_BIOS, "utf-8");
   let strip_iv_from_block = text_block.split(":");
-  console.log("DEBUG [deCryptContents]> IV_RETRIEVED (hex): " + strip_iv_from_block[0]);
-  IV_RETRIEVED = Buffer.from(strip_iv_from_block[0],'hex');
+  //console.log("DEBUG [deCryptContents]> IV_RETRIEVED (hex): " + strip_iv_from_block[0]);
+  //IV_RETRIEVED = Buffer.from(strip_iv_from_block[0],'hex');
   //IV_RETRIEVED = hexStringToByte(strip_iv_from_block[0]);
-  console.log("DEBUG [deCryptContents]> IV_RETRIEVED (raw): " + IV_RETRIEVED);
+  //console.log("DEBUG [deCryptContents]> IV_RETRIEVED (raw): " + IV_RETRIEVED);
   //console.log("DEBUG [deCryptContents]> Block to decipher: " + strip_iv_from_block[1]);
   let text_block_split_garbled = strip_iv_from_block[1].split("\n");
   CHAS_BIOGS = new Array();
@@ -584,8 +585,8 @@ function highScore(read_write) {
 loadHooks();
 // Load in encrypted information
 // Update Constants FILE_TO_BE_ENCRYPTED (input) and FILE_ENCRYPTED (output)
-enCryptFileContents(); // Run once to encrypt files
-//deCryptContents(); // Normal runtime configuration
+//enCryptFileContents(); // Run once to encrypt files
+deCryptContents(); // Normal runtime configuration
 var CHAS_EVENTS_VIABLE = loadCalendar();
 //console.log("DEBUG [postloadCalendar]> Viable? " + CHAS_EVENTS_VIABLE);
 var SURVEY_VIABLE = loadSurvey();
