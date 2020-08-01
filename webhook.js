@@ -28,7 +28,7 @@ const pg = require('pg'); // https://www.npmjs.com/package/pg
 const request = require('request'); // https://github.com/request/request
 const express = require('express'); // https://expressjs.com
 const bodyParser = require('body-parser'); // https://github.com/expressjs/body-parser
-const dialogFlow = require('apiai')(KEY_DIALOGFLOW); // https://www.npmjs.com/package/apiai
+//const dialogFlow = require('apiai')(KEY_DIALOGFLOW); // https://www.npmjs.com/package/apiai
 
 const dialogflow = require('dialogflow');
 
