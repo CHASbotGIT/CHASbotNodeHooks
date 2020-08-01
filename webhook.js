@@ -301,9 +301,11 @@ var enCrypt = function(text_plain) {
   return crypted.toString('hex');
 }
 var deCrypt = function(text_obscure) {
-  //console.log("DEBUG [deCrypt]> obscured: " + text_obscure);
+  console.log("DEBUG [deCrypt]> obscured: " + text_obscure);
   let decipher = crypto.createDecipheriv(ALGO,Buffer.from(KEY_CRYPTO),Buffer.from(KEY_IV,'hex'));
-  let dec = decipher.update(Buffer.from(text_obscure,'hex'));
+  let text_obscure_buffer = Buffer.from(text_obscure,'hex');
+  console.log("DEBUG [deCrypt]> buffered: " + text_obscure_buffer);
+  let dec = decipher.update(text_obscure_buffer);
   dec = Buffer.concat([dec, decipher.final()]);
   return dec.toString();
 }
