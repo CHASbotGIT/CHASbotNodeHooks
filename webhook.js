@@ -1500,17 +1500,34 @@ const sessionClient = new dialogflow.SessionsClient(
   }
 );
 
+const uuid = require('uuid');
+
+const sessionIds = new Map();
+const usersMap = new Map();
+
+function setSessionAndUser(senderID) {
+  if (!sessionIds.has(senderID)) {
+    sessionIds.set(senderID, uuid.v1());
+  }
+  if (!usersMap.has(senderID)) {
+    userService.addUser(function(user){
+      usersMap.set(senderID, user);
+    }, senderID);
+  }
+}
+
 //https://github.com/kamjony/Chatbot-DialogFlowV2-Messenger-NodeJS
 async function sendViaDialogV2(eventSend) {
   //sendTypingOn(sender);
   console.log('sendViaDialogV2')
   let sender = eventSend.sender.id;
+  setSessionAndUser(sender);
   let dialogFlowQuery = eventSend.message.text;
   console.log(dialogFlowQuery);
   try {
     const sessionPath = sessionClient.sessionPath(
       GOOGLE_PROJECT_ID,
-      sender
+      sessionIds.get(sender)
     );
     const request = {
       session: sessionPath,
