@@ -1506,6 +1506,7 @@ const sessionIds = new Map();
 const usersMap = new Map();
 
 function setSessionAndUser(senderID) {
+  console.log("setSessionAndUser" + senderID);
   if (!sessionIds.has(senderID)) {
     sessionIds.set(senderID, uuid.v1());
   }
@@ -1546,48 +1547,6 @@ async function sendViaDialogV2(eventSend) {
     console.log('error');
     console.log(e);
   }
-}
-
-
-function sendViaDialogWIP(eventSend) {
-  let projectId = 'chasbot-c43d7'
-  let sender = eventSend.sender.id;
-  let dialogFlowQuery = eventSend.message.text;
-  // A unique identifier for the given session
-  let sessionId = 'sessionID' + sender;
-  //const sessionId = uuid.v4();
-  // Create a new session
-  const sessionClient = new dialogflow.SessionsClient();
-  const sessionPath = sessionClient.sessionPath(projectId, sessionId);
-  // The text query request.
-  const request = {
-    session: sessionPath,
-    queryInput: {
-      text: {
-        // The query to send to the dialogflow agent
-        text: dialogFlowQuery,
-        // The language used by the client (en-US)
-        languageCode: 'en-UK',
-      },
-    },
-  };
-  // Send request and log result
-     sessionClient
-       .detectIntent(request)
-       .then(responses => {
-         console.log('Detected intent');
-         const result = responses[0].queryResult;
-         console.log(`  Query: ${result.queryText}`);
-         console.log(`  Response: ${result.fulfillmentText}`);
-         if (result.intent) {
-           console.log(`  Intent: ${result.intent.displayName}`);
-         } else {
-           console.log(`  No intent matched.`);
-         }
-       })
-       .catch(err => {
-         console.error('ERROR:', err);
-       });
 }
 
 // Message request pinged off of API.AI for response
