@@ -30,7 +30,7 @@ const express = require('express'); // https://expressjs.com
 const bodyParser = require('body-parser'); // https://github.com/expressjs/body-parser
 //const dialogFlow = require('apiai')(KEY_DIALOGFLOW); // https://www.npmjs.com/package/apiai
 
-const dialogflow = require('@google-cloud/dialogflow').v2;
+const dialogflow = require('@google-cloud/dialogflow');
 
 // Node.js libraries used
 const fs = require("fs"); // https://nodejs.org/api/fs.html
@@ -1525,7 +1525,7 @@ async function sendViaDialogV2(eventSend) {
 // Latest: 29 June 2020: v1 DialogFlow is being deprecated
 // https://cloud.google.com/dialogflow/docs/release-notes
 // APIAI is therefore also deprecated
-function sendViaDialog(eventSend) {
+/*function sendViaDialog(eventSend) {
   let sender = eventSend.sender.id;
   let text = eventSend.message.text;
   let apiai = dialogFlow.textRequest(text, {
@@ -1575,7 +1575,7 @@ function sendViaDialog(eventSend) {
     console.log("ERROR [sendViaDialog]> Undefined: " + error);
   });
   apiai.end();
-}
+}*/
 
 // Posting functions
 // =================
