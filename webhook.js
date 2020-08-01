@@ -1522,6 +1522,13 @@ async function sendViaDialogV2(eventSend) {
     };
     // Send request and log result
     const responses = await sessionClient.detectIntent(request);
+
+    console.log('fulfillmentMessages.fulfillmentText ' + result.fulfillmentMessages.fulfillmentText);
+    console.log('fulfillmentMessages ' + result.fulfillmentMessages);
+    console.log('action ' + result.action);
+    console.log('outputContexts ' + result.outputContexts);
+    console.log('parameters ' + result.parameters);
+
     console.log('Detected intent');
     const result = responses[0].queryResult;
     console.log("INFO [sendViaDialogV2]> Query: " + result.queryText);
@@ -1566,7 +1573,6 @@ async function sendViaDialogV2(eventSend) {
         sendTextDirect(eventLoopback,loopbackText);
       };
     };
-
 
   } catch (e) {
     console.log("ERROR [sendViaDialogV2]> Undefined: " + e);
