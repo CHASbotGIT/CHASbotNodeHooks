@@ -1486,7 +1486,39 @@ function sendTextDirect(eventSend,outbound_text) {
   }); // request
 }
 
+
 async function sendViaDialogV2(eventSend) {
+  //sendTypingOn(sender);
+  const PROJECT_ID = 'chasbot-c43d7'
+  let sender = eventSend.sender.id;
+  let dialogFlowQuery = eventSend.message.text;
+  const sessionClient = new dialogflow.SessionsClient();
+  try {
+    const sessionPath = sessionClient.sessionPath(
+      config.PROJECT_ID,
+      sender
+    );
+    const request = {
+      session: sessionPath,
+      queryInput: {
+        text: {
+          text: dialogFlowQuery,
+          languageCode: 'en-UK',
+        },
+      },
+    };
+    const responses = await sessionClient.detectIntent(request);
+    const result = responses[0].queryResult;
+    console.log(result)
+    //handleDialogFlowResponse(sender, result);
+  } catch (e) {
+    console.log('error');
+    console.log(e);
+  }
+}
+
+
+function sendViaDialogWIP(eventSend) {
   let projectId = 'chasbot-c43d7'
   let sender = eventSend.sender.id;
   let dialogFlowQuery = eventSend.message.text;
