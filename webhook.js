@@ -1499,6 +1499,7 @@ const sessionClient = new dialogflow.SessionsClient(
     credentials
   }
 );
+console.log('^^^^^^^^^^^' + sessionClient);
 
 const uuid = require('uuid');
 
@@ -1521,7 +1522,6 @@ function setSessionAndUser(senderID) {
 async function sendViaDialogV2(eventSend) {
   //sendTypingOn(sender);
   console.log('>>>>>>>> sendViaDialogV2 <<<<<<<<');
-  console.log('######## ' + eventSend.message.text);
 
   let sender = eventSend.sender.id;
   //setSessionAndUser(sender);
@@ -1551,7 +1551,7 @@ async function sendViaDialogV2(eventSend) {
     //handleDialogFlowResponse(sender, result);
   } catch (e) {
     console.log('error');
-    console.log('what is it ' + e)
+    console.log('>>>>>>>>>>>>>> ERROR:' + e)
     //process.exit(1);
   }
 }
