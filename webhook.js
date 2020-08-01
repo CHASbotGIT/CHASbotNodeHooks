@@ -1523,7 +1523,7 @@ async function sendViaDialogV2(eventSend) {
   console.log('>>>>>>>> sendViaDialogV2 <<<<<<<<');
   let sender = eventSend.sender.id;
   setSessionAndUser(sender);
-  console.log ('>>>>>>> we are back...'');
+  console.log ('>>>>>>> we are back...');
   let dialogFlowQuery = eventSend.message.text;
   console.log('>>>>>>>> dialogFlowQuery: ' + dialogFlowQuery);
   try {
