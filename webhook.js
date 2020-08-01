@@ -1541,7 +1541,7 @@ async function sendViaDialogV2(eventSend) {
     };
     const responses = await sessionClient.detectIntent(request);
     const result = responses[0].queryResult;
-    console.log(result)
+    console.log('result? ' + result);
     //handleDialogFlowResponse(sender, result);
   } catch (e) {
     console.log('error');
