@@ -1551,8 +1551,8 @@ async function sendViaDialogV2(eventSend) {
     //handleDialogFlowResponse(sender, result);
   } catch (e) {
     console.log('error');
-    console.log('what is it ' + e);
-    process.exit(1);
+    console.log('what is it ' + e)
+    //process.exit(1);
   }
 }
 
