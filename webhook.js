@@ -1506,7 +1506,7 @@ const sessionIds = new Map();
 const usersMap = new Map();
 
 function setSessionAndUser(senderID) {
-  console.log("setSessionAndUser" + senderID);
+  console.log("setSessionAndUser: " + senderID);
   if (!sessionIds.has(senderID)) {
     sessionIds.set(senderID, uuid.v4());
   }
@@ -1521,9 +1521,14 @@ function setSessionAndUser(senderID) {
 async function sendViaDialogV2(eventSend) {
   //sendTypingOn(sender);
   console.log('>>>>>>>> sendViaDialogV2 <<<<<<<<');
+  console.log('######## ' + eventSend.message.text);
+
   let sender = eventSend.sender.id;
   setSessionAndUser(sender);
-  console.log ('>>>>>>> we are back...');
+  
+  onsole.log('######## ' + sessionIds.get(sender));
+
+
   let dialogFlowQuery = eventSend.message.text;
   console.log('>>>>>>>> dialogFlowQuery: ' + dialogFlowQuery);
   try {
