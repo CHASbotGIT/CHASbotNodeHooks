@@ -1503,9 +1503,9 @@ const sessionClient = new dialogflow.SessionsClient(
 //https://github.com/kamjony/Chatbot-DialogFlowV2-Messenger-NodeJS
 async function sendViaDialogV2(eventSend) {
   let sender = eventSend.sender.id;
-  let dialogFlowQuery = eventSend.message.text;
+  let dialogFlowInbound = eventSend.message.text;
   console.log("INFO [sendViaDialogV2]> Sender: " + sender);
-  console.log("INFO [sendViaDialogV2]> Request: " + dialogFlowQuery);
+  console.log("INFO [sendViaDialogV2]> Request: " + dialogFlowInbound);
   try {
     const sessionPath = sessionClient.projectAgentSessionPath(
       GOOGLE_PROJECT_ID,
@@ -1515,7 +1515,7 @@ async function sendViaDialogV2(eventSend) {
       session: sessionPath,
       queryInput: {
         text: {
-          text: dialogFlowQuery,
+          text: dialogFlowInbound,
           languageCode: 'en-UK',
         },
       },
@@ -1525,12 +1525,46 @@ async function sendViaDialogV2(eventSend) {
     console.log('Detected intent');
     const result = responses[0].queryResult;
     console.log("INFO [sendViaDialogV2]> Query: " + result.queryText);
-    console.log("INFO [sendViaDialogV2]> Response: " + result.fulfillmentText);
+    let dialogFlowText = result.fulfillmentText;
+    console.log("INFO [sendViaDialogV2]> Response: " + dialogFlowText);
     if (result.intent) {
       console.log("INFO [sendViaDialogV2]> Intent: " + result.intent.displayName);
     } else {
       console.log("INFO [sendViaDialogV2]> Intent: NONE MATCHED");
     }
+
+    let hooked = false;
+    if (HOOKS_CUSTOM.length > 0) { // Have custom hooks to check
+      for (var i = 0; i < HOOKS_CUSTOM.length; i++) {
+        if (HOOKS_CUSTOM[i][0] && dialogFlowText == HOOKS_CUSTOM[i][2]) { // Found custom
+          console.log("INFO [sendViaDialogV2]> Response: Template " + HOOKS_CUSTOM[i][2] + " (" + HOOKS_CUSTOM[i][1] + ")");
+          if (HOOKS_CUSTOM[i][1] == 'image') {
+            postImage(eventSend,HOOKS_CUSTOM[i][3],false,'');
+          } else if (HOOKS_CUSTOM[i][1] == 'image_text') {
+            postImage(eventSend,HOOKS_CUSTOM[i][3],true,HOOKS_CUSTOM[i][4]);
+          } else if (HOOKS_CUSTOM[i][1] == 'button') {
+            postLinkButton(eventSend,HOOKS_CUSTOM[i][3],HOOKS_CUSTOM[i][4],HOOKS_CUSTOM[i][5]);
+          };
+          hooked = true;
+          break;
+        }; // if
+      }; // for
+    }; // if
+    if (!hooked) { // No hook
+      if (dialogFlowText == '') {dialogFlowText = MSG_NO_HOOK}; // Catch empty dialogflow responses
+      console.log("INFO [sendViaDialogV2]> Response: " + dialogFlowText);
+      sendTextDirect(eventSend,dialogFlowText);
+      // Look out for unknown response and cc. admin
+      if (response.result.action == 'input.unknown'||response.result.action.slice(0,21)=='DefaultFallbackIntent') {
+        let loopbackText = sender + ">>" + customGreeting(sender,false) + ">>" + response.result.resolvedQuery;
+        console.log("ADMIN [sendViaDialogV2]> Feedback: " + loopbackText);
+        let eventLoopback = eventSend;
+        eventLoopback.sender.id = KEY_ADMIN;
+        sendTextDirect(eventLoopback,loopbackText);
+      };
+    };
+
+
   } catch (e) {
     console.log("ERROR [sendViaDialogV2]> Undefined: " + e);
   }
