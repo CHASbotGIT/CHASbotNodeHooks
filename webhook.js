@@ -20,17 +20,31 @@ const KEY_DIALOGFLOW = process.env.KEY_DIALOGFLOW;
 const KEY_PAGE_ACCESS = process.env.KEY_PAGE_ACCESS;
 const KEY_API_WEATHER = process.env.KEY_API_WEATHER;
 const KEY_API_MOVIEDB = process.env.KEY_API_MOVIEDB;
+const GOOGLE_PROJECT_ID = process.GOOGLE_PROJECT_ID;
 const KEY_MARVEL_PUBLIC = process.env.KEY_MARVEL_PUBLIC;
 const KEY_ADMIN_TRIGGER = process.env.KEY_ADMIN_TRIGGER;
 const KEY_MARVEL_PRIVATE = process.env.KEY_MARVEL_PRIVATE;
+const GOOGLE_PRIVATE_KEY = process.GOOGLE_PRIVATE_KEY;
+const GOOGLE_CLIENT_EMAIL = process.GOOGLE_CLIENT_EMAIL;
+
 // Set-up dependencies for app
 const pg = require('pg'); // https://www.npmjs.com/package/pg
 const request = require('request'); // https://github.com/request/request
 const express = require('express'); // https://expressjs.com
 const bodyParser = require('body-parser'); // https://github.com/expressjs/body-parser
 //const dialogFlow = require('apiai')(KEY_DIALOGFLOW); // https://www.npmjs.com/package/apiai
-
+// Configure dialogFlow
 const dialogflow = require('@google-cloud/dialogflow');
+const credentials = {
+  client_email: GOOGLE_CLIENT_EMAIL,
+  private_key: GOOGLE_PRIVATE_KEY,
+};
+const sessionClient = new dialogflow.SessionsClient(
+  {
+    projectId: GOOGLE_PROJECT_ID,
+    credentials
+  }
+);
 
 // Node.js libraries used
 const fs = require("fs"); // https://nodejs.org/api/fs.html
@@ -1486,7 +1500,7 @@ function sendTextDirect(eventSend,outbound_text) {
   }); // request
 }
 
-const GOOGLE_PROJECT_ID = "chasbot-c43d7";
+/*const GOOGLE_PROJECT_ID = "chasbot-c43d7";
 const GOOGLE_CLIENT_EMAIL = "dialogflow-murapr@chasbot-c43d7.iam.gserviceaccount.com";
 const GOOGLE_PRIVATE_KEY = "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCZS1U7kmASrkYp\nvQj0ZHIEdIZGqfrRHhngNIBfvu5Zxska/pFxAwKn1X42XlbIdy1ZtZ1mbZVW97sZ\nRZKfijMZTFy28KyJKmrL4B7bcDrS8eBsuVkOZoGhJ/ZtoAJiiiIOD5MKtqBEvNDI\n4TMY0FSdLbj5X19B992seGgvfXafywBz9uzGaaCY/66ihFKhwg60MmBHmcDwmRxU\nwtmbUHNdyZ9LqWZ6AxjUb4TRMXwjY1BMYyHSq7kqPy9qFerjQhHgDj6nwmhmAftP\njBWDiZN+ZAAi4o9WWTsmypOQ62+l731qcyNST52HAE3geDbSJTUQywyfJBJb36u0\ndaK66jNFAgMBAAECggEAL0yQxHxSO4FdcdR7llkF2z0PD2+0TeDxT/4zHBfgGIBf\nHf6tZsbsg1e7BVCPi3RGYHdK1Ud7vGVc7BvM9YAhay1mMCZLvlkBsd159/CFnf/2\n5OU9xtU3K0AW59Vm1vvTLS5+CuC1y+/MpibiasYhTYxFlmBoloTB980BLKIUP5Jb\njx1NK8W4sI63L9uv5siGD0d/q8Wj3FRrIdWqijiB0jd2ZYgX1ybrpcPTOw+NCHv2\nvckNHn7cEaDVLgsrguUsRcgNxofOS0J9m9BhmsmCgbZmtbpg+ic2jZ7b9C/MaQnH\nWqbK0UrhfPFdAlrmcuwyos4mTEzeWlQsqF2yTvHMAwKBgQDT5izYEYl4Lmr/WEs4\n4YM8IWI2bf67f6USdNlJ6nINr/6h4OxqtKhyHl3utQ1+afWQNR4fYwbGk7bMKdpG\neK6YlClP0Rw2+tfT8Rmc7wcm7/upgWgcH913F6ORXSeeHYh592DbHyl/cw2D0dCN\nUwBDNs26z+LLDpvBp1L27SzFKwKBgQC5MrxPS43H9TTsRw2pW5HApLT/Blw9WoQ/\nK09vrPtJSvRPXsS9PbhZUC7bGdU7vOXExzfOes9/EUvIB9+cdxNFtVihTXD61cgm\nUHbsBctPIDLr4ByMvasslj1j4nRGmZksRZoXIR5sUVMwGUcTodyoFTb6L3rfT9De\nWmgE7USRTwKBgQCUOr8CAvqMVMRKjWRJjQ+1v5CpjLaWSQubZpwd5eAVDRlt+h7H\n4kq3UeDZvFONK+g5Eb9Zq3cw8GH+XgSwKXnRiEuB50D6gOz7+Pu22UrChTwh7kF6\n8xuEVMf6RxUQuY4f69oYTqtD2aMJpHtkcTyMyEiQNx5qd3Sjuj4COBWKcwKBgHiF\nHOjZeT3sQ/GTV7+j2JkuVp8z62j989wL+ljpkGok/hJ80Ll6ZfKxbJynFg4XIsvI\n/XdAkrHVdqSJAysWjpMprbDi7ag+4U6VxJ5aMvGeOaUopkuszq1oZDERWKvtHzIh\nZWKx6dOBpQpDGO8cwbUcgTeVGHgkv/9DhDfYlGufAoGAHGj+cAVHuG/YK+uvqrHF\nNR7YzR7ehdFWJw6I7fX84K3M3UO/ykSAG10P7VY5oCSwSk8UAkjL9XSG3mgvURF/\n1A+Rv0DuA61zcXBrRj1jNVH75yO/8FSeJBdrdXK6oB9jy1u1LeB0Dsal0P6YMDHJ\nuHU+nKghFwgf1Zcd3HWNpPI=\n-----END PRIVATE KEY-----\n";
 const credentials = {
@@ -1498,7 +1512,7 @@ const sessionClient = new dialogflow.SessionsClient(
     projectId: GOOGLE_PROJECT_ID,
     credentials
   }
-);
+);*/
 
 //https://github.com/kamjony/Chatbot-DialogFlowV2-Messenger-NodeJS
 async function sendViaDialogV2(eventSend) {
