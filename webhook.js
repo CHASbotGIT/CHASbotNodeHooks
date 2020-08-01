@@ -20,12 +20,12 @@ const KEY_DIALOGFLOW = process.env.KEY_DIALOGFLOW;
 const KEY_PAGE_ACCESS = process.env.KEY_PAGE_ACCESS;
 const KEY_API_WEATHER = process.env.KEY_API_WEATHER;
 const KEY_API_MOVIEDB = process.env.KEY_API_MOVIEDB;
-const GOOGLE_PROJECT_ID = process.GOOGLE_PROJECT_ID;
+const GOOGLE_PROJECT_ID = process.env.GOOGLE_PROJECT_ID;
 const KEY_MARVEL_PUBLIC = process.env.KEY_MARVEL_PUBLIC;
 const KEY_ADMIN_TRIGGER = process.env.KEY_ADMIN_TRIGGER;
 const KEY_MARVEL_PRIVATE = process.env.KEY_MARVEL_PRIVATE;
-const GOOGLE_PRIVATE_KEY = process.GOOGLE_PRIVATE_KEY;
-const GOOGLE_CLIENT_EMAIL = process.GOOGLE_CLIENT_EMAIL;
+const GOOGLE_PRIVATE_KEY = process.env.GOOGLE_PRIVATE_KEY;
+const GOOGLE_CLIENT_EMAIL = process.env.GOOGLE_CLIENT_EMAIL;
 
 // Set-up dependencies for app
 const pg = require('pg'); // https://www.npmjs.com/package/pg
