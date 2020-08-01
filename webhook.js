@@ -7,6 +7,7 @@
 'use strict';
 // Pick up variables from the server implementation || Remove API keys
 // Source: https://github.com/CHASbotGIT/CHASbotNodeHooks
+const KEY_IV = process.env.KEY_IV;
 const KEY_ROOT = process.env.KEY_ROOT;
 const KEY_ADMIN = process.env.KEY_ADMIN;
 const KEY_VERIFY = process.env.KEY_VERIFY;
@@ -33,13 +34,6 @@ const http = require('https'); // https://nodejs.org/api/https.html
 const crypto = require('crypto'); // https://nodejs.org/api/crypto.html
 // Difining algorithm
 const ALGO = 'aes-256-cbc';
-const KEY_IV = process.env.KEY_IV;
-// Defining iv length
-//const IV_LENGTH = 16; // For AES, this is always 16
-//const IV_RUNTIME = crypto.randomBytes(IV_LENGTH);
-//var IV_RETRIEVED = IV_RUNTIME;
-//console.log("DEBUG [Constant]> IV_RUNTIME (raw): " + IV_RUNTIME);
-//console.log("DEBUG [Constant]> IV_RUNTIME (hex): " + IV_RUNTIME.toString('hex'));
 
 // Initialise CHASbot
 const CHASbot = express();
@@ -81,9 +75,9 @@ const FILE_SURVEY = "./survey.txt";
 const FILE_CALENDAR = "./calendar.txt";
 const FILE_ENCRYPTED_IDS = "./ids_public.txt";
 const FILE_ENCRYPTED_BIOS = "./bios_public.txt";
-const FILE_TO_BE_ENCRYPTED = "./bios_private.txt"; // "./fundraising_private.txt" "./ids_private.txt"
+const FILE_TO_BE_ENCRYPTED = "./fundraising_private.txt"; // "./bios_private.txt"  "./ids_private.txt"
 const FILE_ENCRYPTED_FR_CARD = "./fundraising_public.txt";
-const FILE_ENCRYPTED = FILE_ENCRYPTED_BIOS // FILE_ENCRYPTED_IDS FILE_ENCRYPTED_FR_CARD
+const FILE_ENCRYPTED = FILE_ENCRYPTED_FR_CARD; // FILE_ENCRYPTED_BIOS FILE_ENCRYPTED_IDS
 // Messages
 const MSG_NO_HOOK = "🐞 Any other day, that might have worked but not today, sorry!";
 const MSG_RPSLS_INTRO = "💡 First to five is the champion. Scissors cuts Paper, Paper covers Rock, Rock crushes Lizard, Lizard poisons Spock, Spock smashes Scissors, Scissors decapitates Lizard, Lizard eats Paper, Paper disproves Spock, Spock vaporizes Rock, and Rock crushes Scissors!";
@@ -295,19 +289,21 @@ function urlExists(url, cb) {
 
 // Encryption and decryption of files
 var enCrypt = function(text_plain) {
+  console.log("DEBUG [enCrypt]> plain: " + text_plain);
   let cipher = crypto.createCipheriv(ALGO,Buffer.from(KEY_CRYPTO),Buffer.from(KEY_IV,'hex'));
   let crypted = cipher.update(text_plain);
   crypted = Buffer.concat([crypted, cipher.final()]);
+  console.log("DEBUG [enCrypt]> obscured: " + crypted);
   return crypted.toString('hex');
 }
 var deCrypt = function(text_obscure) {
-  console.log("DEBUG [deCrypt]> obscured: " + text_obscure);
+  //console.log("DEBUG [deCrypt]> obscured: " + text_obscure);
   let decipher = crypto.createDecipheriv(ALGO,Buffer.from(KEY_CRYPTO),Buffer.from(KEY_IV,'hex'));
   let text_obscure_buffer = Buffer.from(text_obscure,'hex');
-  console.log("DEBUG [deCrypt]> buffered: " + text_obscure_buffer);
+  //console.log("DEBUG [deCrypt]> buffered: " + text_obscure_buffer);
   let dec = decipher.update(text_obscure_buffer);
   dec = Buffer.concat([dec, decipher.final()]);
-  console.log("DEBUG [deCrypt]> deciphered: " + dec);
+  //console.log("DEBUG [deCrypt]> deciphered: " + dec);
   return dec.toString();
 }
 function enCryptFileContents () {
@@ -329,12 +325,6 @@ function enCryptFileContents () {
 }
 function deCryptContents () {
   let text_block = fs.readFileSync(FILE_ENCRYPTED_BIOS, "utf-8");
-  //let strip_iv_from_block = text_block.split(":");
-  //console.log("DEBUG [deCryptContents]> IV_RETRIEVED (hex): " + strip_iv_from_block[0]);
-  //IV_RETRIEVED = Buffer.from(strip_iv_from_block[0],'hex');
-  //IV_RETRIEVED = hexStringToByte(strip_iv_from_block[0]);
-  //console.log("DEBUG [deCryptContents]> IV_RETRIEVED (raw): " + IV_RETRIEVED);
-  //console.log("DEBUG [deCryptContents]> Block to decipher: " + strip_iv_from_block[1]);
   let text_block_split_garbled = text_block.split("\n");
   CHAS_BIOGS = new Array();
   let decrypt_loop = 0;
@@ -587,8 +577,8 @@ function highScore(read_write) {
 loadHooks();
 // Load in encrypted information
 // Update Constants FILE_TO_BE_ENCRYPTED (input) and FILE_ENCRYPTED (output)
-//enCryptFileContents(); // Run once to encrypt files
-deCryptContents(); // Normal runtime configuration
+enCryptFileContents(); // Run once to encrypt files
+//deCryptContents(); // Normal runtime configuration
 var CHAS_EVENTS_VIABLE = loadCalendar();
 //console.log("DEBUG [postloadCalendar]> Viable? " + CHAS_EVENTS_VIABLE);
 var SURVEY_VIABLE = loadSurvey();
