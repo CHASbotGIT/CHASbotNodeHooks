@@ -1524,8 +1524,8 @@ async function sendViaDialogV2(eventSend) {
   console.log('######## ' + eventSend.message.text);
 
   let sender = eventSend.sender.id;
-  setSessionAndUser(sender);
-  
+  //setSessionAndUser(sender);
+
   onsole.log('######## ' + sessionIds.get(sender));
 
 
@@ -1534,7 +1534,7 @@ async function sendViaDialogV2(eventSend) {
   try {
     const sessionPath = sessionClient.sessionPath(
       GOOGLE_PROJECT_ID,
-      sessionIds.get(sender)
+      sender
     );
     console.log('>>>>>>>> sessionPath: ' + sessionPath);
     const request = {
