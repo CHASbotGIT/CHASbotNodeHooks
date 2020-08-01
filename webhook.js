@@ -75,9 +75,9 @@ const FILE_SURVEY = "./survey.txt";
 const FILE_CALENDAR = "./calendar.txt";
 const FILE_ENCRYPTED_IDS = "./ids_public.txt";
 const FILE_ENCRYPTED_BIOS = "./bios_public.txt";
-const FILE_TO_BE_ENCRYPTED = "./fundraising_private.txt"; // "./bios_private.txt"  "./ids_private.txt"
+const FILE_TO_BE_ENCRYPTED = "./ids_private.txt"; // "./bios_private.txt"  "./fundraising_private.txt"
 const FILE_ENCRYPTED_FR_CARD = "./fundraising_public.txt";
-const FILE_ENCRYPTED = FILE_ENCRYPTED_FR_CARD; // FILE_ENCRYPTED_BIOS FILE_ENCRYPTED_IDS
+const FILE_ENCRYPTED = FILE_ENCRYPTED_IDS; // FILE_ENCRYPTED_FR_CARD FILE_ENCRYPTED_BIOS FILE_ENCRYPTED_IDS
 // Messages
 const MSG_NO_HOOK = "🐞 Any other day, that might have worked but not today, sorry!";
 const MSG_RPSLS_INTRO = "💡 First to five is the champion. Scissors cuts Paper, Paper covers Rock, Rock crushes Lizard, Lizard poisons Spock, Spock smashes Scissors, Scissors decapitates Lizard, Lizard eats Paper, Paper disproves Spock, Spock vaporizes Rock, and Rock crushes Scissors!";
@@ -293,7 +293,8 @@ var enCrypt = function(text_plain) {
   let cipher = crypto.createCipheriv(ALGO,Buffer.from(KEY_CRYPTO),Buffer.from(KEY_IV,'hex'));
   let crypted = cipher.update(text_plain);
   crypted = Buffer.concat([crypted, cipher.final()]);
-  console.log("DEBUG [enCrypt]> obscured: " + crypted);
+  console.log("DEBUG [enCrypt]> obscured (raw): " + crypted);
+  console.log("DEBUG [enCrypt]> obscured (hex): " + crypted.toString('hex'));
   return crypted.toString('hex');
 }
 var deCrypt = function(text_obscure) {
