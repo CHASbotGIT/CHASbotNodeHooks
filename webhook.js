@@ -29,6 +29,11 @@ const request = require('request'); // https://github.com/request/request
 const express = require('express'); // https://expressjs.com
 const bodyParser = require('body-parser'); // https://github.com/expressjs/body-parser
 const dialogFlow = require('apiai')(KEY_DIALOGFLOW); // https://www.npmjs.com/package/apiai
+
+
+const dialogflow = require('@google-cloud/dialogflow');
+//const uuid = require('uuid');
+
 // Node.js libraries used
 const fs = require("fs"); // https://nodejs.org/api/fs.html
 const http = require('https'); // https://nodejs.org/api/https.html
@@ -1279,7 +1284,7 @@ CHASbot.post('/webhook', (req, res) => {
             playHangman(event,hangman_guess);
           } else {
             //console.log("DEBUG [postWebhook_route]> No special cases, send via APIAI");
-            sendViaDialog(event);
+            sendViaDialogV2(event);
           }
         }
       });
@@ -1483,7 +1488,45 @@ function sendTextDirect(eventSend,outbound_text) {
   }); // request
 }
 
+function sendViaDialogV2(eventSend) {
+  let projectId = 'chasbot-c43d7'
+  let sender = eventSend.sender.id;
+  let dialogFlowQuery = eventSend.message.text;
+  // A unique identifier for the given session
+  let sessionId = 'sessionID' + sender;
+  //const sessionId = uuid.v4();
+  // Create a new session
+  const sessionClient = new dialogflow.SessionsClient();
+  const sessionPath = sessionClient.sessionPath(projectId, sessionId);
+  // The text query request.
+  const request = {
+    session: sessionPath,
+    queryInput: {
+      text: {
+        // The query to send to the dialogflow agent
+        text: dialogFlowQuery,
+        // The language used by the client (en-US)
+        languageCode: 'en-UK',
+      },
+    },
+  };
+  // Send request and log result
+  const responses = await sessionClient.detectIntent(request);
+  console.log('Detected intent');
+    const result = responses[0].queryResult;
+    console.log(`  Query: ${result.queryText}`);
+    console.log(`  Response: ${result.fulfillmentText}`);
+    if (result.intent) {
+      console.log(`  Intent: ${result.intent.displayName}`);
+    } else {
+      console.log(`  No intent matched.`);
+    }
+}
+
 // Message request pinged off of API.AI for response
+// Latest: 29 June 2020: v1 DialogFlow is being deprecated
+// https://cloud.google.com/dialogflow/docs/release-notes
+// APIAI is therefore also deprecated
 function sendViaDialog(eventSend) {
   let sender = eventSend.sender.id;
   let text = eventSend.message.text;
@@ -1743,7 +1786,7 @@ function postBiogs(postEvent,success_result,biogs_index,biogs_name) {
     sendTextDirect(postEvent,biogsText);
   } else {
     console.log("INFO [postBiogs]> Reponse: Unsuccessful");
-    sendViaDialog(postEvent);
+    sendViaDialogV2(postEvent);
   };
 }
 
@@ -1841,7 +1884,7 @@ function postFilmTV(postEvent,record_index) {
     MOVIEDB_RECORDS[record_index][7] = true;
     if (MOVIEDB_RECORDS[record_index][1] == 'No TV result' && MOVIEDB_RECORDS[record_index][4] == 'No film result') {
       // No result
-      sendViaDialog(postEvent);
+      sendViaDialogV2(postEvent);
     } else if (MOVIEDB_RECORDS[record_index][1] != 'No TV result' && MOVIEDB_RECORDS[record_index][4] == 'No film result') {
       // TV only
       console.log("INFO [postFilmTV]> Sender: " + sender);
