@@ -1523,14 +1523,15 @@ async function sendViaDialogV2(eventSend) {
     // Send request and log result
     const responses = await sessionClient.detectIntent(request);
 
+    console.log('Detected intent');
+    const result = responses[0].queryResult;
+
     console.log('fulfillmentMessages.fulfillmentText ' + result.fulfillmentMessages.fulfillmentText);
     console.log('fulfillmentMessages ' + result.fulfillmentMessages);
     console.log('action ' + result.action);
     console.log('outputContexts ' + result.outputContexts);
     console.log('parameters ' + result.parameters);
 
-    console.log('Detected intent');
-    const result = responses[0].queryResult;
     console.log("INFO [sendViaDialogV2]> Query: " + result.queryText);
     let dialogFlowText = result.fulfillmentText;
 
