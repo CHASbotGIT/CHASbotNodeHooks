@@ -1500,10 +1500,10 @@ const sessionClient = new dialogflow.SessionsClient(
   }
 );
 
-const uuid = require('uuid');
+//const uuid = require('uuid');
 
-const sessionIds = new Map();
-const usersMap = new Map();
+//const sessionIds = new Map();
+//const usersMap = new Map();
 
 function setSessionAndUser(senderID) {
   console.log("setSessionAndUser: " + senderID);
@@ -1528,7 +1528,7 @@ async function sendViaDialogV2(eventSend) {
   let dialogFlowQuery = eventSend.message.text;
   console.log('>>>>>>>> dialogFlowQuery: ' + dialogFlowQuery);
   try {
-    const sessionPath = sessionClient.sessionPath(
+    const sessionPath = sessionClient.projectAgentSessionPath(
       GOOGLE_PROJECT_ID,
       sender
     );
