@@ -1509,7 +1509,7 @@ async function sendViaDialogV2(eventSend) {
   console.log(dialogFlowQuery);
   try {
     const sessionPath = sessionClient.sessionPath(
-      config.PROJECT_ID,
+      PROJECT_ID,
       sender
     );
     const request = {
