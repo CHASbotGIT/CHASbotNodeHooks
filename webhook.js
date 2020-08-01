@@ -1524,13 +1524,13 @@ async function sendViaDialogV2(eventSend) {
   let sender = eventSend.sender.id;
   setSessionAndUser(sender);
   let dialogFlowQuery = eventSend.message.text;
-  console.log('dialogFlowQuery: ' + dialogFlowQuer);
+  console.log('>>>>>>>> dialogFlowQuery: ' + dialogFlowQuery);
   try {
     const sessionPath = sessionClient.sessionPath(
       GOOGLE_PROJECT_ID,
       sessionIds.get(sender)
     );
-    console.log('sessionPath: ' + sessionPath);
+    console.log('>>>>>>>> sessionPath: ' + sessionPath);
     const request = {
       session: sessionPath,
       queryInput: {
