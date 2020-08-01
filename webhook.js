@@ -1611,7 +1611,7 @@ CHASbot.post('/heroku', (req, res) => {
 });
 
 function postImage(postEvent,image_url,plusText,passText) {
-  console.log("DEBUG [postImage]> Input: " + image_url);
+  //console.log("DEBUG [postImage]> Input: " + image_url);
   let imgTemplate = {
     attachment: {
       type: "image",
