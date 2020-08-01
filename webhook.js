@@ -301,11 +301,10 @@ var enCrypt = function(text_plain) {
   return crypted.toString('hex');
 }
 var deCrypt = function(text_obscure) {
-  console.log("DEBUG [deCrypt]> obscured: " + text_obscure);
+  //console.log("DEBUG [deCrypt]> obscured: " + text_obscure);
   let decipher = crypto.createDecipheriv(ALGO,Buffer.from(KEY_CRYPTO),Buffer.from(KEY_IV,'hex'));
   let dec = decipher.update(Buffer.from(text_obscure,'hex'));
   dec = Buffer.concat([dec, decipher.final()]);
-  console.log("DEBUG [deCrypt]> transparent: " + dec.toString);
   return dec.toString();
 }
 function enCryptFileContents () {
