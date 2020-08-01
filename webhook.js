@@ -1526,6 +1526,9 @@ async function sendViaDialogV2(eventSend) {
     const result = responses[0].queryResult;
     console.log("INFO [sendViaDialogV2]> Query: " + result.queryText);
     let dialogFlowText = result.fulfillmentText;
+
+    console.log("INFO [sendViaDialogV2]> XXXXXXXXX: " + result.action;
+
     console.log("INFO [sendViaDialogV2]> Response: " + dialogFlowText);
     if (result.intent) {
       console.log("INFO [sendViaDialogV2]> Intent: " + result.intent.displayName);
@@ -1555,8 +1558,8 @@ async function sendViaDialogV2(eventSend) {
       console.log("INFO [sendViaDialogV2]> Response: " + dialogFlowText);
       sendTextDirect(eventSend,dialogFlowText);
       // Look out for unknown response and cc. admin
-      if (response.result.action == 'input.unknown'||response.result.action.slice(0,21)=='DefaultFallbackIntent') {
-        let loopbackText = sender + ">>" + customGreeting(sender,false) + ">>" + response.result.resolvedQuery;
+      if (result.action == 'input.unknown'||result.action.slice(0,21)=='DefaultFallbackIntent') {
+        let loopbackText = sender + ">>" + customGreeting(sender,false) + ">>" + result.resolvedQuery;
         console.log("ADMIN [sendViaDialogV2]> Feedback: " + loopbackText);
         let eventLoopback = eventSend;
         eventLoopback.sender.id = KEY_ADMIN;
