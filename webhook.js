@@ -1508,7 +1508,7 @@ const usersMap = new Map();
 function setSessionAndUser(senderID) {
   console.log("setSessionAndUser" + senderID);
   if (!sessionIds.has(senderID)) {
-    sessionIds.set(senderID, uuid.v1());
+    sessionIds.set(senderID, uuid.v4());
   }
   if (!usersMap.has(senderID)) {
     userService.addUser(function(user){
@@ -1518,7 +1518,7 @@ function setSessionAndUser(senderID) {
 }
 
 //https://github.com/kamjony/Chatbot-DialogFlowV2-Messenger-NodeJS
-function sendViaDialogV2(eventSend) {
+async function sendViaDialogV2(eventSend) {
   //sendTypingOn(sender);
   console.log('sendViaDialogV2')
   let sender = eventSend.sender.id;
@@ -1546,6 +1546,7 @@ function sendViaDialogV2(eventSend) {
   } catch (e) {
     console.log('error');
     console.log(e);
+    process.exit(1);
   }
 }
 
