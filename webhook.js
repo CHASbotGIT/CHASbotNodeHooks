@@ -1528,7 +1528,6 @@ async function sendViaDialogV2(eventSend) {
 
   console.log('######## ' + sessionIds.get(sender));
 
-
   let dialogFlowQuery = eventSend.message.text;
   console.log('>>>>>>>> dialogFlowQuery: ' + dialogFlowQuery);
   try {
