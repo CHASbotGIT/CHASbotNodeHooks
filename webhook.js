@@ -327,13 +327,13 @@ function enCryptFileContents () {
 }
 function deCryptContents () {
   let text_block = fs.readFileSync(FILE_ENCRYPTED_BIOS, "utf-8");
-  let strip_iv_from_block = text_block.split(":");
+  //let strip_iv_from_block = text_block.split(":");
   //console.log("DEBUG [deCryptContents]> IV_RETRIEVED (hex): " + strip_iv_from_block[0]);
   //IV_RETRIEVED = Buffer.from(strip_iv_from_block[0],'hex');
   //IV_RETRIEVED = hexStringToByte(strip_iv_from_block[0]);
   //console.log("DEBUG [deCryptContents]> IV_RETRIEVED (raw): " + IV_RETRIEVED);
   //console.log("DEBUG [deCryptContents]> Block to decipher: " + strip_iv_from_block[1]);
-  let text_block_split_garbled = strip_iv_from_block[1].split("\n");
+  let text_block_split_garbled = text_block.split("\n");
   CHAS_BIOGS = new Array();
   let decrypt_loop = 0;
   for (decrypt_loop = 0; decrypt_loop < text_block_split_garbled.length; decrypt_loop++) {
