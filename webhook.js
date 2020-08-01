@@ -289,12 +289,12 @@ function urlExists(url, cb) {
 
 // Encryption and decryption of files
 var enCrypt = function(text_plain) {
-  console.log("DEBUG [enCrypt]> plain: " + text_plain);
+  //console.log("DEBUG [enCrypt]> plain: " + text_plain);
   let cipher = crypto.createCipheriv(ALGO,Buffer.from(KEY_CRYPTO),Buffer.from(KEY_IV,'hex'));
   let crypted = cipher.update(text_plain);
   crypted = Buffer.concat([crypted, cipher.final()]);
-  console.log("DEBUG [enCrypt]> obscured (raw): " + crypted);
-  console.log("DEBUG [enCrypt]> obscured (hex): " + crypted.toString('hex'));
+  //console.log("DEBUG [enCrypt]> obscured (raw): " + crypted);
+  //console.log("DEBUG [enCrypt]> obscured (hex): " + crypted.toString('hex'));
   return crypted.toString('hex');
 }
 var deCrypt = function(text_obscure) {
@@ -344,7 +344,7 @@ function deCryptContents () {
   } else {
     CHAS_BIOGS_VIABLE = true;0
   };
-  /*text_block = fs.readFileSync(FILE_ENCRYPTED_IDS, "utf-8");
+  text_block = fs.readFileSync(FILE_ENCRYPTED_IDS, "utf-8");
   text_block_split_garbled = text_block.split("\n");
   //IDS_LIST = new Array();
   decrypt_loop = 0;
@@ -353,18 +353,18 @@ function deCryptContents () {
     IDS_TIMESTAMP[decrypt_loop] = null;
   };
   let number_ids_entries = IDS_LIST.length;
-  //console.log("DEBUG [deCryptContents]> ID entries: " + number_ids_entries);
+  console.log("DEBUG [deCryptContents]> ID entries: " + number_ids_entries);
   remainder = number_ids_entries % IDS_BLOCK_SIZE;
-  //console.log("DEBUG [deCryptContents]> ID remainder (looking for 0): " + remainder);
+  console.log("DEBUG [deCryptContents]> ID remainder (looking for 0): " + remainder);
   IDS_TOTAL = number_ids_entries / IDS_BLOCK_SIZE;
-  //console.log("DEBUG [deCryptContents]> IDs: " + IDS_TOTAL);
+  console.log("DEBUG [deCryptContents]> IDs: " + IDS_TOTAL);
   if ((remainder != 0)||(IDS_TOTAL == 0)) {
     console.log("ERROR [deCryptContents]> Something funky going on with IDs");
     IDS_VIABLE = false;
   } else {
     IDS_VIABLE = true;
   };
-  //console.log("DEBUG [deCryptContents]> IDs Viable? " + IDS_VIABLE);
+  console.log("DEBUG [deCryptContents]> IDs Viable? " + IDS_VIABLE);
   text_block = fs.readFileSync(FILE_ENCRYPTED_FR_CARD, "utf-8");
   text_block_split_garbled = text_block.split("\n");
   decrypt_loop = 0;
@@ -372,7 +372,7 @@ function deCryptContents () {
     CHAS_FR_LIST = CHAS_FR_LIST + deCrypt(text_block_split_garbled[decrypt_loop]);
     if (decrypt_loop != text_block_split_garbled.length) {CHAS_FR_LIST = CHAS_FR_LIST + "\n"};
   };
-  //console.log("DEBUG [deCryptContents]> Contact Card: " + CHAS_FR_LIST);*/
+  console.log("DEBUG [deCryptContents]> Contact Card: " + CHAS_FR_LIST);
 }
 
 function loadHooks() {
@@ -578,8 +578,8 @@ function highScore(read_write) {
 loadHooks();
 // Load in encrypted information
 // Update Constants FILE_TO_BE_ENCRYPTED (input) and FILE_ENCRYPTED (output)
-enCryptFileContents(); // Run once to encrypt files
-//deCryptContents(); // Normal runtime configuration
+//enCryptFileContents(); // Run once to encrypt files
+deCryptContents(); // Normal runtime configuration
 var CHAS_EVENTS_VIABLE = loadCalendar();
 //console.log("DEBUG [postloadCalendar]> Viable? " + CHAS_EVENTS_VIABLE);
 var SURVEY_VIABLE = loadSurvey();
