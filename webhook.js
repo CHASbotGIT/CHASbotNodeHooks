@@ -1520,16 +1520,17 @@ function setSessionAndUser(senderID) {
 //https://github.com/kamjony/Chatbot-DialogFlowV2-Messenger-NodeJS
 async function sendViaDialogV2(eventSend) {
   //sendTypingOn(sender);
-  console.log('sendViaDialogV2')
+  console.log('>>>>>>>> sendViaDialogV2 <<<<<<<<')
   let sender = eventSend.sender.id;
   setSessionAndUser(sender);
   let dialogFlowQuery = eventSend.message.text;
-  console.log(dialogFlowQuery);
+  console.log('dialogFlowQuery: ' + dialogFlowQuer);
   try {
     const sessionPath = sessionClient.sessionPath(
       GOOGLE_PROJECT_ID,
       sessionIds.get(sender)
     );
+    console.log('sessionPath: ' + sessionPath);
     const request = {
       session: sessionPath,
       queryInput: {
