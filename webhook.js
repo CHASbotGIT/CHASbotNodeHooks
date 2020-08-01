@@ -307,6 +307,7 @@ var deCrypt = function(text_obscure) {
   console.log("DEBUG [deCrypt]> buffered: " + text_obscure_buffer);
   let dec = decipher.update(text_obscure_buffer);
   dec = Buffer.concat([dec, decipher.final()]);
+  console.log("DEBUG [deCrypt]> deciphered: " + dec);
   return dec.toString();
 }
 function enCryptFileContents () {
