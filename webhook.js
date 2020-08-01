@@ -1527,7 +1527,7 @@ function sendViaDialogV2(eventSend) {
 // Latest: 29 June 2020: v1 DialogFlow is being deprecated
 // https://cloud.google.com/dialogflow/docs/release-notes
 // APIAI is therefore also deprecated
-function sendViaDialog(eventSend) {
+async function sendViaDialog(eventSend) {
   let sender = eventSend.sender.id;
   let text = eventSend.message.text;
   let apiai = dialogFlow.textRequest(text, {
