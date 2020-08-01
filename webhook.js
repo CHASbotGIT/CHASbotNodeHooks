@@ -1488,7 +1488,7 @@ function sendTextDirect(eventSend,outbound_text) {
   }); // request
 }
 
-function sendViaDialogV2(eventSend) {
+async function sendViaDialogV2(eventSend) {
   let projectId = 'chasbot-c43d7'
   let sender = eventSend.sender.id;
   let dialogFlowQuery = eventSend.message.text;
@@ -1527,7 +1527,7 @@ function sendViaDialogV2(eventSend) {
 // Latest: 29 June 2020: v1 DialogFlow is being deprecated
 // https://cloud.google.com/dialogflow/docs/release-notes
 // APIAI is therefore also deprecated
-async function sendViaDialog(eventSend) {
+function sendViaDialog(eventSend) {
   let sender = eventSend.sender.id;
   let text = eventSend.message.text;
   let apiai = dialogFlow.textRequest(text, {
