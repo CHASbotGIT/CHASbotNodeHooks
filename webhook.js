@@ -33,12 +33,13 @@ const http = require('https'); // https://nodejs.org/api/https.html
 const crypto = require('crypto'); // https://nodejs.org/api/crypto.html
 // Difining algorithm
 const ALGO = 'aes-256-cbc';
+const KEY_IV = process.env.KEY_IV;
 // Defining iv length
-const IV_LENGTH = 16; // For AES, this is always 16
-const IV_RUNTIME = crypto.randomBytes(IV_LENGTH);
-var IV_RETRIEVED = IV_RUNTIME;
-console.log("DEBUG [Constant]> IV_RUNTIME (raw): " + IV_RUNTIME);
-console.log("DEBUG [Constant]> IV_RUNTIME (hex): " + IV_RUNTIME.toString('hex'));
+//const IV_LENGTH = 16; // For AES, this is always 16
+//const IV_RUNTIME = crypto.randomBytes(IV_LENGTH);
+//var IV_RETRIEVED = IV_RUNTIME;
+//console.log("DEBUG [Constant]> IV_RUNTIME (raw): " + IV_RUNTIME);
+//console.log("DEBUG [Constant]> IV_RUNTIME (hex): " + IV_RUNTIME.toString('hex'));
 
 // Initialise CHASbot
 const CHASbot = express();
@@ -294,7 +295,7 @@ function urlExists(url, cb) {
 
 // Encryption and decryption of files
 var enCrypt = function(text_plain) {
-  let cipher = crypto.createCipheriv(ALGO,Buffer.from(KEY_CRYPTO),IV_RUNTIME);
+  let cipher = crypto.createCipheriv(ALGO,Buffer.from(KEY_CRYPTO),Buffer.from(KEY_IV));
   let crypted = cipher.update(text_plain);
   crypted = Buffer.concat([crypted, cipher.final()]);
   return crypted.toString('hex');
@@ -311,8 +312,6 @@ function enCryptFileContents () {
   let text_block_split = text_block.split("\n");
   let stream = fs.createWriteStream(FILE_ENCRYPTED, "utf-8");
   stream.once('open', function(fd) {
-    // Start the file dynamic key
-    stream.write(IV_RUNTIME.toString('hex') + ':');
     let stream_loop = 0;
     for (stream_loop = 0; stream_loop < text_block_split.length; stream_loop++) {
       //console.log("DEBUG [enCryptFileContents]> " + text_block_split[stream_loop]);
@@ -585,7 +584,7 @@ function highScore(read_write) {
 loadHooks();
 // Load in encrypted information
 // Update Constants FILE_TO_BE_ENCRYPTED (input) and FILE_ENCRYPTED (output)
-//enCryptFileContents(); // Run once to encrypt files
+enCryptFileContents(); // Run once to encrypt files
 //deCryptContents(); // Normal runtime configuration
 var CHAS_EVENTS_VIABLE = loadCalendar();
 //console.log("DEBUG [postloadCalendar]> Viable? " + CHAS_EVENTS_VIABLE);
