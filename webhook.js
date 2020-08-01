@@ -1518,7 +1518,7 @@ function setSessionAndUser(senderID) {
 }
 
 //https://github.com/kamjony/Chatbot-DialogFlowV2-Messenger-NodeJS
-async function sendViaDialogV2(eventSend) {
+function sendViaDialogV2(eventSend) {
   //sendTypingOn(sender);
   console.log('sendViaDialogV2')
   let sender = eventSend.sender.id;
