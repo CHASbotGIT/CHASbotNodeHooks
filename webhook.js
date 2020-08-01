@@ -295,7 +295,7 @@ function urlExists(url, cb) {
 
 // Encryption and decryption of files
 var enCrypt = function(text_plain) {
-  let cipher = crypto.createCipheriv(ALGO,Buffer.from(KEY_CRYPTO),Buffer.from(KEY_IV));
+  let cipher = crypto.createCipheriv(ALGO,Buffer.from(KEY_CRYPTO),Buffer.from(KEY_IV,'hex'));
   let crypted = cipher.update(text_plain);
   crypted = Buffer.concat([crypted, cipher.final()]);
   return crypted.toString('hex');
