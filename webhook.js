@@ -1,7 +1,8 @@
 /* __ _  _   _   ___ _         _
  / __| || | /_\ / __| |__  ___| |_
 | (__| __ |/ _ \\__ \ '_ \/ _ \  _|
- \___|_||_/_/ \_\___/_.__/\___/\__| CHAS (C) 2017 */
+ \___|_||_/_/ \_\___/_.__/\___/\__| CHAS (C) 2017
+ Build 2020.1 Refactored Encryption*/
 
 // Make sure everything is properly defined
 'use strict';
@@ -333,11 +334,11 @@ function deCryptContents () {
     CHAS_BIOGS[decrypt_loop] = deCrypt(text_block_split_garbled[decrypt_loop]);
   };
   let number_bios_entries = CHAS_BIOGS.length;
-  console.log("DEBUG [deCryptContents]> Bios entries: " + number_bios_entries);
+  //console.log("DEBUG [deCryptContents]> Bios entries: " + number_bios_entries);
   let remainder = number_bios_entries % CHAS_BIOGS_BLOCK_SIZE;
-  console.log("DEBUG [deCryptContents]> Bios remainder (looking for 0): " + remainder);
+  //console.log("DEBUG [deCryptContents]> Bios remainder (looking for 0): " + remainder);
   CHAS_BIOGS_TOTAL = number_bios_entries / CHAS_BIOGS_BLOCK_SIZE;
-  console.log("DEBUG [deCryptContents]> Events: " + CHAS_BIOGS_TOTAL);
+  //console.log("DEBUG [deCryptContents]> Events: " + CHAS_BIOGS_TOTAL);
   if ((remainder != 0)||(CHAS_BIOGS_TOTAL == 0)) {
     console.log("ERROR [deCryptContents]> Something funky going on with bios");
     CHAS_BIOGS_VIABLE = false;
@@ -353,18 +354,18 @@ function deCryptContents () {
     IDS_TIMESTAMP[decrypt_loop] = null;
   };
   let number_ids_entries = IDS_LIST.length;
-  console.log("DEBUG [deCryptContents]> ID entries: " + number_ids_entries);
+  //console.log("DEBUG [deCryptContents]> ID entries: " + number_ids_entries);
   remainder = number_ids_entries % IDS_BLOCK_SIZE;
-  console.log("DEBUG [deCryptContents]> ID remainder (looking for 0): " + remainder);
+  //console.log("DEBUG [deCryptContents]> ID remainder (looking for 0): " + remainder);
   IDS_TOTAL = number_ids_entries / IDS_BLOCK_SIZE;
-  console.log("DEBUG [deCryptContents]> IDs: " + IDS_TOTAL);
+  //console.log("DEBUG [deCryptContents]> IDs: " + IDS_TOTAL);
   if ((remainder != 0)||(IDS_TOTAL == 0)) {
     console.log("ERROR [deCryptContents]> Something funky going on with IDs");
     IDS_VIABLE = false;
   } else {
     IDS_VIABLE = true;
   };
-  console.log("DEBUG [deCryptContents]> IDs Viable? " + IDS_VIABLE);
+  //console.log("DEBUG [deCryptContents]> IDs Viable? " + IDS_VIABLE);
   text_block = fs.readFileSync(FILE_ENCRYPTED_FR_CARD, "utf-8");
   text_block_split_garbled = text_block.split("\n");
   decrypt_loop = 0;
@@ -372,7 +373,7 @@ function deCryptContents () {
     CHAS_FR_LIST = CHAS_FR_LIST + deCrypt(text_block_split_garbled[decrypt_loop]);
     if (decrypt_loop != text_block_split_garbled.length) {CHAS_FR_LIST = CHAS_FR_LIST + "\n"};
   };
-  console.log("DEBUG [deCryptContents]> Contact Card: " + CHAS_FR_LIST);
+  //console.log("DEBUG [deCryptContents]> Contact Card: " + CHAS_FR_LIST);
 }
 
 function loadHooks() {
