@@ -1486,7 +1486,7 @@ function sendTextDirect(eventSend,outbound_text) {
   }); // request
 }
 
-function sendViaDialogV2(eventSend) {
+async function sendViaDialogV2(eventSend) {
   let projectId = 'chasbot-c43d7'
   let sender = eventSend.sender.id;
   let dialogFlowQuery = eventSend.message.text;
