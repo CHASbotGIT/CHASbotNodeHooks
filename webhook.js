@@ -1500,39 +1500,17 @@ const sessionClient = new dialogflow.SessionsClient(
   }
 );
 
-//const uuid = require('uuid');
-
-//const sessionIds = new Map();
-//const usersMap = new Map();
-
-function setSessionAndUser(senderID) {
-  console.log("setSessionAndUser: " + senderID);
-  if (!sessionIds.has(senderID)) {
-    sessionIds.set(senderID, uuid.v4());
-  }
-  if (!usersMap.has(senderID)) {
-    userService.addUser(function(user){
-      usersMap.set(senderID, user);
-    }, senderID);
-  }
-}
-
 //https://github.com/kamjony/Chatbot-DialogFlowV2-Messenger-NodeJS
 async function sendViaDialogV2(eventSend) {
-  //sendTypingOn(sender);
-  console.log('>>>>>>>> sendViaDialogV2 <<<<<<<<');
-
   let sender = eventSend.sender.id;
-  //setSessionAndUser(sender);
-
   let dialogFlowQuery = eventSend.message.text;
-  console.log('>>>>>>>> dialogFlowQuery: ' + dialogFlowQuery);
+  console.log("INFO [sendViaDialogV2]> Sender: " + sender);
+  console.log("INFO [sendViaDialogV2]> Request: " + dialogFlowQuery);
   try {
     const sessionPath = sessionClient.projectAgentSessionPath(
       GOOGLE_PROJECT_ID,
       sender
     );
-    console.log('>>>>>>>> sessionPath: ' + sessionPath);
     const request = {
       session: sessionPath,
       queryInput: {
@@ -1542,28 +1520,19 @@ async function sendViaDialogV2(eventSend) {
         },
       },
     };
-    //const responses = await sessionClient.detectIntent(request);
-
-    //const result = responses[0].queryResult;
-    //console.log('result? ' + result);
-    //handleDialogFlowResponse(sender, result);
-
     // Send request and log result
     const responses = await sessionClient.detectIntent(request);
     console.log('Detected intent');
     const result = responses[0].queryResult;
-    console.log(`  Query: ${result.queryText}`);
-    console.log(`  Response: ${result.fulfillmentText}`);
+    console.log("INFO [sendViaDialogV2]> Query: " + result.queryText);
+    console.log("INFO [sendViaDialogV2]> Response: " + result.fulfillmentText);
     if (result.intent) {
-      console.log(`  Intent: ${result.intent.displayName}`);
+      console.log("INFO [sendViaDialogV2]> Intent: " + result.intent.displayName);
     } else {
-      console.log(`  No intent matched.`);
+      console.log("INFO [sendViaDialogV2]> Intent: NONE MATCHED");
     }
-
   } catch (e) {
-    console.log('error');
-    console.log('>>>>>>>>>>>>>> ERROR:' + e)
-    //process.exit(1);
+    console.log("ERROR [sendViaDialogV2]> Undefined: " + e);
   }
 }
 
