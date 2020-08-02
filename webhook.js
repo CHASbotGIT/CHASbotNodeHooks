@@ -1540,11 +1540,11 @@ async function sendViaDialogV2(eventSend) {
     //let dialogFlowText = result.fulfillmentText; // [LEGACY]
     let dialogFlowHook = result.action;
     console.log("DEBUG [sendViaDialogV2]> dialogFlowHook: " + dialogFlowHook);
-    if (dialogFlowHook == '') {
-      let dialogFlowText = result.fulfillmentMessages[0].text.text[0];
-    } else {
-      let dialogFlowText = '';
-    };
+
+    if (typeof result.fulfillmentMessages[0].text == 'undefined'){console.console.log('WTAF______________WTAF')};
+
+    let dialogFlowText = result.fulfillmentMessages[0].text.text[0];
+
     console.log("INFO [sendViaDialogV2]> Response to " + sender + ": " + dialogFlowText);
     if (result.intent) {
       console.log("INFO [sendViaDialogV2]> Intent to " + sender + ": " + result.intent.displayName);
