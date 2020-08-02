@@ -1526,7 +1526,7 @@ async function sendViaDialogV2(eventSend) {
     const result = responses[0].queryResult;
     console.log("DEBUG [sendViaDialogV2]> Action: " + result.action);
     console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
-    //let dialogFlowText = result.fulfillmentText;
+    //let dialogFlowText = result.fulfillmentText; // [LEGACY]
     let dialogFlowText = result.fulfillmentMessages[0].text.text[0];
     console.log("INFO [sendViaDialogV2]> Response to " + sender + ": " + dialogFlowText);
     if (result.intent) {
@@ -1579,26 +1579,27 @@ async function sendViaDialogV2(eventSend) {
 // Posting functions
 // =================
 // Webhook for API.ai to get response from the 3rd party API or code
+// No longer API.ai - Refactor
 CHASbot.post('/heroku', (req, res) => {
-  //console.log("DEBUG [postHeroku]> " + req.body.result);
+  console.log("DEBUG [postHeroku]> " + req.body.result);
   let hookText = '';
   if (req.body.result.action === HOOK_WEATHER) {
     // Set a default weather location
     let city = 'Edinburgh';
     if (typeof req.body.result.parameters['geo-city-gb'] != 'undefined') {
       city = req.body.result.parameters['geo-city-gb'];
-      //console.log("DEBUG [postHeroku]> Location @ :" + city);
+      console.log("DEBUG [postHeroku]> Location @ :" + city);
     };
     if (typeof req.body.result.parameters['hospice_places'] != 'undefined') {
       city = req.body.result.parameters['hospice_places'];
-      //console.log("DEBUG [postHeroku]> Hospice @ :" + city);
+      console.log("DEBUG [postHeroku]> Hospice @ :" + city);
     };
     let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
-    //console.log("DEBUG [postHeroku]> Weather URL: " + restUrl);
+    console.log("DEBUG [postHeroku]> Weather URL: " + restUrl);
     request.get(restUrl, (err, response, body) => {
       if (!err && response.statusCode == 200) {
         let json = JSON.parse(body);
-        //console.log("DEBUG [postHeroku]> " + json);
+        console.log("DEBUG [postHeroku]> " + json);
         let tempF = ~~(json.main.temp * 9/5 - 459.67);
         let tempC = ~~(json.main.temp - 273.15);
         hookText = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
@@ -1617,7 +1618,7 @@ CHASbot.post('/heroku', (req, res) => {
       }
     })
   } else if (req.body.result.action === HOOK_PICKCARD) {
-    //console.log("DEBUG [postHeroku]> Pick a playing card");
+    console.log("DEBUG [postHeroku]> Pick a playing card");
     CARD_PICK = CARD_DECK[randomBetween(0,CARD_DECK.length-1)];
     hookText = CARD_PROMPTS[randomBetween(0,CARD_PROMPTS.length-1)] + CARD_PICK;
     return res.json({
@@ -1625,7 +1626,7 @@ CHASbot.post('/heroku', (req, res) => {
       displayText: hookText
     });
   } else if (req.body.result.action === HOOK_FUNDRAISING) {
-    //console.log("DEBUG [postHeroku]> Send fundraising contact list");
+    console.log("DEBUG [postHeroku]> Send fundraising contact list");
     return res.json({
       speech: CHAS_FR_LIST,
       displayText: CHAS_FR_LIST
@@ -1634,13 +1635,13 @@ CHASbot.post('/heroku', (req, res) => {
   if (HOOKS_CUSTOM.length > 0) { // Have custom hooks to check
     for (var i = 0; i < HOOKS_CUSTOM.length; i++) {
       if (HOOKS_CUSTOM[i][0] && req.body.result.action === HOOKS_CUSTOM[i][2]) { // Found custom
-        //console.log("DEBUG [postHeroku]> Send custom hook " + HOOKS_CUSTOM[i][2]);
+        console.log("DEBUG [postHeroku]> Send custom hook " + HOOKS_CUSTOM[i][2]);
         return res.json({
           speech: HOOKS_CUSTOM[i][2],
           displayText: HOOKS_CUSTOM[i][2]
         }); // return
       } else if (!HOOKS_CUSTOM[i][0] && req.body.result.action === HOOKS_CUSTOM[i][2]) { // Should be a hook
-        //console.log("DEBUG [postHeroku]> Disqualified custom hook " + HOOKS_CUSTOM[i][2]);
+        console.log("DEBUG [postHeroku]> Disqualified custom hook " + HOOKS_CUSTOM[i][2]);
         return res.json({
           speech: MSG_NO_HOOK,
           displayText: MSG_NO_HOOK
