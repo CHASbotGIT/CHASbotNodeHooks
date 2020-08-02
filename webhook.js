@@ -1539,6 +1539,10 @@ async function sendViaDialogV2(eventSend) {
     console.log("DEBUG [sendViaDialogV2]> Action: " + result.action);
     console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
     //let dialogFlowText = result.fulfillmentText; // [LEGACY]
+    if (typeof result.result.fulfillmentMessages[0].text.text[0] = 'undefined') {
+      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+    }
+
     let dialogFlowText = result.fulfillmentMessages[0].text.text[0];
     console.log("INFO [sendViaDialogV2]> Response to " + sender + ": " + dialogFlowText);
     if (result.intent) {
