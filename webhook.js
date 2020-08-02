@@ -1523,7 +1523,7 @@ async function sendViaDialogV2(eventSend) {
       GOOGLE_PROJECT_ID,
       sender
     ); // try
-    const request = {
+    const dialogflow_request = {
       session: sessionPath,
       queryInput: {
         text: {
@@ -1532,8 +1532,8 @@ async function sendViaDialogV2(eventSend) {
         }, // text
       }, // queryInput
     }; // const
-    // Send request and log result
-    const responses = await sessionClient.detectIntent(request);
+    // Send dialogflow_request and log result
+    const responses = await sessionClient.detectIntent(dialogflow_request);
     //console.log("DEBUG [sendViaDialogV2]: DialogFlow Intent Detected");
     const result = responses[0].queryResult;
     console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
