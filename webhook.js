@@ -1581,10 +1581,16 @@ async function sendViaDialogV2(eventSend) {
 // Webhook for API.ai to get response from the 3rd party API or code
 // No longer API.ai - Refactor
 CHASbot.post('/heroku', (req, res) => {
+
+
+
   console.log("DEBUG [postHeroku]> " + req.body.result);
   let hookText = '';
-  if (req.body.result.action === HOOK_WEATHER) {
+  if (req.body.queryresult.action === HOOK_WEATHER) {
     // Set a default weather location
+
+    console.log ("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+
     let city = 'Edinburgh';
     if (typeof req.body.result.parameters['geo-city-gb'] != 'undefined') {
       city = req.body.result.parameters['geo-city-gb'];
