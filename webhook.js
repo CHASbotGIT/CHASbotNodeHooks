@@ -1538,7 +1538,7 @@ async function sendViaDialogV2(eventSend) {
     } else {
       console.log("INFO [sendViaDialogV2]> Intent to " + sender + ": NONE MATCHED");
     }
-    if (typeof rresult.action != 'undefined') {
+    if (typeof result.action != 'undefined') {
       let dialogFlowHook = result.action;
     } else {
       let dialogFlowHook = "";
