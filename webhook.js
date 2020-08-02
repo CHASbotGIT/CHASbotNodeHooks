@@ -1527,20 +1527,17 @@ async function sendViaDialogV2(eventSend) {
     console.log("DEBUG [sendViaDialogV2]> Action: " + result.action);
     console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
     let dialogFlowText = result.fulfillmentText;
+
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>" + result.queryResult.fulfillmentMessages[0].text.text[0]);
+
     console.log("INFO [sendViaDialogV2]> Response to " + sender + ": " + dialogFlowText);
     if (result.intent) {
       console.log("INFO [sendViaDialogV2]> Intent to " + sender + ": " + result.intent.displayName);
     } else {
       console.log("INFO [sendViaDialogV2]> Intent to " + sender + ": NONE MATCHED");
     };
-
-    //let dialogFlowHook = "";
-    //if (typeof result.action != 'undefined') {
-    //  let dialogFlowHook = result.action;
-    //};
     let dialogFlowHook = result.action;
     console.log("DEBUG [sendViaDialogV2]> dialogFlowHook: " + dialogFlowHook);
-
     let hooked = false;
     if (HOOKS_CUSTOM.length > 0) { // Have custom hooks to check
       for (var i = 0; i < HOOKS_CUSTOM.length; i++) {
