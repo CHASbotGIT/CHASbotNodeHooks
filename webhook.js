@@ -1576,10 +1576,25 @@ async function sendViaDialogV2(eventSend) {
       console.log("DEBUG [sendViaDialogV2] Weather Hook > URL: " + restUrl);
 
       request(restUrl, function (err, response, body) {
-        if(err){
+        /*if(err){
           console.log('error:', error);
         } else {
           console.log('body:', body);
+        }*/
+        if (!err && response.statusCode == 200) { // Successful response
+          let json = JSON.parse(body);
+          console.log("DEBUG [sendViaDialogV2] Weather Hook JSON > " + json);
+          let tempF = ~~(json.main.temp * 9/5 - 459.67);
+          let tempC = ~~(json.main.temp - 273.15);
+          hookText = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
+          console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
+          sendTextDirect(eventSend,hookText);
+          return;
+        } else { // Error code from weather API
+          hookText = MSG_NO_WEATHER;
+          console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
+          sendTextDirect(eventSend,hookText);
+          return;
         }
       });
 
