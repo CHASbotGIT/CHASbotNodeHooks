@@ -1574,7 +1574,10 @@ async function sendViaDialogV2(eventSend) {
       };
       let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
       console.log("DEBUG [sendViaDialogV2] Weather Hook > URL: " + restUrl);
-      request.get(restUrl, (err, response, body) => { // Check the weather API
+      http.get(restUrl, (err, response, body) => { // Check the weather API
+
+        console.log('Weather >>>>>>>>>>>>>>>> GOT THIS FAR');
+
         if (!err && response.statusCode == 200) { // Successful response
           let json = JSON.parse(body);
           console.log("DEBUG [sendViaDialogV2] Weather Hook JSON > " + json);
