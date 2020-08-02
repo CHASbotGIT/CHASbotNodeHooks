@@ -1530,10 +1530,7 @@ async function sendViaDialogV2(eventSend) {
     console.log('>>>>> outputContexts ' + result.outputContexts);
 
     console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
-    let dialogFlowText = result.fulfillmentText;
-
-    console.log("******************** Text [legacy]" + result.FulfillmentText);
-    console.log("******************** Message" + result.FulfillmentMessages);
+    let dialogFlowText = result.fulfillmentMessages;
 
     console.log("INFO [sendViaDialogV2]> Response to " + sender + ": " + dialogFlowText);
     if (result.intent) {
@@ -1541,9 +1538,11 @@ async function sendViaDialogV2(eventSend) {
     } else {
       console.log("INFO [sendViaDialogV2]> Intent to " + sender + ": NONE MATCHED");
     }
-
-    let dialogFlowHook = result.action;
-
+    if (typeof rresult.action != 'undefined') {
+      let dialogFlowHook = result.action;
+    } else {
+      let dialogFlowHook = "";
+    };
     let hooked = false;
     if (HOOKS_CUSTOM.length > 0) { // Have custom hooks to check
       for (var i = 0; i < HOOKS_CUSTOM.length; i++) {
@@ -1552,7 +1551,7 @@ async function sendViaDialogV2(eventSend) {
         //console.log("DEBUG [sendViaDialogV2] Hook " + i + " [Name] = " + HOOKS_CUSTOM[i][2]);
         //console.log("DEBUG [sendViaDialogV2] Hook " + i + " [URL] = " + HOOKS_CUSTOM[i][3]);
         if (HOOKS_CUSTOM[i][0] && dialogFlowHook == HOOKS_CUSTOM[i][2]) { // Found custom
-          console.log("INFO [sendViaDialogV2]> Response: Template " + HOOKS_CUSTOM[i][2] + " (" + HOOKS_CUSTOM[i][1] + ")");
+          console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Hook: " + HOOKS_CUSTOM[i][2] + " (" + HOOKS_CUSTOM[i][1] + ")");
           if (HOOKS_CUSTOM[i][1] == 'image') {
             postImage(eventSend,HOOKS_CUSTOM[i][3],false,'');
           } else if (HOOKS_CUSTOM[i][1] == 'image_text') {
@@ -1583,62 +1582,6 @@ async function sendViaDialogV2(eventSend) {
     console.log("ERROR [sendViaDialogV2]> Undefined: " + e);
   }
 } // function
-
-// Message request pinged off of API.AI for response
-// Latest: 29 June 2020: v1 DialogFlow is being deprecated
-// https://cloud.google.com/dialogflow/docs/release-notes
-// APIAI is therefore also deprecated
-/*function sendViaDialog(eventSend) {
-  let sender = eventSend.sender.id;
-  let text = eventSend.message.text;
-  let apiai = dialogFlow.textRequest(text, {
-    sessionId: 'sessionID' + sender // Arbitrary id
-  });
-  apiai.on('response', (response) => {
-    let dialogFlowText = response.result.fulfillment.speech;
-    console.log("INFO [sendViaDialog]> Sender: " + sender);
-    console.log("INFO [sendViaDialog]> Request: " + response.result.resolvedQuery);
-    if (response.result.action == '') {
-      console.log("INFO [sendViaDialog]> Action: " + response.result.metadata.intentName);
-    } else {
-      console.log("INFO [sendViaDialog]> Action: " + response.result.action);
-    };
-    let hooked = false;
-    if (HOOKS_CUSTOM.length > 0) { // Have custom hooks to check
-      for (var i = 0; i < HOOKS_CUSTOM.length; i++) {
-        if (HOOKS_CUSTOM[i][0] && dialogFlowText == HOOKS_CUSTOM[i][2]) { // Found custom
-          console.log("INFO [sendViaDialog]> Response: Template " + HOOKS_CUSTOM[i][2] + " (" + HOOKS_CUSTOM[i][1] + ")");
-          if (HOOKS_CUSTOM[i][1] == 'image') {
-            postImage(eventSend,HOOKS_CUSTOM[i][3],false,'');
-          } else if (HOOKS_CUSTOM[i][1] == 'image_text') {
-            postImage(eventSend,HOOKS_CUSTOM[i][3],true,HOOKS_CUSTOM[i][4]);
-          } else if (HOOKS_CUSTOM[i][1] == 'button') {
-            postLinkButton(eventSend,HOOKS_CUSTOM[i][3],HOOKS_CUSTOM[i][4],HOOKS_CUSTOM[i][5]);
-          };
-          hooked = true;
-          break;
-        }; // if
-      }; // for
-    }; // if
-    if (!hooked) { // No hook
-      if (dialogFlowText == '') {dialogFlowText = MSG_NO_HOOK}; // Catch empty dialogflow responses
-      console.log("INFO [sendViaDialog]> Response: " + dialogFlowText);
-      sendTextDirect(eventSend,dialogFlowText);
-      // Look out for unknown response and cc. admin
-      if (response.result.action == 'input.unknown'||response.result.action.slice(0,21)=='DefaultFallbackIntent') {
-        let loopbackText = sender + ">>" + customGreeting(sender,false) + ">>" + response.result.resolvedQuery;
-        console.log("ADMIN [sendViaDialog]> Feedback: " + loopbackText);
-        let eventLoopback = eventSend;
-        eventLoopback.sender.id = KEY_ADMIN;
-        sendTextDirect(eventLoopback,loopbackText);
-      };
-    };
-  });
-  apiai.on('error', (error) => {
-    console.log("ERROR [sendViaDialog]> Undefined: " + error);
-  });
-  apiai.end();
-}*/
 
 // Posting functions
 // =================
