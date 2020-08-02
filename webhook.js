@@ -1638,7 +1638,7 @@ async function sendViaDialogV2(eventSend) {
   // Catch undefined error from async await
   } catch (e) {
     sendTextDirect(eventSend,MSG_NO_HOOK);
-    console.log("INFO [sendViaDialogV2]> Response to " + sender + " via dialogflow NLP: " + dialogFlowText)
+    console.log("INFO [sendViaDialogV2]> Response to " + sender + " via dialogflow NLP: " + MSG_NO_HOOK)
     console.log("ERROR [sendViaDialogV2]> " + e);
   }
 } // function
