@@ -1536,6 +1536,9 @@ async function sendViaDialogV2(eventSend) {
     const responses = await sessionClient.detectIntent(dialogflow_request);
     //console.log("DEBUG [sendViaDialogV2]: DialogFlow Intent Detected");
     const result = responses[0].queryResult;
+    let json = JSON.parse(result);
+    console.log(json);
+
     console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
     //let dialogFlowText = result.fulfillmentText; // [LEGACY]
     let dialogFlowHook = result.action;
