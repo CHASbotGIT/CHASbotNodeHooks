@@ -1539,7 +1539,7 @@ async function sendViaDialogV2(eventSend) {
     console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
     //let dialogFlowText = result.fulfillmentText; // [LEGACY]
     let dialogFlowHook = result.action;
-    console.log("DEBUG [sendViaDialogV2]> dialogFlowHook: " + dialogFlowHook);
+    //console.log("DEBUG [sendViaDialogV2]> dialogFlowHook: " + dialogFlowHook);
     let dialogFlowText = ''
     if (dialogFlowHook != '') { // If there is an 'action' then there likely to be a hook
       if (dialogFlowHook.includes('smalltalk') || dialogFlowHook.includes('unknown') || dialogFlowHook.includes('Default')){
@@ -1561,6 +1561,9 @@ async function sendViaDialogV2(eventSend) {
       // Set a default weather location
       console.log("DEBUG [sendViaDialogV2]> HOOK_WEATHER");
       let city = 'Edinburgh';
+
+      console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters);
+
       if (typeof result.parameters['geo-city-gb'] != 'undefined') {
         city = result.parameters['geo-city-gb'];
         console.log("DEBUG [sendViaDialogV2] Weather Hook > Location @ :" + city);
@@ -1589,14 +1592,14 @@ async function sendViaDialogV2(eventSend) {
         }
       })
     } else if (dialogFlowHook === HOOK_PICKCARD) {
-      console.log("DEBUG [sendViaDialogV2]> HOOK_PICKCARD");
+      //console.log("DEBUG [sendViaDialogV2]> HOOK_PICKCARD");
       CARD_PICK = CARD_DECK[randomBetween(0,CARD_DECK.length-1)];
       hookText = CARD_PROMPTS[randomBetween(0,CARD_PROMPTS.length-1)] + CARD_PICK;
       console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Pick a Card Hook: " + hookText);
       sendTextDirect(eventSend,hookText);
       return;
     } else if (dialogFlowHook === HOOK_FUNDRAISING) {
-      console.log("DEBUG [sendViaDialogV2]> HOOK_FUNDRAISING");
+      //console.log("DEBUG [sendViaDialogV2]> HOOK_FUNDRAISING");
       hookText = CHAS_FR_LIST;
       console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Fundraising Hook: " + hookText);
       sendTextDirect(eventSend,hookText);
@@ -1639,87 +1642,6 @@ async function sendViaDialogV2(eventSend) {
     console.log("ERROR [sendViaDialogV2]> " + e);
   }
 } // function
-
-/*
-// Posting functions
-// =================
-// Webhook for API.ai to get response from the 3rd party API or code
-// No longer API.ai - Refactor
-CHASbot.post('/heroku', (req, res) => {
-
-
-
-  console.log("DEBUG [postHeroku]> " + req.body.result);
-  let hookText = '';
-  if (req.body.queryresult.action === HOOK_WEATHER) {
-    // Set a default weather location
-    let city = 'Edinburgh';
-    if (typeof req.body.result.parameters['geo-city-gb'] != 'undefined') {
-      city = req.body.result.parameters['geo-city-gb'];
-      console.log("DEBUG [postHeroku]> Location @ :" + city);
-    };
-    if (typeof req.body.result.parameters['hospice_places'] != 'undefined') {
-      city = req.body.result.parameters['hospice_places'];
-      console.log("DEBUG [postHeroku]> Hospice @ :" + city);
-    };
-    let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
-    console.log("DEBUG [postHeroku]> Weather URL: " + restUrl);
-    request.get(restUrl, (err, response, body) => {
-      if (!err && response.statusCode == 200) {
-        let json = JSON.parse(body);
-        console.log("DEBUG [postHeroku]> " + json);
-        let tempF = ~~(json.main.temp * 9/5 - 459.67);
-        let tempC = ~~(json.main.temp - 273.15);
-        hookText = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
-        return res.json({
-          speech: hookText,
-          displayText: hookText
-        });
-      } else {
-        let errorMessage = "Oops, I wasn't able to look up that place name.";
-        return res.status(400).json({
-          status: {
-            code: 400,
-            errorType: errorMessage
-          }
-        });
-      }
-    })
-  } else if (req.body.result.action === HOOK_PICKCARD) {
-    console.log("DEBUG [postHeroku]> Pick a playing card");
-    CARD_PICK = CARD_DECK[randomBetween(0,CARD_DECK.length-1)];
-    hookText = CARD_PROMPTS[randomBetween(0,CARD_PROMPTS.length-1)] + CARD_PICK;
-    return res.json({
-      speech: hookText,
-      displayText: hookText
-    });
-  } else if (req.body.result.action === HOOK_FUNDRAISING) {
-    console.log("DEBUG [postHeroku]> Send fundraising contact list");
-    return res.json({
-      speech: CHAS_FR_LIST,
-      displayText: CHAS_FR_LIST
-    });
-  };
-  if (HOOKS_CUSTOM.length > 0) { // Have custom hooks to check
-    for (var i = 0; i < HOOKS_CUSTOM.length; i++) {
-      if (HOOKS_CUSTOM[i][0] && req.body.result.action === HOOKS_CUSTOM[i][2]) { // Found custom
-        console.log("DEBUG [postHeroku]> Send custom hook " + HOOKS_CUSTOM[i][2]);
-        return res.json({
-          speech: HOOKS_CUSTOM[i][2],
-          displayText: HOOKS_CUSTOM[i][2]
-        }); // return
-      } else if (!HOOKS_CUSTOM[i][0] && req.body.result.action === HOOKS_CUSTOM[i][2]) { // Should be a hook
-        console.log("DEBUG [postHeroku]> Disqualified custom hook " + HOOKS_CUSTOM[i][2]);
-        return res.json({
-          speech: MSG_NO_HOOK,
-          displayText: MSG_NO_HOOK
-        }); // return
-      }; // if
-    }; // for
-  }; // if
-});
-
-*/
 
 function postImage(postEvent,image_url,plusText,passText) {
   //console.log("DEBUG [postImage]> Input: " + image_url);
