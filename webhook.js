@@ -1565,9 +1565,9 @@ async function sendViaDialogV2(eventSend) {
       console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters);
       console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters['geo-city-gb']);
 
-      let list_parameters = result.parameters;
+      let list_parameters = JSON.stringify(struct.decode(result.parameters));
 
-      console.log('>>>>>>>>>> Parameters' + list_parameters.length]);
+      console.log('>>>>>>>>>> Parameters' + list_parameters]);
 
 
       if (typeof result.parameters['geo-city-gb'] != 'undefined') {
