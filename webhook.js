@@ -1625,17 +1625,19 @@ async function sendViaDialogV2(eventSend) {
       }; // for
     }; // if
     // No hooks found - Note that weather request may still be in-flight - it will catch its own errors
-    if (dialogFlowText == '' && dialogFlowHook != HOOK_WEATHER) {dialogFlowText = MSG_NO_HOOK}; // Catch empty dialogflow responses
-    console.log("INFO [sendViaDialogV2]> Empty response to " + sender + " via dialogflow NLP: " + dialogFlowText);
-    sendTextDirect(eventSend,dialogFlowText);
-    // Look out for unknown response and cc. admin
-    if (result.action == 'input.unknown'||result.action.slice(0,21)=='DefaultFallbackIntent') {
-      let loopbackText = sender + ">>" + customGreeting(sender,false) + ">>" + result.queryText;
-      console.log("ADMIN [sendViaDialogV2]> Feedback: " + loopbackText);
-      let eventLoopback = eventSend;
-      eventLoopback.sender.id = KEY_ADMIN;
-      sendTextDirect(eventLoopback,loopbackText);
-    }; // If
+    if (dialogFlowHook != HOOK_WEATHER) {
+      if (dialogFlowText == '') {dialogFlowText = MSG_NO_HOOK}; // Catch empty dialogflow responses
+      console.log("INFO [sendViaDialogV2]> Empty response to " + sender + " via dialogflow NLP: " + dialogFlowText);
+      sendTextDirect(eventSend,dialogFlowText);
+      // Look out for unknown response and cc. admin
+      if (result.action == 'input.unknown'||result.action.slice(0,21)=='DefaultFallbackIntent') {
+        let loopbackText = sender + ">>" + customGreeting(sender,false) + ">>" + result.queryText;
+        console.log("ADMIN [sendViaDialogV2]> Feedback: " + loopbackText);
+        let eventLoopback = eventSend;
+        eventLoopback.sender.id = KEY_ADMIN;
+        sendTextDirect(eventLoopback,loopbackText);
+      };
+    };
   // Catch undefined error from async await
   } catch (e) {
     sendTextDirect(eventSend,MSG_NO_HOOK);
