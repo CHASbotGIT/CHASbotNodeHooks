@@ -1567,7 +1567,7 @@ async function sendViaDialogV2(eventSend) {
 
       let list_parameters = JSON.stringify(struct.decode(result.parameters));
 
-      console.log('>>>>>>>>>> Parameters' + list_parameters]);
+      console.log('>>>>>>>>>> Parameters' + list_parameters);
 
 
       if (typeof result.parameters['geo-city-gb'] != 'undefined') {
