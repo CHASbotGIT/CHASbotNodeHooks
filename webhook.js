@@ -1536,22 +1536,22 @@ async function sendViaDialogV2(eventSend) {
     const responses = await sessionClient.detectIntent(request);
     //console.log("DEBUG [sendViaDialogV2]: DialogFlow Intent Detected");
     const result = responses[0].queryResult;
-    console.log("DEBUG [sendViaDialogV2]> Action: " + result.action);
     console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
     //let dialogFlowText = result.fulfillmentText; // [LEGACY]
-    if (typeof result.fulfillmentMessages[0].text.text[0] == 'undefined') {
-      console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-    }
-
-    let dialogFlowText = result.fulfillmentMessages[0].text.text[0];
+    let dialogFlowHook = result.action;
+    console.log("DEBUG [sendViaDialogV2]> dialogFlowHook: " + dialogFlowHook);
+    If (dialogFlowHook == '') {
+      let dialogFlowText = result.fulfillmentMessages[0].text.text[0];
+    } else {
+      let dialogFlowText = '';
+    };
     console.log("INFO [sendViaDialogV2]> Response to " + sender + ": " + dialogFlowText);
     if (result.intent) {
       console.log("INFO [sendViaDialogV2]> Intent to " + sender + ": " + result.intent.displayName);
     } else {
       console.log("INFO [sendViaDialogV2]> Intent to " + sender + ": NONE MATCHED");
     };
-    let dialogFlowHook = result.action;
-    console.log("DEBUG [sendViaDialogV2]> dialogFlowHook: " + dialogFlowHook);
+
     // Check for hard-coded hooks
     let hookText = '';
     if (dialogFlowHook === HOOK_WEATHER) {
@@ -1631,6 +1631,7 @@ async function sendViaDialogV2(eventSend) {
     }; // If
   // Catch undefined error from async await
   } catch (e) {
+    sendTextDirect(eventSend,MSG_NO_HOOK);
     console.log("ERROR [sendViaDialogV2]> " + e);
   }
 } // function
