@@ -1592,27 +1592,6 @@ async function sendViaDialogV2(eventSend) {
           return;
         } //else
       }); // } function ) request
-
-      /*https.get(restUrl, (err, response, body) => { // Check the weather API
-
-        console.log('Weather >>>>>>>>>>>>>>>> GOT THIS FAR');
-
-        if (!err && response.statusCode == 200) { // Successful response
-          let json = JSON.parse(body);
-          console.log("DEBUG [sendViaDialogV2] Weather Hook JSON > " + json);
-          let tempF = ~~(json.main.temp * 9/5 - 459.67);
-          let tempC = ~~(json.main.temp - 273.15);
-          hookText = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
-          console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
-          sendTextDirect(eventSend,hookText);
-          return;
-        } else { // Error code from weather API
-          hookText = MSG_NO_WEATHER;
-          console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
-          sendTextDirect(eventSend,hookText);
-          return;
-        }
-      })*/
     } else if (dialogFlowHook === HOOK_PICKCARD) {
       //console.log("DEBUG [sendViaDialogV2]> HOOK_PICKCARD");
       CARD_PICK = CARD_DECK[randomBetween(0,CARD_DECK.length-1)];
@@ -1645,8 +1624,8 @@ async function sendViaDialogV2(eventSend) {
         }; // if
       }; // for
     }; // if
-    // No hooks found
-    if (dialogFlowText == '') {dialogFlowText = MSG_NO_HOOK}; // Catch empty dialogflow responses
+    // No hooks found - Note that weather request may still be in-flight - it will catch its own errors
+    if (dialogFlowText == '' && dialogFlowHook != HOOK_WEATHER) {dialogFlowText = MSG_NO_HOOK}; // Catch empty dialogflow responses
     console.log("INFO [sendViaDialogV2]> Empty response to " + sender + " via dialogflow NLP: " + dialogFlowText);
     sendTextDirect(eventSend,dialogFlowText);
     // Look out for unknown response and cc. admin
