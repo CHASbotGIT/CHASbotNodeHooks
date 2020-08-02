@@ -1574,7 +1574,7 @@ async function sendViaDialogV2(eventSend) {
       };
       let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
       console.log("DEBUG [sendViaDialogV2] Weather Hook > URL: " + restUrl);
-      http.get(restUrl, (err, response, body) => { // Check the weather API
+      https.get(restUrl, (err, response, body) => { // Check the weather API
 
         console.log('Weather >>>>>>>>>>>>>>>> GOT THIS FAR');
 
@@ -1979,7 +1979,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
     if (res.statusCode === 503) {
       console.log("ERROR [apiFilmTV]> 503 Response Error for " + tv_film);
       if (tv_film == 'tv') {
-	MOVIEDB_RECORDS[record_index][0] = true;
+	      MOVIEDB_RECORDS[record_index][0] = true;
         MOVIEDB_RECORDS[record_index][1] = 'No TV result';
         MOVIEDB_RECORDS[record_index][3] = true;
         MOVIEDB_RECORDS[record_index][4] = 'No film result';
