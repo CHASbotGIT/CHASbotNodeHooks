@@ -1561,14 +1561,9 @@ async function sendViaDialogV2(eventSend) {
       // Set a default weather location
       console.log("DEBUG [sendViaDialogV2]> HOOK_WEATHER");
       let city = 'Edinburgh';
-
+      /*
       console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters);
       console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters['geo-city-gb']);
-
-      let list_parameters = JSON.stringify(struct.decode(result.parameters));
-
-      console.log('>>>>>>>>>> Parameters' + list_parameters);
-
 
       if (typeof result.parameters['geo-city-gb'] != 'undefined') {
         city = result.parameters['geo-city-gb'];
@@ -1578,6 +1573,7 @@ async function sendViaDialogV2(eventSend) {
         city = result.parameters['hospice_places'];
         console.log("DEBUG [sendViaDialogV2] Weather Hook > Hospice @ :" + city);
       };
+      */
       let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
       console.log("DEBUG [sendViaDialogV2] Weather Hook > URL: " + restUrl);
 
