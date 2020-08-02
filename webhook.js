@@ -1564,7 +1564,9 @@ async function sendViaDialogV2(eventSend) {
 
       console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters);
       console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters['geo-city-gb']);
-      console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters.geo-city-gb);
+
+      let list_parameters = result.parameters;
+      console.log('Weather >>>>>>>>>>>>>>>>' + list_parameters['geo-city-gb']);
 
       if (typeof result.parameters['geo-city-gb'] != 'undefined') {
         city = result.parameters['geo-city-gb'];
