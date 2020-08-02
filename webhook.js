@@ -1576,6 +1576,7 @@ async function sendViaDialogV2(eventSend) {
   }
 } // function
 
+/*
 // Posting functions
 // =================
 // Webhook for API.ai to get response from the 3rd party API or code
@@ -1656,6 +1657,8 @@ CHASbot.post('/heroku', (req, res) => {
     }; // for
   }; // if
 });
+
+*/
 
 function postImage(postEvent,image_url,plusText,passText) {
   //console.log("DEBUG [postImage]> Input: " + image_url);
