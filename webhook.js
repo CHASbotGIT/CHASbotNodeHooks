@@ -1574,7 +1574,16 @@ async function sendViaDialogV2(eventSend) {
       };
       let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
       console.log("DEBUG [sendViaDialogV2] Weather Hook > URL: " + restUrl);
-      https.get(restUrl, (err, response, body) => { // Check the weather API
+
+      request(restUrl, function (err, response, body) {
+        if(err){
+          console.log('error:', error);
+        } else {
+          console.log('body:', body);
+        }
+      });
+
+      /*https.get(restUrl, (err, response, body) => { // Check the weather API
 
         console.log('Weather >>>>>>>>>>>>>>>> GOT THIS FAR');
 
@@ -1593,7 +1602,7 @@ async function sendViaDialogV2(eventSend) {
           sendTextDirect(eventSend,hookText);
           return;
         }
-      })
+      })*/
     } else if (dialogFlowHook === HOOK_PICKCARD) {
       //console.log("DEBUG [sendViaDialogV2]> HOOK_PICKCARD");
       CARD_PICK = CARD_DECK[randomBetween(0,CARD_DECK.length-1)];
