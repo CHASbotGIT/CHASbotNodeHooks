@@ -2,7 +2,7 @@
  / __| || | /_\ / __| |__  ___| |_
 | (__| __ |/ _ \\__ \ '_ \/ _ \  _|
  \___|_||_/_/ \_\___/_.__/\___/\__| CHAS (C) 2017
- Build 2020.1 Refactored Encryption*/
+ Build 2020.2 Refactored for DialogFlow v2*/
 
 // Make sure everything is properly defined
 'use strict';
@@ -1524,13 +1524,9 @@ async function sendViaDialogV2(eventSend) {
     const responses = await sessionClient.detectIntent(request);
     //console.log("DEBUG [sendViaDialogV2]: DialogFlow Intent Detected");
     const result = responses[0].queryResult;
-
-    console.log('>>>>> action ' + result.action);
-    console.log('>>>>> outputContexts ' + result.outputContexts);
-
+    console.log("DEBUG [sendViaDialogV2]> Action: " + result.action);
     console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
-    let dialogFlowText = result.fulfillmentMessages;
-
+    let dialogFlowText = result.fulfillmentMessages.fulfillmentText;
     console.log("INFO [sendViaDialogV2]> Response to " + sender + ": " + dialogFlowText);
     if (result.intent) {
       console.log("INFO [sendViaDialogV2]> Intent to " + sender + ": " + result.intent.displayName);
