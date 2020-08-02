@@ -1539,6 +1539,7 @@ async function sendViaDialogV2(eventSend) {
     //  let dialogFlowHook = result.action;
     //};
     let dialogFlowHook = result.action;
+    console.log("DEBUG [sendViaDialogV2]> dialogFlowHook: " + dialogFlowHook);
 
     let hooked = false;
     if (HOOKS_CUSTOM.length > 0) { // Have custom hooks to check
