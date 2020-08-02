@@ -89,7 +89,6 @@ setInterval(function() {
 // https://developers.facebook.com/docs/messenger-platform/send-messages/templates
 // File dependencies
 const FILE_HIGH = "./high_score.txt"; // Same directory as source code
-const FILE_HOOKS = "./hooks.txt";
 const FILE_SURVEY = "./survey.txt";
 const FILE_CALENDAR = "./calendar.txt";
 const FILE_ENCRYPTED_IDS = "./ids_public.txt";
@@ -98,7 +97,6 @@ const FILE_TO_BE_ENCRYPTED = "./ids_private.txt"; // "./bios_private.txt"  "./fu
 const FILE_ENCRYPTED_FR_CARD = "./fundraising_public.txt";
 const FILE_ENCRYPTED = FILE_ENCRYPTED_IDS; // FILE_ENCRYPTED_FR_CARD FILE_ENCRYPTED_BIOS FILE_ENCRYPTED_IDS
 // Messages
-const MSG_NO_HOOK = "🐞 Any other day, that might have worked but not today, sorry!";
 const MSG_RPSLS_INTRO = "💡 First to five is the champion. Scissors cuts Paper, Paper covers Rock, Rock crushes Lizard, Lizard poisons Spock, Spock smashes Scissors, Scissors decapitates Lizard, Lizard eats Paper, Paper disproves Spock, Spock vaporizes Rock, and Rock crushes Scissors!";
 const MSG_RPSLS_PROMPT = "Choose... Rock, Paper, Scissors, Lizard or Spock?";
 const MSG_HANGMAN_INTRO = "🤔 Figure out the mystery staff member name.\nType a letter to guess, or 'stop'.\nYou are allowed no more than 3 strikes.";
@@ -168,7 +166,19 @@ const TRIGGER_HANGMAN = 'hangman';
 const TRIGGER_STOP = 'stop';
 var TRIGGER_SEARCH = ['search','google','wiki','beeb'];
 var TRIGGER_MOVIEDB = ['synopsis on','synopsis of','watched','info on','about','watch','catch','seen','see'];
-// DialogFlow fulfilment hooks
+
+// ╦ ╦╔═╗╔═╗╦╔═╔═╗
+// ╠═╣║ ║║ ║╠╩╗╚═╗
+// ╩ ╩╚═╝╚═╝╩ ╩╚═╝
+// DialogFlow fulfilment hard-coded hooks
+// These HOOKS use dialogflow NLP but have hard-coded procedures rather than the user-configured
+// The user-configurted hooks are set up in FILE_HOOKS and accept the following 'card' layouts:
+// [1] Picture (only)
+// [2] Picture with Text
+// [3] Text with Button (inc. URL)
+const MSG_NO_HOOK = "🐞 Any other day, that might have worked but not today, sorry!";
+const MSG_NO_WEATHER = "😔 Oops, I wasn't able to look up the weather for that place just now.";
+const FILE_HOOKS = "./hooks.txt";
 const HOOK_FUNDRAISING = 'fundraising';
 const HOOK_PICKCARD = 'cards';
 const HOOK_WEATHER = 'weather';
@@ -177,8 +187,10 @@ const HOOK_URL_GROUP_DOCS = 'group_docs';
 const HOOK_PLAN = 'plan';
 const HOOK_XMAS = 'xmas';
 const HOOK_CONTACT_INFO = 'contact_info';*/
-var HOOKS = ['fundraising','cards','weather'];
+// Add any new hard-coded hook names to the HOOKS array
+var HOOKS = ['fundraising','cards','weather']; // List of UNIQUE hook names, gets extended with custom hook names
 var HOOKS_CUSTOM = [];
+
 // End-points
 const URL_GIPHY = "https://api.giphy.com/v1/gifs/random";
 const URL_MOVIEDB = "https://api.themoviedb.org/3/";
@@ -1536,46 +1548,79 @@ async function sendViaDialogV2(eventSend) {
     };
     let dialogFlowHook = result.action;
     console.log("DEBUG [sendViaDialogV2]> dialogFlowHook: " + dialogFlowHook);
-    // Check for coded hooks
-
-
-
-
-
-
-    let hooked = false;
-    if (HOOKS_CUSTOM.length > 0) { // Check custom hooks
+    // Check for hard-coded hooks
+    let hookText = '';
+    if (dialogFlowHook === HOOK_WEATHER) {
+      // Set a default weather location
+      let city = 'Edinburgh';
+      if (typeof result.parameters['geo-city-gb'] != 'undefined') {
+        city = result.parameters['geo-city-gb'];
+        console.log("DEBUG [sendViaDialogV2] Weather Hook > Location @ :" + city);
+      };
+      if (typeof result.parameters['hospice_places'] != 'undefined') {
+        city = result.parameters['hospice_places'];
+        console.log("DEBUG [sendViaDialogV2] Weather Hook > Hospice @ :" + city);
+      };
+      let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
+      console.log("DEBUG [sendViaDialogV2] Weather Hook > URL: " + restUrl);
+      request.get(restUrl, (err, response, body) => { // Check the weather API
+        if (!err && response.statusCode == 200) { // Successful response
+          let json = JSON.parse(body);
+          console.log("DEBUG [sendViaDialogV2] Weather Hook JSON > " + json);
+          let tempF = ~~(json.main.temp * 9/5 - 459.67);
+          let tempC = ~~(json.main.temp - 273.15);
+          hookText = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
+          console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
+          sendTextDirect(eventSend,hookText);
+          return;
+        } else { // Error code from weather API
+          hookText = MSG_NO_WEATHER;
+          console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
+          sendTextDirect(eventSend,hookText);
+          return;
+        }
+      })
+    } else if (dialogFlowHook === HOOK_PICKCARD) {
+      CARD_PICK = CARD_DECK[randomBetween(0,CARD_DECK.length-1)];
+      hookText = CARD_PROMPTS[randomBetween(0,CARD_PROMPTS.length-1)] + CARD_PICK;
+      console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Pick a Card Hook: " + hookText);
+      sendTextDirect(eventSend,hookText);
+      return;
+    } else if (dialogFlowHook === HOOK_FUNDRAISING) {
+      hookText = CHAS_FR_LIST;
+      console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Fundraising Hook: " + hookText);
+      sendTextDirect(eventSend,hookText);
+      return;
+    };
+    // Check for custom hooks
+    if (HOOKS_CUSTOM.length > 0) {
       for (var i = 0; i < HOOKS_CUSTOM.length; i++) {
-        //console.log("DEBUG [sendViaDialogV2] Hook " + i + " [Validity] = " + HOOKS_CUSTOM[i][0]);
-        //console.log("DEBUG [sendViaDialogV2] Hook " + i + " [Response Type] = " + HOOKS_CUSTOM[i][1]);
-        //console.log("DEBUG [sendViaDialogV2] Hook " + i + " [Name] = " + HOOKS_CUSTOM[i][2]);
-        //console.log("DEBUG [sendViaDialogV2] Hook " + i + " [URL] = " + HOOKS_CUSTOM[i][3]);
         if (HOOKS_CUSTOM[i][0] && dialogFlowHook == HOOKS_CUSTOM[i][2]) { // Found custom
-          console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Hook: " + HOOKS_CUSTOM[i][2] + " (" + HOOKS_CUSTOM[i][1] + ")");
+          console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Custom Hook: " + HOOKS_CUSTOM[i][2] + " (" + HOOKS_CUSTOM[i][1] + ")");
           if (HOOKS_CUSTOM[i][1] == 'image') {
             postImage(eventSend,HOOKS_CUSTOM[i][3],false,'');
+            return;
           } else if (HOOKS_CUSTOM[i][1] == 'image_text') {
             postImage(eventSend,HOOKS_CUSTOM[i][3],true,HOOKS_CUSTOM[i][4]);
+            return;
           } else if (HOOKS_CUSTOM[i][1] == 'button') {
             postLinkButton(eventSend,HOOKS_CUSTOM[i][3],HOOKS_CUSTOM[i][4],HOOKS_CUSTOM[i][5]);
+            return;
           };
-          hooked = true;
-          break;
         }; // if
       }; // for
     }; // if
-    if (!hooked) { // No hook
-      if (dialogFlowText == '') {dialogFlowText = MSG_NO_HOOK}; // Catch empty dialogflow responses
-      console.log("INFO [sendViaDialogV2]> Response: " + dialogFlowText);
-      sendTextDirect(eventSend,dialogFlowText);
-      // Look out for unknown response and cc. admin
-      if (result.action == 'input.unknown'||result.action.slice(0,21)=='DefaultFallbackIntent') {
-        let loopbackText = sender + ">>" + customGreeting(sender,false) + ">>" + result.queryText;
-        console.log("ADMIN [sendViaDialogV2]> Feedback: " + loopbackText);
-        let eventLoopback = eventSend;
-        eventLoopback.sender.id = KEY_ADMIN;
-        sendTextDirect(eventLoopback,loopbackText);
-      }; // If
+    // No hooks found
+    if (dialogFlowText == '') {dialogFlowText = MSG_NO_HOOK}; // Catch empty dialogflow responses
+    console.log("INFO [sendViaDialogV2]> Response to " + sender + " via dialogflow NLP: " + dialogFlowText);
+    sendTextDirect(eventSend,dialogFlowText);
+    // Look out for unknown response and cc. admin
+    if (result.action == 'input.unknown'||result.action.slice(0,21)=='DefaultFallbackIntent') {
+      let loopbackText = sender + ">>" + customGreeting(sender,false) + ">>" + result.queryText;
+      console.log("ADMIN [sendViaDialogV2]> Feedback: " + loopbackText);
+      let eventLoopback = eventSend;
+      eventLoopback.sender.id = KEY_ADMIN;
+      sendTextDirect(eventLoopback,loopbackText);
     }; // If
   // Catch undefined error from async await
   } catch (e) {
@@ -1596,9 +1641,6 @@ CHASbot.post('/heroku', (req, res) => {
   let hookText = '';
   if (req.body.queryresult.action === HOOK_WEATHER) {
     // Set a default weather location
-
-    console.log ("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-
     let city = 'Edinburgh';
     if (typeof req.body.result.parameters['geo-city-gb'] != 'undefined') {
       city = req.body.result.parameters['geo-city-gb'];
