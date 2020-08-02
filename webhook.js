@@ -414,11 +414,11 @@ function loadHooks() {
   if (hook_lines.length > 0) {
     for (var i = 0; i < hook_lines.length; i++) {
       if (hook_lines[i].slice(0,2)=='//') { continue }; // Skip comments
-      console.log("DEBUG [loadHooks]> Possible hook: " + hook_lines[i]);
+      //console.log("DEBUG [loadHooks]> Possible hook: " + hook_lines[i]);
       let poss_hook = hook_lines[i].split("$");
       if (poss_hook.length < 2 || poss_hook.length > 4) { continue }; // Skip where not 2,3 or 4 items
       let poss_hook_name = poss_hook[0];
-      console.log("DEBUG [loadHooks]> Valid items in hook: " + poss_hook.length);
+      //console.log("DEBUG [loadHooks]> Valid items in hook: " + poss_hook.length);
       if (!poss_hook_name.match(/^[a-z_]+$/)) { continue }; // Skip hook name not lowercase + underscore
       let skip_hook = false;
       for (var j = 0; j < HOOKS.length; j++) {
@@ -428,13 +428,13 @@ function loadHooks() {
         }; // if
       }; // for
       if (skip_hook) { continue };
-      console.log("DEBUG [loadHooks]> Poss hook name: " + skip_hook);
+      //console.log("DEBUG [loadHooks]> Poss hook name: " + skip_hook);
       let poss_hook_url = poss_hook[1];
       if (poss_hook_url.slice(0,8) != "https://") { continue }; // Simple check for SSL URL
       if (poss_hook_url.slice(8,14) == "groups") {
         poss_hook_url = "https://work-" + KEY_ROOT + ".facebook.com/" + poss_hook_url.slice(8,poss_hook_url.length);
       };
-      console.log("DEBUG [loadHooks]> Poss URL: " + poss_hook_url);
+      //console.log("DEBUG [loadHooks]> Poss URL: " + poss_hook_url);
       let poss_hook_blurb = '';
       let poss_hook_btn = '';
       let hook_type = 'image';
@@ -449,15 +449,15 @@ function loadHooks() {
         hook_type = 'button';
       };
       HOOKS_CUSTOM[HOOKS_CUSTOM.length] = [true,hook_type,poss_hook_name,poss_hook_url,poss_hook_blurb,poss_hook_btn];
-      console.log("DEBUG [loadHooks]> Valid Hook[" + (HOOKS_CUSTOM.length - 1) + "]: " + HOOKS_CUSTOM[HOOKS_CUSTOM.length - 1]);
+      //console.log("DEBUG [loadHooks]> Valid Hook[" + (HOOKS_CUSTOM.length - 1) + "]: " + HOOKS_CUSTOM[HOOKS_CUSTOM.length - 1]);
       // More compreheinsice URL check
       urlExists(poss_hook_url, function(err, exists) {
-        console.log("DEBUG [loadHooks]> URL check: " + poss_hook_url + ' = ' + exists);
+        //console.log("DEBUG [loadHooks]> URL check: " + poss_hook_url + ' = ' + exists);
         if (!exists) {
           for (var j = 0; j < HOOKS_CUSTOM.length; j++) {
             if (HOOKS_CUSTOM[j][3] == poss_hook_url) { // Callback delay requires fresh search
               HOOKS_CUSTOM[j][0] = false; // Disables the hook
-              console.log("DEBUG [loadHooks]> Disabled Hook[" + j + "]: " + HOOKS_CUSTOM[j]);
+              //console.log("DEBUG [loadHooks]> Disabled Hook[" + j + "]: " + HOOKS_CUSTOM[j]);
               break;
             }; // if
           }; // for
@@ -1542,8 +1542,11 @@ async function sendViaDialogV2(eventSend) {
     console.log("DEBUG [sendViaDialogV2]> dialogFlowHook: " + dialogFlowHook);
 
     if (typeof result.fulfillmentMessages[0].text == 'undefined'){console.console.log('WTAF______________WTAF')};
-
-    let dialogFlowText = result.fulfillmentMessages[0].text.text[0];
+    let dialogFlowText = '';
+    if (dialogFlowHook != null){
+      console.console.log('DIRTY______________DIRTY');
+      let dialogFlowText = result.fulfillmentMessages[0].text.text[0];
+    };
 
     console.log("INFO [sendViaDialogV2]> Response to " + sender + ": " + dialogFlowText);
     if (result.intent) {
@@ -1632,6 +1635,7 @@ async function sendViaDialogV2(eventSend) {
   // Catch undefined error from async await
   } catch (e) {
     sendTextDirect(eventSend,MSG_NO_HOOK);
+    console.log("INFO [sendViaDialogV2]> Response to " + sender + " via dialogflow NLP: " + dialogFlowText)
     console.log("ERROR [sendViaDialogV2]> " + e);
   }
 } // function
