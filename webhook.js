@@ -1505,62 +1505,53 @@ function sendTextDirect(eventSend,outbound_text) {
 async function sendViaDialogV2(eventSend) {
   let sender = eventSend.sender.id;
   let dialogFlowInbound = eventSend.message.text;
-  console.log("INFO [sendViaDialogV2]> Sender: " + sender);
-  console.log("INFO [sendViaDialogV2]> Request: " + dialogFlowInbound);
+  console.log("INFO [sendViaDialogV2]> Request from " + sender + ": " + dialogFlowInbound);
   try {
     const sessionPath = sessionClient.projectAgentSessionPath(
       GOOGLE_PROJECT_ID,
       sender
-    );
+    ); // try
     const request = {
       session: sessionPath,
       queryInput: {
         text: {
           text: dialogFlowInbound,
           languageCode: 'en-UK',
-        },
-      },
-    };
+        }, // text
+      }, // queryInput
+    }; // const
     // Send request and log result
     const responses = await sessionClient.detectIntent(request);
 
     console.log("DEBUG [sendViaDialogV2]: DialogFlow Intent Detected");
     const result = responses[0].queryResult;
 
-    //console.log('fulfillmentMessages.fulfillmentText ' + result.fulfillmentMessages.fulfillmentText);
-    // always undefined
-    //console.log('fulfillmentMessages ' + result.fulfillmentMessages);
-    // always an object
     console.log('>>>>> action ' + result.action);
-    // typically empty
-    // sometimes input.unknown or DefaultFallbackIntent.DefaultFallbackIntent-fallback i.e. forward to Integration Admin
-    // sometimes a webhook identifier
     console.log('>>>>> outputContexts ' + result.outputContexts);
-    // often empty, often objects
-    //console.log('parameters ' + result.parameters);
-    // always objects
-    console.log('>>>>> WebhookSource ' + result.WebhookSource);
-    console.log('>>>>> WIntentDetectionConfidence ' + result.IntentDetectionConfidence);
-    console.log('>>>>> DiagnosticInfo ' + result.DiagnosticInfo);
 
-    console.log("INFO [sendViaDialogV2]> Query: " + result.queryText);
+    console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
     let dialogFlowText = result.fulfillmentText;
 
-    console.log("INFO [sendViaDialogV2]> Response: " + dialogFlowText);
+    console.log("******************** Text [legacy]" + result.FulfillmentText);
+    console.log("******************** Message" + result.FulfillmentMessages);
+
+    console.log("INFO [sendViaDialogV2]> Response to " + sender + ": " + dialogFlowText);
     if (result.intent) {
-      console.log("INFO [sendViaDialogV2]> Intent: " + result.intent.displayName);
+      console.log("INFO [sendViaDialogV2]> Intent to " + sender + ": " + result.intent.displayName);
     } else {
-      console.log("INFO [sendViaDialogV2]> Intent: NONE MATCHED");
+      console.log("INFO [sendViaDialogV2]> Intent to " + sender + ": NONE MATCHED");
     }
+
+    let dialogFlowHook = result.action;
 
     let hooked = false;
     if (HOOKS_CUSTOM.length > 0) { // Have custom hooks to check
       for (var i = 0; i < HOOKS_CUSTOM.length; i++) {
-        console.log("DEBUG [sendViaDialogV2] Hook " + i + " [0] = " + HOOKS_CUSTOM[i][0]);
-        console.log("DEBUG [sendViaDialogV2] Hook " + i + " [1] = " + HOOKS_CUSTOM[i][1]);
-        console.log("DEBUG [sendViaDialogV2] Hook " + i + " [2] = " + HOOKS_CUSTOM[i][2]);
-        console.log("DEBUG [sendViaDialogV2] Hook " + i + " [3] = " + HOOKS_CUSTOM[i][3]);
-        if (HOOKS_CUSTOM[i][0] && dialogFlowText == HOOKS_CUSTOM[i][2]) { // Found custom
+        //console.log("DEBUG [sendViaDialogV2] Hook " + i + " [Validity] = " + HOOKS_CUSTOM[i][0]);
+        //console.log("DEBUG [sendViaDialogV2] Hook " + i + " [Response Type] = " + HOOKS_CUSTOM[i][1]);
+        //console.log("DEBUG [sendViaDialogV2] Hook " + i + " [Name] = " + HOOKS_CUSTOM[i][2]);
+        //console.log("DEBUG [sendViaDialogV2] Hook " + i + " [URL] = " + HOOKS_CUSTOM[i][3]);
+        if (HOOKS_CUSTOM[i][0] && dialogFlowHook == HOOKS_CUSTOM[i][2]) { // Found custom
           console.log("INFO [sendViaDialogV2]> Response: Template " + HOOKS_CUSTOM[i][2] + " (" + HOOKS_CUSTOM[i][1] + ")");
           if (HOOKS_CUSTOM[i][1] == 'image') {
             postImage(eventSend,HOOKS_CUSTOM[i][3],false,'');
@@ -1585,13 +1576,13 @@ async function sendViaDialogV2(eventSend) {
         let eventLoopback = eventSend;
         eventLoopback.sender.id = KEY_ADMIN;
         sendTextDirect(eventLoopback,loopbackText);
-      };
-    };
-
+      }; // If
+    }; // If
+  // Catch undefined error from async await
   } catch (e) {
     console.log("ERROR [sendViaDialogV2]> Undefined: " + e);
   }
-}
+} // function
 
 // Message request pinged off of API.AI for response
 // Latest: 29 June 2020: v1 DialogFlow is being deprecated
