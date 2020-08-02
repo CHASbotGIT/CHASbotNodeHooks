@@ -1540,21 +1540,21 @@ async function sendViaDialogV2(eventSend) {
     //let dialogFlowText = result.fulfillmentText; // [LEGACY]
     let dialogFlowHook = result.action;
     console.log("DEBUG [sendViaDialogV2]> dialogFlowHook: " + dialogFlowHook);
-
     let dialogFlowText = ''
-    if (dialogFlowHook != '') {
-      console.log ('!!!!!!!!! THERE MUST BE A HOOK, THEREFORE NO TEXT RESPONSE !!!!!!!!!');
-    } else {
+    if (dialogFlowHook != '') { // If there is an 'action' then there likely to be a hook
+      if (dialogFlowHook.includes('smalltalk') || dialogFlowHook.includes('unknown') || dialogFlowHook.includes('Default')){
+        // For dialogflow built-in 'action' exceptons
+        dialogFlowText = result.fulfillmentMessages[0].text.text[0];
+      }
+    } else { // If there is no 'action', there is no hook and therefore will be text
       dialogFlowText = result.fulfillmentMessages[0].text.text[0];
     };
-
     console.log("INFO [sendViaDialogV2]> Response to " + sender + ": " + dialogFlowText);
     if (result.intent) {
       console.log("INFO [sendViaDialogV2]> Intent to " + sender + ": " + result.intent.displayName);
     } else {
       console.log("INFO [sendViaDialogV2]> Intent to " + sender + ": NONE MATCHED");
     };
-
     // Check for hard-coded hooks
     let hookText = '';
     if (dialogFlowHook === HOOK_WEATHER) {
