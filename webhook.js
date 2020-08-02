@@ -1526,7 +1526,7 @@ async function sendViaDialogV2(eventSend) {
     const result = responses[0].queryResult;
     console.log("DEBUG [sendViaDialogV2]> Action: " + result.action);
     console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
-    let dialogFlowText = result.fulfillmentMessages.fulfillmentText;
+    let dialogFlowText = result.fulfillmentText;
     console.log("INFO [sendViaDialogV2]> Response to " + sender + ": " + dialogFlowText);
     if (result.intent) {
       console.log("INFO [sendViaDialogV2]> Intent to " + sender + ": " + result.intent.displayName);
