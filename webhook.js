@@ -1563,7 +1563,7 @@ async function sendViaDialogV2(eventSend) {
       let city = 'Edinburgh';
 
       console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters);
-      console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters.['geo-city-gb']);
+      console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters['geo-city-gb']);
       console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters.geo-city-gb);
 
       if (typeof result.parameters['geo-city-gb'] != 'undefined') {
