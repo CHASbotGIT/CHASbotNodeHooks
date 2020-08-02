@@ -1539,7 +1539,7 @@ async function sendViaDialogV2(eventSend) {
     console.log("DEBUG [sendViaDialogV2]> Action: " + result.action);
     console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
     //let dialogFlowText = result.fulfillmentText; // [LEGACY]
-    if (typeof result.result.fulfillmentMessages[0].text.text[0] = 'undefined') {
+    if (typeof result.fulfillmentMessages[0].text.text[0] = 'undefined') {
       console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
     }
 
@@ -1556,6 +1556,7 @@ async function sendViaDialogV2(eventSend) {
     let hookText = '';
     if (dialogFlowHook === HOOK_WEATHER) {
       // Set a default weather location
+      console.log("DEBUG [sendViaDialogV2]> HOOK_WEATHER");
       let city = 'Edinburgh';
       if (typeof result.parameters['geo-city-gb'] != 'undefined') {
         city = result.parameters['geo-city-gb'];
@@ -1585,12 +1586,14 @@ async function sendViaDialogV2(eventSend) {
         }
       })
     } else if (dialogFlowHook === HOOK_PICKCARD) {
+      console.log("DEBUG [sendViaDialogV2]> HOOK_PICKCARD");
       CARD_PICK = CARD_DECK[randomBetween(0,CARD_DECK.length-1)];
       hookText = CARD_PROMPTS[randomBetween(0,CARD_PROMPTS.length-1)] + CARD_PICK;
       console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Pick a Card Hook: " + hookText);
       sendTextDirect(eventSend,hookText);
       return;
     } else if (dialogFlowHook === HOOK_FUNDRAISING) {
+      console.log("DEBUG [sendViaDialogV2]> HOOK_FUNDRAISING");
       hookText = CHAS_FR_LIST;
       console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Fundraising Hook: " + hookText);
       sendTextDirect(eventSend,hookText);
