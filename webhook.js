@@ -1541,11 +1541,12 @@ async function sendViaDialogV2(eventSend) {
     let dialogFlowHook = result.action;
     console.log("DEBUG [sendViaDialogV2]> dialogFlowHook: " + dialogFlowHook);
 
+    let dialogFlowText = ''
     if (dialogFlowHook != '') {
       console.log ('!!!!!!!!! THERE MUST BE A HOOK, THEREFORE NO TEXT RESPONSE !!!!!!!!!');
+    } else {
+      dialogFlowText = result.fulfillmentMessages[0].text.text[0];
     };
-
-    let dialogFlowText = result.fulfillmentMessages[0].text.text[0];
 
     console.log("INFO [sendViaDialogV2]> Response to " + sender + ": " + dialogFlowText);
     if (result.intent) {
