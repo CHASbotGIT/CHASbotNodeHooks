@@ -1576,11 +1576,6 @@ async function sendViaDialogV2(eventSend) {
       console.log("DEBUG [sendViaDialogV2] Weather Hook > URL: " + restUrl);
 
       request(restUrl, function (err, response, body) {
-        /*if(err){
-          console.log('error:', error);
-        } else {
-          console.log('body:', body);
-        }*/
         if (!err && response.statusCode == 200) { // Successful response
           let json = JSON.parse(body);
           console.log("DEBUG [sendViaDialogV2] Weather Hook JSON > " + json);
@@ -1595,8 +1590,8 @@ async function sendViaDialogV2(eventSend) {
           console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
           sendTextDirect(eventSend,hookText);
           return;
-        }
-      });
+        } //else
+      }); // } function ) request
 
       /*https.get(restUrl, (err, response, body) => { // Check the weather API
 
@@ -1652,7 +1647,7 @@ async function sendViaDialogV2(eventSend) {
     }; // if
     // No hooks found
     if (dialogFlowText == '') {dialogFlowText = MSG_NO_HOOK}; // Catch empty dialogflow responses
-    console.log("INFO [sendViaDialogV2]> Response to " + sender + " via dialogflow NLP: " + dialogFlowText);
+    console.log("INFO [sendViaDialogV2]> Empty response to " + sender + " via dialogflow NLP: " + dialogFlowText);
     sendTextDirect(eventSend,dialogFlowText);
     // Look out for unknown response and cc. admin
     if (result.action == 'input.unknown'||result.action.slice(0,21)=='DefaultFallbackIntent') {
@@ -1665,7 +1660,7 @@ async function sendViaDialogV2(eventSend) {
   // Catch undefined error from async await
   } catch (e) {
     sendTextDirect(eventSend,MSG_NO_HOOK);
-    console.log("INFO [sendViaDialogV2]> Response to " + sender + " via dialogflow NLP: " + MSG_NO_HOOK)
+    console.log("INFO [sendViaDialogV2]> Catch response to " + sender + " via dialogflow NLP: " + MSG_NO_HOOK)
     console.log("ERROR [sendViaDialogV2]> " + e);
   }
 } // function
