@@ -1534,11 +1534,11 @@ async function sendViaDialogV2(eventSend) {
       console.log("INFO [sendViaDialogV2]> Intent to " + sender + ": NONE MATCHED");
     };
 
-    let dialogFlowHook = "";
-    if (typeof result.action != 'undefined') {
-      let dialogFlowHook = result.action;
-    };
-
+    //let dialogFlowHook = "";
+    //if (typeof result.action != 'undefined') {
+    //  let dialogFlowHook = result.action;
+    //};
+    let dialogFlowHook = result.action;
 
     let hooked = false;
     if (HOOKS_CUSTOM.length > 0) { // Have custom hooks to check
