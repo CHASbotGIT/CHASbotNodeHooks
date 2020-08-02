@@ -1522,8 +1522,7 @@ async function sendViaDialogV2(eventSend) {
     }; // const
     // Send request and log result
     const responses = await sessionClient.detectIntent(request);
-
-    console.log("DEBUG [sendViaDialogV2]: DialogFlow Intent Detected");
+    //console.log("DEBUG [sendViaDialogV2]: DialogFlow Intent Detected");
     const result = responses[0].queryResult;
 
     console.log('>>>>> action ' + result.action);
@@ -1538,10 +1537,9 @@ async function sendViaDialogV2(eventSend) {
     } else {
       console.log("INFO [sendViaDialogV2]> Intent to " + sender + ": NONE MATCHED");
     }
+    let dialogFlowHook = "";
     if (typeof result.action != 'undefined') {
       let dialogFlowHook = result.action;
-    } else {
-      let dialogFlowHook = "";
     };
     let hooked = false;
     if (HOOKS_CUSTOM.length > 0) { // Have custom hooks to check
@@ -1579,7 +1577,7 @@ async function sendViaDialogV2(eventSend) {
     }; // If
   // Catch undefined error from async await
   } catch (e) {
-    console.log("ERROR [sendViaDialogV2]> Undefined: " + e);
+    console.log("ERROR [sendViaDialogV2]> " + e);
   }
 } // function
 
