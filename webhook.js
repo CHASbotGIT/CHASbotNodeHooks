@@ -1562,7 +1562,7 @@ async function sendViaDialogV2(eventSend) {
       console.log("DEBUG [sendViaDialogV2]> HOOK_WEATHER");
       let city = 'Edinburgh';
 
-      console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters);
+      console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters.geo-city-gb);
 
       if (typeof result.parameters['geo-city-gb'] != 'undefined') {
         city = result.parameters['geo-city-gb'];
