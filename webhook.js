@@ -1579,7 +1579,7 @@ async function sendViaDialogV2(eventSend) {
       let city = 'Edinburgh';
 
       const ZZZ = responses[0].queryResult.outputContexts[0];
-      console.log('>>>>>>>>>>>>>'+ ZZZ.+'<<<<<<<<<<<<<<<<<<<');
+      console.log('>>>>>>>>>>>>>'+ ZZZ +'<<<<<<<<<<<<<<<<<<<');
       /*
       console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters);
       console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters['geo-city-gb']);
