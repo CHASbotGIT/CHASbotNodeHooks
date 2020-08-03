@@ -1546,7 +1546,7 @@ async function sendViaDialogV2(eventSend) {
     //console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ >'+intent_repsonse.displayName);
     // works
     const params = responses[0].queryResult.parameters;
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ >'+params[0]]);
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ >'+params[0]);
 
     console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
     //let dialogFlowText = result.fulfillmentText; // [LEGACY]
