@@ -1549,6 +1549,23 @@ async function sendViaDialogV2(eventSend) {
     console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ A >'+params);
     for(var property in params) { console.log(property + "=" + params[property]); }
 
+    function getDim(a) {
+        var dim = [];
+        for (;;) {
+            dim.push(a.length);
+
+            if (Array.isArray(a[0])) {
+                a = a[0];
+            } else {
+                break;
+            }
+        }
+        return dim;
+    }
+    var myArray = Object.values(params);
+    console.log (getDim(myArray));
+
+
     //console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ B >'+params[0]);
     //console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ C >'+params[1]);
     //console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ D >'+params[2]);
