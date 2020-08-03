@@ -1586,7 +1586,7 @@ async function sendViaDialogV2(eventSend) {
       request(restUrl, function (err, response, body) {
         if (!err && response.statusCode == 200) { // Successful response
           let json = JSON.parse(body);
-          console.log("DEBUG [sendViaDialogV2] Weather Hook JSON > " + json);
+          console.log("DEBUG [sendViaDialogV2] Weather Hook JSON > " + body);
           let tempF = ~~(json.main.temp * 9/5 - 459.67);
           let tempC = ~~(json.main.temp - 273.15);
           hookText = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
