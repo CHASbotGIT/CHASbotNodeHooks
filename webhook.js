@@ -1546,10 +1546,11 @@ async function sendViaDialogV2(eventSend) {
     //console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ >'+intent_repsonse.displayName);
     // works
     const params = responses[0].queryResult.parameters;
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ >'+params[0]);
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ >'+params[1]);
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ >'+params[2]);
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ >'+params['geo-city-gb']);
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ A >'+params);
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ B >'+params[0]);
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ C >'+params[1]);
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ D >'+params[2]);
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ E >'+params['geo-city-gb']);
 
     console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
     //let dialogFlowText = result.fulfillmentText; // [LEGACY]
@@ -1578,7 +1579,7 @@ async function sendViaDialogV2(eventSend) {
       let city = 'Edinburgh';
 
       const ZZZ = responses[0].queryResult.outputContexts[0];
-      console.log('>>>>>>>>>>>>>'+ +'<<<<<<<<<<<<<<<<<<<');
+      console.log('>>>>>>>>>>>>>'+ ZZZ.+'<<<<<<<<<<<<<<<<<<<');
       /*
       console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters);
       console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters['geo-city-gb']);
