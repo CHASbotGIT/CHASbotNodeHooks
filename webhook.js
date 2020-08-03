@@ -1556,8 +1556,10 @@ async function sendViaDialogV2(eventSend) {
     }
     var myArray = Object.values(params);
     console.log (getDim(myArray));
-    console.log (myArray[0]);
-    if (myArray[0].includes("geo-city-gb")) {console.log("BAZINGA")};
+
+    let acid_test = myArray[0];
+    console.log (acid_test);
+    if (acid_test.includes("geo-city-gb")) {console.log("BAZINGA")};
 
     console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
     //let dialogFlowText = result.fulfillmentText; // [LEGACY]
