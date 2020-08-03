@@ -1536,6 +1536,12 @@ async function sendViaDialogV2(eventSend) {
     const responses = await sessionClient.detectIntent(dialogflow_request);
     //console.log("DEBUG [sendViaDialogV2]: DialogFlow Intent Detected");
     const result = responses[0].queryResult;
+
+    const response_id = responses[0].responseId;
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ >'+response_id);
+    const webhook_status = responses[0].webhookStatus;
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ >'+webhook_status.code);
+
     console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
     //let dialogFlowText = result.fulfillmentText; // [LEGACY]
     let dialogFlowHook = result.action;
@@ -1561,6 +1567,9 @@ async function sendViaDialogV2(eventSend) {
       // Set a default weather location
       console.log("DEBUG [sendViaDialogV2]> HOOK_WEATHER");
       let city = 'Edinburgh';
+
+      const ZZZ = responses[0].queryResult.outputContexts[0];
+      console.log('>>>>>>>>>>>>>'+ +'<<<<<<<<<<<<<<<<<<<');
       /*
       console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters);
       console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters['geo-city-gb']);
