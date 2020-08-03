@@ -1576,6 +1576,8 @@ async function sendViaDialogV2(eventSend) {
         if (paramsString.includes("geo-city-gb")) {
           let starting_point = 32;
           let ending_point = paramsString.Length - 24;
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>> LENGTH' + paramsString.Length);
+          console.log ('>>>>>>>>>>>>>>>>>>>>>>>> END ' + ending_point + ' START ' + starting_point);
           if (ending_point - starting_point > 0) {
             city = paramsString.slice(starting_point,ending_point);
             console.log("DEBUG [sendViaDialogV2]> Weather geo-city-gb found: " + city);
@@ -1590,7 +1592,7 @@ async function sendViaDialogV2(eventSend) {
         }; // else if
       }; //if (typeof
       let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
-      console.log("DEBUG [sendViaDialogV2] Weather Hook > URL: " + restUrl);
+      console.log("DEBUG [sendViaDialogV2] > Weather Hook URL: " + restUrl);
       request(restUrl, function (err, response, body) {
         if (!err && response.statusCode == 200) { // Successful response
           let json = JSON.parse(body);
