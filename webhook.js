@@ -1614,14 +1614,12 @@ async function sendViaDialogV2(eventSend) {
             weathericonId = weathericonId + "04"; // broken clouds
           };
           let hr = new Date().getHours();
-          console.log('>>>>>>>>>>>>>> ' + hr);
           if (hr >= 7 && hr <= 21) {
-              weathericonId = weathericonId + "d@2x.png";
+              weathericonId = weathericonId + "d@4x.png"; // day time
           } else {
-              weathericonId = weathericonId + "n@2x.png";
+              weathericonId = weathericonId + "n@4x.png"; // night time
           };
           postImage(eventSend,weathericonId,true,hookText);
-          //sendTextDirect(eventSend,hookText);
           return;
         } else { // Error code from weather API
           hookText = MSG_NO_WEATHER;
