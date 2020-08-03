@@ -1557,7 +1557,7 @@ async function sendViaDialogV2(eventSend) {
     var myArray = Object.values(params);
     console.log (getDim(myArray));
 
-    let acid_test = myArray[0];
+    let acid_test = JSON.stringify(myArray[0]);
     console.log (acid_test);
     if (acid_test.includes("geo-city-gb")) {console.log("BAZINGA")};
 
