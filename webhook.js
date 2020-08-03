@@ -1537,14 +1537,6 @@ async function sendViaDialogV2(eventSend) {
     //console.log("DEBUG [sendViaDialogV2]: DialogFlow Intent Detected");
     const result = responses[0].queryResult;
 
-    const response_id = responses[0].responseId;
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ >'+response_id);
-    //const webhook_status = responses[0].webhookStatus;
-    //console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ >'+webhook_status.code);
-    // TypeError: Cannot read property 'code' of null
-    //const intent_repsonse = responses[0].queryResult.intent;
-    //console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ >'+intent_repsonse.displayName);
-    // works
     const params = responses[0].queryResult.parameters;
     console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ A >'+params);
     for(var property in params) { console.log(property + "=" + params[property]); }
@@ -1564,13 +1556,8 @@ async function sendViaDialogV2(eventSend) {
     }
     var myArray = Object.values(params);
     console.log (getDim(myArray));
-    console.log(myArray[0]);
-
-
-    //console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ B >'+params[0]);
-    //console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ C >'+params[1]);
-    //console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ D >'+params[2]);
-    //console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ E >'+params['geo-city-gb']);
+    console.log (myArray[0]);
+    if (myArray[0].includes("geo-city-gb"){console.log("BAZINGA")};
 
     console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
     //let dialogFlowText = result.fulfillmentText; // [LEGACY]
@@ -1598,11 +1585,7 @@ async function sendViaDialogV2(eventSend) {
       console.log("DEBUG [sendViaDialogV2]> HOOK_WEATHER");
       let city = 'Edinburgh';
 
-      const ZZZ = responses[0].queryResult.outputContexts[0];
-      console.log('>>>>>>>>>>>>>'+ ZZZ +'<<<<<<<<<<<<<<<<<<<');
       /*
-      console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters);
-      console.log('Weather >>>>>>>>>>>>>>>>' + result.parameters['geo-city-gb']);
 
       if (typeof result.parameters['geo-city-gb'] != 'undefined') {
         city = result.parameters['geo-city-gb'];
