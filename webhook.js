@@ -1619,7 +1619,7 @@ async function sendViaDialogV2(eventSend) {
           } else {
               weathericonId = weathericonId + "n@4x.png"; // night time
           };
-          weathericonId="https://images2.imgbox.com/76/f9/XqB4iCtM_o.gif"
+          //weathericonId="https://images2.imgbox.com/76/f9/XqB4iCtM_o.gif"
           postImage(eventSend,weathericonId,true,hookText);
           return;
         } else { // Error code from weather API
