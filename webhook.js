@@ -1564,6 +1564,7 @@ async function sendViaDialogV2(eventSend) {
     }
     var myArray = Object.values(params);
     console.log (getDim(myArray));
+    console.log(myArray[0]);
 
 
     //console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ B >'+params[0]);
