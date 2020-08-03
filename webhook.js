@@ -1539,8 +1539,11 @@ async function sendViaDialogV2(eventSend) {
 
     const response_id = responses[0].responseId;
     console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ >'+response_id);
-    const webhook_status = responses[0].webhookStatus;
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ >'+webhook_status.code);
+    //const webhook_status = responses[0].webhookStatus;
+    //console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ >'+webhook_status.code);
+    // TypeError: Cannot read property 'code' of null
+    const intent_repsonse = responses[0].queryResult,intent;
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ >'+intent_repsonse.displayName);
 
     console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
     //let dialogFlowText = result.fulfillmentText; // [LEGACY]
