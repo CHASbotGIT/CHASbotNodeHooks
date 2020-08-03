@@ -1547,6 +1547,7 @@ async function sendViaDialogV2(eventSend) {
     // works
     const params = responses[0].queryResult.parameters;
     console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ >'+params[0]);
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ >'+parameters['geo-city-gb']);
 
     console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
     //let dialogFlowText = result.fulfillmentText; // [LEGACY]
