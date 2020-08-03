@@ -1576,14 +1576,14 @@ async function sendViaDialogV2(eventSend) {
         if (paramsString.includes("geo-city-gb")) {
           let starting_point = 32;
           let ending_point = paramsString.Length - 24;
-          if (ending_point - starting-point > 0) {
+          if (ending_point - starting_point > 0) {
             city = paramsString.slice(starting_point,ending_point);
             console.log("DEBUG [sendViaDialogV2]> Weather geo-city-gb found: " + city);
           }; // if
         } else if (paramsString.includes("hospice_places")) {
           let starting_point = 35;
           let ending_point = paramsString.Length - 24;
-          if (ending_point - starting-point > 0) {
+          if (ending_point - starting_point > 0) {
             city = paramsString.slice(starting_point,ending_point);
             console.log("DEBUG [sendViaDialogV2]> Weather hospice_places found: " + city);
           }; // if (ending_point
