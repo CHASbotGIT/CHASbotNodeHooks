@@ -1570,29 +1570,26 @@ async function sendViaDialogV2(eventSend) {
       if (typeof responses[0].queryResult.parameters != 'undefined') {
         console.log("DEBUG [sendViaDialogV2]> Weather params are defined");
         const params = responses[0].queryResult.parameters;
-        var paramsArray = Object.values(params);
-        let paramsString = JSON.stringify(paramsArray[0]);
-
-let some_other_thing = JSON.parse(paramsString);
-console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZ' + some_other_thing["geo-city-gb"]["stringValue"]);
-
-        console.log("DEBUG [sendViaDialogV2]> Weather Parameters: " + paramsString);
-        if (paramsString.includes("geo-city-gb")) {
-          let starting_point = 32;
-          let ending_point = paramsString.Length - 24;
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>> LENGTH' + paramsString.Length);
-          console.log ('>>>>>>>>>>>>>>>>>>>>>>>> END ' + ending_point + ' START ' + starting_point);
-          if (ending_point - starting_point > 0) {
-            city = paramsString.slice(starting_point,ending_point);
+        var paramsObject = Object.values(params);
+        let paramsJSON = JSON.stringify(paramsObject[0]);
+        let paramsParsed = JSON.parse(paramsString);
+        console.log("DEBUG [sendViaDialogV2]> Weather Parameters: " + paramsJSON);
+        if (paramsJSON.includes("geo-city-gb")) {
+          //let starting_point = 32;
+          //let ending_point = paramsString.Length - 24;
+          //console.log('>>>>>>>>>>>>>>>>>>>>>>>>> LENGTH' + paramsString.Length);
+          //console.log ('>>>>>>>>>>>>>>>>>>>>>>>> END ' + ending_point + ' START ' + starting_point);
+          //if (ending_point - starting_point > 0) {
+            city = paramsParsed["geo-city-gb"]["stringValue"];
             console.log("DEBUG [sendViaDialogV2]> Weather geo-city-gb found: " + city);
-          }; // if
-        } else if (paramsString.includes("hospice_places")) {
-          let starting_point = 35;
-          let ending_point = paramsString.Length - 24;
-          if (ending_point - starting_point > 0) {
-            city = paramsString.slice(starting_point,ending_point);
+          //}; // if
+        } else if (paramsJSON.includes("hospice_places")) {
+          //let starting_point = 35;
+          //let ending_point = paramsString.Length - 24;
+          //if (ending_point - starting_point > 0) {
+            city = paramsParsed["hospice_places"]["stringValue"];
             console.log("DEBUG [sendViaDialogV2]> Weather hospice_places found: " + city);
-          }; // if (ending_point
+          //}; // if (ending_point
         }; // else if
       }; //if (typeof
       let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
