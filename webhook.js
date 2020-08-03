@@ -33,7 +33,6 @@ const pg = require('pg'); // https://www.npmjs.com/package/pg
 const request = require('request'); // https://github.com/request/request
 const express = require('express'); // https://expressjs.com
 const bodyParser = require('body-parser'); // https://github.com/expressjs/body-parser
-//const dialogFlow = require('apiai')(KEY_DIALOGFLOW); // https://www.npmjs.com/package/apiai
 // Configure dialogFlow session credentials
 const dialogflow = require('@google-cloud/dialogflow');
 const credentials = {
@@ -1571,28 +1570,15 @@ async function sendViaDialogV2(eventSend) {
         console.log("DEBUG [sendViaDialogV2]> Weather params are defined");
         const params = responses[0].queryResult.parameters;
         var paramsObject = Object.values(params);
-
-        console.log('HA HA HA ' + responses[0].queryResult.parameters["geo-city-gb"]["stringValue"]);
-
         let paramsJSON = JSON.stringify(paramsObject[0]);
         let paramsParsed = JSON.parse(paramsJSON);
         console.log("DEBUG [sendViaDialogV2]> Weather Parameters: " + paramsJSON);
         if (paramsJSON.includes("geo-city-gb")) {
-          //let starting_point = 32;
-          //let ending_point = paramsString.Length - 24;
-          //console.log('>>>>>>>>>>>>>>>>>>>>>>>>> LENGTH' + paramsString.Length);
-          //console.log ('>>>>>>>>>>>>>>>>>>>>>>>> END ' + ending_point + ' START ' + starting_point);
-          //if (ending_point - starting_point > 0) {
-            city = paramsParsed["geo-city-gb"]["stringValue"];
-            console.log("DEBUG [sendViaDialogV2]> Weather geo-city-gb found: " + city);
-          //}; // if
+          city = paramsParsed["geo-city-gb"]["stringValue"];
+          console.log("DEBUG [sendViaDialogV2]> Weather geo-city-gb found: " + city);
         } else if (paramsJSON.includes("hospice_places")) {
-          //let starting_point = 35;
-          //let ending_point = paramsString.Length - 24;
-          //if (ending_point - starting_point > 0) {
-            city = paramsParsed["hospice_places"]["stringValue"];
-            console.log("DEBUG [sendViaDialogV2]> Weather hospice_places found: " + city);
-          //}; // if (ending_point
+          city = paramsParsed["hospice_places"]["stringValue"];
+          console.log("DEBUG [sendViaDialogV2]> Weather hospice_places found: " + city);
         }; // else if
       }; //if (typeof
       let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
