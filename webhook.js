@@ -1545,10 +1545,10 @@ async function sendViaDialogV2(eventSend) {
       if (dialogFlowHook.includes('smalltalk') || dialogFlowHook.includes('unknown') || dialogFlowHook.includes('Default')){
         // For dialogflow built-in 'action' exceptons
         dialogFlowText = result.fulfillmentMessages[0].text.text[0];
-      }
+      }; // if (dialogFlowHook
     } else { // If there is no 'action', there is no hook and therefore will be text
       dialogFlowText = result.fulfillmentMessages[0].text.text[0];
-    };
+    }; // else
     console.log("INFO [sendViaDialogV2]> Response to " + sender + ": " + dialogFlowText);
     if (result.intent) {
       console.log("INFO [sendViaDialogV2]> Intent to " + sender + ": " + result.intent.displayName);
@@ -1580,18 +1580,19 @@ async function sendViaDialogV2(eventSend) {
           if (ending_point - starting-point > 0) {
             city = paramString.slice(starting_point,ending_point);
             console.log("DEBUG [sendViaDialogV2]> Weather geo-city-gb found: " + city);
-          }
+          }; // if
         } else if (paramsString.includes("hospice_places")) {
           let starting_point = 35;
           let ending_point = paramString.Length - 24;
           if (ending_point - starting-point > 0) {
             city = paramString.slice(starting_point,ending_point);
             console.log("DEBUG [sendViaDialogV2]> Weather hospice_places found: " + city);
-          }
-        };
-        let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
-        console.log("DEBUG [sendViaDialogV2] Weather Hook > URL: " + restUrl);
-        request(restUrl, function (err, response, body) {
+          }; // if (ending_point
+        }; // else if
+      }; //if (typeof
+      let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
+      console.log("DEBUG [sendViaDialogV2] Weather Hook > URL: " + restUrl);
+      request(restUrl, function (err, response, body) {
         if (!err && response.statusCode == 200) { // Successful response
           let json = JSON.parse(body);
           console.log("DEBUG [sendViaDialogV2] Weather Hook JSON > " + json);
@@ -1621,7 +1622,7 @@ async function sendViaDialogV2(eventSend) {
       console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Fundraising Hook: " + hookText);
       sendTextDirect(eventSend,hookText);
       return;
-    };
+    }; // else if (dialogFlowHook
     // Check for custom hooks
     if (HOOKS_CUSTOM.length > 0) {
       for (var i = 0; i < HOOKS_CUSTOM.length; i++) {
@@ -1636,10 +1637,10 @@ async function sendViaDialogV2(eventSend) {
           } else if (HOOKS_CUSTOM[i][1] == 'button') {
             postLinkButton(eventSend,HOOKS_CUSTOM[i][3],HOOKS_CUSTOM[i][4],HOOKS_CUSTOM[i][5]);
             return;
-          };
-        }; // if
-      }; // for
-    }; // if
+          }; // elseif... HOOKS_CUSTOM[i][1]
+        }; // if... HOOKS_CUSTOM[i][0]
+      }; // for (var i = 0
+    }; // if (HOOKS_CUSTOM.length
     // No hooks found - Note that weather request may still be in-flight - it will catch its own errors
     if (dialogFlowHook != HOOK_WEATHER) {
       if (dialogFlowText == '') {dialogFlowText = MSG_NO_HOOK}; // Catch empty dialogflow responses
@@ -1652,14 +1653,13 @@ async function sendViaDialogV2(eventSend) {
         let eventLoopback = eventSend;
         eventLoopback.sender.id = KEY_ADMIN;
         sendTextDirect(eventLoopback,loopbackText);
-      };
-    };
-  // Catch undefined error from async await
-  } catch (e) {
+      }; //if (result.action
+    }; // if (dialogFlowHook
+} catch (e) { // cattch from try - undefined error from async await
     sendTextDirect(eventSend,MSG_NO_HOOK);
     console.log("INFO [sendViaDialogV2]> Catch response to " + sender + " via dialogflow NLP: " + MSG_NO_HOOK)
     console.log("ERROR [sendViaDialogV2]> " + e);
-  }
+  } // catch end
 } // function
 
 function postImage(postEvent,image_url,plusText,passText) {
