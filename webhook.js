@@ -1574,7 +1574,7 @@ async function sendViaDialogV2(eventSend) {
         let paramsString = JSON.stringify(paramsArray[0]);
 
 let some_other_thing = JSON.parse(paramsString);
-console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZ' + some_other_thing.["geo-city-gb"].stringValue);
+console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZ' + some_other_thing["geo-city-gb"]["stringValue"]);
 
         console.log("DEBUG [sendViaDialogV2]> Weather Parameters: " + paramsString);
         if (paramsString.includes("geo-city-gb")) {
