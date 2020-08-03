@@ -1571,6 +1571,9 @@ async function sendViaDialogV2(eventSend) {
         console.log("DEBUG [sendViaDialogV2]> Weather params are defined");
         const params = responses[0].queryResult.parameters;
         var paramsObject = Object.values(params);
+
+        console.log('HA HA HA ' + params["geo-city-gb"]["stringValue"]);
+
         let paramsJSON = JSON.stringify(paramsObject[0]);
         let paramsParsed = JSON.parse(paramsJSON);
         console.log("DEBUG [sendViaDialogV2]> Weather Parameters: " + paramsJSON);
