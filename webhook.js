@@ -1547,10 +1547,12 @@ async function sendViaDialogV2(eventSend) {
     // works
     const params = responses[0].queryResult.parameters;
     console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ A >'+params);
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ B >'+params[0]);
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ C >'+params[1]);
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ D >'+params[2]);
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ E >'+params['geo-city-gb']);
+    for(var property in params) { console.log(property + "=" + params[property]); }
+
+    //console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ B >'+params[0]);
+    //console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ C >'+params[1]);
+    //console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ D >'+params[2]);
+    //console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ E >'+params['geo-city-gb']);
 
     console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
     //let dialogFlowText = result.fulfillmentText; // [LEGACY]
