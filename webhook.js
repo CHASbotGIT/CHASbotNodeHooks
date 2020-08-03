@@ -1536,31 +1536,6 @@ async function sendViaDialogV2(eventSend) {
     const responses = await sessionClient.detectIntent(dialogflow_request);
     //console.log("DEBUG [sendViaDialogV2]: DialogFlow Intent Detected");
     const result = responses[0].queryResult;
-
-    const params = responses[0].queryResult.parameters;
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@ A >'+params);
-    for(var property in params) { console.log(property + "=" + params[property]); }
-
-    function getDim(a) {
-        var dim = [];
-        for (;;) {
-            dim.push(a.length);
-
-            if (Array.isArray(a[0])) {
-                a = a[0];
-            } else {
-                break;
-            }
-        }
-        return dim;
-    }
-    var myArray = Object.values(params);
-    console.log (getDim(myArray));
-
-    let acid_test = JSON.stringify(myArray[0]);
-    console.log (acid_test);
-    if (acid_test.includes("geo-city-gb")) {console.log("BAZINGA")};
-
     console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
     //let dialogFlowText = result.fulfillmentText; // [LEGACY]
     let dialogFlowHook = result.action;
@@ -1586,22 +1561,37 @@ async function sendViaDialogV2(eventSend) {
       // Set a default weather location
       console.log("DEBUG [sendViaDialogV2]> HOOK_WEATHER");
       let city = 'Edinburgh';
-
-      /*
-
-      if (typeof result.parameters['geo-city-gb'] != 'undefined') {
-        city = result.parameters['geo-city-gb'];
-        console.log("DEBUG [sendViaDialogV2] Weather Hook > Location @ :" + city);
-      };
-      if (typeof result.parameters['hospice_places'] != 'undefined') {
-        city = result.parameters['hospice_places'];
-        console.log("DEBUG [sendViaDialogV2] Weather Hook > Hospice @ :" + city);
-      };
-      */
-      let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
-      console.log("DEBUG [sendViaDialogV2] Weather Hook > URL: " + restUrl);
-
-      request(restUrl, function (err, response, body) {
+      //54321098765432109876543210987654321098765432109876543210987654321
+      //{"hospice_places":{"stringValue":"Kinross","kind":"stringValue"}}
+      //12345678901234567890123456789012345678901234567890123456789012345
+      //---------------------------------------------------------------
+      //321098765432109876543210987654321098765432109876543210987654321
+      //{"geo-city-gb":{"stringValue":"Stirling","kind":"stringValue"}}
+      //123456789012345678901234567890123456789012345678901234567890123
+      if (typeof responses[0].queryResult.parameters != 'undefined') {
+        console.log("DEBUG [sendViaDialogV2]> HOOK_WEATHER");
+        const params = responses[0].queryResult.parameters;
+        var paramsArray = Object.values(params);
+        let paramsString = JSON.stringify(paramsArray[0]);
+        console.log("DEBUG [sendViaDialogV2]> Weather Parameters: " + paramsString);
+        if (paramsString.includes("geo-city-gb")) {
+          let starting_point = 32;
+          let ending_point = paramString.Length - 24;
+          if (ending_point - starting-point > 0) {
+            city = paramString.slice(starting_point,ending_point);
+            console.log("DEBUG [sendViaDialogV2]> Weather geo-city-gb found: " + city);
+          }
+        } else if (paramsString.includes("hospice_places")) {
+          let starting_point = 35;
+          let ending_point = paramString.Length - 24;
+          if (ending_point - starting-point > 0) {
+            city = paramString.slice(starting_point,ending_point);
+            console.log("DEBUG [sendViaDialogV2]> Weather hospice_places found: " + city);
+          }
+        };
+        let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
+        console.log("DEBUG [sendViaDialogV2] Weather Hook > URL: " + restUrl);
+        request(restUrl, function (err, response, body) {
         if (!err && response.statusCode == 200) { // Successful response
           let json = JSON.parse(body);
           console.log("DEBUG [sendViaDialogV2] Weather Hook JSON > " + json);
