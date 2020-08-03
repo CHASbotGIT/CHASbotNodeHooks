@@ -1549,7 +1549,6 @@ async function sendViaDialogV2(eventSend) {
     } else { // If there is no 'action', there is no hook and therefore will be text
       dialogFlowText = result.fulfillmentMessages[0].text.text[0];
     }; // else
-    console.log("INFO [sendViaDialogV2]> Response to " + sender + ": " + dialogFlowText);
     if (result.intent) {
       console.log("INFO [sendViaDialogV2]> Intent to " + sender + ": " + result.intent.displayName);
     } else {
@@ -1569,23 +1568,23 @@ async function sendViaDialogV2(eventSend) {
       //{"geo-city-gb":{"stringValue":"Stirling","kind":"stringValue"}}
       //123456789012345678901234567890123456789012345678901234567890123
       if (typeof responses[0].queryResult.parameters != 'undefined') {
-        console.log("DEBUG [sendViaDialogV2]> HOOK_WEATHER");
+        console.log("DEBUG [sendViaDialogV2]> Weather params are defined");
         const params = responses[0].queryResult.parameters;
         var paramsArray = Object.values(params);
         let paramsString = JSON.stringify(paramsArray[0]);
         console.log("DEBUG [sendViaDialogV2]> Weather Parameters: " + paramsString);
         if (paramsString.includes("geo-city-gb")) {
           let starting_point = 32;
-          let ending_point = paramString.Length - 24;
+          let ending_point = paramsString.Length - 24;
           if (ending_point - starting-point > 0) {
-            city = paramString.slice(starting_point,ending_point);
+            city = paramsString.slice(starting_point,ending_point);
             console.log("DEBUG [sendViaDialogV2]> Weather geo-city-gb found: " + city);
           }; // if
         } else if (paramsString.includes("hospice_places")) {
           let starting_point = 35;
-          let ending_point = paramString.Length - 24;
+          let ending_point = paramsString.Length - 24;
           if (ending_point - starting-point > 0) {
-            city = paramString.slice(starting_point,ending_point);
+            city = paramsString.slice(starting_point,ending_point);
             console.log("DEBUG [sendViaDialogV2]> Weather hospice_places found: " + city);
           }; // if (ending_point
         }; // else if
