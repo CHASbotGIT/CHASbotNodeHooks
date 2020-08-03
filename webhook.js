@@ -1591,11 +1591,42 @@ async function sendViaDialogV2(eventSend) {
           let tempC = ~~(json.main.temp - 273.15);
           hookText = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
           console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
-          sendTextDirect(eventSend,hookText);
+          let weatherId = json.weather[0].id;
+          // Icons at https://openweathermap.org/weather-conditions
+          let weathericonId = "https://openweathermap.org/img/wn/";
+          if (weatherId <= 232) {
+            weathericonId = weathericonId + "11"; // thunderstorm
+          } else if (weatherId >= 300 && weatherId <= 321) {
+            weathericonId = weathericonId + "10"; // drizzle
+          } else if (weatherId >= 500 && weatherId <= 531) {
+            weathericonId = weathericonId + "09"; // rain
+          } else if (weatherId >= 600 && weatherId <= 622 ) {
+            weathericonId = weathericonId + "13"; // snow
+          } else if (weatherId >= 701 && weatherId <= 781 ) {
+            weathericonId = weathericonId + "50"; // atmosphere
+          } else if (weatherId === 800) {
+            weathericonId = weathericonId + "01"; // clear
+          } else if (weatherId === 801) {
+            weathericonId = weathericonId + "02"; // few clouds
+          } else if (weatherId === 802) {
+            weathericonId = weathericonId + "03"; // scattered clouds
+          } else if (weatherId >= 803 && weatherId <= 804) {
+            weathericonId = weathericonId + "04"; // broken clouds
+          };
+          let hr = new Date().getHours();
+          console.log('>>>>>>>>>>>>>> ' + hr);
+          if (hr >= 7 && hr <= 21) {
+              weathericonId = weathericonId + "d@2x.png";
+          } else {
+              weathericonId = weathericonId + "n@2x.png";
+          };
+          postImage(eventSend,weathericonId,true,hookText);
+          //sendTextDirect(eventSend,hookText);
           return;
         } else { // Error code from weather API
           hookText = MSG_NO_WEATHER;
           console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
+          postImage(eventSend,weathericonId,true,HOOKS_CUSTOM[i][4]);
           sendTextDirect(eventSend,hookText);
           return;
         } //else
