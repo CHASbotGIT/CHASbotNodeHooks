@@ -1572,7 +1572,10 @@ async function sendViaDialogV2(eventSend) {
         const params = responses[0].queryResult.parameters;
         var paramsArray = Object.values(params);
         let paramsString = JSON.stringify(paramsArray[0]);
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>> LENGTH...' + paramsArray[0].length);
+
+let some_other_thing = JSON.parse(paramsString);
+console.log('ZZZZZZZZZZZZZZZZZZZZZZZZZZZZ' + some_other_thing.["geo-city-gb"].stringValue);
+
         console.log("DEBUG [sendViaDialogV2]> Weather Parameters: " + paramsString);
         if (paramsString.includes("geo-city-gb")) {
           let starting_point = 32;
