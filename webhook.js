@@ -1665,7 +1665,7 @@ async function sendViaDialogV2(eventSend) {
         } else {
           hookText = MSG_NO_WEATHER;
           console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
-          postImage(eventSend,EMPTY_WEATHER_GIF_UR,true,hookText);
+          postImage(eventSend,EMPTY_WEATHER_GIF_URL,true,hookText);
           return;
         } //else
       }); // } function ) request
