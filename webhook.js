@@ -1652,8 +1652,8 @@ async function sendViaDialogV2(eventSend) {
           console.log("DEBUG [sendViaDialogV2]> Weather Id" + findId + " [" + day_or_night + "]");
           for (var loop_icons = 0; loop_icons < WEATHER_GIFS.length; loop_icons++) {
             if (WEATHER_GIFS[loop_icons].includes(findId) && WEATHER_GIFS[loop_icons].includes(day_or_night)) {
-              weathericonId = weathericonId + WEATHER_GIFS[loop_icons].slice(0, 13) + URL_GIF_SUFFIX;
-              console.log("DEBUG [sendViaDialogV2]> Weather GIF:" + weathericonId);
+              weathericonId = weathericonId + WEATHER_GIFS[loop_icons].slice(0, 14) + URL_GIF_SUFFIX;
+              console.log("DEBUG [sendViaDialogV2]> Weather GIF: " + weathericonId);
               break;
             }; // if
           }; // for
