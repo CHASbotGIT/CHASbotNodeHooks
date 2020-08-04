@@ -279,6 +279,7 @@ CHASABET [24] = ["2a/4a/9R5ZzF7V","d0/23/QDFnWi52"]; // Y
 CHASABET [25] = ["f6/89/4pwI187X","3c/4f/AguL64HL"]; // Z
 // All images2 prefix and gif suffix - source: https://www.mikeafford.com/store/weather-icons/weather-icon-set-re-03/
 // Maps to https://openweathermap.org/weather-conditions
+const EMPTY_WEATHER_GIF_URL = "https://images2.imgbox.com/c0/d5/dTFWiA7h_o.gif";
 var WEATHER_GIFS = [
   "a7/8c/0ZQ6B9PR day 800",
   "89/6c/S892YW2m day 801, 802",
@@ -1657,14 +1658,14 @@ async function sendViaDialogV2(eventSend) {
               break;
             }; // if
           }; // for
-          //weathericonId="https://images2.imgbox.com/76/f9/XqB4iCtM_o.gif";
+          // Catch missing GIF
+          if (weathericonId == URL_IMG_PREFIX) { weathericonId = EMPTY_WEATHER_GIF_URL };
           postImage(eventSend,weathericonId,true,hookText);
           return;
         } else {
           hookText = MSG_NO_WEATHER;
           console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
-          postImage(eventSend,weathericonId,true,HOOKS_CUSTOM[i][4]);
-          sendTextDirect(eventSend,hookText);
+          postImage(eventSend,EMPTY_WEATHER_GIF_UR,true,hookText);
           return;
         } //else
       }); // } function ) request
