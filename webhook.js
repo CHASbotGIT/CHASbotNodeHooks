@@ -206,6 +206,7 @@ const URL_BEEB_THUMB = "https://images.imgbox.com/59/f5/PFN3tfX5_o.png";
 const URL_IMG_PREFIX = "https://images.imgbox.com/";
 const URL_IMG_PREFIX2 = "https://images2.imgbox.com/";
 const URL_IMG_SUFFIX = "_o.png";
+const URL_GIF_SUFFIX = "_o.gif";
 // Regular expressions
 const REGEX_START = '(?=.*\\b'; // Regular expression bits
 const REGEX_MIDDLE = '\\b)';
@@ -276,6 +277,63 @@ CHASABET [22] = ["6e/ec/Hd1zypGj","95/0b/xyZtCqje","b0/f5/wBb2EsqF"]; // W
 CHASABET [23] = ["e9/0c/nB1EzCck","2e/60/2ETG0nZa"]; // X
 CHASABET [24] = ["2a/4a/9R5ZzF7V","d0/23/QDFnWi52"]; // Y
 CHASABET [25] = ["f6/89/4pwI187X","3c/4f/AguL64HL"]; // Z
+// All images2 prefix and gif suffix - source: https://www.mikeafford.com/store/weather-icons/weather-icon-set-re-03/
+// Maps to https://openweathermap.org/weather-conditions
+var WEATHER_GIFS = [
+  "a7/8c/0ZQ6B9PR day 800",
+  "89/6c/S892YW2m day 801, 802",
+  "9d/27/o2e05zGc day 804",
+  "1d/eb/z98LmXpq day 721",
+  "0f/61/FCn1GAAr day 701",
+  "6d/da/XcKVM4EB day 741",
+  "5c/9e/H4Wk9GCj night 800",
+  "ed/ab/Fzq4hS68 day 321, 520, 521, 531",
+  "9d/c3/wiKQBmSp day 522",
+  "b7/5d/KqF87CiA day 620, 621, 622",
+  "ac/25/Y6sde2q8 day 500, 501",
+  "0c/3b/PxjLH80T day 502, 503",
+  "10/5b/YO9xBG7c day 600, 601",
+  "c1/ed/LAEBQvmO day 602",
+  "92/99/Otcf46PS day 611, 612, 613, 615, 616",
+  "6f/07/ypBgFMBm day 906",
+  "76/f9/XqB4iCtM day 200, 201, 202, 210, 211, 212, 221, 230, 231, 232",
+  "26/36/vW04Z2uV night 321, 520, 521, 531",
+  "b1/f1/pDcVw9wP night 522",
+  "8f/e2/FnnYeCUV night 620, 621, 622",
+  "d0/4c/vWYADC2T night 500, 501",
+  "01/92/UNomL02l night 502, 503",
+  "e3/92/wU0uHnZ4 night 600, 601",
+  "9b/ff/BoURacwM night 602",
+  "d8/f9/EuC4GMyQ night 611, 612, 613, 615, 616",
+  "82/e9/7tVFKV08 night 906",
+  "b1/31/TSZSdk54 night 200, 201, 202, 210, 211, 212, 221, 230, 231, 232",
+  "c3/03/20ahf4a7 night 721, 801, 802",
+  "47/fd/OhBirQQd night 804",
+  "7d/cd/m6gR8cQQ day 803",
+  "24/60/yj2D9tIN night 803",
+  "52/04/yiToCBuQ day 904",
+  "d6/63/ek6aZEfu day 903",
+  "36/e5/1NHJnEh5 day 300, 301, 310, 311, 313",
+  "16/52/11EwhgRm day 511",
+  "ed/71/zJc3BIs7 day 504",
+  "bd/f8/7V6HMeQO day 711, 762",
+  "51/eb/SPnVGvEt day 731",
+  "16/d4/v0JNGIFp day 905",
+  "a9/2b/m4OOIKOC night 904",
+  "33/05/RDR9i2iA night 903",
+  "61/1b/8pU2yng3 night 701",
+  "03/9e/8ebh09jn night 741",
+  "da/74/UpiDPXsS night 300, 301, 310, 311, 313",
+  "e3/6a/FeuXDOcW night 511",
+  "7c/68/f0pw4zcW night 504",
+  "33/b5/PqNzCp8K night 711, 762",
+  "f4/53/gAEADyta night 731, 751, 761",
+  "af/75/AuCJyiHK night 905",
+  "2e/69/zDShc6Or night day 781",
+  "0a/7f/kbmDUHRi night day 771",
+  "c1/2e/8jAAjnXo day 302, 312, 314",
+  "79/38/CpeF1okY night 302, 312, 314"
+];
 var CHASABET_INDEX = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 // Rock Paper Scissors Lizard Spock
 var RPSLS_VALID = ["rock","paper","scissors","lizard","spock"];
@@ -1559,13 +1617,6 @@ async function sendViaDialogV2(eventSend) {
       // Set a default weather location
       console.log("DEBUG [sendViaDialogV2]> HOOK_WEATHER");
       let city = 'Edinburgh';
-      //54321098765432109876543210987654321098765432109876543210987654321
-      //{"hospice_places":{"stringValue":"Kinross","kind":"stringValue"}}
-      //12345678901234567890123456789012345678901234567890123456789012345
-      //---------------------------------------------------------------
-      //321098765432109876543210987654321098765432109876543210987654321
-      //{"geo-city-gb":{"stringValue":"Stirling","kind":"stringValue"}}
-      //123456789012345678901234567890123456789012345678901234567890123
       if (typeof responses[0].queryResult.parameters != 'undefined') {
         console.log("DEBUG [sendViaDialogV2]> Weather params are defined");
         const params = responses[0].queryResult.parameters;
@@ -1592,7 +1643,13 @@ async function sendViaDialogV2(eventSend) {
           hookText = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
           console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
           let weatherId = json.weather[0].id;
-          // Icons at https://openweathermap.org/weather-conditions
+          console.log (">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> type " + typeof (weatherId))
+          // Match the id to the weather icon
+          for (var loop_hour = 0; loop_hour < TIME_OF_DAY.length; loop_hour++) {
+            if (hr >= TIME_OF_DAY[loop_hour][0]) {
+              build_greeting = TIME_OF_DAY[loop_hour][1];
+              break;
+            }; // for
           let weathericonId = "https://openweathermap.org/img/wn/";
           if (weatherId <= 232) {
             weathericonId = weathericonId + "11"; // thunderstorm
