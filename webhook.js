@@ -1648,7 +1648,8 @@ async function sendViaDialogV2(eventSend) {
             if (hr >= TIME_OF_DAY[loop_hour][0]) {
               build_greeting = TIME_OF_DAY[loop_hour][1];
               break;
-            }; // for
+            }; // if
+          }; // for
           let weathericonId = "https://openweathermap.org/img/wn/";
           if (weatherId <= 232) {
             weathericonId = weathericonId + "11"; // thunderstorm
@@ -1679,7 +1680,7 @@ async function sendViaDialogV2(eventSend) {
           postImage(eventSend,weathericonId,true,hookText);
           //sendTextDirect(eventSend,hookText);
           return;
-        } else { // Error code from weather API
+        } else {
           hookText = MSG_NO_WEATHER;
           console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
           postImage(eventSend,weathericonId,true,HOOKS_CUSTOM[i][4]);
