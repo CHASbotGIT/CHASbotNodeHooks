@@ -880,6 +880,9 @@ function cleanInput(inboundText) {
 CHASbot.post('/webhook', (req, res) => {
   if (req.body.object === 'page') {
     req.body.entry.forEach((entry) => {
+
+      console.log(JSON.stringify(entry));
+
       entry.messaging.forEach((event) => {
         //if (event.read && event.read.watermark) { //console.log("DEBUG [postWebhook]> Receipt: " + event.read.watermark) };
 
