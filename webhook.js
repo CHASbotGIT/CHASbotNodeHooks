@@ -827,8 +827,8 @@ function customGreeting(senderID,greet) {
       if (hr >= TIME_OF_DAY[loop_hour][0]) {
         build_greeting = TIME_OF_DAY[loop_hour][1];
         break;
-      }; // for
-    }; // if
+      }; // if
+    }; // for
     build_greeting = build_greeting + ' ' + fb_who + '. ' + MSG_RANDOM_COMPLIMENT[randomBetween(0,MSG_RANDOM_COMPLIMENT.length-1)] + ' ';
     // Set the time the ID received a name check
     IDS_TIMESTAMP[id_index] = new Date().getTime();
@@ -1644,7 +1644,21 @@ async function sendViaDialogV2(eventSend) {
           console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
           let weatherId = json.weather[0].id;
           // Match the id to the weather icon
-          let weathericonId = "https://openweathermap.org/img/wn/";
+          let findId = ' ' + weatherId.toString();
+          let hr = new Date().getHours();
+          let day_or_night = '';
+          let weathericonId = URL_IMG_PREFIX2;
+          console.log("DEBUG [sendViaDialogV2]> Weather Id" + findId + " [" + day_or_night + "]");
+          if (hr >= 7 && hr <= 21) { day_or_night = 'day' } else { day_or_night = 'night' };
+          for (var loop_icons = 0; loop_icons < WEATHER_GIFS.length; loop_icons++) {
+            if (WEATHER_GIFS[loop_icons].includes(findId) && WEATHER_GIFS[loop_icons].includes(day_or_night)) {
+              weathericonId = weathericonId + WEATHER_GIFS[loop_icons].slice(0, 13);
+              console.log("DEBUG [sendViaDialogV2]> Weather GIF:" + weathericonId);
+              break;
+            }; // if
+          }; // for
+          weathericonId = weathericonId + URL_GIF_SUFFIX;
+          /*let weathericonId = "https://openweathermap.org/img/wn/";
           if (weatherId <= 232) {
             weathericonId = weathericonId + "11"; // thunderstorm
           } else if (weatherId >= 300 && weatherId <= 321) {
@@ -1663,13 +1677,8 @@ async function sendViaDialogV2(eventSend) {
             weathericonId = weathericonId + "03"; // scattered clouds
           } else if (weatherId >= 803 && weatherId <= 804) {
             weathericonId = weathericonId + "04"; // broken clouds
-          };
-          let hr = new Date().getHours();
-          if (hr >= 7 && hr <= 21) {
-              weathericonId = weathericonId + "d@4x.png";
-          } else {
-              weathericonId = weathericonId + "n@4x.png";
-          };
+          };*/
+
           //weathericonId="https://images2.imgbox.com/76/f9/XqB4iCtM_o.gif";
           postImage(eventSend,weathericonId,true,hookText);
           //sendTextDirect(eventSend,hookText);
