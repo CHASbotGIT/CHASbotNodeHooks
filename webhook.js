@@ -882,6 +882,10 @@ CHASbot.post('/webhook', (req, res) => {
     req.body.entry.forEach((entry) => {
       entry.messaging.forEach((event) => {
         //if (event.read && event.read.watermark) { //console.log("DEBUG [postWebhook]> Receipt: " + event.read.watermark) };
+
+        console.log(JSON.stringify(event));
+
+
         let sticker_path = '';
         let sender = event.sender.id;
         let alt_message_type = '';
