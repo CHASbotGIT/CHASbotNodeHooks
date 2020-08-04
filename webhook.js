@@ -1670,13 +1670,12 @@ async function sendViaDialogV2(eventSend) {
             weathericonId = weathericonId + "04"; // broken clouds
           };
           let hr = new Date().getHours();
-          console.log('>>>>>>>>>>>>>> ' + hr);
           if (hr >= 7 && hr <= 21) {
               weathericonId = weathericonId + "d@2x.png";
           } else {
               weathericonId = weathericonId + "n@2x.png";
           };
-          //weathericonId="https://images2.imgbox.com/76/f9/XqB4iCtM_o.gif"
+          weathericonId="https://images2.imgbox.com/76/f9/XqB4iCtM_o.gif";
           postImage(eventSend,weathericonId,true,hookText);
           //sendTextDirect(eventSend,hookText);
           return;
