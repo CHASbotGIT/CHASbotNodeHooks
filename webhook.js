@@ -1644,12 +1644,6 @@ async function sendViaDialogV2(eventSend) {
           console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
           let weatherId = json.weather[0].id;
           // Match the id to the weather icon
-          for (var loop_hour = 0; loop_hour < TIME_OF_DAY.length; loop_hour++) {
-            if (hr >= TIME_OF_DAY[loop_hour][0]) {
-              build_greeting = TIME_OF_DAY[loop_hour][1];
-              break;
-            }; // if
-          }; // for
           let weathericonId = "https://openweathermap.org/img/wn/";
           if (weatherId <= 232) {
             weathericonId = weathericonId + "11"; // thunderstorm
