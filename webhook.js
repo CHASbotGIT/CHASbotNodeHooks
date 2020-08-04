@@ -1615,29 +1615,29 @@ async function sendViaDialogV2(eventSend) {
     let hookText = '';
     if (dialogFlowHook === HOOK_WEATHER) {
       // Set a default weather location
-      console.log("DEBUG [sendViaDialogV2]> HOOK_WEATHER");
+      //console.log("DEBUG [sendViaDialogV2]> HOOK_WEATHER");
       let city = 'Edinburgh';
       if (typeof responses[0].queryResult.parameters != 'undefined') {
-        console.log("DEBUG [sendViaDialogV2]> Weather params are defined");
+        //console.log("DEBUG [sendViaDialogV2]> Weather params are defined");
         const params = responses[0].queryResult.parameters;
         var paramsObject = Object.values(params);
         let paramsJSON = JSON.stringify(paramsObject[0]);
         let paramsParsed = JSON.parse(paramsJSON);
-        console.log("DEBUG [sendViaDialogV2]> Weather Parameters: " + paramsJSON);
+        //console.log("DEBUG [sendViaDialogV2]> Weather Parameters: " + paramsJSON);
         if (paramsJSON.includes("geo-city-gb")) {
           city = paramsParsed["geo-city-gb"]["stringValue"];
-          console.log("DEBUG [sendViaDialogV2]> Weather geo-city-gb found: " + city);
+          //console.log("DEBUG [sendViaDialogV2]> Weather geo-city-gb found: " + city);
         } else if (paramsJSON.includes("hospice_places")) {
           city = paramsParsed["hospice_places"]["stringValue"];
-          console.log("DEBUG [sendViaDialogV2]> Weather hospice_places found: " + city);
+          //console.log("DEBUG [sendViaDialogV2]> Weather hospice_places found: " + city);
         }; // else if
       }; //if (typeof
       let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
-      console.log("DEBUG [sendViaDialogV2] > Weather Hook URL: " + restUrl);
+      //console.log("DEBUG [sendViaDialogV2]> Weather Hook URL: " + restUrl);
       request(restUrl, function (err, response, body) {
         if (!err && response.statusCode == 200) { // Successful response
           let json = JSON.parse(body);
-          console.log("DEBUG [sendViaDialogV2] Weather Hook JSON > " + body);
+          //console.log("DEBUG [sendViaDialogV2]> Weather Hook JSON: " + body);
           let tempF = ~~(json.main.temp * 9/5 - 459.67);
           let tempC = ~~(json.main.temp - 273.15);
           hookText = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
@@ -1649,38 +1649,16 @@ async function sendViaDialogV2(eventSend) {
           let day_or_night = '';
           let weathericonId = URL_IMG_PREFIX2;
           if (hr >= 7 && hr <= 21) { day_or_night = 'day' } else { day_or_night = 'night' };
-          console.log("DEBUG [sendViaDialogV2]> Weather Id" + findId + " [" + day_or_night + "]");
+          //console.log("DEBUG [sendViaDialogV2]> Weather Id" + findId + " [" + day_or_night + "]");
           for (var loop_icons = 0; loop_icons < WEATHER_GIFS.length; loop_icons++) {
             if (WEATHER_GIFS[loop_icons].includes(findId) && WEATHER_GIFS[loop_icons].includes(day_or_night)) {
               weathericonId = weathericonId + WEATHER_GIFS[loop_icons].slice(0, 14) + URL_GIF_SUFFIX;
-              console.log("DEBUG [sendViaDialogV2]> Weather GIF: " + weathericonId);
+              //console.log("DEBUG [sendViaDialogV2]> Weather GIF: " + weathericonId);
               break;
             }; // if
           }; // for
-          /*let weathericonId = "https://openweathermap.org/img/wn/";
-          if (weatherId <= 232) {
-            weathericonId = weathericonId + "11"; // thunderstorm
-          } else if (weatherId >= 300 && weatherId <= 321) {
-            weathericonId = weathericonId + "10"; // drizzle
-          } else if (weatherId >= 500 && weatherId <= 531) {
-            weathericonId = weathericonId + "09"; // rain
-          } else if (weatherId >= 600 && weatherId <= 622 ) {
-            weathericonId = weathericonId + "13"; // snow
-          } else if (weatherId >= 701 && weatherId <= 781 ) {
-            weathericonId = weathericonId + "50"; // atmosphere
-          } else if (weatherId === 800) {
-            weathericonId = weathericonId + "01"; // clear
-          } else if (weatherId === 801) {
-            weathericonId = weathericonId + "02"; // few clouds
-          } else if (weatherId === 802) {
-            weathericonId = weathericonId + "03"; // scattered clouds
-          } else if (weatherId >= 803 && weatherId <= 804) {
-            weathericonId = weathericonId + "04"; // broken clouds
-          };*/
-
           //weathericonId="https://images2.imgbox.com/76/f9/XqB4iCtM_o.gif";
           postImage(eventSend,weathericonId,true,hookText);
-          //sendTextDirect(eventSend,hookText);
           return;
         } else {
           hookText = MSG_NO_WEATHER;
