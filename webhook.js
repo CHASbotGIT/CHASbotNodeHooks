@@ -1643,7 +1643,6 @@ async function sendViaDialogV2(eventSend) {
           hookText = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
           console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
           let weatherId = json.weather[0].id;
-          
           // Match the id to the weather icon
           for (var loop_hour = 0; loop_hour < TIME_OF_DAY.length; loop_hour++) {
             if (hr >= TIME_OF_DAY[loop_hour][0]) {
