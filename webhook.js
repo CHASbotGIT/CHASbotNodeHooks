@@ -880,6 +880,11 @@ function cleanInput(inboundText) {
 CHASbot.post('/webhook', (req, res) => {
   if (req.body.object === 'page') {
     req.body.entry.forEach((entry) => {
+
+      entry.reaction.forEach((entry)) => {
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>' + event.reaction.reaction);
+      };
+
       entry.messaging.forEach((event) => {
         //if (event.read && event.read.watermark) { //console.log("DEBUG [postWebhook]> Receipt: " + event.read.watermark) };
         let sticker_path = '';
