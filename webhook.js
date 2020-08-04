@@ -1648,16 +1648,15 @@ async function sendViaDialogV2(eventSend) {
           let hr = new Date().getHours();
           let day_or_night = '';
           let weathericonId = URL_IMG_PREFIX2;
-          console.log("DEBUG [sendViaDialogV2]> Weather Id" + findId + " [" + day_or_night + "]");
           if (hr >= 7 && hr <= 21) { day_or_night = 'day' } else { day_or_night = 'night' };
+          console.log("DEBUG [sendViaDialogV2]> Weather Id" + findId + " [" + day_or_night + "]");
           for (var loop_icons = 0; loop_icons < WEATHER_GIFS.length; loop_icons++) {
             if (WEATHER_GIFS[loop_icons].includes(findId) && WEATHER_GIFS[loop_icons].includes(day_or_night)) {
-              weathericonId = weathericonId + WEATHER_GIFS[loop_icons].slice(0, 13);
+              weathericonId = weathericonId + WEATHER_GIFS[loop_icons].slice(0, 13) + URL_GIF_SUFFIX;
               console.log("DEBUG [sendViaDialogV2]> Weather GIF:" + weathericonId);
               break;
             }; // if
           }; // for
-          weathericonId = weathericonId + URL_GIF_SUFFIX;
           /*let weathericonId = "https://openweathermap.org/img/wn/";
           if (weatherId <= 232) {
             weathericonId = weathericonId + "11"; // thunderstorm
