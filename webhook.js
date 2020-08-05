@@ -1683,7 +1683,7 @@ async function sendViaDialogV2(eventSend) {
         const params = responses[0].queryResult.outputContexts;
         //const params = responses[0].queryResult.outputContexts.params;
         var paramsObject = Object.values(params);
-        let paramsJSON = JSON.stringify(paramsObject[0]);
+        let paramsJSON = JSON.stringify(paramsObject);
         //let paramsParsed = JSON.parse(paramsJSON);
         console.log("DEBUG [sendViaDialogV2]> Marvel Parameters: " + paramsJSON);
       } else {
