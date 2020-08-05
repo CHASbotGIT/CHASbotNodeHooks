@@ -1679,10 +1679,10 @@ async function sendViaDialogV2(eventSend) {
       }); // } function ) request
     } else if (dialogFlowHook === HOOK_MARVEL) {
       console.log("DEBUG [sendViaDialogV2]> HOOK_MARVEL");
-      if (typeof responses[0].queryResult.outputContexts[0] != 'undefined') {
+      if (typeof responses[0].queryResult.outputContexts != 'undefined') {
         console.log("DEBUG [sendViaDialogV2]> Marvel contexts are defined");
-        const context = responses[0].queryResult.outputContexts[0];
-        var contextObject = Object.values(context);
+        const context = responses[0].queryResult.outputContexts;
+        var contextObject = Object.values(context[0]);
         let contextJSON = JSON.stringify(contextObject);
         let contextParsed = JSON.parse(contextJSON);
         console.log("DEBUG [sendViaDialogV2]> Marvel Context: " + contextJSON);
