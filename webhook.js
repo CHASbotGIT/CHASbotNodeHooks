@@ -157,7 +157,7 @@ const TRIGGER_FEELING_LUCKY = 'feeling lucky';
 const TRIGGER_CHAS_LOGO = 'chas logo';
 const TRIGGER_CHASABET_1 = 'chas alphabet';
 const TRIGGER_CHASABET_2 = 'chas letter';
-const TRIGGER_MARVEL = 'marvel';
+const TRIGGER_MARVEL = 'xxx';
 const TRIGGER_CHAS_EVENTS = 'when is';
 const TRIGGER_CHAS_BIOGS = 'who is';
 const TRIGGER_RPSLS = 'bazinga';
@@ -181,6 +181,7 @@ const FILE_HOOKS = "./hooks.txt";
 const HOOK_FUNDRAISING = 'fundraising';
 const HOOK_PICKCARD = 'cards';
 const HOOK_WEATHER = 'weather';
+const HOOK_MARVEL = "marvel";
 /*const HOOK_WORKPLACE = 'workplace';
 const HOOK_URL_GROUP_DOCS = 'group_docs';
 const HOOK_PLAN = 'plan';
@@ -1676,6 +1677,17 @@ async function sendViaDialogV2(eventSend) {
           return;
         } //else
       }); // } function ) request
+    } else if (dialogFlowHook === HOOK_MARVEL) {
+      console.log("DEBUG [sendViaDialogV2]> HOOK_MARVEL");
+      const output_contexts = responses[0].queryResult.outputContexts;
+      var contextObject = Object.values(output_contexts);
+      let contextJSON = JSON.stringify(contextObject[0]);
+      let contextParsed = JSON.parse(contextJSON);
+      console.log("DEBUG [sendViaDialogV2]> Marvel Contexts: " + contextJSON);
+
+
+
+
     } else if (dialogFlowHook === HOOK_PICKCARD) {
       console.log("DEBUG [sendViaDialogV2]> HOOK_PICKCARD");
       CARD_PICK = CARD_DECK[randomBetween(0,CARD_DECK.length-1)];
