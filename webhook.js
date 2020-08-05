@@ -1679,18 +1679,15 @@ async function sendViaDialogV2(eventSend) {
       }); // } function ) request
     } else if (dialogFlowHook === HOOK_MARVEL) {
       console.log("DEBUG [sendViaDialogV2]> HOOK_MARVEL");
-      if (typeof responses[0].queryResult.outputContexts != 'undefined') {
+      if (typeof responses[0].queryResult.parameters != 'undefined') {
         const params = responses[0].queryResult.outputContexts;
-        //const params = responses[0].queryResult.outputContexts.params;
+        console.log("DEBUG [sendViaDialogV2]> Marvel params are defined");
+        const params = responses[0].queryResult.parameters;
         var paramsObject = Object.values(params);
-        let paramsJSON = JSON.stringify(paramsObject);
-        //let paramsParsed = JSON.parse(paramsJSON);
+        let paramsJSON = JSON.stringify(paramsObject[0]);
+        let paramsParsed = JSON.parse(paramsJSON);
         console.log("DEBUG [sendViaDialogV2]> Marvel Parameters: " + paramsJSON);
-      } else {
-        var resultJSON = JSON.stringify(result);
-        console.log("DEBUG [sendViaDialogV2]> Parameters Undefined: " + resultJSON);
       };
-
 
 
 
