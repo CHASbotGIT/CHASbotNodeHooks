@@ -1679,7 +1679,7 @@ async function sendViaDialogV2(eventSend) {
       }); // } function ) request
     } else if (dialogFlowHook === HOOK_MARVEL) {
       console.log("DEBUG [sendViaDialogV2]> HOOK_MARVEL");
-      console.log(>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + result.outputContexts[0].name)
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + result.outputContexts[0].name)
       if (typeof result.outputContexts[0] != 'undefined') {
         console.log("DEBUG [sendViaDialogV2]> Marvel contexts are defined");
         const context = result.outputContexts[0];
