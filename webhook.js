@@ -1679,7 +1679,8 @@ async function sendViaDialogV2(eventSend) {
       }); // } function ) request
     } else if (dialogFlowHook === HOOK_MARVEL) {
       console.log("DEBUG [sendViaDialogV2]> HOOK_MARVEL");
-      const params = responses[0].queryResult.outputContexts.params;
+      const params = responses[0].queryResult;
+      //const params = responses[0].queryResult.outputContexts.params;
       var paramsObject = Object.values(params);
       let paramsJSON = JSON.stringify(paramsObject[0]);
       let paramsParsed = JSON.parse(paramsJSON);
