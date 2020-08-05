@@ -1711,7 +1711,7 @@ async function sendViaDialogV2(eventSend) {
     // No hooks found - Note that weather request may still be in-flight - it will catch its own errors
     if (dialogFlowHook != HOOK_WEATHER) {
       if (dialogFlowText == '') {dialogFlowText = MSG_NO_HOOK}; // Catch empty dialogflow responses
-      console.log("INFO [sendViaDialogV2]> Empty response to " + sender + " via dialogflow NLP: " + dialogFlowText);
+      console.log("INFO [sendViaDialogV2]> Scripted response to " + sender + " via dialogflow NLP: " + dialogFlowText);
       sendTextDirect(eventSend,dialogFlowText);
       // Look out for unknown response and cc. admin
       if (result.action == 'input.unknown'||result.action.slice(0,21)=='DefaultFallbackIntent') {
