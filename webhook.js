@@ -1682,8 +1682,8 @@ async function sendViaDialogV2(eventSend) {
       if (typeof responses[0].queryResult.outputContexts != 'undefined') {
         console.log("DEBUG [sendViaDialogV2]> Marvel contexts are defined");
         const context = responses[0].queryResult.outputContexts;
-        var contextObject = Object.values(context[0]);
-        let contextJSON = JSON.stringify(contextObject);
+        var contextObject = Object.values(context);
+        let contextJSON = JSON.stringify(contextObject[0]);
         let contextParsed = JSON.parse(contextJSON);
         console.log("DEBUG [sendViaDialogV2]> Marvel Context: " + contextJSON);
       };
