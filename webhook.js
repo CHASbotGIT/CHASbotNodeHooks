@@ -1680,7 +1680,7 @@ async function sendViaDialogV2(eventSend) {
     } else if (dialogFlowHook === HOOK_MARVEL) {
       console.log("DEBUG [sendViaDialogV2]> HOOK_MARVEL");
       if (typeof responses[0].queryResult.parameters != 'undefined') {
-        const params2 = responses[0].queryResult.outputContexts;
+        const params2 = responses[0].queryResult.parameters;
         console.log("DEBUG [sendViaDialogV2]> Marvel params are defined");
         const params = responses[0].queryResult.parameters;
         var paramsObject2 = Object.values(params2);
