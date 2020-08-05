@@ -1679,12 +1679,12 @@ async function sendViaDialogV2(eventSend) {
       }); // } function ) request
     } else if (dialogFlowHook === HOOK_MARVEL) {
       console.log("DEBUG [sendViaDialogV2]> HOOK_MARVEL");
-      const params = responses[0].queryResult;
+      const params = responses[0].queryResult.outputContexts;
       //const params = responses[0].queryResult.outputContexts.params;
       var paramsObject = Object.values(params);
       let paramsJSON = JSON.stringify(paramsObject[0]);
       let paramsParsed = JSON.parse(paramsJSON);
-      console.log("DEBUG [sendViaDialogV2]> Weather Parameters: " + paramsJSON);
+      console.log("DEBUG [sendViaDialogV2]> Marvel Parameters: " + paramsJSON);
 
 
     } else if (dialogFlowHook === HOOK_PICKCARD) {
