@@ -164,7 +164,7 @@ const TRIGGER_RPSLS = 'bazinga';
 const TRIGGER_HANGMAN = 'hangman';
 const TRIGGER_STOP = 'stop';
 var TRIGGER_SEARCH = ['search','google','wiki','beeb'];
-var TRIGGER_MOVIEDB = ['synopsis on','synopsis of','watched','info on','about','watch','catch','seen','see'];
+var TRIGGER_MOVIEDB = ['synopsis','watched','watch','catch','seen','see'];
 
 // ╦ ╦╔═╗╔═╗╦╔═╔═╗
 // ╠═╣║ ║║ ║╠╩╗╚═╗
