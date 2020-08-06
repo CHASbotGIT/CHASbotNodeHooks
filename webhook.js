@@ -1230,12 +1230,12 @@ CHASbot.post('/webhook', (req, res) => {
           // Marvel
           let hero_who = ''
           position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_MARVEL) + 1;
-          console.log("DEBUG [postWebhook]> " + TRIGGER_MARVEL + " phrase search result: " + position_in_analyse_text);
+          //console.log("DEBUG [postWebhook]> " + TRIGGER_MARVEL + " phrase search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
             starting_point = position_in_analyse_text + TRIGGER_MARVEL.length;
             ending_point = analyse_text.length;
             string_length = ending_point - starting_point;
-            console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
+            //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
             if (string_length > 0) {
               trigger_path = TRIGGER_MARVEL;
               hero_who = analyse_text.slice(starting_point,ending_point);
@@ -1768,7 +1768,7 @@ function postLinkButton(postEvent,link_url,reponse_msg,btn_msg) {
 }
 
 function postMarvel(postEvent,success_result,hero_array) {
-  console.log("DEBUG [postMarvel]> True or False: " + success_result);
+  //console.log("DEBUG [postMarvel]> True or False: " + success_result);
   let sender = postEvent.sender.id;
   let marvelTemplate = '';
   let marvelText = '';
@@ -2168,7 +2168,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
   let ts = new Date().getTime();
   let hash = crypto.createHash('md5').update(ts + KEY_MARVEL_PRIVATE + KEY_MARVEL_PUBLIC).digest('hex');
   url += "&ts=" + ts + "&hash=" + hash;
-  console.log("DEBUG [apiMarvelChar]> Lookup: " + url);
+  //console.log("DEBUG [apiMarvelChar]> Lookup: " + url);
   // Call on the URL to get a response
   http.get(url, function(res) {
     let body = "";
@@ -2177,30 +2177,30 @@ function apiMarvelChar(eventMarvel,marvelWho) {
     // When all the data is back, go on to query the full response
     res.on('end', function() {
       let characterData = JSON.parse(body);
-      console.log("DEBUG [apiMarvelChar]> Character Code: " + JSON.stringify(characterData));
+      //console.log("DEBUG [apiMarvelChar]> Character Code: " + JSON.stringify(characterData));
       if (characterData.code === 200) { // Successful response from Marvel
         if (characterData['data'].count == 0) { // A successful response doesn't mean there was a match
-          console.log("DEBUG [apiMarvelChar]> Valid URL but no results for " + toTitleCase(marvelWho));
+          //console.log("DEBUG [apiMarvelChar]> Valid URL but no results for " + toTitleCase(marvelWho));
           marvelPost = [marvelWho,marvelNote,marvelThumb,marvelURL];
           postMarvel(eventMarvel,false,marvelPost);
           return;
         } else if (characterData['data'].results[0].description !== '') { // Assess the first result back
           marvelNote = characterData.data.results[0].description;
-          console.log("DEBUG [apiMarvelChar]> Description: " + marvelNote);
+          //console.log("DEBUG [apiMarvelChar]> Description: " + marvelNote);
           marvelThumb = characterData.data.results[0].thumbnail.path + '/standard_xlarge.jpg';
-          console.log("DEBUG [apiMarvelChar]> Thumbnail: " + marvelThumb);
+          //console.log("DEBUG [apiMarvelChar]> Thumbnail: " + marvelThumb);
           marvelURL = characterData.data.results[0].urls[0].url;
-          console.log("DEBUG [apiMarvelChar]> Hero URL: " + marvelURL);
+          //console.log("DEBUG [apiMarvelChar]> Hero URL: " + marvelURL);
           marvelPost = [marvelWho,marvelNote,marvelThumb,marvelURL];
           postMarvel(eventMarvel,true,marvelPost);
           return;
         } else { // Assess the first result back when there isn't a description provided by Marvel
           marvelNote = "Find out more at Marvel.";
-          console.log("DEBUG [apiMarvelChar]> Description: " + marvelNote);
+          //console.log("DEBUG [apiMarvelChar]> Description: " + marvelNote);
           marvelThumb = characterData.data.results[0].thumbnail.path + '/standard_xlarge.jpg';
-          console.log("DEBUG [apiMarvelChar]> Thumbnail: " + marvelThumb);
+          //console.log("DEBUG [apiMarvelChar]> Thumbnail: " + marvelThumb);
           marvelURL = characterData.data.results[0].urls[0].url;
-          console.log("DEBUG [apiMarvelChar]> Hero URL: " + marvelURL);
+          //console.log("DEBUG [apiMarvelChar]> Hero URL: " + marvelURL);
           marvelPost = [marvelWho,marvelNote,marvelThumb,marvelURL];
           postMarvel(eventMarvel,true,marvelPost);
           return;
