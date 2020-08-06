@@ -1330,6 +1330,7 @@ CHASbot.post('/webhook', (req, res) => {
             sendQuestion_playSurvey(event);
           } else if (trigger_path == TRIGGER_HELP) {
             //console.log("DEBUG [postWebhook_route]> Help: " + HELP_INDEX);
+            genLottery(6,1,49);
             console.log("INFO [postWebhook]> Sender: " + sender);
             console.log("INFO [postWebhook]> Request: " + TRIGGER_HELP);
             console.log("INFO [postWebhook]> Action: postWebhook.postImage");
@@ -2607,4 +2608,35 @@ function playRPSLS(eventRPSLS,pickPlayer) {
     console.log("INFO [playRPSLS]> Reponse: IMG URL "  + rpsls_url + '; Text: ' + rpslsText);
     postImage(eventRPSLS,rpsls_url,true,rpslsText);
   };
+}
+
+function genLottery(size, lowest, highest) {
+  console.log("DEBUG [genLottery]> Lottery Generator");
+	var numbers = [];
+	for(var i = 0; i < size; i++) {
+		var add = true;
+		var randomNumber = Math.floor(Math.random() * highest) + 1;
+		for(var y = 0; y < highest; y++) {
+			if(numbers[y] == randomNumber) {
+				add = false;
+			};
+		};
+		if (add) {
+			numbers.push(randomNumber);
+      console.log("DEBUG [genLottery]> Number picked: " + randomNumber);
+		} else {
+			i--;
+		};
+	};
+  // Number sort
+	var highestNumber = 0;
+	for (var m = 0; m < numbers.length; m++) {
+		for (var n = m + 1; n < numbers.length; n++) {
+			if (numbers[n] < numbers[m]) {
+			   highestNumber = numbers[m];
+				numbers[m] = numbers[n];
+				numbers[n] = highestNumber;
+			}; // if
+		}; // for
+	}; // for
 }
