@@ -1230,12 +1230,12 @@ CHASbot.post('/webhook', (req, res) => {
           // Marvel
           let hero_who = ''
           position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_MARVEL) + 1;
-          //console.log("DEBUG [postWebhook]> " + TRIGGER_MARVEL + " phrase search result: " + position_in_analyse_text);
+          console.log("DEBUG [postWebhook]> " + TRIGGER_MARVEL + " phrase search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
             starting_point = position_in_analyse_text + TRIGGER_MARVEL.length;
             ending_point = analyse_text.length;
             string_length = ending_point - starting_point;
-            //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
+            console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
             if (string_length > 0) {
               trigger_path = TRIGGER_MARVEL;
               hero_who = analyse_text.slice(starting_point,ending_point);
@@ -1292,7 +1292,7 @@ CHASbot.post('/webhook', (req, res) => {
               analyse_text = trigger_path; // Clean extra
             };
           };
-	  // CHAS Biogs
+          // CHAS Biogs
           position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_CHAS_BIOGS) + 1;
           //console.log("DEBUG [postWebhook]> " + TRIGGER_CHAS_BIOGS + " phrase search result: " + position_in_analyse_text);
           let biogs_name = '';
@@ -1768,7 +1768,7 @@ function postLinkButton(postEvent,link_url,reponse_msg,btn_msg) {
 }
 
 function postMarvel(postEvent,success_result,hero_array) {
-  //console.log("DEBUG [postMarvel]> Pass or Fail: " + success_result);
+  console.log("DEBUG [postMarvel]> Pass or Fail: " + success_result);
   let sender = postEvent.sender.id;
   let marvelTemplate = '';
   let marvelText = '';
