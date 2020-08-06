@@ -2178,7 +2178,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
       console.log("DEBUG [apiMarvelChar]> Character Code: " + characterData.code);
       if (characterData.code === 200) { // Successful response from Marvel
         if (characterData['data'].count == 0) { // A successful response doesn't mean there was a match
-          console.log("DEBUG [apiMarvelChar]> Valid URL but no results for " + toTitleCase(hero_who));
+          console.log("DEBUG [apiMarvelChar]> Valid URL but no results for " + toTitleCase(marvelWho));
           marvelPost = [marvelWho,marvelNote,marvelThumb,marvelURL];
           postMarvel(eventMarvel,false,marvelPost);
           return;
