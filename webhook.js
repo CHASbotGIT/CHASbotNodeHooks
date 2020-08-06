@@ -2176,7 +2176,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
     // When all the data is back, go on to query the full response
     res.on('end', function() {
       let characterData = JSON.parse(body);
-      console.log("DEBUG [apiMarvelChar]> Character Code: " + characterData.code);
+      console.log("DEBUG [apiMarvelChar]> Character Code: " + characterData);
       if (characterData.code === 200) { // Successful response from Marvel
         if (characterData['data'].count == 0) { // A successful response doesn't mean there was a match
           console.log("DEBUG [apiMarvelChar]> Valid URL but no results for " + toTitleCase(marvelWho));
