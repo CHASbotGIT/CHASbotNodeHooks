@@ -157,7 +157,7 @@ const TRIGGER_FEELING_LUCKY = 'feeling lucky';
 const TRIGGER_CHAS_LOGO = 'chas logo';
 const TRIGGER_CHASABET_1 = 'chas alphabet';
 const TRIGGER_CHASABET_2 = 'chas letter';
-const TRIGGER_MARVEL = 'xxx';
+const TRIGGER_MARVEL = 'marvel';
 const TRIGGER_CHAS_EVENTS = 'when is';
 const TRIGGER_CHAS_BIOGS = 'who is';
 const TRIGGER_RPSLS = 'bazinga';
@@ -1677,21 +1677,6 @@ async function sendViaDialogV2(eventSend) {
           return;
         } //else
       }); // } function ) request
-    } else if (dialogFlowHook === HOOK_MARVEL) {
-      console.log("DEBUG [sendViaDialogV2]> HOOK_MARVEL");
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + result.outputContexts[0].name)
-      if (typeof result.outputContexts[0] != 'undefined') {
-        console.log("DEBUG [sendViaDialogV2]> Marvel contexts are defined");
-        const context = result.outputContexts[0];
-        var contextObject = Object.values(context);
-        let contextJSON = JSON.stringify(contextObject[0]);
-        //let contextParsed = JSON.parse(contextJSON);
-        console.log("DEBUG [sendViaDialogV2]> Marvel Context Object: " + contextObject);
-      };
-
-
-
-
     } else if (dialogFlowHook === HOOK_PICKCARD) {
       //console.log("DEBUG [sendViaDialogV2]> HOOK_PICKCARD");
       CARD_PICK = CARD_DECK[randomBetween(0,CARD_DECK.length-1)];
