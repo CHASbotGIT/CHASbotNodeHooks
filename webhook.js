@@ -2162,8 +2162,9 @@ function apiMarvelChar(eventMarvel,marvelWho) {
   let marvelThumb = '';
   let marvelURL = '';
   let marvelPost = [];
-  let marvelWhoShort = marvelWho.substring(0,6); // Trim to first six characyers
-  let url = URL_API_MARVEL + marvelWhoShort + "&apikey=" + KEY_MARVEL_PUBLIC;
+  let marvelLimit = "1";
+  let marvelWhoShort = marvelWho.substring(0,8); // Trim to first six characyers
+  let url = URL_API_MARVEL + marvelWhoShort + "&limit=" + marvelLimit + "&apikey=" + KEY_MARVEL_PUBLIC;
   let ts = new Date().getTime();
   let hash = crypto.createHash('md5').update(ts + KEY_MARVEL_PRIVATE + KEY_MARVEL_PUBLIC).digest('hex');
   url += "&ts=" + ts + "&hash=" + hash;
