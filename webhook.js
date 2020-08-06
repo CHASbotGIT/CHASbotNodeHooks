@@ -196,7 +196,7 @@ const URL_GIPHY = "https://api.giphy.com/v1/gifs/random";
 const URL_MOVIEDB = "https://api.themoviedb.org/3/";
 const URL_CHAT_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages";
 const URL_API_WEATHER = "http://api.openweathermap.org/data/2.5/weather?APPID=";
-const URL_API_MARVEL = "https://gateway.marvel.com/v1/public/characters?nameStartsWith="
+const URL_API_MARVEL = "https://gateway.marvel.com:443/v1/public/characters?nameStartsWith="
 const URL_SEARCH_GOOGLE = "https://www.google.com/search?q=";
 const URL_SEARCH_WIKI = "https://en.wikipedia.org/w/index.php?search=";
 const URL_SEARCH_BEEB = "https://www.bbc.co.uk/search?q=";
@@ -2162,7 +2162,8 @@ function apiMarvelChar(eventMarvel,marvelWho) {
   let marvelThumb = '';
   let marvelURL = '';
   let marvelPost = [];
-  let url = URL_API_MARVEL + marvelWho + "&apikey=" + KEY_MARVEL_PUBLIC;
+  let marvelWhoShort = marvelWho.substring(0,6); // Trim to first six characyers
+  let url = URL_API_MARVEL + marvelWhoShort + "&apikey=" + KEY_MARVEL_PUBLIC;
   let ts = new Date().getTime();
   let hash = crypto.createHash('md5').update(ts + KEY_MARVEL_PRIVATE + KEY_MARVEL_PUBLIC).digest('hex');
   url += "&ts=" + ts + "&hash=" + hash;
