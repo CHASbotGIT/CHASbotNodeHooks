@@ -869,7 +869,7 @@ function cleanInput(inboundText) {
   // Lowercase
   inboundText = inboundText.toLowerCase();
   // Strip out none alphanumeric
-  inboundText = inboundText.replace(/[^A-Za-z0-9\s]/g,'');
+  inboundText = inboundText.replace(/[^A-Za-z0-9\s]/g,'','-');
   // Contract white space
   let outboundText = inboundText.replace(/\s\s+/g, ' ');
   return [outboundText,emoticon_up_count,emoticon_down_count];
