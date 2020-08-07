@@ -2704,7 +2704,7 @@ function genLottery(size, lowest, highest, ball_or_star) {
     console.log("DEBUG [genLottery]> Ball");
     genLotteryString = genLotteryString + '🔮';
     for (var q = 0; q < numbers.length; q++) {
-      genLotteryString = genLotteryString + number[q].toString();
+      genLotteryString = genLotteryString + number[q];
       if (q != (numbers.length-1)) { genLotteryString = genLotteryString + ', ' };
     }; // for
   } else {
