@@ -2673,7 +2673,7 @@ function genLottery(size, lowest, highest, ball_or_star) {
   // Scottish Lottery - 5 unique numbers 1-49
   var genLotteryString = '';
   var numbers = [];
-	for(var i = 0; i < size; i++) {
+	for (var i = 0; i < size; i++) {
 		var add = true;
 		var randomNumber = Math.floor(Math.random() * highest) + 1;
 		for(var y = 0; y < highest; y++) {
@@ -2701,12 +2701,14 @@ function genLottery(size, lowest, highest, ball_or_star) {
 	}; // for
   genLotteryString = '';
   if (ball_or_star == 'ball') {
+    console.log("DEBUG [genLottery]> Ball");
     genLotteryString = genLotteryString + '🔮';
     for (var q = 0; q < numbers.length; q++) {
       genLotteryString = genLotteryString + number[q].toString();
       if (q != (numbers.length-1)) { genLotteryString = genLotteryString + ', ' };
     }; // for
   } else {
+    console.log("DEBUG [genLottery]> Star");
     genLotteryString = genLotteryString + '⭐';
     for (var q = 0; q < numbers.length; q++) {
       genLotteryString = genLotteryString + number[q].toString();
@@ -2714,5 +2716,5 @@ function genLottery(size, lowest, highest, ball_or_star) {
     }; // for
   }; // if
   console.log("DEBUG [genLottery]> Numbers string: " + genLotteryString);
-  return genLotteryString;
+  //return genLotteryString;
 }
