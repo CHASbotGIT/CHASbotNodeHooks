@@ -164,6 +164,7 @@ const TRIGGER_RPSLS = 'bazinga';
 const TRIGGER_HANGMAN = 'hangman';
 const TRIGGER_STOP = 'stop';
 var TRIGGER_SEARCH = ['search','google','wiki','beeb'];
+var TRIGGER_LOTTERY = ['lotto','lottery','euromillions','euro-millions'];
 var TRIGGER_MOVIEDB = ['synopsis','watched','watch','catch','seen','see'];
 
 // ╦ ╦╔═╗╔═╗╦╔═╔═╗
@@ -200,11 +201,16 @@ const URL_API_MARVEL = "https://gateway.marvel.com:443/v1/public/characters?name
 const URL_SEARCH_GOOGLE = "https://www.google.com/search?q=";
 const URL_SEARCH_WIKI = "https://en.wikipedia.org/w/index.php?search=";
 const URL_SEARCH_BEEB = "https://www.bbc.co.uk/search?q=";
-const URL_CHAS_THUMB = 'https://images.imgbox.com/99/1d/bFWYzY68_o.jpg';
 const URL_GOOGLE_THUMB = "https://images.imgbox.com/7f/57/CkDZNBfZ_o.png";
 const URL_WIKI_THUMB = "https://images.imgbox.com/30/62/Vv6KJ9k9_o.png";
 const URL_BEEB_THUMB = "https://images.imgbox.com/59/f5/PFN3tfX5_o.png";
-const URL_IMG_PREFIX = "https://images.imgbox.com/";
+const URL_CHAS_THUMB = 'https://images.imgbox.com/99/1d/bFWYzY68_o.jpg';
+const URL_LOTTO_UK = "https://www.national-lottery.co.uk/games/lotto?";
+const URL_LOTTO_SCOT = "https://www.scottishchildrenslottery.com";
+const URL_LOTTO_EURO = "https://www.national-lottery.co.uk/games/euromillions?";
+const URL_LOTTO_THUMB_UK = "https://images2.imgbox.com/a7/d9/bPkhSTGL_o.png";
+const URL_LOTTO_THUMB_SCOT = "https://images2.imgbox.com/38/2f/Do75wmKv_o.png";
+const URL_LOTTO_THUMB_EURO = "https://images2.imgbox.com/c0/e9/IMp4gYs4_o.png";const URL_IMG_PREFIX = "https://images.imgbox.com/";
 const URL_IMG_PREFIX2 = "https://images2.imgbox.com/";
 const URL_IMG_SUFFIX = "_o.png";
 const URL_GIF_SUFFIX = "_o.gif";
@@ -1330,7 +1336,7 @@ CHASbot.post('/webhook', (req, res) => {
             sendQuestion_playSurvey(event);
           } else if (trigger_path == TRIGGER_HELP) {
             //console.log("DEBUG [postWebhook_route]> Help: " + HELP_INDEX);
-            genLottery(6,1,49);
+            genLottery(6,1,49,'ball');
             console.log("INFO [postWebhook]> Sender: " + sender);
             console.log("INFO [postWebhook]> Request: " + TRIGGER_HELP);
             console.log("INFO [postWebhook]> Action: postWebhook.postImage");
@@ -1866,6 +1872,52 @@ function postBiogs(postEvent,success_result,biogs_index,biogs_name) {
     console.log("INFO [postBiogs]> Reponse: Unsuccessful");
     sendViaDialogV2(postEvent);
   };
+}
+
+function postLottery(postEvent,lotto_uk,lotto_euro,lotto_scot) {
+  console.log("DEBUG [postLottery]> Input: " + postEvent);
+  let sender = postEvent.sender.id;
+  console.log("INFO [postLottery]> Sender: " + sender);
+  console.log("INFO [postLottery]> Request: UK " + lotto_uk + ", Euro "+ lotto_euro + ", Scot" + lotto_scot);
+  console.log("INFO [postLottery]> Action: postSearch.sendTemplate");
+  let carouselTemplate = {
+    attachment: {
+      type: "template",
+      payload: {
+        template_type: "generic",
+        elements: [{
+          title: lotto_uk,
+          image_url: URL_LOTTO_THUMB_UK,
+          default_action: {
+            type: "web_url",
+            url: URL_LOTTO_UK,
+            messenger_extensions: false,
+            webview_height_ratio: "tall"
+          }
+        },{
+          title: lotto_euro,
+          image_url: URL_LOTTO_THUMB_EURO,
+          default_action: {
+            type: "web_url",
+            url: URL_LOTTO_EURO,
+            messenger_extensions: false,
+            webview_height_ratio: "tall"
+          }
+        },{
+          title: lotto_scot,
+          image_url: URL_LOTTO_THUMB_SCOT,
+          default_action: {
+            type: "web_url",
+            url: URL_LOTTO_SCOT,
+            messenger_extensions: false,
+            webview_height_ratio: "tall"
+          }
+        }]
+      }
+    }
+  };
+  console.log("INFO [postLottery]> Reponse: Lottery Carousel");
+  sendTemplate(postEvent,carouselTemplate,false,'');
 }
 
 function postSearch(postEvent,search_method,search_term) {
@@ -2610,12 +2662,17 @@ function playRPSLS(eventRPSLS,pickPlayer) {
   };
 }
 
-function genLottery(size, lowest, highest) {
+//genLottery(6,1,59,"ball"); // UK
+//genLottery(5,1,49,"ball"); // Scot
+//genLottery(5,1,50,"ball") + genLottery(2,1,12,"star"); // Euro
+
+function genLottery(size, lowest, highest, ball_or_star) {
   console.log("DEBUG [genLottery]> Lottery Generator");
   // Euro-millions - 5 unique numbers 1-50 + 2 unique numbers 1-12
   // UK Lottery - 6 unique numbers 1-59
   // Scottish Lottery - 5 unique numbers 1-49
-	var numbers = [];
+  var genLotteryString = '';
+  var numbers = [];
 	for(var i = 0; i < size; i++) {
 		var add = true;
 		var randomNumber = Math.floor(Math.random() * highest) + 1;
@@ -2636,10 +2693,26 @@ function genLottery(size, lowest, highest) {
 	for (var m = 0; m < numbers.length; m++) {
 		for (var n = m + 1; n < numbers.length; n++) {
 			if (numbers[n] < numbers[m]) {
-			   highestNumber = numbers[m];
+			  highestNumber = numbers[m];
 				numbers[m] = numbers[n];
 				numbers[n] = highestNumber;
 			}; // if
 		}; // for
 	}; // for
+  genLotteryString = '';
+  if (ball_or_star == 'ball') {
+    genLotteryString = genLotteryString + '🔮';
+    for (var q = 0; q < numbers.length; q++) {
+      genLotteryString = genLotteryString + number[q].toString();
+      if (q != (numbers.length-1)) { genLotteryString = genLotteryString + ', ' };
+    }; // for
+  } else {
+    genLotteryString = genLotteryString + '⭐';
+    for (var q = 0; q < numbers.length; q++) {
+      genLotteryString = genLotteryString + number[q].toString();
+      if (q != (numbers.length-1)) { genLotteryString = genLotteryString + ', ' };
+    }; // for
+  }; // if
+  console.log("DEBUG [genLottery]> Numbers string: " + genLotteryString);
+  return genLotteryString;
 }
