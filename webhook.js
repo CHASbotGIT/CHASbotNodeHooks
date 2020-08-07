@@ -1047,7 +1047,7 @@ CHASbot.post('/webhook', (req, res) => {
               };
             };
           };
-          // ******** IN PLAY ********
+          // ******** IN PLAY/INTERACTIVE ********
           // Survey/Quiz
           // 0:id_of_sender,1:survey_in_play,4:survey_question,
           //console.log("DEBUG [postWebhook]> In play, survey: " + inPlay('survey',sender_index));
@@ -1249,8 +1249,31 @@ CHASbot.post('/webhook', (req, res) => {
               analyse_text = trigger_path; // Clean extra
             };
           };
+          // ****** Odds 'n' Ends *******
+          // Lottery
+          let uk_lotto = '';
+          let scot_lotto = '';
+          let euro_lotto = '';
+          let one_is_enough = false;
+          for (trigger_loop = 0; trigger_loop < TRIGGER_LOTTERY.length; trigger_loop++) {
+            position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_LOTTERY[trigger_loop]) + 1;
+            if (position_in_analyse_text > 0 && !one_is_enough && !inPlay('survey',sender_index)) {
+              // Found a lottery trigger
+              one_is_enough = true; // Single
+              uk_lotto = genLottery(6,1,59,"ball"); // UK
+              console.log("DEBUG [postWebhook]> Lottery UK: " + uk_lotto);
+              scot_lotto = genLottery(5,1,49,"ball"); // Scot
+              console.log("DEBUG [postWebhook]> Lottery Scottish: " + scot_lotto);
+              euro_lotto genLottery(5,1,50,"ball") + ' ' + genLottery(2,1,12,"star"); // Euro
+              console.log("DEBUG [postWebhook]> Lottery Scottish: " + euro_lotto);
+              trigger_path = TRIGGER_LOTTERY[0];
+              search_term = analyse_text.slice(starting_point,ending_point);
+              // FLOW: Lotto triggered and drawn - pause all in-play
+              inPlayPause(sender_index); // Pause all in-play
+            }; // if
+          }; // for
           // Trigger priority increases down list i.e. if multiple tirggers, lower ones trump higher
-          // ****** CHAS STUFF *******
+          // ****** CHAS THINGS *******
           // CHAS logo
           position_in_analyse_text = analyse_text.search(TRIGGER_CHAS_LOGO) + 1;
           //console.log("DEBUG [postWebhook]> " + TRIGGER_CHAS_LOGO + " search result: " + position_in_analyse_text);
@@ -1360,6 +1383,9 @@ CHASbot.post('/webhook', (req, res) => {
           } else if (trigger_path == TRIGGER_SEARCH[0]) {
             //console.log("DEBUG [postWebhook_route]> Search: " + search_term);
             postSearch(event,search_method,search_term);
+          } else if (trigger_path == TRIGGER_LOTTERY[0]) {
+            console.log("DEBUG [postWebhook_route]> Lottery UK: " + uk_lotto + ', Euro: ' + euro_lotto + ', Scot: ' + scot_lotto);
+            postLottery(event,uk_lotto,euro_lotto,scot_lotto);
           } else if (trigger_path == TRIGGER_MOVIEDB[0]) {
             //console.log("DEBUG [postWebhook_route]> Movie/TV: " + moviedb_term);
             apiPrimeFilmTV(event,moviedb_term);
@@ -2662,10 +2688,6 @@ function playRPSLS(eventRPSLS,pickPlayer) {
   };
 }
 
-//genLottery(6,1,59,"ball"); // UK
-//genLottery(5,1,49,"ball"); // Scot
-//genLottery(5,1,50,"ball") + genLottery(2,1,12,"star"); // Euro
-
 function genLottery(size, lowest, highest, ball_or_star) {
   console.log("DEBUG [genLottery]> Lottery Generator");
   // Euro-millions - 5 unique numbers 1-50 + 2 unique numbers 1-12
@@ -2702,19 +2724,19 @@ function genLottery(size, lowest, highest, ball_or_star) {
   genLotteryString = '';
   if (ball_or_star == 'ball') {
     console.log("DEBUG [genLottery]> Ball");
-    genLotteryString = genLotteryString + '🔮';
+    genLotteryString = genLotteryString + '🔮 ';
     for (var q = 0; q < numbers.length; q++) {
       genLotteryString = genLotteryString + numbers[q].toString();
       if (q != (numbers.length-1)) { genLotteryString = genLotteryString + ', ' };
     }; // for
   } else {
     console.log("DEBUG [genLottery]> Star");
-    genLotteryString = genLotteryString + '⭐';
+    genLotteryString = genLotteryString + '⭐ ';
     for (var q = 0; q < numbers.length; q++) {
       genLotteryString = genLotteryString + numbers[q].toString();
       if (q != (numbers.length-1)) { genLotteryString = genLotteryString + ', ' };
     }; // for
   }; // if
   console.log("DEBUG [genLottery]> Numbers string: " + genLotteryString);
-  //return genLotteryString;
+  return genLotteryString;
 }
