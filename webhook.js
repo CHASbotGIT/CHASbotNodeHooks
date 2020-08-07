@@ -2323,7 +2323,7 @@ function apiLOTR (eventLOTR,lotrWho){
         } else {
           //console.log(res.body);
           let lotrData = JSON.parse(res.body);
-          console.log('^^^^^^^^^^^^^^^^^^^' + lotrData.docs.id);
+          console.log('^^^^^^^^^^^^^^^^^^^' + lotrData);
         }
 
   });
