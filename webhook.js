@@ -4,6 +4,7 @@
  \___|_||_/_/ \_\___/_.__/\___/\__| CHAS (C) 2017
  Build 2020.2 Refactored for DialogFlow v2*/
 
+
 // Make sure everything is properly defined
 'use strict';
 // Pick up variables from the server implementation || Remove API keys
@@ -1003,6 +1004,9 @@ CHASbot.post('/webhook', (req, res) => {
           let help_url = '';
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
             trigger_path = TRIGGER_HELP;
+
+            apiLOTR(event,hero_who);
+
             help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
             //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
             chasbotText = "Try typing any of these:";
@@ -1904,7 +1908,7 @@ function postLottery(postEvent,lotto_uk,lotto_euro,lotto_scot) {
   //console.log("DEBUG [postLottery]> Input: " + postEvent);
   let sender = postEvent.sender.id;
   console.log("INFO [postLottery]> Sender: " + sender);
-  console.log("INFO [postLottery]> Request: UK " + lotto_uk + ", Euro "+ lotto_euro + ", Scot" + lotto_scot);
+  console.log("INFO [postLottery]> Request: UK " + lotto_uk + ", Euro "+ lotto_euro + ", Scot " + lotto_scot);
   console.log("INFO [postLottery]> Action: postSearch.sendTemplate");
   let carouselTemplate = {
     attachment: {
@@ -2297,6 +2301,29 @@ function apiMarvelChar(eventMarvel,marvelWho) {
       };
     });
   });
+}
+
+function apiLOTR (eventLOTR,lotrWho){
+  //console.log("DEBUG [apiLOTR]> Input: " + lotrWho);
+  //"Authorization: Bearer 8NFOPxFtp6xQvj44vADQ"
+  //?Authorization=Bearer
+  // 8NFOPxFtp6xQvj44vADQ
+  // https://the-one-api.herokuapp.com/v1/movie?Authorization: Bearer 8NFOPxFtp6xQvj44vADQ
+  request({
+    url: 'https://the-one-api.herokuapp.com/v1/movie',
+    headers: {
+       'Authorization': 'Bearer 8NFOPxFtp6xQvj44vADQ'
+    },
+    rejectUnauthorized: false
+  }, function(err, res) {
+        if(err) {
+          console.error(err);
+        } else {
+          console.log(res.body);
+        }
+
+  });
+
 }
 
 // Loaded/stored value search functions
