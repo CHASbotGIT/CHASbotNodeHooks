@@ -2310,7 +2310,7 @@ function apiLOTR (eventLOTR,lotrWho){
   // 8NFOPxFtp6xQvj44vADQ
   // https://the-one-api.herokuapp.com/v1/movie?Authorization: Bearer 8NFOPxFtp6xQvj44vADQ
   request({
-    url: 'https://the-one-api.herokuapp.com/v1/movie',
+    url: 'https://the-one-api.herokuapp.com/v1/character',
     headers: {
        'Authorization': 'Bearer 8NFOPxFtp6xQvj44vADQ'
     },
