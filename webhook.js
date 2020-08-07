@@ -1005,7 +1005,7 @@ CHASbot.post('/webhook', (req, res) => {
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
             trigger_path = TRIGGER_HELP;
 
-            apiLOTR(event,hero_who);
+            apiLOTR(event,'bob');
 
             help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
             //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
