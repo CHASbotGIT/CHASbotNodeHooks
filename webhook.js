@@ -1261,11 +1261,11 @@ CHASbot.post('/webhook', (req, res) => {
               // Found a lottery trigger
               one_is_enough = true; // Single
               uk_lotto = genLottery(6,1,59,"ball"); // UK
-              console.log("DEBUG [postWebhook]> Lottery UK: " + uk_lotto);
+              //console.log("DEBUG [postWebhook]> Lottery UK: " + uk_lotto);
               scot_lotto = genLottery(5,1,49,"ball"); // Scot
-              console.log("DEBUG [postWebhook]> Lottery Scottish: " + scot_lotto);
+              //console.log("DEBUG [postWebhook]> Lottery Scottish: " + scot_lotto);
               euro_lotto = genLottery(5,1,50,"ball") + ' ' + genLottery(2,1,12,"star"); // Euro
-              console.log("DEBUG [postWebhook]> Lottery Scottish: " + euro_lotto);
+              //console.log("DEBUG [postWebhook]> Lottery Scottish: " + euro_lotto);
               trigger_path = TRIGGER_LOTTERY[0];
               search_term = analyse_text.slice(starting_point,ending_point);
               // FLOW: Lotto triggered and drawn - pause all in-play
@@ -1384,7 +1384,7 @@ CHASbot.post('/webhook', (req, res) => {
             //console.log("DEBUG [postWebhook_route]> Search: " + search_term);
             postSearch(event,search_method,search_term);
           } else if (trigger_path == TRIGGER_LOTTERY[0]) {
-            console.log("DEBUG [postWebhook_route]> Lottery UK: " + uk_lotto + ', Euro: ' + euro_lotto + ', Scot: ' + scot_lotto);
+            //console.log("DEBUG [postWebhook_route]> Lottery UK: " + uk_lotto + ', Euro: ' + euro_lotto + ', Scot: ' + scot_lotto);
             postLottery(event,uk_lotto,euro_lotto,scot_lotto);
           } else if (trigger_path == TRIGGER_MOVIEDB[0]) {
             //console.log("DEBUG [postWebhook_route]> Movie/TV: " + moviedb_term);
@@ -1901,7 +1901,7 @@ function postBiogs(postEvent,success_result,biogs_index,biogs_name) {
 }
 
 function postLottery(postEvent,lotto_uk,lotto_euro,lotto_scot) {
-  console.log("DEBUG [postLottery]> Input: " + postEvent);
+  //console.log("DEBUG [postLottery]> Input: " + postEvent);
   let sender = postEvent.sender.id;
   console.log("INFO [postLottery]> Sender: " + sender);
   console.log("INFO [postLottery]> Request: UK " + lotto_uk + ", Euro "+ lotto_euro + ", Scot" + lotto_scot);
@@ -2689,7 +2689,7 @@ function playRPSLS(eventRPSLS,pickPlayer) {
 }
 
 function genLottery(size, lowest, highest, ball_or_star) {
-  console.log("DEBUG [genLottery]> Lottery Generator");
+  //console.log("DEBUG [genLottery]> Lottery Generator");
   // Euro-millions - 5 unique numbers 1-50 + 2 unique numbers 1-12
   // UK Lottery - 6 unique numbers 1-59
   // Scottish Lottery - 5 unique numbers 1-49
@@ -2705,7 +2705,7 @@ function genLottery(size, lowest, highest, ball_or_star) {
 		};
 		if (add) {
 			numbers.push(randomNumber);
-      console.log("DEBUG [genLottery]> Number picked: " + randomNumber);
+      //console.log("DEBUG [genLottery]> Number picked: " + randomNumber);
 		} else {
 			i--;
 		};
@@ -2723,20 +2723,20 @@ function genLottery(size, lowest, highest, ball_or_star) {
 	}; // for
   genLotteryString = '';
   if (ball_or_star == 'ball') {
-    console.log("DEBUG [genLottery]> Ball");
+    //console.log("DEBUG [genLottery]> Ball");
     genLotteryString = genLotteryString + '🔮 ';
     for (var q = 0; q < numbers.length; q++) {
       genLotteryString = genLotteryString + numbers[q].toString();
       if (q != (numbers.length-1)) { genLotteryString = genLotteryString + ', ' };
     }; // for
   } else {
-    console.log("DEBUG [genLottery]> Star");
+    //console.log("DEBUG [genLottery]> Star");
     genLotteryString = genLotteryString + '⭐ ';
     for (var q = 0; q < numbers.length; q++) {
       genLotteryString = genLotteryString + numbers[q].toString();
       if (q != (numbers.length-1)) { genLotteryString = genLotteryString + ', ' };
     }; // for
   }; // if
-  console.log("DEBUG [genLottery]> Numbers string: " + genLotteryString);
+  //console.log("DEBUG [genLottery]> Numbers string: " + genLotteryString);
   return genLotteryString;
 }
