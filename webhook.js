@@ -2322,7 +2322,7 @@ function apiLOTR (eventLOTR,lotrWho){
           console.error(err);
         } else {
           //console.log(res.body);
-          let lotrData = JSON.parse(body);
+          let lotrData = JSON.parse(res.body);
           console.log('^^^^^^^^^^^^^^^^^^^' + lotrData['docs'].count);
         }
 
