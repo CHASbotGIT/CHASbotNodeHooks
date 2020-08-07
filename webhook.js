@@ -1264,7 +1264,7 @@ CHASbot.post('/webhook', (req, res) => {
               console.log("DEBUG [postWebhook]> Lottery UK: " + uk_lotto);
               scot_lotto = genLottery(5,1,49,"ball"); // Scot
               console.log("DEBUG [postWebhook]> Lottery Scottish: " + scot_lotto);
-              euro_lotto genLottery(5,1,50,"ball") + ' ' + genLottery(2,1,12,"star"); // Euro
+              euro_lotto = genLottery(5,1,50,"ball") + ' ' + genLottery(2,1,12,"star"); // Euro
               console.log("DEBUG [postWebhook]> Lottery Scottish: " + euro_lotto);
               trigger_path = TRIGGER_LOTTERY[0];
               search_term = analyse_text.slice(starting_point,ending_point);
