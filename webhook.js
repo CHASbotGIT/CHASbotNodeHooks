@@ -2312,7 +2312,7 @@ function apiLOTR (eventLOTR,lotrWho){
   // 5cd99d4bde30eff6ebccfbcc
   // https://the-one-api.herokuapp.com
   request({
-    url: 'https://the-one-api.herokuapp.com/v1/character/5cd99d4bde30eff6ebccfbcc',
+    url: 'https://the-one-api.herokuapp.com/v1/character/',
     headers: {
        'Authorization': 'Bearer 8NFOPxFtp6xQvj44vADQ'
     },
@@ -2321,7 +2321,9 @@ function apiLOTR (eventLOTR,lotrWho){
         if(err) {
           console.error(err);
         } else {
-          console.log(res.body);
+          //console.log(res.body);
+          let lotrData = JSON.parse(body);
+          console.log('^^^^^^^^^^^^^^^^^^^' + lotrData['docs'].count);
         }
 
   });
