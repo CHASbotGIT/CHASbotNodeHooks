@@ -2700,7 +2700,7 @@ function genLottery(size, lowest, highest, ball_or_star) {
 		}; // for
 	}; // for
   genLotteryString = '';
-  if (ball_or_star == 'ball') {
+  /*if (ball_or_star == 'ball') {
     console.log("DEBUG [genLottery]> Ball");
     genLotteryString = genLotteryString + '🔮';
     for (var q = 0; q < numbers.length; q++) {
@@ -2715,6 +2715,7 @@ function genLottery(size, lowest, highest, ball_or_star) {
       if (q != (numbers.length-1)) { genLotteryString = genLotteryString + ', ' };
     }; // for
   }; // if
+  */
   console.log("DEBUG [genLottery]> Numbers string: " + genLotteryString);
   //return genLotteryString;
 }
