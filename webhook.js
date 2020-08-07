@@ -2612,6 +2612,9 @@ function playRPSLS(eventRPSLS,pickPlayer) {
 
 function genLottery(size, lowest, highest) {
   console.log("DEBUG [genLottery]> Lottery Generator");
+  // Euro-millions - 5 unique numbers 1-50 + 2 unique numbers 1-12
+  // UK Lottery - 6 unique numbers 1-59
+  // Scottish Lottery - 5 unique numbers 1-49
 	var numbers = [];
 	for(var i = 0; i < size; i++) {
 		var add = true;
