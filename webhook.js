@@ -200,7 +200,7 @@ const URL_MOVIEDB = "https://api.themoviedb.org/3/";
 const URL_CHAT_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages";
 const URL_API_WEATHER = "http://api.openweathermap.org/data/2.5/weather?APPID=";
 const URL_API_MARVEL = "https://gateway.marvel.com:443/v1/public/characters?nameStartsWith=";
-const URL_API_LOTR = ""
+const URL_API_LOTR = "the-one-api.herokuapp.com";
 const URL_SEARCH_GOOGLE = "https://www.google.com/search?q=";
 const URL_SEARCH_WIKI = "https://en.wikipedia.org/w/index.php?search=";
 const URL_SEARCH_BEEB = "https://www.bbc.co.uk/search?q=";
@@ -2324,14 +2324,13 @@ function apiMarvelChar(eventMarvel,marvelWho) {
 function apiLOTR (eventLOTR,lotrWho){
   console.log("DEBUG [apiLOTR]> Input: " + lotrWho);
   let lotrWhoMatch = '';
-  let url_path = '/v1/character';
+  let url_path = '/v1/characte';
   // Set URL with authorisation header i.e. API key not sent in URL
-  console.log(KEY_API_LOTR);
   const requestOptions = {
     hostname: URL_API_LOTR,
     path: url_path,
     headers: {
-      Authorization: 'Bearer 8NFOPxFtp6xQvj44vADQ'
+      Authorization: 'Bearer ' + KEY_API_LOTR
     }
   }
 
