@@ -2396,9 +2396,9 @@ function apiLOTR (eventLOTR,lotrWho){
       console.log("DEBUG [apiLOTR]> Character JSON: " + JSON.stringify(characterData));
 
     }); // res.on('end'
-    res.on('error') function(e) {
+    res.on('error', function(e) {
       console.log("DEBUG [apiLOTR]> Error: " + e);
-    });
+    }); // res.on('error'
   }); // http.get
   /*request({
     url: 'https://the-one-api.herokuapp.com/v1/character/',
