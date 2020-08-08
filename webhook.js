@@ -2348,7 +2348,7 @@ function apiLOTR (eventLOTR,lotrWho){
       //console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + JSON.stringify(characterData.docs[2]));
       let characterDataList = characterData.docs;
       console.log('HOW MANY >>>>>>>>>>>>>>>>>>>>>>>'+ characterDataList.length);
-      for (character_loop = 0; character_loop < characterDataList.length; character_loop++) {
+      for (var character_loop = 0; character_loop < characterDataList.length; character_loop++) {
         if (characterDataList[character_loop].name == lotrWho) {
             console.log('WIKI WIKI WIKI ' + characterDataList[character_loop].wikiUrl);
             break;
