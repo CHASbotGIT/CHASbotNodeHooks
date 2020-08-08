@@ -2324,7 +2324,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
 function apiLOTR (eventLOTR,lotrWho){
   console.log("DEBUG [apiLOTR]> Input: " + lotrWho);
   let lotrWhoMatch = '';
-  let url_path = '/v1/characte';
+  let url_path = '/v1/character';
   // Set URL with authorisation header i.e. API key not sent in URL
   const requestOptions = {
     hostname: URL_API_LOTR,
