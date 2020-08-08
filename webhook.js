@@ -2319,10 +2319,33 @@ function apiLOTR (eventLOTR,lotrWho){
 
   const requestOptions = {
     hostname: url,
+    path: '/get',
     headers: {
-        Authorization: 'Bearer 8NFOPxFtp6xQvj44vADQ'
+      Authorization: 'Bearer 8NFOPxFtp6xQvj44vADQ'
     }
-  };
+  }
+
+
+  //const options = {
+  //    hostname: 'httpbin.org',
+  //    path: '/get',
+  //    headers: {
+  //        Authorization: 'authKey'
+  //    }
+  //}
+
+  //https.get(options, (response) => {
+
+  //    var result = ''
+  //    response.on('data', function (chunk) {
+  //        result += chunk;
+  //    });
+
+  //    response.on('end', function () {
+  //        console.log(result);
+  //    });
+
+  //});
 
 
   //let customHeaders = new Headers({ Authorization: "Bearer " + "8NFOPxFtp6xQvj44vADQ"});
