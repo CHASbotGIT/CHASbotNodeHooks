@@ -2263,8 +2263,8 @@ function apiMarvelChar(eventMarvel,marvelWho) {
   let marvelThumb = '';
   let marvelURL = '';
   let marvelPost = [];
-  let marvelLimit = "1";
-  let marvelWhoShort = marvelWho.substring(0,8); // Trim to first six characyers
+  let marvelLimit = "3";
+  let marvelWhoShort = marvelWho.substring(0,8); // Trim to first eight characyers
   let url = URL_API_MARVEL + marvelWhoShort + "&limit=" + marvelLimit + "&apikey=" + KEY_MARVEL_PUBLIC;
   let ts = new Date().getTime();
   let hash = crypto.createHash('md5').update(ts + KEY_MARVEL_PRIVATE + KEY_MARVEL_PUBLIC).digest('hex');
@@ -2367,7 +2367,7 @@ function apiLOTR (eventLOTR,lotrWho){
       if (characterData_legible.includes('docs')) {
         let characterDataList = characterData.docs;
         console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
-        let got_a_live_one = false;
+        let got_a_live_one = -1;
         for (var character_loop = 0; character_loop < characterDataList.length; character_loop++) {
           lotrWhoMatch = characterDataList[character_loop].name;
           lotrWhoMatch = lotrWhoMatch.toLowerCase(); // Retain lotrWho as title case bur compare lower
@@ -2376,14 +2376,14 @@ function apiLOTR (eventLOTR,lotrWho){
           if (lotrWhoMatch.includes(lotrWhoMatch.toLowerCase())) {
               console.log('WIKI WIKI WIKI ' + characterDataList[character_loop].wikiUrl);
               // Do some checks on data quality and build response
-              got_a_live_one = true;
+              got_a_live_one = character_loop;
 
           }; // if
-          if (got_a_live_one) { break }; // We can stop looking
+          if (got_a_live_one > -1) { break }; // We can stop looking
         }; // for
-        if (got_a_live_one) {
+        if (got_a_live_one > -1) {
           // Found a match
-          postLinkButton(eventLOTR,characterDataList[character_loop].wikiUrl,'some blurb','Wiki ' + lotrWho);
+          postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,'some blurb','Wiki ' + lotrWho);
           return;
         } else {
           // Could not find a match
