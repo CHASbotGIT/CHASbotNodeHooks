@@ -2260,7 +2260,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
     // When all the data is back, go on to query the full response
     res.on('end', function() {
       let characterData = JSON.parse(body);
-      console.log("DEBUG [apiMarvelChar]> Character Code: " + JSON.stringify(characterData));
+      console.log("DEBUG [apiMarvelChar]> Character JSON: " + JSON.stringify(characterData));
       if (characterData.code === 200) { // Successful response from Marvel
         if (characterData['data'].count == 0) { // A successful response doesn't mean there was a match
           //console.log("DEBUG [apiMarvelChar]> Valid URL but no results for " + toTitleCase(marvelWho));
@@ -2311,7 +2311,23 @@ function apiLOTR (eventLOTR,lotrWho){
   // https://the-one-api.herokuapp.com/v1/movie?Authorization: Bearer 8NFOPxFtp6xQvj44vADQ
   // 5cd99d4bde30eff6ebccfbcc
   // https://the-one-api.herokuapp.com
-  request({
+
+  let url = 'https://the-one-api.herokuapp.com/v1/character/';
+  let customHeaders = new Headers({ Authorization: "Bearer " + "8NFOPxFtp6xQvj44vADQ"});
+  const requestOptions: RequestOptionsArgs = { headers: customHeaders };
+
+  http.get(url, requestOptions, function(res) {
+    let body = "";
+    // Data comes through in chunks
+    res.on('data', function (chunk) { body += chunk });
+    // When all the data is back, go on to query the full response
+    res.on('end', function() {
+      let characterData = JSON.parse(body);
+      console.log("DEBUG [apiLOTR]> Character JSON: " + JSON.stringify(characterData));
+
+    }; // res.on('end'
+  }; // http.get
+  /*request({
     url: 'https://the-one-api.herokuapp.com/v1/character/',
     headers: {
        'Authorization': 'Bearer 8NFOPxFtp6xQvj44vADQ'
@@ -2323,10 +2339,10 @@ function apiLOTR (eventLOTR,lotrWho){
         } else {
           //console.log(res.body);
           let lotrData = JSON.parse(res.body);
-          console.log('^^^^^^^^^^^^^^^^^^^' + lotrData);
+          //console.log('^^^^^^^^^^^^^^^^^^^' + lotrData);
         }
 
-  });
+  });*/
 
 }
 
