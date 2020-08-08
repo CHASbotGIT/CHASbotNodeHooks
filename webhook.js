@@ -2286,6 +2286,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
           postMarvel(eventMarvel,false,marvelPost);
           return;
         } else if (characterData['data'].results[0].description !== '') { // Assess the first result back
+          console.log("DEBUG [apiMarvelChar]> Number of possible: " + characterData['data'].results.length);
           marvelNote = characterData.data.results[0].description;
           //console.log("DEBUG [apiMarvelChar]> Description: " + marvelNote);
           marvelThumb = characterData.data.results[0].thumbnail.path + '/standard_xlarge.jpg';
@@ -2324,6 +2325,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
 function apiLOTR (eventLOTR,lotrWho){
   console.log("DEBUG [apiLOTR]> Input: " + lotrWho);
   let lotrWhoMatch = '';
+  let lotrWhoLower = '';
   let url_path = '/v1/character';
   // Set URL with authorisation header i.e. API key not sent in URL
   const requestOptions = {
@@ -2369,8 +2371,9 @@ function apiLOTR (eventLOTR,lotrWho){
         for (var character_loop = 0; character_loop < characterDataList.length; character_loop++) {
           lotrWhoMatch = characterDataList[character_loop].name;
           lotrWhoMatch = lotrWhoMatch.toLowerCase(); // Retain lotrWho as title case bur compare lower
+          lotrWhoLower = lotrWho.toLowerCase();
 
-          if (lotrWhoMatch.inludes(lotrWho.toLowerCase())) {
+          if (lotrWhoMatch.inludes(lotrWhoLower)) {
               console.log('WIKI WIKI WIKI ' + characterDataList[character_loop].wikiUrl);
               // Do some checks on data quality and build response
               got_a_live_one = true;
