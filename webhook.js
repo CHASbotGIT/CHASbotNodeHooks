@@ -1761,7 +1761,7 @@ async function sendViaDialogV2(eventSend) {
           } else if (HOOKS_CUSTOM[i][1] == 'button') {
             postLinkButton(eventSend,HOOKS_CUSTOM[i][3],HOOKS_CUSTOM[i][4],HOOKS_CUSTOM[i][5]);
             return;
-          }; // elseif... HOOKS_CUSTOM[i][1]
+          }; // else if... HOOKS_CUSTOM[i][1]
         }; // if... HOOKS_CUSTOM[i][0]
       }; // for (var i = 0
     }; // if (HOOKS_CUSTOM.length
@@ -2325,6 +2325,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
 
 function apiLOTR (eventLOTR,lotrWho){
   console.log("DEBUG [apiLOTR]> Input: " + lotrWho);
+  let lotrBlurb = '';
   let lotrWhoMatch = '';
   let lotrWhoLower = '';
   let url_path = '/v1/character';
@@ -2336,25 +2337,6 @@ function apiLOTR (eventLOTR,lotrWho){
       Authorization: 'Bearer ' + KEY_API_LOTR
     }
   }
-
-  /*
-  {"docs":
-  [
-  {"_id":"5cd99d4bde30eff6ebccfdf3","height":"","race":"Human","gender":"Male","birth":"SA 192","spouse":"Unnamed wife","death":"SA 603","realm":"Númenor","hair":"","name":"Tar-Amandil","wikiUrl":"http://lotr.wikia.com//wiki/Tar-Amandil"},
-  {"_id":"5cd99d4bde30eff6ebccfdf7","height":"","race":"Human","gender":"Male","birth":"SA 1800","spouse":"Unnamed wife","death":"SA 2221","realm":"Númenor","hair":"","name":"Tar-Atanamir","wikiUrl":"http://lotr.wikia.com//wiki/Tar-Atanamir"},
-  {"_id":"5cd99d4bde30eff6ebccfdf9",
-  "height":"",
-  "race":"Human",
-  "gender":"Male",
-  "birth":"SA 1634",
-  "spouse":"Unnamed wife",
-  "death":"SA 2035",
-  "realm":"Númenor",
-  "hair":"",
-  "name":"Tar-Ciryatan",
-  "wikiUrl":"http://lotr.wikia.com//wiki/Tar-Ciryatan"},
-  */
-
   var req = http.get(requestOptions, function(res) {
     let body = "";
     // Data comes through in chunks
@@ -2367,7 +2349,7 @@ function apiLOTR (eventLOTR,lotrWho){
       // Correct responses start with "docs" i.e. no status code 200 to help verify
       if (characterData_legible.includes('docs')) {
         let characterDataList = characterData.docs;
-        console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
+        //console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
         let got_a_live_one = -1;
         let validWikiURL = '';
         let levenshtein_lowest = 100;
@@ -2377,25 +2359,75 @@ function apiLOTR (eventLOTR,lotrWho){
           lotrWhoMatch = characterDataList[character_loop].name;
           lotrWhoMatch = lotrWhoMatch.toLowerCase(); // Retain lotrWho as title case but compare lower
           levenshtein_newest = levenshtein(lotrWhoLower,lotrWhoMatch); // Calculate proximity of names
-          console.log("DEBUG [apiLOTR]> Difference :" + lotrWhoLower + " [" + levenshtein_newest + "] " + lotrWhoMatch);
+          //console.log("DEBUG [apiLOTR]> Difference :" + lotrWhoLower + " [" + levenshtein_newest + "] " + lotrWhoMatch);
           // Better match but must also have a wiki
-
           let validWikiURL = characterDataList[character_loop].wikiUrl;
           let validWikiURLstring = JSON.stringify(validWikiURL);
-          console.log("DEBUG [apiLOTR]> wikiUrl STRING " + validWikiURLstring);
-
-
-          if (levenshtein_newest < levenshtein_lowest && validWikiURLstring != 'wikiUrlundefined' && typeof validWikiURLstring != 'undefined') {
+          //console.log("DEBUG [apiLOTR]> wikiUrl STRING " + validWikiURLstring);
+          if (levenshtein_newest < levenshtein_lowest && typeof validWikiURLstring != 'undefined'
+              && validWikiURLstring != 'wikiUrlundefined' && validWikiURLstring != '') {
             // Better proximity between terms
             got_a_live_one = character_loop; // Best for now
             levenshtein_lowest = levenshtein_newest; // Lower difference
-            console.log("DEBUG [apiLOTR]> Best for now [" + levenshtein_lowest + "] is: " + lotrWhoMatch);
-            console.log("DEBUG [apiLOTR]> wikiUrl" + characterDataList[got_a_live_one].wikiUrl)
+            //console.log("DEBUG [apiLOTR]> Best for now [" + levenshtein_lowest + "] is: " + lotrWhoMatch);
+            //console.log("DEBUG [apiLOTR]> wikiUrl" + characterDataList[got_a_live_one].wikiUrl)
           }; // if
         }; // for
         if (got_a_live_one > -1) {
           // Found a match
-          postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,'some blurb','Wiki ' + characterDataList[got_a_live_one].name);
+          lortBlurb = "This is the best match I can find for " + toTitleCase(lortWho) + ".\n";
+          if (characterDataList[got_a_live_one].gender == 'Male') {
+            lortBlurb = lortBlurb + "He is ";
+          } else if (characterDataList[got_a_live_one].gender == 'Female')  {
+            lortBlurb = lortBlurb + "She is ";
+          } else {
+            lortBlurb = lortBlurb + "They are ";
+          };
+          console.log("DEBUG [apiLOTR]> Blurb so far is: " + lortBlurb);
+          let extent_unknown = 0;
+          if (characterDataList[got_a_live_one].race = '' || characterDataList[got_a_live_one].realm = '') {
+            extent_unknown = extent_unknown + 1; // 0 or 1
+            console.log("DEBUG [apiLOTR]> Either race or realm is unknown");
+          } else {
+            lortBlurb = lortBlurb + " of the " + characterDataList[got_a_live_one].race + " race, from the realm of " + characterDataList[got_a_live_one].realm );
+            console.log("DEBUG [apiLOTR]> Blurb so far is: " + lortBlurb);
+          };
+          // Either:
+          // 0 = 'He is/ She is/ They are of the A race, from the realm of B'
+          // 1 = 'He is/ She is/ They are '
+          if (characterDataList[got_a_live_one].height = '' || characterDataList[got_a_live_one].hair = '') {
+            extent_unknown = extent_unknown + 2; // 0, 1, 2 or 3
+            console.log("DEBUG [apiLOTR]> Either height or hair colour is unknown");
+          } else if (extent_unknown == 1) {
+            lortBlurb = lortBlurb + " of " + characterDataList[got_a_live_one].height + " and " + characterDataList[got_a_live_one].hair + " hair."
+            console.log("DEBUG [apiLOTR]> Blurb so far is: " + lortBlurb);
+          } else {
+            lortBlurb = lortBlurb + "; with " + characterDataList[got_a_live_one].hair + " hair, and a height of " + characterDataList[got_a_live_one].height + "." );
+            console.log("DEBUG [apiLOTR]> Blurb so far is: " + lortBlurb);
+          };
+          // Either:
+          // 0 = 'He is/ She is/ They are of the A race, from the realm of B; with C hair, and a height of D.'
+          // 1 = 'He is/ She is/ They are of D height and C hair.'
+          // 2 = 'He is/ She is/ They are of the A race, from the realm of B"
+          // 3 = 'He is/ She is/ They are '
+          if (characterDataList[got_a_live_one].birth = '' || characterDataList[got_a_live_one].death = '' && extent_unknown == 3 ) {
+            console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
+            lortBlurb = lortBlurb + "a complete mystery to me! 😞 You might have better luck with the Wiki.";
+          } else if (characterDataList[got_a_live_one].birth = '' || characterDataList[got_a_live_one].death = '' && extent_unknown == 2 ) {
+            console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
+            lortBlurb = lortBlurb + ". More than that, I don't know! 🤔 Find our more at the Wiki.";
+          } else if (characterDataList[got_a_live_one].birth = '' || characterDataList[got_a_live_one].death = '' && extent_unknown == 1 ) {
+            console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
+            lortBlurb = lortBlurb + " 😊 The Wiki can tell you more.";
+          } else if (extent_unknown == 3) {
+            lortBlurb = lortBlurb + "a stranger to me but I can tell you they were born in " + characterDataList[got_a_live_one].birth + " and died " + characterDataList[got_a_live_one].death + ". 🤔 Find our more at the Wiki.";
+          } else if (extent_unknown == 2) {
+            lortBlurb = lortBlurb + ". I can also tell you they were born in " + characterDataList[got_a_live_one].birth + " and died " + characterDataList[got_a_live_one].death + ". 😊 The Wiki has more.";
+          } else { // 1 or 0
+            lortBlurb = lortBlurb + " I can also tell you they were born in " + characterDataList[got_a_live_one].birth + " and died " + characterDataList[got_a_live_one].death + ". 😃 Check out the Wiki.";
+          };
+          console.log("DEBUG [apiLOTR]> Final blurb is: " + lortBlurb);
+          postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,lortBlurb,'Wiki ' + characterDataList[got_a_live_one].name);
           return;
         } else {
           // Could not find a match
