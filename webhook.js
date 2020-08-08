@@ -2394,7 +2394,7 @@ function apiLOTR (eventLOTR,lotrWho){
     res.on('end', function() {
       let characterData = JSON.parse(body);
       //console.log("DEBUG [apiLOTR]> Character JSON: " + JSON.stringify(characterData));
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + characterData.docs[2]);
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + JSON.stringify(characterData.docs[2]);
 
     }); // res.on('end'
     res.on('error', function(e) {
