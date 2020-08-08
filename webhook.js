@@ -2393,7 +2393,7 @@ function apiLOTR (eventLOTR,lotrWho){
     // When all the data is back, go on to query the full response
     res.on('end', function() {
       let characterData = JSON.parse(body);
-      console.log("DEBUG [apiLOTR]> Character JSON: " + JSON.stringify(characterData));
+      //console.log("DEBUG [apiLOTR]> Character JSON: " + JSON.stringify(characterData));
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + characterData.docs[2]);
 
     }); // res.on('end'
