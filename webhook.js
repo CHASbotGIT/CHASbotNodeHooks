@@ -2329,7 +2329,7 @@ function apiLOTR (eventLOTR,lotrWho){
       console.log("DEBUG [apiLOTR]> Character JSON: " + JSON.stringify(characterData));
 
     }); // res.on('end'
-  }; // http.get
+  }); // http.get
   /*request({
     url: 'https://the-one-api.herokuapp.com/v1/character/',
     headers: {
