@@ -2385,7 +2385,7 @@ function apiLOTR (eventLOTR,lotrWho){
           };
           console.log("DEBUG [apiLOTR]> Blurb so far is: " + lortBlurb);
           let extent_unknown = 0;
-          if (characterDataList[got_a_live_one].race = '' || characterDataList[got_a_live_one].realm = '') {
+          if ((characterDataList[got_a_live_one].race == '') || (characterDataList[got_a_live_one].realm == '')) {
             extent_unknown = extent_unknown + 1; // 0 or 1
             console.log("DEBUG [apiLOTR]> Either race or realm is unknown");
           } else {
@@ -2395,7 +2395,7 @@ function apiLOTR (eventLOTR,lotrWho){
           // Either:
           // 0 = 'He is/ She is/ They are of the A race, from the realm of B'
           // 1 = 'He is/ She is/ They are '
-          if (characterDataList[got_a_live_one].height = '' || characterDataList[got_a_live_one].hair = '') {
+          if ((characterDataList[got_a_live_one].height == '') || (characterDataList[got_a_live_one].hair == '')) {
             extent_unknown = extent_unknown + 2; // 0, 1, 2 or 3
             console.log("DEBUG [apiLOTR]> Either height or hair colour is unknown");
           } else if (extent_unknown == 1) {
@@ -2410,13 +2410,13 @@ function apiLOTR (eventLOTR,lotrWho){
           // 1 = 'He is/ She is/ They are of D height and C hair.'
           // 2 = 'He is/ She is/ They are of the A race, from the realm of B"
           // 3 = 'He is/ She is/ They are '
-          if (characterDataList[got_a_live_one].birth = '' || characterDataList[got_a_live_one].death = '' && extent_unknown == 3 ) {
+          if ((characterDataList[got_a_live_one].birth == '') || (characterDataList[got_a_live_one].death == '') && (extent_unknown == 3)) {
             console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
             lortBlurb = lortBlurb + "a complete mystery to me! 😞 You might have better luck with the Wiki.";
-          } else if (characterDataList[got_a_live_one].birth = '' || characterDataList[got_a_live_one].death = '' && extent_unknown == 2 ) {
+          } else if ((characterDataList[got_a_live_one].birth == '') || (characterDataList[got_a_live_one].death == '') && (extent_unknown == 2)) {
             console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
             lortBlurb = lortBlurb + ". More than that, I don't know! 🤔 Find our more at the Wiki.";
-          } else if (characterDataList[got_a_live_one].birth = '' || characterDataList[got_a_live_one].death = '' && extent_unknown == 1 ) {
+          } else if ((characterDataList[got_a_live_one].birth == '') || (characterDataList[got_a_live_one].death == '') && (extent_unknown == 1)) {
             console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
             lortBlurb = lortBlurb + " 😊 The Wiki can tell you more.";
           } else if (extent_unknown == 3) {
