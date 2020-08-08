@@ -30,11 +30,12 @@ const GOOGLE_CLIENT_EMAIL = process.env.GOOGLE_CLIENT_EMAIL;
 const GOOGLE_PRIVATE_KEY_ORIG = process.env.GOOGLE_PRIVATE_KEY;
 const GOOGLE_PRIVATE_KEY = GOOGLE_PRIVATE_KEY_ORIG.replace(/\\n/g, '\n');
 
-// Set-up dependencies for app
+// Set-up dependencies for app x-ref tp package.json
 const pg = require('pg'); // https://www.npmjs.com/package/pg
 const request = require('request'); // https://github.com/request/request
 const express = require('express'); // https://expressjs.com
 const bodyParser = require('body-parser'); // https://github.com/expressjs/body-parser
+const levenshtein = require('js-levenshtein'); // https://www.npmjs.com/package/js-levenshtein
 // Configure dialogFlow session credentials
 const dialogflow = require('@google-cloud/dialogflow');
 const credentials = {
@@ -2368,18 +2369,26 @@ function apiLOTR (eventLOTR,lotrWho){
         let characterDataList = characterData.docs;
         console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
         let got_a_live_one = -1;
+        let levenshtein_highest = 0;
+        let levenshtein_newest = 0;
+        lotrWhoLower = lotrWho.toLowerCase(); // Able to compare both
         for (var character_loop = 0; character_loop < characterDataList.length; character_loop++) {
           lotrWhoMatch = characterDataList[character_loop].name;
-          lotrWhoMatch = lotrWhoMatch.toLowerCase(); // Retain lotrWho as title case bur compare lower
-          //lotrWhoLower = lotrWho.toLowerCase();
+          lotrWhoMatch = lotrWhoMatch.toLowerCase(); // Retain lotrWho as title case but compare lower
+          levenshtein_newest = levenshtein(lotrWhoLower,lotrWhoMatch); // Calculate proximity of names
+          if (levenshtein_newest > levenshtein_highest) {
+            // Better proximity between terms
+            got_a_live_one = character_loop; // Best for now
+            levenshtein_highest = levenshtein_newest;
+            console.log("DEBUG [apiLOTR]> Best for now [" + levenshtein_highest + "] is: " + lotrWhoMatch);
+          }
+          //if (lotrWhoMatch.includes(lotrWho.toLowerCase())) {
+          //    console.log('WIKI WIKI WIKI ' + characterDataList[character_loop].wikiUrl);
+          //    // Do some checks on data quality and build response
+          //    got_a_live_one = character_loop;
 
-          if (lotrWhoMatch.includes(lotrWho.toLowerCase())) {
-              console.log('WIKI WIKI WIKI ' + characterDataList[character_loop].wikiUrl);
-              // Do some checks on data quality and build response
-              got_a_live_one = character_loop;
-
-          }; // if
-          if (got_a_live_one > -1) { break }; // We can stop looking
+          //}; // if
+          //if (got_a_live_one > -1) { break }; // We can stop looking
         }; // for
         if (got_a_live_one > -1) {
           // Found a match
