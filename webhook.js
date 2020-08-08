@@ -2376,11 +2376,13 @@ function apiLOTR (eventLOTR,lotrWho){
 
 
     }); // res.on('end'
-    req.on('error', function(e) {
-      console.log("DEBUG [apiLOTR]> Error: " + e);
-    }); // res.on('error'
+
 
   }); // http.get
+
+  req.on('error', function(e) {
+    console.log("DEBUG [apiLOTR]> Error: " + e);
+  }); // res.on('error'
 
 }
 
