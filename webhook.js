@@ -2305,15 +2305,8 @@ function apiMarvelChar(eventMarvel,marvelWho) {
 
 function apiLOTR (eventLOTR,lotrWho){
   console.log("DEBUG [apiLOTR]> Input: " + lotrWho);
-  //"Authorization: Bearer 8NFOPxFtp6xQvj44vADQ"
-  //?Authorization=Bearer
-  // 8NFOPxFtp6xQvj44vADQ
-  // https://the-one-api.herokuapp.com/v1/movie?Authorization: Bearer 8NFOPxFtp6xQvj44vADQ
-  // 5cd99d4bde30eff6ebccfbcc
-  // https://the-one-api.herokuapp.com
 
-  //const headerDict = { 'Authorization': 'Bearer 8NFOPxFtp6xQvj44vADQ' };
-  //const requestOptions = { headers: new Headers(headerDict) };
+  lotrWho = 'Tar-Ciryatan';
 
   let url = 'the-one-api.herokuapp.com';
   let url_path = '/v1/character';
@@ -2326,31 +2319,6 @@ function apiLOTR (eventLOTR,lotrWho){
     }
   }
 
-
-  //const options = {
-  //    hostname: 'httpbin.org',
-  //    path: '/get',
-  //    headers: {
-  //        Authorization: 'authKey'
-  //    }
-  //}
-
-  //https.get(options, (response) => {
-
-  //    var result = ''
-  //    response.on('data', function (chunk) {
-  //        result += chunk;
-  //    });
-
-  //    response.on('end', function () {
-  //        console.log(result);
-  //    });
-
-  //});
-
-
-  //let customHeaders = new Headers({ Authorization: "Bearer " + "8NFOPxFtp6xQvj44vADQ"});
-  //const requestOptions: RequestOptionsArgs = { headers: customHeaders };
 /*
 {"docs":
 [
@@ -2367,25 +2335,8 @@ function apiLOTR (eventLOTR,lotrWho){
 "hair":"",
 "name":"Tar-Ciryatan",
 "wikiUrl":"http://lotr.wikia.com//wiki/Tar-Ciryatan"},
-
-{"code":200,
-"status":"Ok",
-"copyright":"© 2020 MARVEL",
-"attributionText":"Data provided by Marvel. © 2020 MARVEL",
-"attributionHTML":"<a href=\"http://marvel.com\">Data provided by Marvel. © 2020 MARVEL</a>",
-"etag":"cd8b478117d95d8e51355115e875f825866c4523",
-"data":
-{"offset":0,
-"limit":1,
-"total":9,
-"count":1,
-"results":
-[
-{"id":1009351,
-"name":"Hulk",
-"description":
-"Caught in a gamma bomb explosion while trying to save the life of a teenager, Dr. Bruce Banner was transformed into the incredibly powerful creature called the Hulk. An all too often misunderstood hero, the angrier the Hulk gets, the stronger the Hulk gets.","modified":"2020-07-21T10:35:15-0400","thumbnail":{"path":"http://i.annihil.us/u/prod/marvel/i/mg/5/a0/538615ca33ab0","extension":"jpg"},"resourceURI":"http://gateway.marvel.com/v1/public/characters/1009351","comics":{"available":1662,"collectionURI":"http://gateway.marvel.com/v1/public/characters/1009351/comics","items":[{"resourceURI":"http://gateway.marvel.com/v1/public/comics/41112","name":"5 Ronin (Hardcover)"},{"resourceURI":"http://gateway.marvel.com/v1/public/comics/36365","name":"5 Ronin (2010) #2"},
 */
+
   http.get(requestOptions, function(res) {
     let body = "";
     // Data comes through in chunks
@@ -2394,31 +2345,23 @@ function apiLOTR (eventLOTR,lotrWho){
     res.on('end', function() {
       let characterData = JSON.parse(body);
       //console.log("DEBUG [apiLOTR]> Character JSON: " + JSON.stringify(characterData));
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + JSON.stringify(characterData.docs[2]));
+      //console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + JSON.stringify(characterData.docs[2]));
       let characterDataList = characterData.docs;
       console.log('HOW MANY >>>>>>>>>>>>>>>>>>>>>>>'+ characterDataList.length);
+      for (character_loop = 0; character_loop < characterDataList.length; character_loop++) {
+        if (characterDataList[character_loop].name == lotrWho) {
+            console.log('WIKI WIKI WIKI ' + characterDataList[character_loop].wikiUrl);
+            break;
+        };
+
+      };
+
 
     }); // res.on('end'
     res.on('error', function(e) {
       console.log("DEBUG [apiLOTR]> Error: " + e);
     }); // res.on('error'
   }); // http.get
-  /*request({
-    url: 'https://the-one-api.herokuapp.com/v1/character/',
-    headers: {
-       'Authorization': 'Bearer 8NFOPxFtp6xQvj44vADQ'
-    },
-    rejectUnauthorized: false
-  }, function(err, res) {
-        if(err) {
-          console.error(err);
-        } else {
-          //console.log(res.body);
-          let lotrData = JSON.parse(res.body);
-          //console.log('^^^^^^^^^^^^^^^^^^^' + lotrData);
-        }
-
-  });*/
 
 }
 
