@@ -2315,7 +2315,7 @@ function apiLOTR (eventLOTR,lotrWho){
   //const headerDict = { 'Authorization': 'Bearer 8NFOPxFtp6xQvj44vADQ' };
   //const requestOptions = { headers: new Headers(headerDict) };
 
-  let url = 'https://the-one-api.herokuapp.com/v1/character/';
+  let url = 'the-one-api.herokuapp.com/v1/character/';
 
   const requestOptions = {
     hostname: url,
