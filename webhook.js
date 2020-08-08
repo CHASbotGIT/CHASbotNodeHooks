@@ -2389,7 +2389,7 @@ function apiLOTR (eventLOTR,lotrWho){
             extent_unknown = extent_unknown + 1; // 0 or 1
             console.log("DEBUG [apiLOTR]> Either race or realm is unknown");
           } else {
-            lortBlurb = lortBlurb + " of the " + characterDataList[got_a_live_one].race + " race, from the realm of " + characterDataList[got_a_live_one].realm );
+            lortBlurb = lortBlurb + " of the " + characterDataList[got_a_live_one].race + " race, from the realm of " + characterDataList[got_a_live_one].realm;
             console.log("DEBUG [apiLOTR]> Blurb so far is: " + lortBlurb);
           };
           // Either:
@@ -2399,10 +2399,10 @@ function apiLOTR (eventLOTR,lotrWho){
             extent_unknown = extent_unknown + 2; // 0, 1, 2 or 3
             console.log("DEBUG [apiLOTR]> Either height or hair colour is unknown");
           } else if (extent_unknown == 1) {
-            lortBlurb = lortBlurb + " of " + characterDataList[got_a_live_one].height + " and " + characterDataList[got_a_live_one].hair + " hair."
+            lortBlurb = lortBlurb + " of " + characterDataList[got_a_live_one].height + " and " + characterDataList[got_a_live_one].hair + " hair.";
             console.log("DEBUG [apiLOTR]> Blurb so far is: " + lortBlurb);
           } else {
-            lortBlurb = lortBlurb + "; with " + characterDataList[got_a_live_one].hair + " hair, and a height of " + characterDataList[got_a_live_one].height + "." );
+            lortBlurb = lortBlurb + "; with " + characterDataList[got_a_live_one].hair + " hair, and a height of " + characterDataList[got_a_live_one].height + ".";
             console.log("DEBUG [apiLOTR]> Blurb so far is: " + lortBlurb);
           };
           // Either:
