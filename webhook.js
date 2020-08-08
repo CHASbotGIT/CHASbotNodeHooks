@@ -2312,9 +2312,12 @@ function apiLOTR (eventLOTR,lotrWho){
   // 5cd99d4bde30eff6ebccfbcc
   // https://the-one-api.herokuapp.com
 
+  const headerDict = { 'Authorization': 'Bearer 8NFOPxFtp6xQvj44vADQ' };
+  const requestOptions = { headers: new Headers(headerDict) };
+
   let url = 'https://the-one-api.herokuapp.com/v1/character/';
-  let customHeaders = new Headers({ Authorization: "Bearer " + "8NFOPxFtp6xQvj44vADQ"});
-  const requestOptions: RequestOptionsArgs = { headers: customHeaders };
+  //let customHeaders = new Headers({ Authorization: "Bearer " + "8NFOPxFtp6xQvj44vADQ"});
+  //const requestOptions: RequestOptionsArgs = { headers: customHeaders };
 
   http.get(url, requestOptions, function(res) {
     let body = "";
