@@ -200,7 +200,7 @@ const URL_MOVIEDB = "https://api.themoviedb.org/3/";
 const URL_CHAT_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages";
 const URL_API_WEATHER = "http://api.openweathermap.org/data/2.5/weather?APPID=";
 const URL_API_MARVEL = "https://gateway.marvel.com:443/v1/public/characters?nameStartsWith=";
-const URL_API_LOTR = "the-one-api.herokuapp.com";
+const URL_API_LOTR = ;// "the-one-api.herokuapp.com";
 const URL_SEARCH_GOOGLE = "https://www.google.com/search?q=";
 const URL_SEARCH_WIKI = "https://en.wikipedia.org/w/index.php?search=";
 const URL_SEARCH_BEEB = "https://www.bbc.co.uk/search?q=";
@@ -2324,7 +2324,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
 function apiLOTR (eventLOTR,lotrWho){
   console.log("DEBUG [apiLOTR]> Input: " + lotrWho);
   let lotrWhoMatch = '';
-  let url_path = '/v1/characte';
+  let url_path = '/v1/character';
   // Set URL with authorisation header i.e. API key not sent in URL
   const requestOptions = {
     hostname: URL_API_LOTR,
@@ -2352,7 +2352,7 @@ function apiLOTR (eventLOTR,lotrWho){
 "wikiUrl":"http://lotr.wikia.com//wiki/Tar-Ciryatan"},
 */
 
-  http.get(requestOptions, function(res) {
+  var req = http.get(requestOptions, function(res) {
     let body = "";
     // Data comes through in chunks
     res.on('data', function (chunk) { body += chunk });
@@ -2376,7 +2376,7 @@ function apiLOTR (eventLOTR,lotrWho){
 
 
     }); // res.on('end'
-    res.on('error', function(e) {
+    req.on('error', function(e) {
       console.log("DEBUG [apiLOTR]> Error: " + e);
     }); // res.on('error'
 
