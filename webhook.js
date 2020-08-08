@@ -2452,7 +2452,7 @@ function apiLOTR (eventLOTR,lotrWho){
           } else { // 1 or 0
             lotrBlurb = lotrBlurb + " I can also tell you they were born " + clean_up_text1 + " and died " + clean_up_text2 + ". 😃 Check out the Wiki.";
           };
-          lotrBlurb = flotrBlurb.replace(/\s(\w+\s)\1/, " $1"); // Cleans consecutive repeated words
+          lotrBlurb = lotrBlurb.replace(/\s(\w+\s)\1/, " $1"); // Cleans consecutive repeated words
           console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
           postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,lotrBlurb,'Wiki ' + characterDataList[got_a_live_one].name);
           return;
