@@ -2263,7 +2263,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
   let marvelThumb = '';
   let marvelURL = '';
   let marvelPost = [];
-  let marvelLimit = "3";
+  let marvelLimit = "1";
   let marvelWhoShort = marvelWho.substring(0,8); // Trim to first eight characyers
   let url = URL_API_MARVEL + marvelWhoShort + "&limit=" + marvelLimit + "&apikey=" + KEY_MARVEL_PUBLIC;
   let ts = new Date().getTime();
@@ -2278,7 +2278,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
     // When all the data is back, go on to query the full response
     res.on('end', function() {
       let characterData = JSON.parse(body);
-      console.log("DEBUG [apiMarvelChar]> Character JSON: " + JSON.stringify(characterData));
+      //console.log("DEBUG [apiMarvelChar]> Character JSON: " + JSON.stringify(characterData));
       if (characterData.code === 200) { // Successful response from Marvel
         if (characterData['data'].count == 0) { // A successful response doesn't mean there was a match
           //console.log("DEBUG [apiMarvelChar]> Valid URL but no results for " + toTitleCase(marvelWho));
@@ -2286,7 +2286,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
           postMarvel(eventMarvel,false,marvelPost);
           return;
         } else if (characterData['data'].results[0].description !== '') { // Assess the first result back
-          console.log("DEBUG [apiMarvelChar]> Number of possible: " + characterData['data'].results.length);
+          //console.log("DEBUG [apiMarvelChar]> Number of possible: " + characterData['data'].results.length);
           marvelNote = characterData.data.results[0].description;
           //console.log("DEBUG [apiMarvelChar]> Description: " + marvelNote);
           marvelThumb = characterData.data.results[0].thumbnail.path + '/standard_xlarge.jpg';
@@ -2373,7 +2373,7 @@ function apiLOTR (eventLOTR,lotrWho){
           lotrWhoMatch = lotrWhoMatch.toLowerCase(); // Retain lotrWho as title case bur compare lower
           //lotrWhoLower = lotrWho.toLowerCase();
 
-          if (lotrWhoMatch.includes(lotrWhoMatch.toLowerCase())) {
+          if (lotrWhoMatch.includes(lotrWho.toLowerCase())) {
               console.log('WIKI WIKI WIKI ' + characterDataList[character_loop].wikiUrl);
               // Do some checks on data quality and build response
               got_a_live_one = character_loop;
