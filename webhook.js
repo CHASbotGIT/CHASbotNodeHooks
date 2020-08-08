@@ -2385,7 +2385,7 @@ function apiLOTR (eventLOTR,lotrWho){
         } else {
           // Could not find a match
           console.log("ERROR [apiLOTR]> No Luck");
-          return:
+          return;
         };
       } else {
         // Could be status code 404 or some other response i.e. valid block BUT not results
