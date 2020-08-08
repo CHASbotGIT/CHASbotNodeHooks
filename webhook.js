@@ -2377,6 +2377,7 @@ function apiLOTR (eventLOTR,lotrWho){
           // Found a match
           let clean_up_text1 = '';
           let clean_up_text2 = '';
+          let various_trap = false;
           lotrBlurb = "This is the best match I can find for " + toTitleCase(lotrWho) + ".\n";
           if (characterDataList[got_a_live_one].gender == 'Male') {
             lotrBlurb = lotrBlurb + "He is ";
@@ -2391,7 +2392,7 @@ function apiLOTR (eventLOTR,lotrWho){
             extent_unknown = extent_unknown + 1; // 0 or 1
             console.log("DEBUG [apiLOTR]> Either race or realm is unknown");
           } else {
-            lotrBlurb = lotrBlurb + " of the " + characterDataList[got_a_live_one].race + " race, from the realm of " + characterDataList[got_a_live_one].realm;
+            lotrBlurb = lotrBlurb + "of the " + characterDataList[got_a_live_one].race + " race, from the realm of " + characterDataList[got_a_live_one].realm;
             console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           };
           // Either:
@@ -2402,10 +2403,11 @@ function apiLOTR (eventLOTR,lotrWho){
             clean_up_text1 = clean_up_text1.toLowerCase();
             clean_up_text2 = characterDataList[got_a_live_one].height;
             clean_up_text2 = clean_up_text2.toLowerCase();
+            if (clean_up_text1.inludes('various')||clean_up_text2.inludes('various')) { various_trap = true };
           };
-          if ((characterDataList[got_a_live_one].height == '') || (characterDataList[got_a_live_one].hair == '')) {
+          if ((characterDataList[got_a_live_one].height == '') || (characterDataList[got_a_live_one].hair == '' || various_trap)) {
             extent_unknown = extent_unknown + 2; // 0, 1, 2 or 3
-            console.log("DEBUG [apiLOTR]> Either height or hair colour is unknown");
+            console.log("DEBUG [apiLOTR]> Either height or hair colour is unknown, or various");
           } else if (extent_unknown == 1) {
             lotrBlurb = lotrBlurb + clean_up_text2 + " in height with " + clean_up_text1 + " hair.";
             console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
