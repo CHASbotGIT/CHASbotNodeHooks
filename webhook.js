@@ -2321,7 +2321,7 @@ function apiLOTR (eventLOTR,lotrWho){
     hostname: url,
     headers: {
         Authorization: 'Bearer 8NFOPxFtp6xQvj44vADQ'
-    };
+    }
   };
 
 
