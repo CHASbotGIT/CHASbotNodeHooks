@@ -2326,11 +2326,12 @@ function apiLOTR (eventLOTR,lotrWho){
   let lotrWhoMatch = '';
   let url_path = '/v1/character';
   // Set URL with authorisation header i.e. API key not sent in URL
+  console.log(KEY_API_LOTR);
   const requestOptions = {
     hostname: URL_API_LOTR,
     path: url_path,
     headers: {
-      Authorization: 'Bearer ' + KEY_API_LOTR
+      Authorization: 'Bearer 8NFOPxFtp6xQvj44vADQ'
     }
   }
 
