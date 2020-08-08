@@ -2330,7 +2330,7 @@ function apiLOTR (eventLOTR,lotrWho){
     hostname: URL_API_LOTR,
     path: url_path,
     headers: {
-      Authorization: 'Bearer ' + KEY_API_LOTR;
+      Authorization: 'Bearer ' + KEY_API_LOTR
     }
   }
 
@@ -2360,7 +2360,7 @@ function apiLOTR (eventLOTR,lotrWho){
     res.on('end', function() {
       // Any checking needed here? ********************* could be 404
       let characterData = JSON.parse(body);
-      //console.log("DEBUG [apiLOTR]> Character JSON: " + JSON.stringify(characterData));
+      console.log("DEBUG [apiLOTR]> Character JSON: " + JSON.stringify(characterData));
       let characterDataList = characterData.docs;
       console.log("DEBUG [apiLOTR]> Characters Retrieved " + characterDataList.length);
       // Any checking needed here? *********************
