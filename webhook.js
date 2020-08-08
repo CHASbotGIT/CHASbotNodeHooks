@@ -2403,7 +2403,7 @@ function apiLOTR (eventLOTR,lotrWho){
             clean_up_text1 = clean_up_text1.toLowerCase();
             clean_up_text2 = characterDataList[got_a_live_one].height;
             clean_up_text2 = clean_up_text2.toLowerCase();
-            if (clean_up_text1.inludes('various')||clean_up_text2.inludes('various')) { various_trap = true };
+            if (clean_up_text1.includes('various')||clean_up_text2.includes('various')) { various_trap = true };
           };
           if ((characterDataList[got_a_live_one].height == '') || (characterDataList[got_a_live_one].hair == '' || various_trap)) {
             extent_unknown = extent_unknown + 2; // 0, 1, 2 or 3
