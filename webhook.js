@@ -2324,7 +2324,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
 function apiLOTR (eventLOTR,lotrWho){
   console.log("DEBUG [apiLOTR]> Input: " + lotrWho);
   let lotrWhoMatch = '';
-  let url_path = '/v1/characte';
+  let url_path = '/v1/character';
   // Set URL with authorisation header i.e. API key not sent in URL
   const requestOptions = {
     hostname: URL_API_LOTR,
@@ -2334,23 +2334,23 @@ function apiLOTR (eventLOTR,lotrWho){
     }
   }
 
-/*
-{"docs":
-[
-{"_id":"5cd99d4bde30eff6ebccfdf3","height":"","race":"Human","gender":"Male","birth":"SA 192","spouse":"Unnamed wife","death":"SA 603","realm":"Númenor","hair":"","name":"Tar-Amandil","wikiUrl":"http://lotr.wikia.com//wiki/Tar-Amandil"},
-{"_id":"5cd99d4bde30eff6ebccfdf7","height":"","race":"Human","gender":"Male","birth":"SA 1800","spouse":"Unnamed wife","death":"SA 2221","realm":"Númenor","hair":"","name":"Tar-Atanamir","wikiUrl":"http://lotr.wikia.com//wiki/Tar-Atanamir"},
-{"_id":"5cd99d4bde30eff6ebccfdf9",
-"height":"",
-"race":"Human",
-"gender":"Male",
-"birth":"SA 1634",
-"spouse":"Unnamed wife",
-"death":"SA 2035",
-"realm":"Númenor",
-"hair":"",
-"name":"Tar-Ciryatan",
-"wikiUrl":"http://lotr.wikia.com//wiki/Tar-Ciryatan"},
-*/
+  /*
+  {"docs":
+  [
+  {"_id":"5cd99d4bde30eff6ebccfdf3","height":"","race":"Human","gender":"Male","birth":"SA 192","spouse":"Unnamed wife","death":"SA 603","realm":"Númenor","hair":"","name":"Tar-Amandil","wikiUrl":"http://lotr.wikia.com//wiki/Tar-Amandil"},
+  {"_id":"5cd99d4bde30eff6ebccfdf7","height":"","race":"Human","gender":"Male","birth":"SA 1800","spouse":"Unnamed wife","death":"SA 2221","realm":"Númenor","hair":"","name":"Tar-Atanamir","wikiUrl":"http://lotr.wikia.com//wiki/Tar-Atanamir"},
+  {"_id":"5cd99d4bde30eff6ebccfdf9",
+  "height":"",
+  "race":"Human",
+  "gender":"Male",
+  "birth":"SA 1634",
+  "spouse":"Unnamed wife",
+  "death":"SA 2035",
+  "realm":"Númenor",
+  "hair":"",
+  "name":"Tar-Ciryatan",
+  "wikiUrl":"http://lotr.wikia.com//wiki/Tar-Ciryatan"},
+  */
 
   var req = http.get(requestOptions, function(res) {
     let body = "";
@@ -2370,6 +2370,11 @@ function apiLOTR (eventLOTR,lotrWho){
           lotrWhoMatch = lotrWhoMatch.toLowerCase(); // Retain lotrWho as title case bur compare lower
           if (lotrWhoMatch == lotrWho.toLowerCase()) {
               console.log('WIKI WIKI WIKI ' + characterDataList[character_loop].wikiUrl);
+
+
+              postLinkButton(eventLOTR,characterDataList[character_loop].wikiUrl,'some blurb','Wiki ' + lotrWho);
+
+
               break;
           }; // if
         }; // for
@@ -2384,7 +2389,6 @@ function apiLOTR (eventLOTR,lotrWho){
   req.on('error', function(e) { // Catches failures to connect to the API
     console.log("ERROR [apiLOTR]> Error getting to API: " + e);
   }); // res.on('error'
-
 }
 
 // Loaded/stored value search functions
