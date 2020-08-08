@@ -2361,34 +2361,43 @@ function apiLOTR (eventLOTR,lotrWho){
       let characterData = JSON.parse(body);
       let characterData_legible = JSON.stringify(characterData);
       console.log("DEBUG [apiLOTR]> Character JSON: " + characterData_legible);
-      // Correct responses start with "docs" i.e. no status code 200 to verify
+      // Correct responses start with "docs" i.e. no status code 200 to help verify
       if (characterData_legible.includes('docs')) {
         let characterDataList = characterData.docs;
         console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
+        let got_a_live_one = false;
         for (var character_loop = 0; character_loop < characterDataList.length; character_loop++) {
           lotrWhoMatch = characterDataList[character_loop].name;
           lotrWhoMatch = lotrWhoMatch.toLowerCase(); // Retain lotrWho as title case bur compare lower
-          if (lotrWhoMatch == lotrWho.toLowerCase()) {
+
+          if (lotrWhoMatch.inludes(lotrWho.toLowerCase())) {
               console.log('WIKI WIKI WIKI ' + characterDataList[character_loop].wikiUrl);
+              // Do some checks on data quality and build response
+              got_a_live_one = true;
 
-
-              postLinkButton(eventLOTR,characterDataList[character_loop].wikiUrl,'some blurb','Wiki ' + lotrWho);
-
-
-              break;
           }; // if
+          if (got_a_live_one) { break }; // We can stop looking
         }; // for
+        if (got_a_live_one) {
+          // Found a match
+          postLinkButton(eventLOTR,characterDataList[character_loop].wikiUrl,'some blurb','Wiki ' + lotrWho);
+          return;
+        } else {
+          // Could not find a match
+          console.log("ERROR [apiLOTR]> No Luck");
+          return:
+        };
       } else {
         // Could be status code 404 or some other response i.e. valid block BUT not results
         console.log("ERROR [apiLOTR]> Error getting results e.g. 404");
-      }
+        return;
+      };
     }); // res.on('end'
-
   }); // http.get
-
   req.on('error', function(e) { // Catches failures to connect to the API
     console.log("ERROR [apiLOTR]> Error getting to API: " + e);
-  }); // res.on('error'
+    return;
+  }); // req.on('error'
 }
 
 // Loaded/stored value search functions
