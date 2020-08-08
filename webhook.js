@@ -2381,7 +2381,7 @@ function apiLOTR (eventLOTR,lotrWho){
             // Better proximity between terms
             got_a_live_one = character_loop; // Best for now
             levenshtein_lowest = levenshtein_newest; // Lower difference
-            console.log("DEBUG [apiLOTR]> Best for now [" + levenshtein_highest + "] is: " + lotrWhoMatch);
+            console.log("DEBUG [apiLOTR]> Best for now [" + levenshtein_lowest + "] is: " + lotrWhoMatch);
           }
           //if (lotrWhoMatch.includes(lotrWho.toLowerCase())) {
           //    console.log('WIKI WIKI WIKI ' + characterDataList[character_loop].wikiUrl);
