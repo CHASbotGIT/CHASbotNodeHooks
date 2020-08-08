@@ -2376,8 +2376,9 @@ function apiLOTR (eventLOTR,lotrWho){
           lotrWhoMatch = characterDataList[character_loop].name;
           lotrWhoMatch = lotrWhoMatch.toLowerCase(); // Retain lotrWho as title case but compare lower
           levenshtein_newest = levenshtein(lotrWhoLower,lotrWhoMatch); // Calculate proximity of names
-          console.log("DEBUG [apiLOTR]> Match :" + lotrWhoLower + " [" + levenshtein_newest + "] " + lotrWhoMatch);
-          if (levenshtein_newest < levenshtein_lowest) {
+          console.log("DEBUG [apiLOTR]> Difference :" + lotrWhoLower + " [" + levenshtein_newest + "] " + lotrWhoMatch);
+          // Better match but must also have a wiki
+          if (levenshtein_newest < levenshtein_lowest && characterDataList[character_loop].wikiUrl != '') {
             // Better proximity between terms
             got_a_live_one = character_loop; // Best for now
             levenshtein_lowest = levenshtein_newest; // Lower difference
