@@ -16,6 +16,7 @@ const KEY_VERIFY = process.env.KEY_VERIFY;
 const KEY_CRYPTO = process.env.KEY_CRYPTO;
 const URL_CHASBOT = process.env.APP_URL;
 const URL_POSTGRES = process.env.DATABASE_URL;
+const KEY_API_LOTR = process.env.KEY_API_LOTR;
 const KEY_API_GIPHY = process.env.KEY_API_GIPHY;
 const KEY_DIALOGFLOW = process.env.KEY_DIALOGFLOW;
 const KEY_PAGE_ACCESS = process.env.KEY_PAGE_ACCESS;
@@ -159,6 +160,7 @@ const TRIGGER_CHAS_LOGO = 'chas logo';
 const TRIGGER_CHASABET_1 = 'chas alphabet';
 const TRIGGER_CHASABET_2 = 'chas letter';
 const TRIGGER_MARVEL = 'marvel';
+const TRIGGER_LOTR = 'lotr';
 const TRIGGER_CHAS_EVENTS = 'when is';
 const TRIGGER_CHAS_BIOGS = 'who is';
 const TRIGGER_RPSLS = 'bazinga';
@@ -183,7 +185,6 @@ const FILE_HOOKS = "./hooks.txt";
 const HOOK_FUNDRAISING = 'fundraising';
 const HOOK_PICKCARD = 'cards';
 const HOOK_WEATHER = 'weather';
-const HOOK_MARVEL = "marvel";
 /*const HOOK_WORKPLACE = 'workplace';
 const HOOK_URL_GROUP_DOCS = 'group_docs';
 const HOOK_PLAN = 'plan';
@@ -198,7 +199,8 @@ const URL_GIPHY = "https://api.giphy.com/v1/gifs/random";
 const URL_MOVIEDB = "https://api.themoviedb.org/3/";
 const URL_CHAT_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages";
 const URL_API_WEATHER = "http://api.openweathermap.org/data/2.5/weather?APPID=";
-const URL_API_MARVEL = "https://gateway.marvel.com:443/v1/public/characters?nameStartsWith="
+const URL_API_MARVEL = "https://gateway.marvel.com:443/v1/public/characters?nameStartsWith=";
+const URL_API_LOTR = ""
 const URL_SEARCH_GOOGLE = "https://www.google.com/search?q=";
 const URL_SEARCH_WIKI = "https://en.wikipedia.org/w/index.php?search=";
 const URL_SEARCH_BEEB = "https://www.bbc.co.uk/search?q=";
@@ -1004,9 +1006,6 @@ CHASbot.post('/webhook', (req, res) => {
           let help_url = '';
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
             trigger_path = TRIGGER_HELP;
-
-            apiLOTR(event,'bob');
-
             help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
             //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
             chasbotText = "Try typing any of these:";
@@ -1253,6 +1252,22 @@ CHASbot.post('/webhook', (req, res) => {
               analyse_text = trigger_path; // Clean extra
             };
           };
+          // Lord of the Rings
+          // If double-triggered - then seond trigger wins
+          position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_LOTR) + 1;
+          console.log("DEBUG [postWebhook]> " + TRIGGER_LOTR + " phrase search result: " + position_in_analyse_text);
+          if (position_in_analyse_text > 0) {
+            starting_point = position_in_analyse_text + TRIGGER_LOTR.length;
+            ending_point = analyse_text.length;
+            string_length = ending_point - starting_point;
+            console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
+            if (string_length > 0) {
+              trigger_path = TRIGGER_LOTR;
+              hero_who = analyse_text.slice(starting_point,ending_point);
+              hero_who = toTitleCase(hero_who);
+              analyse_text = trigger_path; // Clean extra
+            };
+          };
           // ****** Odds 'n' Ends *******
           // Lottery
           let uk_lotto = '';
@@ -1372,6 +1387,9 @@ CHASbot.post('/webhook', (req, res) => {
           } else if (trigger_path == TRIGGER_MARVEL) {
             //console.log("DEBUG [postWebhook_route]> Marvel Character: " + hero_who);
             apiMarvelChar(event,hero_who);
+          } else if (trigger_path == TRIGGER_LOTR) {
+            console.log("DEBUG [postWebhook_route]> LOTR Character: " + hero_who);
+            apiLOTR(event,hero_who);
           } else if (trigger_path == TRIGGER_CHASABET_1) {
             //console.log("DEBUG [postWebhook_route]> CHAS alpahbet: " + alpha);
             lookupAlpha(event,alpha);
@@ -2305,17 +2323,14 @@ function apiMarvelChar(eventMarvel,marvelWho) {
 
 function apiLOTR (eventLOTR,lotrWho){
   console.log("DEBUG [apiLOTR]> Input: " + lotrWho);
-
-  lotrWho = 'Tar-Ciryatan';
-
-  let url = 'the-one-api.herokuapp.com';
-  let url_path = '/v1/character';
-
+  let lotrWhoMatch = '';
+  let url_path = '/v1/characte';
+  // Set URL with authorisation header i.e. API key not sent in URL
   const requestOptions = {
-    hostname: url,
+    hostname: URL_API_LOTR,
     path: url_path,
     headers: {
-      Authorization: 'Bearer 8NFOPxFtp6xQvj44vADQ'
+      Authorization: 'Bearer ' + KEY_API_LOTR;
     }
   }
 
@@ -2343,24 +2358,28 @@ function apiLOTR (eventLOTR,lotrWho){
     res.on('data', function (chunk) { body += chunk });
     // When all the data is back, go on to query the full response
     res.on('end', function() {
+      // Any checking needed here? ********************* could be 404
       let characterData = JSON.parse(body);
       //console.log("DEBUG [apiLOTR]> Character JSON: " + JSON.stringify(characterData));
-      //console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + JSON.stringify(characterData.docs[2]));
       let characterDataList = characterData.docs;
-      console.log('HOW MANY >>>>>>>>>>>>>>>>>>>>>>>'+ characterDataList.length);
+      console.log("DEBUG [apiLOTR]> Characters Retrieved " + characterDataList.length);
+      // Any checking needed here? *********************
       for (var character_loop = 0; character_loop < characterDataList.length; character_loop++) {
-        if (characterDataList[character_loop].name == lotrWho) {
+        lotrWhoMatch = characterDataList[character_loop].name;
+        lotrWhoMatch = lotrWhoMatch.toLowerCase(); // Retain lotrWho as title case bur compare lower
+        if (lotrWhoMatch == lotrWho.toLowerCase()) {
             console.log('WIKI WIKI WIKI ' + characterDataList[character_loop].wikiUrl);
             break;
-        };
+        }; // if
 
-      };
+      }; // for
 
 
     }); // res.on('end'
     res.on('error', function(e) {
       console.log("DEBUG [apiLOTR]> Error: " + e);
     }); // res.on('error'
+
   }); // http.get
 
 }
