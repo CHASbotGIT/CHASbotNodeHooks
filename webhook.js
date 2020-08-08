@@ -200,7 +200,7 @@ const URL_MOVIEDB = "https://api.themoviedb.org/3/";
 const URL_CHAT_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages";
 const URL_API_WEATHER = "http://api.openweathermap.org/data/2.5/weather?APPID=";
 const URL_API_MARVEL = "https://gateway.marvel.com:443/v1/public/characters?nameStartsWith=";
-const URL_API_LOTR = '';// "the-one-api.herokuapp.com";
+const URL_API_LOTR = "the-one-api.herokuapp.com";
 const URL_SEARCH_GOOGLE = "https://www.google.com/search?q=";
 const URL_SEARCH_WIKI = "https://en.wikipedia.org/w/index.php?search=";
 const URL_SEARCH_BEEB = "https://www.bbc.co.uk/search?q=";
@@ -2324,7 +2324,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
 function apiLOTR (eventLOTR,lotrWho){
   console.log("DEBUG [apiLOTR]> Input: " + lotrWho);
   let lotrWhoMatch = '';
-  let url_path = '/v1/character';
+  let url_path = '/v1/characte';
   // Set URL with authorisation header i.e. API key not sent in URL
   const requestOptions = {
     hostname: URL_API_LOTR,
@@ -2358,30 +2358,30 @@ function apiLOTR (eventLOTR,lotrWho){
     res.on('data', function (chunk) { body += chunk });
     // When all the data is back, go on to query the full response
     res.on('end', function() {
-      // Any checking needed here? ********************* could be 404
       let characterData = JSON.parse(body);
       console.log("DEBUG [apiLOTR]> Character JSON: " + JSON.stringify(characterData));
-      let characterDataList = characterData.docs;
-      console.log("DEBUG [apiLOTR]> Characters Retrieved " + characterDataList.length);
-      // Any checking needed here? *********************
-      for (var character_loop = 0; character_loop < characterDataList.length; character_loop++) {
-        lotrWhoMatch = characterDataList[character_loop].name;
-        lotrWhoMatch = lotrWhoMatch.toLowerCase(); // Retain lotrWho as title case bur compare lower
-        if (lotrWhoMatch == lotrWho.toLowerCase()) {
-            console.log('WIKI WIKI WIKI ' + characterDataList[character_loop].wikiUrl);
-            break;
-        }; // if
-
-      }; // for
-
-
+      // Correct responses start with "docs" i.e. no status code 200 to verify
+      if (characterDataList.includes('smalltalk')) {
+        let characterDataList = characterData.docs;
+        console.log("DEBUG [apiLOTR]> Characters Retrieved " + characterDataList.length);
+        for (var character_loop = 0; character_loop < characterDataList.length; character_loop++) {
+          lotrWhoMatch = characterDataList[character_loop].name;
+          lotrWhoMatch = lotrWhoMatch.toLowerCase(); // Retain lotrWho as title case bur compare lower
+          if (lotrWhoMatch == lotrWho.toLowerCase()) {
+              console.log('WIKI WIKI WIKI ' + characterDataList[character_loop].wikiUrl);
+              break;
+          }; // if
+        }; // for
+      } else {
+        // Could be status code 404 or some other response i.e. valid block BUT not results
+        console.log("ERROR [apiLOTR]> Error getting results e.g. 404");
+      }
     }); // res.on('end'
-
 
   }); // http.get
 
-  req.on('error', function(e) {
-    console.log("DEBUG [apiLOTR]> Error: " + e);
+  req.on('error', function(e) { // Catches failures to connect to the API
+    console.log("ERROR [apiLOTR]> Error getting to API: " + e);
   }); // res.on('error'
 
 }
