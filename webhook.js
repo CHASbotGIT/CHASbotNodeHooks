@@ -2421,18 +2421,18 @@ function apiLOTR (eventLOTR,lotrWho){
           // 2 = 'He is/ She is/ They are of the A race, from the realm of B"
           // 3 = 'He is/ She is/ They are '
           if ((characterDataList[got_a_live_one].birth != '') && (characterDataList[got_a_live_one].death != '')) {
-            clean_up_text1 = characterDataList[got_a_live_one].birth;
-            clean_up_text2 = characterDataList[got_a_live_one].death;
+            clean_up_text1 = characterDataList[got_a_live_one].birth; // birth
             clean_up_text1 = clean_up_text1.replace(/,/g, ""); // birth without commas
-            clean_up_text2 = clean_up_text1.replace(/,/g, ""); // death without commas
             if (clean_up_text1.length > 2) {
               let first_letter = clean_up_text1.charAt(0); // hold first letter
               first_letter = first_letter.toLowerCase(); // make lowercase
               clean_up_text1 = clean_up_text1.substr(1); // drop first character
               clean_up_text1 = first_letter + clean_up_text1; // at lowercase first character back
             };
+            clean_up_text2 = characterDataList[got_a_live_one].death; // death
+            clean_up_text2 = clean_up_text2.replace(/,/g, "");
             if (clean_up_text2.length > 2) {
-              let first_letter = clean_up_text1.charAt(0);
+              let first_letter = clean_up_text2.charAt(0);
               first_letter = first_letter.toLowerCase();
               clean_up_text2 = clean_up_text2.substr(1);
               clean_up_text2 = first_letter + clean_up_text2;
