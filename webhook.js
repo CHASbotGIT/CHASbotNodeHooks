@@ -2382,22 +2382,16 @@ function apiLOTR (eventLOTR,lotrWho){
 
           let validWikiURL = characterDataList[character_loop].wikiUrl;
           let validWikiURLstring = JSON.stringify(validWikiURL);
-          console.log("DEBUG [apiLOTR]> wikiUrl STRING" + validWikiURLstring);
+          console.log("DEBUG [apiLOTR]> wikiUrl STRING " + validWikiURLstring);
 
-          if (levenshtein_newest < levenshtein_lowest && validWikiURLstring != 'wikiUrlundefined' && validWikiURLstring != '') {
+
+          if (levenshtein_newest < levenshtein_lowest && validWikiURLstring != 'wikiUrlundefined' && typeof validWikiURLstring != 'undefined') {
             // Better proximity between terms
             got_a_live_one = character_loop; // Best for now
             levenshtein_lowest = levenshtein_newest; // Lower difference
             console.log("DEBUG [apiLOTR]> Best for now [" + levenshtein_lowest + "] is: " + lotrWhoMatch);
             console.log("DEBUG [apiLOTR]> wikiUrl" + characterDataList[got_a_live_one].wikiUrl)
-          }
-          //if (lotrWhoMatch.includes(lotrWho.toLowerCase())) {
-          //    console.log('WIKI WIKI WIKI ' + characterDataList[character_loop].wikiUrl);
-          //    // Do some checks on data quality and build response
-          //    got_a_live_one = character_loop;
-
-          //}; // if
-          //if (got_a_live_one > -1) { break }; // We can stop looking
+          }; // if
         }; // for
         if (got_a_live_one > -1) {
           // Found a match
