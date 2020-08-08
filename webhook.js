@@ -2426,6 +2426,7 @@ function apiLOTR (eventLOTR,lotrWho){
             if (clean_up_text1.length > 2) {
               let first_letter = clean_up_text1.charAt(0); // hold first letter
               first_letter = first_letter.toLowerCase(); // make lowercase
+              if (first_letter == 't') {first_letter = 'T'}; // TA is valid
               clean_up_text1 = clean_up_text1.substr(1); // drop first character
               clean_up_text1 = first_letter + clean_up_text1; // at lowercase first character back
             };
@@ -2434,6 +2435,7 @@ function apiLOTR (eventLOTR,lotrWho){
             if (clean_up_text2.length > 2) {
               let first_letter = clean_up_text2.charAt(0);
               first_letter = first_letter.toLowerCase();
+              if (first_letter == 't') {first_letter = 'T'};
               clean_up_text2 = clean_up_text2.substr(1);
               clean_up_text2 = first_letter + clean_up_text2;
             };
