@@ -2448,11 +2448,11 @@ function apiLOTR (eventLOTR,lotrWho){
             console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
             lotrBlurb = lotrBlurb + " 😊 The Wiki can tell you more.";
           } else if (extent_unknown == 3) {
-            lotrBlurb = lotrBlurb + "a stranger to me but I can tell you they were born " + clean_up_text1 + " and died " + clean_up_text2 + ". 🤔 Find our more at the Wiki.";
+            lotrBlurb = lotrBlurb + "a stranger to me but I can tell you they were born " + clean_up_text1 + " and concluded their story " + clean_up_text2 + ". 🤔 Find our more at the Wiki.";
           } else if (extent_unknown == 2) {
-            lotrBlurb = lotrBlurb + ". I can also tell you they were born " + clean_up_text1 + " and died " + clean_up_text2 + ". 😊 The Wiki has more.";
+            lotrBlurb = lotrBlurb + ". I can also tell you they were born " + clean_up_text1 + " and ended their journey " + clean_up_text2 + ". 😊 The Wiki has more.";
           } else { // 1 or 0
-            lotrBlurb = lotrBlurb + " I can also tell you they were born " + clean_up_text1 + " and died " + clean_up_text2 + ". 😃 Check out the Wiki.";
+            lotrBlurb = lotrBlurb + " I can also tell you they were born " + clean_up_text1 + " and finished their adventure " + clean_up_text2 + ". 😃 Check out the Wiki.";
           };
           lotrBlurb = lotrBlurb.replace(/\s(\w+\s)\1/, " $1"); // Cleans consecutive repeated words
           console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
