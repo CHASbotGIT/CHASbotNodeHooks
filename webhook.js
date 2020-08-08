@@ -2397,18 +2397,20 @@ function apiLOTR (eventLOTR,lotrWho){
           // Either:
           // 0 = 'He is/ She is/ They are of the A race, from the realm of B'
           // 1 = 'He is/ She is/ They are '
+          if ((characterDataList[got_a_live_one].height != '') && (characterDataList[got_a_live_one].hair != '')) {
+            clean_up_text1 = characterDataList[got_a_live_one].hair;
+            clean_up_text1 = clean_up_text1.toLowerCase();
+            clean_up_text2 = characterDataList[got_a_live_one].height;
+            clean_up_text2 = clean_up_text2.toLowerCase();
+          };
           if ((characterDataList[got_a_live_one].height == '') || (characterDataList[got_a_live_one].hair == '')) {
             extent_unknown = extent_unknown + 2; // 0, 1, 2 or 3
             console.log("DEBUG [apiLOTR]> Either height or hair colour is unknown");
           } else if (extent_unknown == 1) {
-            clean_up_text1 = characterDataList[got_a_live_one].hair;
-            clean_up_text1 = clean_up_text1.toLowerCase();
-            lotrBlurb = lotrBlurb + characterDataList[got_a_live_one].height + " with " + clean_up_text1 + " hair.";
+            lotrBlurb = lotrBlurb + clean_up_text2 + " in height with " + clean_up_text1 + " hair.";
             console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           } else {
-            clean_up_text1 = characterDataList[got_a_live_one].hair;
-            clean_up_text1 = clean_up_text1.toLowerCase();
-            lotrBlurb = lotrBlurb + "; with " + clean_up_text1 + " hair, and a height of " + characterDataList[got_a_live_one].height + ".";
+            lotrBlurb = lotrBlurb + "; with " + clean_up_text1 + " hair, and a height of " + clean_up_text2 + ".";
             console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           };
           // Either:
@@ -2450,6 +2452,7 @@ function apiLOTR (eventLOTR,lotrWho){
           } else { // 1 or 0
             lotrBlurb = lotrBlurb + " I can also tell you they were born " + clean_up_text1 + " and died " + clean_up_text2 + ". 😃 Check out the Wiki.";
           };
+          lotrBlurb = flotrBlurb.replace(/\s(\w+\s)\1/, " $1"); // Cleans consecutive repeated words
           console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
           postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,lotrBlurb,'Wiki ' + characterDataList[got_a_live_one].name);
           return;
