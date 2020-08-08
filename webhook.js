@@ -2369,8 +2369,8 @@ function apiLOTR (eventLOTR,lotrWho){
         let characterDataList = characterData.docs;
         console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
         let got_a_live_one = -1;
-        let levenshtein_lowest = -1;
-        let levenshtein_newest = 0;
+        let levenshtein_lowest = 100;
+        let levenshtein_newest = 100;
         lotrWhoLower = lotrWho.toLowerCase(); // Able to compare both
         for (var character_loop = 0; character_loop < characterDataList.length; character_loop++) {
           lotrWhoMatch = characterDataList[character_loop].name;
