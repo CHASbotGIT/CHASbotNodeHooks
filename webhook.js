@@ -2304,7 +2304,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
 }
 
 function apiLOTR (eventLOTR,lotrWho){
-  //console.log("DEBUG [apiLOTR]> Input: " + lotrWho);
+  console.log("DEBUG [apiLOTR]> Input: " + lotrWho);
   //"Authorization: Bearer 8NFOPxFtp6xQvj44vADQ"
   //?Authorization=Bearer
   // 8NFOPxFtp6xQvj44vADQ
@@ -2316,7 +2316,7 @@ function apiLOTR (eventLOTR,lotrWho){
   //const requestOptions = { headers: new Headers(headerDict) };
 
   let url = 'the-one-api.herokuapp.com';
-  let url_path = '/v1/characte';
+  let url_path = '/v1/character';
 
   const requestOptions = {
     hostname: url,
@@ -2394,6 +2394,7 @@ function apiLOTR (eventLOTR,lotrWho){
     res.on('end', function() {
       let characterData = JSON.parse(body);
       console.log("DEBUG [apiLOTR]> Character JSON: " + JSON.stringify(characterData));
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + characterData.docs[2]);
 
     }); // res.on('end'
     res.on('error', function(e) {
