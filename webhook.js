@@ -2316,7 +2316,7 @@ function apiLOTR (eventLOTR,lotrWho){
   //const requestOptions = { headers: new Headers(headerDict) };
 
   let url = 'the-one-api.herokuapp.com';
-  let url_path = '/v1/character/';
+  let url_path = '/v1/character';
 
   const requestOptions = {
     hostname: url,
