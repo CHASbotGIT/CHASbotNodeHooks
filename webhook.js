@@ -2359,11 +2359,12 @@ function apiLOTR (eventLOTR,lotrWho){
     // When all the data is back, go on to query the full response
     res.on('end', function() {
       let characterData = JSON.parse(body);
-      console.log("DEBUG [apiLOTR]> Character JSON: " + JSON.stringify(characterData));
+      let characterData_legible = JSON.stringify(characterData);
+      console.log("DEBUG [apiLOTR]> Character JSON: " + characterData_legible);
       // Correct responses start with "docs" i.e. no status code 200 to verify
-      if (characterData.includes('docs')) {
+      if (characterData_legible.includes('docs')) {
         let characterDataList = characterData.docs;
-        console.log("DEBUG [apiLOTR]> Characters Retrieved " + characterDataList.length);
+        console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
         for (var character_loop = 0; character_loop < characterDataList.length; character_loop++) {
           lotrWhoMatch = characterDataList[character_loop].name;
           lotrWhoMatch = lotrWhoMatch.toLowerCase(); // Retain lotrWho as title case bur compare lower
