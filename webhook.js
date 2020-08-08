@@ -2361,7 +2361,7 @@ function apiLOTR (eventLOTR,lotrWho){
       let characterData = JSON.parse(body);
       console.log("DEBUG [apiLOTR]> Character JSON: " + JSON.stringify(characterData));
       // Correct responses start with "docs" i.e. no status code 200 to verify
-      if (characterDataList.includes('smalltalk')) {
+      if (characterData.includes('docs')) {
         let characterDataList = characterData.docs;
         console.log("DEBUG [apiLOTR]> Characters Retrieved " + characterDataList.length);
         for (var character_loop = 0; character_loop < characterDataList.length; character_loop++) {
