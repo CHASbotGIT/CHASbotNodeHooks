@@ -2381,7 +2381,7 @@ function apiLOTR (eventLOTR,lotrWho){
           // Better match but must also have a wiki
 
           let validWikiURL = characterDataList[character_loop].wikiUrl;
-          let validWikiURLstring = JSON.toString(validWikiURL);
+          let validWikiURLstring = JSON.stringify(validWikiURL);
           console.log("DEBUG [apiLOTR]> wikiUrl STRING" + validWikiURLstring);
 
           if (levenshtein_newest < levenshtein_lowest && validWikiURLstring != 'wikiUrlundefined' && validWikiURLstring != '') {
