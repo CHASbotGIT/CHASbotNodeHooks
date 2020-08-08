@@ -2371,9 +2371,9 @@ function apiLOTR (eventLOTR,lotrWho){
         for (var character_loop = 0; character_loop < characterDataList.length; character_loop++) {
           lotrWhoMatch = characterDataList[character_loop].name;
           lotrWhoMatch = lotrWhoMatch.toLowerCase(); // Retain lotrWho as title case bur compare lower
-          lotrWhoLower = lotrWho.toLowerCase();
+          //lotrWhoLower = lotrWho.toLowerCase();
 
-          if (lotrWhoMatch.inludes(lotrWhoLower)) {
+          if (lotrWhoMatch.includes(lotrWhoMatch.toLowerCase())) {
               console.log('WIKI WIKI WIKI ' + characterDataList[character_loop].wikiUrl);
               // Do some checks on data quality and build response
               got_a_live_one = true;
