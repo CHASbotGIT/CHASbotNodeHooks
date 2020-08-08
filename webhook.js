@@ -2375,22 +2375,22 @@ function apiLOTR (eventLOTR,lotrWho){
         }; // for
         if (got_a_live_one > -1) {
           // Found a match
-          lortBlurb = "This is the best match I can find for " + toTitleCase(lortWho) + ".\n";
+          lotrBlurb = "This is the best match I can find for " + toTitleCase(lotrWho) + ".\n";
           if (characterDataList[got_a_live_one].gender == 'Male') {
-            lortBlurb = lortBlurb + "He is ";
+            lotrBlurb = lotrBlurb + "He is ";
           } else if (characterDataList[got_a_live_one].gender == 'Female')  {
-            lortBlurb = lortBlurb + "She is ";
+            lotrBlurb = lotrBlurb + "She is ";
           } else {
-            lortBlurb = lortBlurb + "They are ";
+            lotrBlurb = lotrBlurb + "They are ";
           };
-          console.log("DEBUG [apiLOTR]> Blurb so far is: " + lortBlurb);
+          console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           let extent_unknown = 0;
           if ((characterDataList[got_a_live_one].race == '') || (characterDataList[got_a_live_one].realm == '')) {
             extent_unknown = extent_unknown + 1; // 0 or 1
             console.log("DEBUG [apiLOTR]> Either race or realm is unknown");
           } else {
-            lortBlurb = lortBlurb + " of the " + characterDataList[got_a_live_one].race + " race, from the realm of " + characterDataList[got_a_live_one].realm;
-            console.log("DEBUG [apiLOTR]> Blurb so far is: " + lortBlurb);
+            lotrBlurb = lotrBlurb + " of the " + characterDataList[got_a_live_one].race + " race, from the realm of " + characterDataList[got_a_live_one].realm;
+            console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           };
           // Either:
           // 0 = 'He is/ She is/ They are of the A race, from the realm of B'
@@ -2399,11 +2399,11 @@ function apiLOTR (eventLOTR,lotrWho){
             extent_unknown = extent_unknown + 2; // 0, 1, 2 or 3
             console.log("DEBUG [apiLOTR]> Either height or hair colour is unknown");
           } else if (extent_unknown == 1) {
-            lortBlurb = lortBlurb + " of " + characterDataList[got_a_live_one].height + " and " + characterDataList[got_a_live_one].hair + " hair.";
-            console.log("DEBUG [apiLOTR]> Blurb so far is: " + lortBlurb);
+            lotrBlurb = lotrBlurb + " of " + characterDataList[got_a_live_one].height + " and " + characterDataList[got_a_live_one].hair + " hair.";
+            console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           } else {
-            lortBlurb = lortBlurb + "; with " + characterDataList[got_a_live_one].hair + " hair, and a height of " + characterDataList[got_a_live_one].height + ".";
-            console.log("DEBUG [apiLOTR]> Blurb so far is: " + lortBlurb);
+            lotrBlurb = lotrBlurb + "; with " + characterDataList[got_a_live_one].hair + " hair, and a height of " + characterDataList[got_a_live_one].height + ".";
+            console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           };
           // Either:
           // 0 = 'He is/ She is/ They are of the A race, from the realm of B; with C hair, and a height of D.'
@@ -2412,22 +2412,22 @@ function apiLOTR (eventLOTR,lotrWho){
           // 3 = 'He is/ She is/ They are '
           if ((characterDataList[got_a_live_one].birth == '') || (characterDataList[got_a_live_one].death == '') && (extent_unknown == 3)) {
             console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
-            lortBlurb = lortBlurb + "a complete mystery to me! 😞 You might have better luck with the Wiki.";
+            lotrBlurb = lotrBlurb + "a complete mystery to me! 😞 You might have better luck with the Wiki.";
           } else if ((characterDataList[got_a_live_one].birth == '') || (characterDataList[got_a_live_one].death == '') && (extent_unknown == 2)) {
             console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
-            lortBlurb = lortBlurb + ". More than that, I don't know! 🤔 Find our more at the Wiki.";
+            lotrBlurb = lotrBlurb + ". More than that, I don't know! 🤔 Find our more at the Wiki.";
           } else if ((characterDataList[got_a_live_one].birth == '') || (characterDataList[got_a_live_one].death == '') && (extent_unknown == 1)) {
             console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
-            lortBlurb = lortBlurb + " 😊 The Wiki can tell you more.";
+            lotrBlurb = lotrBlurb + " 😊 The Wiki can tell you more.";
           } else if (extent_unknown == 3) {
-            lortBlurb = lortBlurb + "a stranger to me but I can tell you they were born in " + characterDataList[got_a_live_one].birth + " and died " + characterDataList[got_a_live_one].death + ". 🤔 Find our more at the Wiki.";
+            lotrBlurb = lotrBlurb + "a stranger to me but I can tell you they were born in " + characterDataList[got_a_live_one].birth + " and died " + characterDataList[got_a_live_one].death + ". 🤔 Find our more at the Wiki.";
           } else if (extent_unknown == 2) {
-            lortBlurb = lortBlurb + ". I can also tell you they were born in " + characterDataList[got_a_live_one].birth + " and died " + characterDataList[got_a_live_one].death + ". 😊 The Wiki has more.";
+            lotrBlurb = lotrBlurb + ". I can also tell you they were born in " + characterDataList[got_a_live_one].birth + " and died " + characterDataList[got_a_live_one].death + ". 😊 The Wiki has more.";
           } else { // 1 or 0
-            lortBlurb = lortBlurb + " I can also tell you they were born in " + characterDataList[got_a_live_one].birth + " and died " + characterDataList[got_a_live_one].death + ". 😃 Check out the Wiki.";
+            lotrBlurb = lotrBlurb + " I can also tell you they were born in " + characterDataList[got_a_live_one].birth + " and died " + characterDataList[got_a_live_one].death + ". 😃 Check out the Wiki.";
           };
-          console.log("DEBUG [apiLOTR]> Final blurb is: " + lortBlurb);
-          postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,lortBlurb,'Wiki ' + characterDataList[got_a_live_one].name);
+          console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
+          postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,lotrBlurb,'Wiki ' + characterDataList[got_a_live_one].name);
           return;
         } else {
           // Could not find a match
