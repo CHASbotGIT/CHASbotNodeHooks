@@ -2383,6 +2383,7 @@ function apiLOTR (eventLOTR,lotrWho){
             got_a_live_one = character_loop; // Best for now
             levenshtein_lowest = levenshtein_newest; // Lower difference
             console.log("DEBUG [apiLOTR]> Best for now [" + levenshtein_lowest + "] is: " + lotrWhoMatch);
+            console.log("DEBUG [apiLOTR]> wikiUrl" + characterDataList[got_a_live_one].wikiUrl)
           }
           //if (lotrWhoMatch.includes(lotrWho.toLowerCase())) {
           //    console.log('WIKI WIKI WIKI ' + characterDataList[character_loop].wikiUrl);
@@ -2394,7 +2395,7 @@ function apiLOTR (eventLOTR,lotrWho){
         }; // for
         if (got_a_live_one > -1) {
           // Found a match
-          postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,'some blurb','Wiki ' + lotrWho);
+          postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,'some blurb','Wiki ' + characterDataList[got_a_live_one].name);
           return;
         } else {
           // Could not find a match
