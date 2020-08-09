@@ -2468,15 +2468,6 @@ function apiLOTR (eventLOTR,lotrWho){
             lotrBlurb = lotrBlurb + "; with " + clean_up_text1 + " hair, and a height of " + clean_up_text2 + ".";
             console.log("DEBUG [apiLOTR]> [" + extent_unknown + "] Blurb so far is: " + lotrBlurb);
           };
-          // Either:
-          // 0 = 'He is/ She is/ They are of the A race, from the B realm; with C hair, and a height of D.'
-          // 0 = 'He is/ She is/ They are of the A race; with C hair, and a height of D.'
-          // 0 = 'He is/ She is/ They are from the B realm; with C hair, and a height of D.'
-          // 1 = 'He is/ She is/ They are D in height with C hair.'
-          // 2 = 'He is/ She is/ They are of the A race, from the B realm'
-          // 2 = 'He is/ She is/ They are of the A race'
-          // 2 = 'He is/ She is/ They are from the B realm'
-          // 3 = 'He is/ She is/ They are '
           console.log("DEBUG [apiLOTR]> [" + extent_unknown + "] Birth: " + characterDataList[got_a_live_one].birth);
           console.log("DEBUG [apiLOTR]> [" + extent_unknown + "] Death: " + characterDataList[got_a_live_one].death);
           if ((characterDataList[got_a_live_one].birth != '') && (characterDataList[got_a_live_one].death != '')) {
@@ -2497,15 +2488,27 @@ function apiLOTR (eventLOTR,lotrWho){
               clean_up_text2 = first_letter + clean_up_text2;
             };
           };
-          if ((characterDataList[got_a_live_one].birth == '') || (characterDataList[got_a_live_one].death == '') && (extent_unknown == 3)) {
+          // Either:
+          // 0 = 'He is/ She is/ They are of the A race, from the B realm; with C hair, and a height of D.' <period>
+          // 0 = 'He is/ She is/ They are of the A race; with C hair, and a height of D.' <period>
+          // 0 = 'He is/ She is/ They are from the B realm; with C hair, and a height of D.' <period>
+          // 1 = 'He is/ She is/ They are D in height with C hair.' <period>
+          // 2 = 'He is/ She is/ They are of the A race, from the B realm' <txt>
+          // 2 = 'He is/ She is/ They are of the A race' <txt>
+          // 2 = 'He is/ She is/ They are from the B realm' <txt>
+          // 3 = 'He is/ She is/ They are ' <space>
+          if ((characterDataList[got_a_live_one].birth == '') && (characterDataList[got_a_live_one].death == '') && (extent_unknown == 3)) {
             console.log("DEBUG [apiLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
             lotrBlurb = lotrBlurb + "a complete mystery to me! 😞 You might have better luck with the Wiki.";
-          } else if ((characterDataList[got_a_live_one].birth == '') || (characterDataList[got_a_live_one].death == '') && (extent_unknown == 2)) {
+          } else if ((characterDataList[got_a_live_one].birth == '') && (characterDataList[got_a_live_one].death == '') && (extent_unknown == 2)) {
             console.log("DEBUG [apiLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
             lotrBlurb = lotrBlurb + ". More than that, I don't know! 🤔 Find our more at the Wiki.";
-          } else if ((characterDataList[got_a_live_one].birth == '') || (characterDataList[got_a_live_one].death == '') && (extent_unknown == 1)) {
+          } else if ((characterDataList[got_a_live_one].birth == '') && (characterDataList[got_a_live_one].death == '') && (extent_unknown == 1)) {
             console.log("DEBUG [apiLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
             lotrBlurb = lotrBlurb + " 😊 The Wiki can tell you more.";
+          } else if ((characterDataList[got_a_live_one].birth == '') && (characterDataList[got_a_live_one].death == '') && (extent_unknown == 0)) {
+            console.log("DEBUG [apiLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
+            lotrBlurb = lotrBlurb + " 😃 Check out the Wiki.";
           } else if (extent_unknown == 3) {
             lotrBlurb = lotrBlurb + "a stranger to me but I can tell you they were born " + clean_up_text1 + " and concluded their story " + clean_up_text2 + ". 🤔 Find our more at the Wiki.";
           } else if (extent_unknown == 2) {
