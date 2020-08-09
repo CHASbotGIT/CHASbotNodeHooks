@@ -784,17 +784,17 @@ function escapeRegExp(str) {
 function replaceAll(str, find, replace) {
     return str.replace(new RegExp(escapeRegExp(find), 'ig'), replace); // ig cas insensitve for search
 }
-function properNouns(str) {
+function properNouns(strInput) {
   for (var i = 0; i < PROPER_NOUNS_DAYS.length; i += 1) {
-    str = replaceAll(str,PROPER_NOUNS_DAYS[i],PROPER_NOUNS_DAYS[i]);
+    strInput = replaceAll(strInput,PROPER_NOUNS_DAYS[i],PROPER_NOUNS_DAYS[i]);
   };
   for (var i = 0; i < PROPER_NOUNS_MONTHS.length; i += 1) {
-    str = replaceAll(str,PROPER_NOUNS_MONTHS[i],PROPER_NOUNS_MONTHS[i]);
+    strInput = replaceAll(strInput,PROPER_NOUNS_MONTHS[i],PROPER_NOUNS_MONTHS[i]);
   };
   for (var i = 0; i < PROPER_NOUNS_DAYS.length; i += 1) {
-    str = replaceAll(str,PROPER_NOUNS_NAMES[i],PROPER_NOUNS_NAMES[i]);
+    strInput = replaceAll(strInput,PROPER_NOUNS_NAMES[i],PROPER_NOUNS_NAMES[i]);
   };
-  return str;
+  return strInput;
 }
 function toTitleCase(str) {
   return str.replace(/\w\S*/g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
