@@ -2429,23 +2429,25 @@ function apiLOTR (eventLOTR,lotrWho){
           } else {
             lotrBlurb = lotrBlurb + "They are ";
           };
-          //console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
+          console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           let extent_unknown = 0;
-          //console.log("DEBUG [apiLOTR]> Race: " + characterDataList[got_a_live_one].race);
-          //console.log("DEBUG [apiLOTR]> Realm: " + characterDataList[got_a_live_one].realm);
+          console.log("DEBUG [apiLOTR]> Race: " + characterDataList[got_a_live_one].race);
+          console.log("DEBUG [apiLOTR]> Realm: " + characterDataList[got_a_live_one].realm);
           if ((characterDataList[got_a_live_one].race == '') && (characterDataList[got_a_live_one].realm == '')) {
             extent_unknown = extent_unknown + 1; // 0 or 1
-            //console.log("DEBUG [apiLOTR]> Either race or realm is unknown");
+            console.log("DEBUG [apiLOTR]> Either race or realm is unknown");
           } else if ((characterDataList[got_a_live_one].race != '') && (characterDataList[got_a_live_one].realm != '')) {
             lotrBlurb = lotrBlurb + "of the " + characterDataList[got_a_live_one].race + " race, from the " + characterDataList[got_a_live_one].realm + " realm";
-            //console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
+            console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           } else if (characterDataList[got_a_live_one].race != '') {
             lotrBlurb = lotrBlurb + "of the " + characterDataList[got_a_live_one].race + " race";
           } else {
             lotrBlurb = lotrBlurb + "from the " + characterDataList[got_a_live_one].realm + " realm";
           };
           // Either:
-          // 0 = 'He is/ She is/ They are of the A race, from the realm of B'
+          // 0 = 'He is/ She is/ They are of the A race, from the B realm'
+          // 0 = 'He is/ She is/ They are of the A race'
+          // 0 = 'He is/ She is/ They are from the B realm'
           // 1 = 'He is/ She is/ They are '
           //console.log("DEBUG [apiLOTR]> Height: " + characterDataList[got_a_live_one].height);
           //console.log("DEBUG [apiLOTR]> Hair: " + characterDataList[got_a_live_one].hair);
@@ -2458,29 +2460,31 @@ function apiLOTR (eventLOTR,lotrWho){
           };
           if ((characterDataList[got_a_live_one].height == '') || (characterDataList[got_a_live_one].hair == '' || various_trap)) {
             extent_unknown = extent_unknown + 2; // 0, 1, 2 or 3
-            //console.log("DEBUG [apiLOTR]> Either height or hair colour is unknown, or various");
+            console.log("DEBUG [apiLOTR]> Either height or hair colour is unknown, or various");
           } else if (extent_unknown == 1) {
             lotrBlurb = lotrBlurb + clean_up_text2 + " in height with " + clean_up_text1 + " hair.";
-            //console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
+            console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           } else {
             lotrBlurb = lotrBlurb + "; with " + clean_up_text1 + " hair, and a height of " + clean_up_text2 + ".";
-            //console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
+            console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           };
           // Either:
-          // 0 = 'He is/ She is/ They are of the A race, from the realm of B; with C hair, and a height of D.'
-          // 1 = 'He is/ She is/ They are of D height and C hair.'
-          // 2 = 'He is/ She is/ They are of the A race, from the realm of B"
+          // 0 = 'He is/ She is/ They are of the A race, from the B realm; with C hair, and a height of D.'
+          // 0 = 'He is/ She is/ They are of the A race; with C hair, and a height of D.'
+          // 0 = 'He is/ She is/ They are from the B realm; with C hair, and a height of D.'
+          // 1 = 'He is/ She is/ They are D in height with C hair.'
+          // 2 = 'He is/ She is/ They are of the A race, from the B realm'
+          // 2 = 'He is/ She is/ They are of the A race'
+          // 2 = 'He is/ She is/ They are from the B realm'
           // 3 = 'He is/ She is/ They are '
-          //console.log("DEBUG [apiLOTR]> Birth: " + characterDataList[got_a_live_one].birth);
-          //console.log("DEBUG [apiLOTR]> Death: " + characterDataList[got_a_live_one].death);
+          console.log("DEBUG [apiLOTR]> Birth: " + characterDataList[got_a_live_one].birth);
+          console.log("DEBUG [apiLOTR]> Death: " + characterDataList[got_a_live_one].death);
           if ((characterDataList[got_a_live_one].birth != '') && (characterDataList[got_a_live_one].death != '')) {
             clean_up_text1 = characterDataList[got_a_live_one].birth; // birth
             clean_up_text1 = clean_up_text1.replace(/,/g, ""); // birth without commas
             if (clean_up_text1.length > 2) {
               let first_letter = clean_up_text1.charAt(0); // hold first letter
-              //if (first_letter == 'B') {first_letter = 'b'}; // Before is common
               first_letter = first_letter.toLowerCase(); // make lowercase
-              //if (first_letter == 't') {first_letter = 'T'}; // TA is valid
               clean_up_text1 = clean_up_text1.substr(1); // drop first character
               clean_up_text1 = first_letter + clean_up_text1; // at lowercase first character back
             };
@@ -2488,21 +2492,19 @@ function apiLOTR (eventLOTR,lotrWho){
             clean_up_text2 = clean_up_text2.replace(/,/g, "");
             if (clean_up_text2.length > 2) {
               let first_letter = clean_up_text2.charAt(0);
-              //if (first_letter == 'B') {first_letter = 'b'};
               first_letter = first_letter.toLowerCase();
-              //if (first_letter == 't') {first_letter = 'T'};
               clean_up_text2 = clean_up_text2.substr(1);
               clean_up_text2 = first_letter + clean_up_text2;
             };
           };
           if ((characterDataList[got_a_live_one].birth == '') || (characterDataList[got_a_live_one].death == '') && (extent_unknown == 3)) {
-            //console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
+            console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
             lotrBlurb = lotrBlurb + "a complete mystery to me! 😞 You might have better luck with the Wiki.";
           } else if ((characterDataList[got_a_live_one].birth == '') || (characterDataList[got_a_live_one].death == '') && (extent_unknown == 2)) {
-            //console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
+            console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
             lotrBlurb = lotrBlurb + ". More than that, I don't know! 🤔 Find our more at the Wiki.";
           } else if ((characterDataList[got_a_live_one].birth == '') || (characterDataList[got_a_live_one].death == '') && (extent_unknown == 1)) {
-            //console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
+            console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
             lotrBlurb = lotrBlurb + " 😊 The Wiki can tell you more.";
           } else if (extent_unknown == 3) {
             lotrBlurb = lotrBlurb + "a stranger to me but I can tell you they were born " + clean_up_text1 + " and concluded their story " + clean_up_text2 + ". 🤔 Find our more at the Wiki.";
