@@ -224,7 +224,7 @@ const REGEX_END = '.+';
 var SENDERS = new Array ();
 // Functional
 var PROPER_NOUNS_MONTHS = [
-  "January","February","March","April","May","June","July","August","September","October","November","December"];
+  "january","February","March","April","May","June","July","August","September","October","November","December"];
 var PROPER_NOUNS_DAYS = [
   "Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 var PROPER_NOUNS_NAMES = [
