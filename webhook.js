@@ -2410,6 +2410,7 @@ function apiLOTR (eventLOTR,lotrWho){
           let clean_up_text2 = '';
           let various_trap = false;
           lotrBlurb = "This is the best match I can find for " + toTitleCase(lotrWho) + ".\n";
+console.log("DEBUG [apiLOTR]> Gender: " + (characterDataList[got_a_live_one].gender);
           if (characterDataList[got_a_live_one].gender == 'Male') {
             lotrBlurb = lotrBlurb + "He is ";
           } else if (characterDataList[got_a_live_one].gender == 'Female') {
@@ -2419,6 +2420,8 @@ function apiLOTR (eventLOTR,lotrWho){
           };
           //console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           let extent_unknown = 0;
+console.log("DEBUG [apiLOTR]> Race: " + (characterDataList[got_a_live_one].race);
+console.log("DEBUG [apiLOTR]> Race: " + (characterDataList[got_a_live_one].realm);
           if ((characterDataList[got_a_live_one].race == '') || (characterDataList[got_a_live_one].realm == '')) {
             extent_unknown = extent_unknown + 1; // 0 or 1
             //console.log("DEBUG [apiLOTR]> Either race or realm is unknown");
@@ -2433,6 +2436,8 @@ function apiLOTR (eventLOTR,lotrWho){
           // Either:
           // 0 = 'He is/ She is/ They are of the A race, from the realm of B'
           // 1 = 'He is/ She is/ They are '
+console.log("DEBUG [apiLOTR]> Height: " + (characterDataList[got_a_live_one].height);
+console.log("DEBUG [apiLOTR]> Hair: " + (characterDataList[got_a_live_one].hair);
           if ((characterDataList[got_a_live_one].height != '') && (characterDataList[got_a_live_one].hair != '')) {
             clean_up_text1 = characterDataList[got_a_live_one].hair;
             clean_up_text1 = clean_up_text1.toLowerCase();
@@ -2455,6 +2460,8 @@ function apiLOTR (eventLOTR,lotrWho){
           // 1 = 'He is/ She is/ They are of D height and C hair.'
           // 2 = 'He is/ She is/ They are of the A race, from the realm of B"
           // 3 = 'He is/ She is/ They are '
+console.log("DEBUG [apiLOTR]> Birth: " + (characterDataList[got_a_live_one].birth);
+console.log("DEBUG [apiLOTR]> Death: " + (characterDataList[got_a_live_one].death);
           if ((characterDataList[got_a_live_one].birth != '') && (characterDataList[got_a_live_one].death != '')) {
             clean_up_text1 = characterDataList[got_a_live_one].birth; // birth
             clean_up_text1 = clean_up_text1.replace(/,/g, ""); // birth without commas
