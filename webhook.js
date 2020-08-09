@@ -2519,7 +2519,7 @@ function apiLOTR (eventLOTR,lotrWho){
             res.on('data', function (chunk) { body2nd += chunk });
             // When all the data is back, go on to query the full response
             res.on('end', function() {
-              let quoteData = JSON.parse(body);
+              let quoteData = JSON.parse(body2nd);
               let quoteData_legible = JSON.stringify(quoteData);
               console.log("DEBUG [apiLOTR]> Quote JSON: " + quoteData_legible);
 
