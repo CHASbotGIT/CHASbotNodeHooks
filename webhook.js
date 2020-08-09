@@ -2410,7 +2410,7 @@ function apiLOTR (eventLOTR,lotrWho){
           let clean_up_text2 = '';
           let various_trap = false;
           lotrBlurb = "This is the best match I can find for " + toTitleCase(lotrWho) + ".\n";
-console.log("DEBUG [apiLOTR]> Gender: " + characterDataList[got_a_live_one].gender);
+          //console.log("DEBUG [apiLOTR]> Gender: " + characterDataList[got_a_live_one].gender);
           if (characterDataList[got_a_live_one].gender == 'Male') {
             lotrBlurb = lotrBlurb + "He is ";
           } else if (characterDataList[got_a_live_one].gender == 'Female') {
@@ -2420,24 +2420,24 @@ console.log("DEBUG [apiLOTR]> Gender: " + characterDataList[got_a_live_one].gend
           };
           //console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           let extent_unknown = 0;
-console.log("DEBUG [apiLOTR]> Race: " + characterDataList[got_a_live_one].race);
-console.log("DEBUG [apiLOTR]> Realm: " + characterDataList[got_a_live_one].realm);
+          //console.log("DEBUG [apiLOTR]> Race: " + characterDataList[got_a_live_one].race);
+          //console.log("DEBUG [apiLOTR]> Realm: " + characterDataList[got_a_live_one].realm);
           if ((characterDataList[got_a_live_one].race == '') && (characterDataList[got_a_live_one].realm == '')) {
             extent_unknown = extent_unknown + 1; // 0 or 1
             //console.log("DEBUG [apiLOTR]> Either race or realm is unknown");
           } else if ((characterDataList[got_a_live_one].race != '') && (characterDataList[got_a_live_one].realm != '')) {
-            lotrBlurb = lotrBlurb + "of the " + characterDataList[got_a_live_one].race + " race, from the realm of " + characterDataList[got_a_live_one].realm;
+            lotrBlurb = lotrBlurb + "of the " + characterDataList[got_a_live_one].race + " race, from the " + characterDataList[got_a_live_one].realm + " realm";
             //console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           } else if (characterDataList[got_a_live_one].race != '') {
             lotrBlurb = lotrBlurb + "of the " + characterDataList[got_a_live_one].race + " race";
           } else {
-            lotrBlurb = lotrBlurb + "from the realm of " + characterDataList[got_a_live_one].realm;
+            lotrBlurb = lotrBlurb + "from the " + characterDataList[got_a_live_one].realm + " realm";
           };
           // Either:
           // 0 = 'He is/ She is/ They are of the A race, from the realm of B'
           // 1 = 'He is/ She is/ They are '
-console.log("DEBUG [apiLOTR]> Height: " + characterDataList[got_a_live_one].height);
-console.log("DEBUG [apiLOTR]> Hair: " + characterDataList[got_a_live_one].hair);
+          //console.log("DEBUG [apiLOTR]> Height: " + characterDataList[got_a_live_one].height);
+          //console.log("DEBUG [apiLOTR]> Hair: " + characterDataList[got_a_live_one].hair);
           if ((characterDataList[got_a_live_one].height != '') && (characterDataList[got_a_live_one].hair != '')) {
             clean_up_text1 = characterDataList[got_a_live_one].hair;
             clean_up_text1 = clean_up_text1.toLowerCase();
@@ -2460,8 +2460,8 @@ console.log("DEBUG [apiLOTR]> Hair: " + characterDataList[got_a_live_one].hair);
           // 1 = 'He is/ She is/ They are of D height and C hair.'
           // 2 = 'He is/ She is/ They are of the A race, from the realm of B"
           // 3 = 'He is/ She is/ They are '
-console.log("DEBUG [apiLOTR]> Birth: " + characterDataList[got_a_live_one].birth);
-console.log("DEBUG [apiLOTR]> Death: " + characterDataList[got_a_live_one].death);
+          //console.log("DEBUG [apiLOTR]> Birth: " + characterDataList[got_a_live_one].birth);
+          //console.log("DEBUG [apiLOTR]> Death: " + characterDataList[got_a_live_one].death);
           if ((characterDataList[got_a_live_one].birth != '') && (characterDataList[got_a_live_one].death != '')) {
             clean_up_text1 = characterDataList[got_a_live_one].birth; // birth
             clean_up_text1 = clean_up_text1.replace(/,/g, ""); // birth without commas
@@ -2500,7 +2500,34 @@ console.log("DEBUG [apiLOTR]> Death: " + characterDataList[got_a_live_one].death
           } else { // 1 or 0
             lotrBlurb = lotrBlurb + " I can also tell you they were born " + clean_up_text1 + " and finished their adventure " + clean_up_text2 + ". 😃 Check out the Wiki.";
           };
-// look up a quote?
+
+// look up a quote? Does this work nested?????
+
+          url_path = '/v1/character/' + characterDataList[got_a_live_one]._id + "/quote"
+          const requestOptions2nd = {
+            hostname: URL_API_LOTR,
+            path: url_path,
+            headers: {
+              Authorization: 'Bearer ' + KEY_API_LOTR
+            }
+          }
+          var req2nd = http.get(requestOptions2nd, function(res) {
+            let body2nd = "";
+            // Data comes through in chunks
+            res.on('data', function (chunk) { body2nd += chunk });
+            // When all the data is back, go on to query the full response
+            res.on('end', function() {
+              let quoteData = JSON.parse(body);
+              let quoteData_legible = JSON.stringify(characterData);
+              console.log("DEBUG [apiLOTR]> Quote JSON: " + characterData_legible);
+
+            }); // res.on('end'
+          }); // http.get
+          req2nd.on('error', function(e) { // Catches failures to connect to the API
+            console.log("ERROR [apiLOTR]> Error getting to API: " + e);
+          }); // req.on('error'
+
+
           lotrBlurb = fixStutter(lotrBlurb);
           // FA First Age, SA Second Age, TA Third Age, FO Fourth Age
           lotrBlurb = replaceAll(lotrBlurb,' FA ', ' First Age ');
