@@ -2518,8 +2518,8 @@ function apiLOTR (eventLOTR,lotrWho){
             // When all the data is back, go on to query the full response
             res.on('end', function() {
               let quoteData = JSON.parse(body);
-              let quoteData_legible = JSON.stringify(characterData);
-              console.log("DEBUG [apiLOTR]> Quote JSON: " + characterData_legible);
+              let quoteData_legible = JSON.stringify(qoteData);
+              console.log("DEBUG [apiLOTR]> Quote JSON: " + quoteData_legible);
 
             }); // res.on('end'
           }); // http.get
