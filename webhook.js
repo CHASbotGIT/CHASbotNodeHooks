@@ -2565,24 +2565,18 @@ function apiLOTR (eventLOTR,lotrWho){
                   // if there wasn't a movie named then skip the quote
                   if (movie_quote!= '') {
                     let quote_placeholder = quoteList[quotePick].dialog;
-                    console.log("DEBUG [apiLOTR]> Quote raw: " + quote_placeholder);
-                    quote_placeholder = quote_placeholder.trim(); // leading/trailing whitespace
-                    console.log("DEBUG [apiLOTR]> Quote leading/trailing whitespace removed: " + quote_placeholder);
-
+                    //console.log("DEBUG [apiLOTR]> Quote raw: " + quote_placeholder);
                     var regex_punctuation = new RegExp("[?!;:.,]", 'g');
-
                     quote_placeholder = quote_placeholder.replace(regex_punctuation,"$& "); // add minimal space after punctuation
-                    console.log("DEBUG [apiLOTR]> Quote add minimal spaces after punctuation: " + quote_placeholder);
-
-                    //regex_punctuation = new RegExp("/ , /",'g')
-                    //quote_placeholder = quote_placeholder.replace(regex_punctuation,''); // extra commas
+                    //console.log("DEBUG [apiLOTR]> Quote add minimal spaces after punctuation: " + quote_placeholder);
                     quote_placeholder = replaceAll(quote_placeholder,' , ','');
-                    console.log("DEBUG [apiLOTR]> Quote extra commas removed: " + quote_placeholder);
-
+                    //console.log("DEBUG [apiLOTR]> Quote extra commas removed: " + quote_placeholder);
                     quote_placeholder = quote_placeholder.replace(/\s+(\W)/g, "$1"); // pre-punctuation spaces
-                    console.log("DEBUG [apiLOTR]> Quote spaces pre-punctuation removed: " + quote_placeholder);
+                    //console.log("DEBUG [apiLOTR]> Quote spaces pre-punctuation removed: " + quote_placeholder);
                     quote_placeholder = quote_placeholder.replace(/\s\s+/g, ' '); // internal whitespace
-                    console.log("DEBUG [apiLOTR]> Quote padded spaces removed: " + quote_placeholder);
+                    //console.log("DEBUG [apiLOTR]> Quote padded spaces removed: " + quote_placeholder);
+                    quote_placeholder = quote_placeholder.trim(); // leading/trailing whitespace
+                    //console.log("DEBUG [apiLOTR]> Quote leading/trailing whitespace removed: " + quote_placeholder);
                     movie_quote = movie_quote + quote_placeholder;
                   };
                 }; // if (quoteListCount
