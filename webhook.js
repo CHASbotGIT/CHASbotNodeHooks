@@ -788,17 +788,17 @@ function properNouns(str) {
   console.log ("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ >" + str)
   //str = str.replace(/January/ig, "January");
   for (var i = 0; i < PROPER_NOUNS_DAYS.length; i += 1) {
-    var regex_dynamic = new RegExp(PROPER_NOUNS_DAYS[i], '/ig');
+    var regex_dynamic = new RegExp(PROPER_NOUNS_DAYS[i], 'ig');
     console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% >" + regex_dynamic)
     str = str.replace(regex_dynamic, PROPER_NOUNS_DAYS[i]);
   };
   for (var i = 0; i < PROPER_NOUNS_MONTHS.length; i += 1) {
-    var regex_dynamic = new RegExp(PROPER_NOUNS_MONTHS[i], '/ig');
+    var regex_dynamic = new RegExp(PROPER_NOUNS_MONTHS[i], 'ig');
     console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% >" + regex_dynamic)
     str = str.replace(regex_dynamic, PROPER_NOUNS_MONTHS[i]);
   };
   for (var i = 0; i < PROPER_NOUNS_NAMES.length; i += 1) {
-    var regex_dynamic = new RegExp(PROPER_NOUNS_NAMES[i], '/ig');
+    var regex_dynamic = new RegExp(PROPER_NOUNS_NAMES[i], 'ig');
     console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% >" + regex_dynamic)
     str = str.replace(regex_dynamic, PROPER_NOUNS_NAMES[i]);
   };
