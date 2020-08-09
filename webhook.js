@@ -2564,7 +2564,7 @@ function apiLOTR (eventLOTR,lotrWho){
                   console.log("DEBUG [apiLOTR]> Quote Picked: " + quotePick);
                   for (var loop_films = 0; loop_films < LOTR_MOVIES.length; loop_films++) {
                     if (LOTR_MOVIES[loop_films].includes(quoteList[quotePick].movie)) {
-                      movie_quote = "Quoted in:" + LOTR_MOVIES[loop_films].replace(quoteList[quotePick].movie,'') + ': ';
+                      movie_quote = " Quoted in:" + LOTR_MOVIES[loop_films].replace(quoteList[quotePick].movie,'') + ': ';
                       console.log("DEBUG [apiLOTR]> Film: " + movie_quote);
                       break;
                     }; // if (LOTR_MOVIES[loop_films]
@@ -2591,13 +2591,7 @@ function apiLOTR (eventLOTR,lotrWho){
             console.log("INFO [apiLOTR]> Reponse: Successful");
             postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,lotrBlurb,'Wiki ' + characterDataList[got_a_live_one].name);
             return;
-          }); // req.on('error'
-          lotrBlurb = trimTo(640,lotrBlurb); // Make sure the message isn't over-long
-          console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
-          console.log("INFO [apiLOTR]> Action: apiLOTR.postLinkButton");
-          console.log("INFO [apiLOTR]> Reponse: Successful");
-          postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,lotrBlurb,'Wiki ' + characterDataList[got_a_live_one].name);
-          return;
+          }); // req2nd.on('error'
         } else {
           // Could not find a match... though not possible
           console.log("ERROR [apiLOTR]> No Luck");
