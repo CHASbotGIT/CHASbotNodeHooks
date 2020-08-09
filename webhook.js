@@ -2568,10 +2568,15 @@ function apiLOTR (eventLOTR,lotrWho){
                     console.log("DEBUG [apiLOTR]> Quote raw: " + quote_placeholder);
                     quote_placeholder = quote_placeholder.trim(); // leading/trailing whitespace
                     console.log("DEBUG [apiLOTR]> Quote leading/trailing whitespace removed: " + quote_placeholder);
+
+                    var regex_punctuation = new RegExp("[?!;:.,]", 'g');
+
+                    quote_placeholder = quote_placeholder.replace(regex_punctuation,"$0 "); // add minimal space after punctuation
+                    console.log("DEBUG [apiLOTR]> Quote add minimal spaces after punctuation: " + quote_placeholder);
+
                     quote_placeholder = quote_placeholder.replace(/ , /,''); // extra commas
                     console.log("DEBUG [apiLOTR]> Quote extra commas removed: " + quote_placeholder);
-                    quote_placeholder = quote_placeholder.replace("[?!;:.,]/g","$0 "); // add minimal space after punctuation
-                    console.log("DEBUG [apiLOTR]> Quote spaces after punctuation: " + quote_placeholder);
+
                     quote_placeholder = quote_placeholder.replace(/\s+(\W)/g, "$1"); // pre-punctuation spaces
                     console.log("DEBUG [apiLOTR]> Quote spaces pre-punctuation removed: " + quote_placeholder);
                     quote_placeholder = quote_placeholder.replace(/\s\s+/g, ' '); // internal whitespace
