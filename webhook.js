@@ -785,9 +785,11 @@ function replaceAll(str, find, replace) {
     return str.replace(new RegExp(escapeRegExp(find), 'ig'), replace); // ig case insensitve for search
 }
 function properNouns(str) {
+  console.log ("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ >" + str)
   let regex_dynamic = '';
   for (var i = 0; i < PROPER_NOUNS_DAYS.length; i += 1) {
     regex_dynamic = "/"+PROPER_NOUNS_DAYS[i]+"/ig";
+    console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% >" + regex_dynamic)
     str = str.replace(regex_dynamic, PROPER_NOUNS_DAYS[i]);
   };
   for (var i = 0; i < PROPER_NOUNS_MONTHS.length; i += 1) {
@@ -798,6 +800,7 @@ function properNouns(str) {
     regex_dynamic = "/"+PROPER_NOUNS_NAMES[i]+"/ig";
     str = str.replace(regex_dynamic, PROPER_NOUNS_NAMES[i]);
   };
+  console.log ("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ >>" + str)
   return str;
 }
 function toTitleCase(str) {
@@ -2406,6 +2409,10 @@ function apiLOTR (eventLOTR,lotrWho){
           } else {
             lotrBlurb = lotrBlurb + "They are ";
           };
+
+
+// Try one or other for better result
+
           console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           let extent_unknown = 0;
           if ((characterDataList[got_a_live_one].race == '') || (characterDataList[got_a_live_one].realm == '')) {
@@ -2478,7 +2485,11 @@ function apiLOTR (eventLOTR,lotrWho){
           } else { // 1 or 0
             lotrBlurb = lotrBlurb + " I can also tell you they were born " + clean_up_text1 + " and finished their adventure " + clean_up_text2 + ". 😃 Check out the Wiki.";
           };
+// make a function?
           lotrBlurb = lotrBlurb.replace(/\s(\w+\s)\1/, " $1"); // Cleans consecutive repeated words
+
+// look up a quote?
+
           // FA First Age, SA Second Age, TA Third Age, FO Fourth Age
           lotrBlurb = replaceAll(lotrBlurb,' FA ', ' First Age ');
           lotrBlurb = replaceAll(lotrBlurb,' SA ', ' Second Age ');
