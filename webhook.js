@@ -788,15 +788,15 @@ function properNouns(str) {
   let regex_dynamic = '';
   for (var i = 0; i < PROPER_NOUNS_DAYS.length; i += 1) {
     regex_dynamic = "/"+PROPER_NOUNS_DAYS[i]+"/ig";
-    str = strInput.replace(regex_dynamic, PROPER_NOUNS_DAYS[i]);
+    str = str.replace(regex_dynamic, PROPER_NOUNS_DAYS[i]);
   };
   for (var i = 0; i < PROPER_NOUNS_MONTHS.length; i += 1) {
     regex_dynamic = "/"+PROPER_NOUNS_MONTHS[i]+"/ig";
-    str = strInput.replace(regex_dynamic, PROPER_NOUNS_MONTHS[i]);
+    str = str.replace(regex_dynamic, PROPER_NOUNS_MONTHS[i]);
   };
   for (var i = 0; i < PROPER_NOUNS_NAMES.length; i += 1) {
     regex_dynamic = "/"+PROPER_NOUNS_NAMES[i]+"/ig";
-    str = strInput.replace(regex_dynamic, PROPER_NOUNS_NAMES[i]);
+    str = str.replace(regex_dynamic, PROPER_NOUNS_NAMES[i]);
   };
   return str;
 }
