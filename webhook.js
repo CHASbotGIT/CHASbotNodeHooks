@@ -2524,6 +2524,17 @@ function apiLOTR (eventLOTR,lotrWho){
   "character":"5cd99d4bde30eff6ebccfc07"},
 {"_id":"5cd96e05de30eff6ebcceb64","dialog":"' i vethed... n' i onnad. Boe bedich go Frodo. Han b'd l'n.","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb65","dialog":"Ma nathach hi gwannathach or minuial archened?","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb6d","dialog":"Nach gwannatha sin?","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb7b","dialog":"Estelio guru l'n ne dagor.     Ethelithach.","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},
 */
+          lotrBlurb = fixStutter(lotrBlurb); // i.e. doubled words
+          // FA First Age, SA Second Age, TA Third Age, FO Fourth Age
+          lotrBlurb = replaceAll(lotrBlurb,' FA ', ' First Age ');
+          lotrBlurb = replaceAll(lotrBlurb,' SA ', ' Second Age ');
+          lotrBlurb = replaceAll(lotrBlurb,' TA ', ' Third Age ');
+          lotrBlurb = replaceAll(lotrBlurb,' FO ', ' Fourth Age ');
+          lotrBlurb = replaceAll(lotrBlurb,' YT ', ' Years of the Trees ');
+          lotrBlurb = replaceAll(lotrBlurb,' YS ', ' Years of the Sun ');
+          lotrBlurb = replaceAll(lotrBlurb,' YL ', ' Years of the Lamps ');
+          lotrBlurb = replaceAll(lotrBlurb,' VY ', ' Valian Years ');
+          lotrBlurb = properNouns(lotrBlurb); // Tidy proper pronouns
           let movie_quote = '';
           url_path = '/v1/character/' + characterDataList[got_a_live_one]._id + "/quote"
           console.log("DEBUG [apiLOTR]> Quotes URL: " + URL_API_LOTR + url_path);
@@ -2550,6 +2561,7 @@ function apiLOTR (eventLOTR,lotrWho){
                 console.log("DEBUG [apiLOTR]> Quotes Retrieved No.: " + quoteListCount);
                 if (quoteListCount > 0) {
                   let quotePick = randomBetween(0,quoteListCount-1)
+                  console.log("DEBUG [apiLOTR]> Quote Picked: " + quotePick);
                   for (var loop_films = 0; loop_films < LOTR_MOVIES.length; loop_films++) {
                     if (LOTR_MOVIES[loop_films].includes(quoteList[quotePick].movie)) {
                       movie_quote = "Quoted in:" + LOTR_MOVIES[loop_films].replace(quoteList[quotePick].movie,'') + ': ';
@@ -2560,25 +2572,26 @@ function apiLOTR (eventLOTR,lotrWho){
                   // if there wasn't a movie named then skip the quote
                   if (movie_quote!= '') {movie_quote = movie_quote + quoteList[quotePick].dialog};
                   console.log("DEBUG [apiLOTR]> Quote: " + movie_quote);
+                  lotrBlurb = lotrBlurb + movie_quote;
+                  lotrBlurb = trimTo(640,lotrBlurb); // Make sure the message isn't over-long
+                  console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
+                  console.log("INFO [apiLOTR]> Action: apiLOTR.postLinkButton");
+                  console.log("INFO [apiLOTR]> Reponse: Successful");
+                  postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,lotrBlurb,'Wiki ' + characterDataList[got_a_live_one].name);
+                  return;
                 }; // if (quoteListCount
               }; // if (quoteData_legible
             }); // res.on('end'
           }); // http.get
           req2nd.on('error', function(e) { // Catches failures to connect to the API
             console.log("ERROR [apiLOTR]> Error getting to API (for quote): " + e);
+            lotrBlurb = trimTo(640,lotrBlurb); // Make sure the message isn't over-long
+            console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
+            console.log("INFO [apiLOTR]> Action: apiLOTR.postLinkButton");
+            console.log("INFO [apiLOTR]> Reponse: Successful");
+            postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,lotrBlurb,'Wiki ' + characterDataList[got_a_live_one].name);
+            return;
           }); // req.on('error'
-          lotrBlurb = lotrBlurb + movie_quote;
-          lotrBlurb = fixStutter(lotrBlurb); // i.e. doubled words
-          // FA First Age, SA Second Age, TA Third Age, FO Fourth Age
-          lotrBlurb = replaceAll(lotrBlurb,' FA ', ' First Age ');
-          lotrBlurb = replaceAll(lotrBlurb,' SA ', ' Second Age ');
-          lotrBlurb = replaceAll(lotrBlurb,' TA ', ' Third Age ');
-          lotrBlurb = replaceAll(lotrBlurb,' FO ', ' Fourth Age ');
-          lotrBlurb = replaceAll(lotrBlurb,' YT ', ' Years of the Trees ');
-          lotrBlurb = replaceAll(lotrBlurb,' YS ', ' Years of the Sun ');
-          lotrBlurb = replaceAll(lotrBlurb,' YL ', ' Years of the Lamps ');
-          lotrBlurb = replaceAll(lotrBlurb,' VY ', ' Valian Years ');
-          lotrBlurb = properNouns(lotrBlurb); // Tidy proper pronouns
           lotrBlurb = trimTo(640,lotrBlurb); // Make sure the message isn't over-long
           console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
           console.log("INFO [apiLOTR]> Action: apiLOTR.postLinkButton");
