@@ -2568,15 +2568,15 @@ function apiLOTR (eventLOTR,lotrWho){
                     //quote_placeholder = quote_placeholder.replace(/?,/,'?');
                     movie_quote = movie_quote + quote_placeholder;
                   };
-                  console.log("DEBUG [apiLOTR]> Quote: " + movie_quote);
-                  lotrBlurb = lotrBlurb + movie_quote;
-                  lotrBlurb = trimTo(640,lotrBlurb); // Make sure the message isn't over-long
-                  console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
-                  console.log("INFO [apiLOTR]> Action: apiLOTR.postLinkButton");
-                  console.log("INFO [apiLOTR]> Reponse: Successful");
-                  postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,lotrBlurb,'Wiki ' + characterDataList[got_a_live_one].name);
-                  return;
                 }; // if (quoteListCount
+                console.log("DEBUG [apiLOTR]> Quote: " + movie_quote);
+                lotrBlurb = lotrBlurb + movie_quote;
+                lotrBlurb = trimTo(640,lotrBlurb); // Make sure the message isn't over-long
+                console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
+                console.log("INFO [apiLOTR]> Action: apiLOTR.postLinkButton");
+                console.log("INFO [apiLOTR]> Reponse: Successful");
+                postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,lotrBlurb,'Wiki ' + characterDataList[got_a_live_one].name);
+                return;
               }; // if (quoteData_legible
             }); // res.on('end'
           }); // http.get
