@@ -794,7 +794,7 @@ function properNouns(str) {
   };
   for (var i = 0; i < PROPER_NOUNS_MONTHS.length; i += 1) {
     regex_dynamic = "/"+PROPER_NOUNS_MONTHS[i]+"/ig";
-    str = str.replace(regex_dynamic, PROPER_NOUNS_MONTHS[i]);
+    str = str.replace(regex_dynamic, 'PROPER_NOUNS_MONTHS[i]');
   };
   for (var i = 0; i < PROPER_NOUNS_NAMES.length; i += 1) {
     regex_dynamic = "/"+PROPER_NOUNS_NAMES[i]+"/ig";
