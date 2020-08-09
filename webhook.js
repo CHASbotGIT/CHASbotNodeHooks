@@ -2511,19 +2511,6 @@ function apiLOTR (eventLOTR,lotrWho){
           } else { // 1 or 0
             lotrBlurb = lotrBlurb + " I can also tell you they were born " + clean_up_text1 + " and finished their adventure " + clean_up_text2 + ". 😃 Check out the Wiki.";
           };
-// look up a quote? Does this work nested?????
-/*
-{"docs":
-[
-{"_id":"5cd96e05de30eff6ebcceafa","dialog":"May the grace of the Valarprotect you.","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb02","dialog":"There is still hope.","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb05","dialog":"I have made my choice.","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb10","dialog":"Gerich veleth n'n, ada. ","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},
-{"_id":"5cd96e05de30eff6ebcceb48","dialog":"The light of the Evenstardoes not wax and wane.It is mine to give to whom I will.Like my heart.Go to sleep.","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb4a","dialog":"Then it is a good dream. ,Sleep. ","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb5d","dialog":"Ae '-esteliach nad...     estelio han. Estelio ammen.","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},
-{
-  "_id":"5cd96e05de30eff6ebcceb62",
-  "dialog":"Si peliannen i v'd na dail l'n. Si boe '-dhannathach.",
-  "movie":"5cd95395de30eff6ebccde5b",
-  "character":"5cd99d4bde30eff6ebccfc07"},
-{"_id":"5cd96e05de30eff6ebcceb64","dialog":"' i vethed... n' i onnad. Boe bedich go Frodo. Han b'd l'n.","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb65","dialog":"Ma nathach hi gwannathach or minuial archened?","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb6d","dialog":"Nach gwannatha sin?","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb7b","dialog":"Estelio guru l'n ne dagor.     Ethelithach.","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},
-*/
           lotrBlurb = fixStutter(lotrBlurb); // i.e. doubled words
           // FA First Age, SA Second Age, TA Third Age, FO Fourth Age
           lotrBlurb = replaceAll(lotrBlurb,' FA ', ' First Age ');
@@ -2573,8 +2560,12 @@ function apiLOTR (eventLOTR,lotrWho){
                   if (movie_quote!= '') {
                     let quote_placeholder = quoteList[quotePick].dialog;
                     quote_placeholder = quote_placeholder.trim(); // leading/trailing whitespace
+                    quote_placeholder = quote_placeholder.replace(/ , /,''); // extra commas
                     quote_placeholder = quote_placeholder.replace(/\s+(\W)/g, "$1"); // pre-punctuation spaces
                     quote_placeholder = quote_placeholder.replace(/\s\s+/g, ' '); // internal whitespace
+                    //quote_placeholder = quote_placeholder.replace(/.,/,'.'); // extra commas
+                    //quote_placeholder = quote_placeholder.replace(/!,/,'!');
+                    //quote_placeholder = quote_placeholder.replace(/?,/,'?');
                     movie_quote = movie_quote + quote_placeholder;
                   };
                   console.log("DEBUG [apiLOTR]> Quote: " + movie_quote);
