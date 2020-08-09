@@ -2562,7 +2562,7 @@ function apiLOTR (eventLOTR,lotrWho){
                     //console.log("DEBUG [apiLOTR]> Quote Raw: " + quote_placeholder);
                     quote_placeholder = quote_placeholder.trim(); // leading/trailing whitespace
                     quote_placeholder = quote_placeholder.replace(/ , /,''); // extra commas
-                    quote_placeholder = quote_placeholder.replace("[?!;:.,]"/g,'$0 '); // add minimal space after punctuation
+                    quote_placeholder = quote_placeholder.replace("[?!;:.,]/g","$0 "); // add minimal space after punctuation
                     quote_placeholder = quote_placeholder.replace(/\s+(\W)/g, "$1"); // pre-punctuation spaces
                     quote_placeholder = quote_placeholder.replace(/\s\s+/g, ' '); // internal whitespace
                     movie_quote = movie_quote + quote_placeholder;
