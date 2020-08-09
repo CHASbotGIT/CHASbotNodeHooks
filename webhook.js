@@ -2412,7 +2412,7 @@ function apiLOTR (eventLOTR,lotrWho){
           lotrBlurb = "This is the best match I can find for " + toTitleCase(lotrWho) + ".\n";
           if (characterDataList[got_a_live_one].gender == 'Male') {
             lotrBlurb = lotrBlurb + "He is ";
-          } else if (characterDataList[got_a_live_one].gender == 'Female')  {
+          } else if (characterDataList[got_a_live_one].gender == 'Female') {
             lotrBlurb = lotrBlurb + "She is ";
           } else {
             lotrBlurb = lotrBlurb + "They are ";
@@ -2425,7 +2425,7 @@ function apiLOTR (eventLOTR,lotrWho){
           } else if ((characterDataList[got_a_live_one].race != '') && (characterDataList[got_a_live_one].realm != '')) {
             lotrBlurb = lotrBlurb + "of the " + characterDataList[got_a_live_one].race + " race, from the realm of " + characterDataList[got_a_live_one].realm;
             //console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
-          } else if ((characterDataList[got_a_live_one].race != '') {
+          } else if (characterDataList[got_a_live_one].race != '') {
             lotrBlurb = lotrBlurb + "of the " + characterDataList[got_a_live_one].race + " race";
           } else {
             lotrBlurb = lotrBlurb + "from the realm of " + characterDataList[got_a_live_one].realm;
