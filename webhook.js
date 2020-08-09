@@ -2361,7 +2361,7 @@ function apiLOTR (eventLOTR,lotrWho){
   let lotrWhoLower = '';
   let url_path = '/v1/character';
   // Set URL with authorisation header i.e. API key not sent in URL
-  console.log("DEBUG [apiLOTR]> Character URL: " + URL_API_LOTR + url_path);
+  //console.log("DEBUG [apiLOTR]> Character URL: " + URL_API_LOTR + url_path);
   const requestOptions = {
     hostname: URL_API_LOTR,
     path: url_path,
@@ -2503,8 +2503,21 @@ function apiLOTR (eventLOTR,lotrWho){
           };
 
 // look up a quote? Does this work nested?????
+/*
+{"docs":
+[
+{"_id":"5cd96e05de30eff6ebcceafa","dialog":"May the grace of the Valarprotect you.","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb02","dialog":"There is still hope.","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb05","dialog":"I have made my choice.","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb10","dialog":"Gerich veleth n'n, ada. ","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},
+{"_id":"5cd96e05de30eff6ebcceb48","dialog":"The light of the Evenstardoes not wax and wane.It is mine to give to whom I will.Like my heart.Go to sleep.","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb4a","dialog":"Then it is a good dream. ,Sleep. ","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb5d","dialog":"Ae '-esteliach nad...     estelio han. Estelio ammen.","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},
+{
+  "_id":"5cd96e05de30eff6ebcceb62",
+  "dialog":"Si peliannen i v'd na dail l'n. Si boe '-dhannathach.",
+  "movie":"5cd95395de30eff6ebccde5b",
+  "character":"5cd99d4bde30eff6ebccfc07"},
+{"_id":"5cd96e05de30eff6ebcceb64","dialog":"' i vethed... n' i onnad. Boe bedich go Frodo. Han b'd l'n.","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb65","dialog":"Ma nathach hi gwannathach or minuial archened?","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb6d","dialog":"Nach gwannatha sin?","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb7b","dialog":"Estelio guru l'n ne dagor.     Ethelithach.","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},
+*/
 
-          url_path = '/v1/character/' + characterDataList[got_a_live_one]._id + "/quote"
+          //url_path = '/v1/character/' + characterDataList[got_a_live_one]._id + "/quote"
+          url_path = '/v1/movie';
           console.log("DEBUG [apiLOTR]> Quotes URL: " + URL_API_LOTR + url_path);
           const requestOptions2nd = {
             hostname: URL_API_LOTR,
