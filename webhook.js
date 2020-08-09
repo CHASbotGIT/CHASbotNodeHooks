@@ -778,44 +778,44 @@ function inPlayID (id_to_find) {
 
 // String and number handling functions
 // ====================================
-function escapeRegExp(inputString) {
-    return inputString.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+function escapeRegExp(str) {
+    return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
 }
-function replaceAll(inputString, find, replace) {
-    return inputString.replace(new RegExp(escapeRegExp(find), 'ig'), replace); // ig cas insensitve for search
+function replaceAll(str, find, replace) {
+    return str.replace(new RegExp(escapeRegExp(find), 'ig'), replace); // ig cas insensitve for search
 }
-function properNouns(inputString) {
+function properNouns(str) {
   for (var i = 0; i < PROPER_NOUNS_DAYS.length; i += 1) {
-    inputString = replaceAll(inputString,PROPER_NOUNS_DAYS[i],PROPER_NOUNS_DAYS[i]);
+    str = replaceAll(str,PROPER_NOUNS_DAYS[i],PROPER_NOUNS_DAYS[i]);
   };
   for (var i = 0; i < PROPER_NOUNS_MONTHS.length; i += 1) {
-    inputString = replaceAll(inputString,PROPER_NOUNS_MONTHS[i],PROPER_NOUNS_MONTHS[i]);
+    str = replaceAll(str,PROPER_NOUNS_MONTHS[i],PROPER_NOUNS_MONTHS[i]);
   };
   for (var i = 0; i < PROPER_NOUNS_DAYS.length; i += 1) {
-    inputString = replaceAll(inputString,PROPER_NOUNS_NAMES[i],PROPER_NOUNS_NAMES[i]);
+    str = replaceAll(str,PROPER_NOUNS_NAMES[i],PROPER_NOUNS_NAMES[i]);
   };
-  return inputString;
+  return str;
 }
-function toTitleCase(inputString) {
-  return inputString.replace(/\w\S*/g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+function toTitleCase(str) {
+  return str.replace(/\w\S*/g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
-function firstAlpha(inputString) {
-  for (var i = 0; i < inputString.length; i += 1) {
-    if ((inputString.charAt(i) >= 'A' && inputString.charAt(i) <= 'Z') ||
-        (inputString.charAt(i) >= 'a' && inputString.charAt(i) <= 'z')) {
-        return inputString.charAt(i);
+function firstAlpha(str) {
+  for (var i = 0; i < str.length; i += 1) {
+    if ((str.charAt(i) >= 'A' && str.charAt(i) <= 'Z') ||
+        (str.charAt(i) >= 'a' && str.charAt(i) <= 'z')) {
+        return str.charAt(i);
     };
   };
   return '';
 }
-function trimTo(trim_length,inputString) {
-  if (inputString.length > trim_length) {inputString = inputString.slice(0,trim_length-1) + "🤐"};
-  return inputString;
+function trimTo(trim_length,str) {
+  if (str.length > trim_length) {str = str.slice(0,trim_length-1) + "🤐"};
+  return str;
 }
-function xLength(inputString) {
+function xLength(str) {
   //http://blog.jonnew.com/posts/poo-dot-length-equals-two
   const joiner = "\u{200D}";
-  const split = inputString.split(joiner);
+  const split = str.split(joiner);
   let count = 0;
   for (const s of split) {
     //removing the variation selectors
