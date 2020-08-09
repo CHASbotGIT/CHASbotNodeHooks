@@ -224,7 +224,7 @@ const REGEX_END = '.+';
 var SENDERS = new Array ();
 // Functional
 var PROPER_NOUNS_MONTHS = [
-  "january","February","March","April","May","June","July","August","September","October","November","December"];
+  "January","February","March","April","May","June","July","August","September","October","November","December"];
 var PROPER_NOUNS_DAYS = [
   "Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 var PROPER_NOUNS_NAMES = [
@@ -787,17 +787,18 @@ function replaceAll(str, find, replace) {
 function properNouns(str) {
   console.log ("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ >" + str)
   let regex_dynamic = '';
+  str = str.replace(/january/ig, "January");
   for (var i = 0; i < PROPER_NOUNS_DAYS.length; i += 1) {
-    regex_dynamic = "/"+PROPER_NOUNS_DAYS[i]+"/ig";
+    regex_dynamic = '/'+PROPER_NOUNS_DAYS[i]+'/ig';
     console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% >" + regex_dynamic)
     str = str.replace(regex_dynamic, PROPER_NOUNS_DAYS[i]);
   };
   for (var i = 0; i < PROPER_NOUNS_MONTHS.length; i += 1) {
-    regex_dynamic = "/"+PROPER_NOUNS_MONTHS[i]+"/ig";
-    str = str.replace(regex_dynamic, 'PROPER_NOUNS_MONTHS[i]');
+    regex_dynamic = '/'+PROPER_NOUNS_MONTHS[i]+'/ig';
+    str = str.replace(regex_dynamic, PROPER_NOUNS_MONTHS[i]);
   };
   for (var i = 0; i < PROPER_NOUNS_NAMES.length; i += 1) {
-    regex_dynamic = "/"+PROPER_NOUNS_NAMES[i]+"/ig";
+    regex_dynamic = '/'+PROPER_NOUNS_NAMES[i]+'/ig';
     str = str.replace(regex_dynamic, PROPER_NOUNS_NAMES[i]);
   };
   console.log ("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ >>" + str)
