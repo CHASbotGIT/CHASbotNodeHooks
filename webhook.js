@@ -2361,6 +2361,7 @@ function apiLOTR (eventLOTR,lotrWho){
   let lotrWhoLower = '';
   let url_path = '/v1/character';
   // Set URL with authorisation header i.e. API key not sent in URL
+  console.log("DEBUG [apiLOTR]> Character URL: " + URL_API_LOTR + url_path);
   const requestOptions = {
     hostname: URL_API_LOTR,
     path: url_path,
@@ -2504,6 +2505,7 @@ function apiLOTR (eventLOTR,lotrWho){
 // look up a quote? Does this work nested?????
 
           url_path = '/v1/character/' + characterDataList[got_a_live_one]._id + "/quote"
+          console.log("DEBUG [apiLOTR]> Quotes URL: " + URL_API_LOTR + url_path);
           const requestOptions2nd = {
             hostname: URL_API_LOTR,
             path: url_path,
@@ -2534,6 +2536,10 @@ function apiLOTR (eventLOTR,lotrWho){
           lotrBlurb = replaceAll(lotrBlurb,' SA ', ' Second Age ');
           lotrBlurb = replaceAll(lotrBlurb,' TA ', ' Third Age ');
           lotrBlurb = replaceAll(lotrBlurb,' FO ', ' Fourth Age ');
+          lotrBlurb = replaceAll(lotrBlurb,' YT ', ' Years of the Trees ');
+          lotrBlurb = replaceAll(lotrBlurb,' YS ', ' Years of the Sun ');
+          lotrBlurb = replaceAll(lotrBlurb,' YL ', ' Years of the Lamps ');
+          lotrBlurb = replaceAll(lotrBlurb,' VY ', ' Valian Years ');
           lotrBlurb = properNouns(lotrBlurb);
           //console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
           console.log("INFO [apiLOTR]> Action: apiLOTR.postLinkButton");
