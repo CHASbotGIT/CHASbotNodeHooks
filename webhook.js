@@ -2567,7 +2567,7 @@ function apiLOTR (eventLOTR,lotrWho){
             console.log("ERROR [apiLOTR]> Error getting to API (for quote): " + e);
           }); // req.on('error'
           lotrBlub = lotrBlub + movie_quote;
-          lotrBlurb = fixStutter(lotrBlurb);
+          lotrBlurb = fixStutter(lotrBlurb); // i.e. doubled words
           // FA First Age, SA Second Age, TA Third Age, FO Fourth Age
           lotrBlurb = replaceAll(lotrBlurb,' FA ', ' First Age ');
           lotrBlurb = replaceAll(lotrBlurb,' SA ', ' Second Age ');
@@ -2578,8 +2578,8 @@ function apiLOTR (eventLOTR,lotrWho){
           lotrBlurb = replaceAll(lotrBlurb,' YL ', ' Years of the Lamps ');
           lotrBlurb = replaceAll(lotrBlurb,' VY ', ' Valian Years ');
           lotrBlurb = properNouns(lotrBlurb); // Tidy proper pronouns
-          lotrBlub = trimTo(640.lotrBlub); // Make sure the message isn't over-long
-          //console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
+          lotrBlub = trimTo(640,lotrBlub); // Make sure the message isn't over-long
+          console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
           console.log("INFO [apiLOTR]> Action: apiLOTR.postLinkButton");
           console.log("INFO [apiLOTR]> Reponse: Successful");
           postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,lotrBlurb,'Wiki ' + characterDataList[got_a_live_one].name);
