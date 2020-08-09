@@ -778,7 +778,7 @@ function escapeRegExp(str) {
     return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
 }
 function replaceAll(str, find, replace) {
-    return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+    return str.replace(new RegExp(escapeRegExp(find), 'ig'), replace);
 }
 function toTitleCase(inputString) {
   return inputString.replace(/\w\S*/g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
@@ -2460,10 +2460,15 @@ function apiLOTR (eventLOTR,lotrWho){
           };
           lotrBlurb = lotrBlurb.replace(/\s(\w+\s)\1/, " $1"); // Cleans consecutive repeated words
           // FA First Age, SA Second Age, TA Third Age, FO Fourth Age
+          lotrBlurb = replaceAll(lotrBlurb,' TA ', ' Third Age');
           lotrBlurb = lotrBlurb.replace(/ FA /ig, ' First Age '); // ig ignores case i.e. fa, FA, fA, Fa
           lotrBlurb = lotrBlurb.replace(/ SA /ig, ' Second Age ');
-          lotrBlurb = lotrBlurb.replace(/ TA /ig, ' Third Age ');
+          //lotrBlurb = lotrBlurb.replace(/ TA /ig, ' Third Age ');
           lotrBlurb = lotrBlurb.replace(/ FO /ig, ' Fourth Age ');
+
+
+          // Proper name tidy up.... NEW FUNCTION
+
           console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
           postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,lotrBlurb,'Wiki ' + characterDataList[got_a_live_one].name);
           return;
