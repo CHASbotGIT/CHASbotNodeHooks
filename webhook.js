@@ -112,10 +112,6 @@ var MSG_STAR_RATING = [
   "Well worth the watching ⭐⭐⭐⭐🍅, give it a go.",
   "Wow, a fantastic ⭐⭐⭐⭐⭐. In my humble opinion. you must watch."];
 var MSG_THUMBS = ["👍👍👍","👍👍👎","👍👎👎","👎👎👎"];
-var MSG_EVENTS_OOPS = [
-  "📆 Oops, that's not something I could find...",
-  "📆 Mmmm, not an event that I recognise...",
-  "📆 Not sure I'm able to help you with when that is..."];
 var MSG_RANDOM_COMPLIMENT = [
   "Looking good.","You're more fun than bubblewrap.","I bet you do crossword puzzles in ink.",
   "You're like a breath of fresh air.","You're like sunshine on a rainy day.","On a scale from 1 to 10, you're an 11.",
@@ -123,12 +119,6 @@ var MSG_RANDOM_COMPLIMENT = [
   "You're a great listener.","I bet you sweat glitter.","You were cool way before hipsters.",
   "Hanging out with you is always a blast.","You're one of a kind.","You always know just what to say.",
   "There's ordinary, and then there's you."];
-var MSG_HERO_OOPS = [
-  "⚠️ Alert: Hydra stole this result from the S.H.I.E.L.D. database...",
-  "☠️ Warning: Hydra Infiltration. Result unavailable while under attack from enemy forces...",
-  "👁️ Not even the eye of Uatu sees your request...",
-  "💾 Program missing, exiting protocol...",
-  "💣 Danger: Energy Overload..."];
 var MSG_INTERCEPTS = [
   ["🎁 While it's always nice to receive a gift, I'm not sure what you want me to do with that ",
    "🎁 I do appreaciate a nice present, so thank you for the lovely ",
@@ -150,6 +140,23 @@ var MSG_INTERCEPTS = [
   ["💥 That’s an awful lot of emoticons you crammed in there, hard to find what you are saying.",
    "💥 Wow, that's a lot more emojis than I can make sense of."]
 ];
+var MSG_EVENTS_OOPS = [
+  "📆 Oops, that's not something I could find...",
+  "📆 Mmmm, not an event that I recognise...",
+  "📆 Not sure I'm able to help you with when that is..."];
+var MSG_HERO_OOPS = [
+  "⚠️ Alert: Hydra stole this result from the S.H.I.E.L.D. database...",
+  "☠️ Warning: Hydra Infiltration. Result unavailable while under attack from enemy forces...",
+  "👁️ Not even the eye of Uatu sees your request...",
+  "💾 Program missing, exiting protocol...",
+  "💣 Danger: Energy Overload..."];
+var MSG_LOTR_OOPS = [
+  "👁️‍🗨️ Eyes are watching, shhhh...",
+  "🧙‍♂️ He that breaks a thing to find out what it is has left the path of wisdom...",
+  "😍 Curse us and crush us, my precious is lost...",
+  "💀 I don’t know, and I would rather not guess...",
+  "👁 Mordor..."];
+
 // Triggers phrases in lowercase - following phrases are handled in code
 const TRIGGER_SURVEY = 'survey';
 const TRIGGER_QUIZ = 'quiz';
@@ -229,6 +236,7 @@ var PROPER_NOUNS_DAYS = [
   "Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 var PROPER_NOUNS_NAMES = [
   "Rachel House", "Robin House", "CHAS"];
+// Add any new proper arrays to properNouns()
 var TIME_OF_DAY = [
   [22,"Getting late"],[19,"Good evening"],[18,"Time for tea"],[13,"Afternoon"],[12,"Lunch time"],
   [11,"Time for Elevenses"],[8,"Morning"],[7,"Breakfast time"],[6,"Another day another dollar"],
@@ -778,6 +786,9 @@ function inPlayID (id_to_find) {
 
 // String and number handling functions
 // ====================================
+function fixStutter(str) {
+    return str.replace(/\s(\w+\s)\1/, " $1")
+}
 function escapeRegExp(str) {
     return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
 }
@@ -785,24 +796,18 @@ function replaceAll(str, find, replace) {
     return str.replace(new RegExp(escapeRegExp(find), 'ig'), replace); // ig case insensitve for search
 }
 function properNouns(str) {
-  console.log ("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ >" + str)
-  //str = str.replace(/January/ig, "January");
   for (var i = 0; i < PROPER_NOUNS_DAYS.length; i += 1) {
     var regex_dynamic = new RegExp(PROPER_NOUNS_DAYS[i], 'ig');
-    console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% >" + regex_dynamic)
     str = str.replace(regex_dynamic, PROPER_NOUNS_DAYS[i]);
   };
   for (var i = 0; i < PROPER_NOUNS_MONTHS.length; i += 1) {
     var regex_dynamic = new RegExp(PROPER_NOUNS_MONTHS[i], 'ig');
-    console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% >" + regex_dynamic)
     str = str.replace(regex_dynamic, PROPER_NOUNS_MONTHS[i]);
   };
   for (var i = 0; i < PROPER_NOUNS_NAMES.length; i += 1) {
     var regex_dynamic = new RegExp(PROPER_NOUNS_NAMES[i], 'ig');
-    console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% >" + regex_dynamic)
     str = str.replace(regex_dynamic, PROPER_NOUNS_NAMES[i]);
   };
-  console.log ("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ >>" + str)
   return str;
 }
 function toTitleCase(str) {
@@ -1281,12 +1286,12 @@ CHASbot.post('/webhook', (req, res) => {
           // Lord of the Rings
           // If double-triggered - then seond trigger wins
           position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_LOTR) + 1;
-          console.log("DEBUG [postWebhook]> " + TRIGGER_LOTR + " phrase search result: " + position_in_analyse_text);
+          //console.log("DEBUG [postWebhook]> " + TRIGGER_LOTR + " phrase search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
             starting_point = position_in_analyse_text + TRIGGER_LOTR.length;
             ending_point = analyse_text.length;
             string_length = ending_point - starting_point;
-            console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
+            //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
             if (string_length > 0) {
               trigger_path = TRIGGER_LOTR;
               hero_who = analyse_text.slice(starting_point,ending_point);
@@ -1414,7 +1419,7 @@ CHASbot.post('/webhook', (req, res) => {
             //console.log("DEBUG [postWebhook_route]> Marvel Character: " + hero_who);
             apiMarvelChar(event,hero_who);
           } else if (trigger_path == TRIGGER_LOTR) {
-            console.log("DEBUG [postWebhook_route]> LOTR Character: " + hero_who);
+            //console.log("DEBUG [postWebhook_route]> LOTR Character: " + hero_who);
             apiLOTR(event,hero_who);
           } else if (trigger_path == TRIGGER_CHASABET_1) {
             //console.log("DEBUG [postWebhook_route]> CHAS alpahbet: " + alpha);
@@ -2349,11 +2354,12 @@ function apiMarvelChar(eventMarvel,marvelWho) {
 }
 
 function apiLOTR (eventLOTR,lotrWho){
-  console.log("DEBUG [apiLOTR]> Input: " + lotrWho);
+  console.log("INFO [apiLOTR]> Sender: " + eventLOTR.sender.id);
+  console.log("INFO [apiLOTR]> Request: lotr " + lotrWho);
   let lotrBlurb = '';
   let lotrWhoMatch = '';
   let lotrWhoLower = '';
-  let url_path = '/v1/character';
+  let url_path = '/v1/characte';
   // Set URL with authorisation header i.e. API key not sent in URL
   const requestOptions = {
     hostname: URL_API_LOTR,
@@ -2412,17 +2418,16 @@ function apiLOTR (eventLOTR,lotrWho){
             lotrBlurb = lotrBlurb + "They are ";
           };
 
-
 // Try one or other for better result
 
-          console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
+          //console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           let extent_unknown = 0;
           if ((characterDataList[got_a_live_one].race == '') || (characterDataList[got_a_live_one].realm == '')) {
             extent_unknown = extent_unknown + 1; // 0 or 1
-            console.log("DEBUG [apiLOTR]> Either race or realm is unknown");
+            //console.log("DEBUG [apiLOTR]> Either race or realm is unknown");
           } else {
             lotrBlurb = lotrBlurb + "of the " + characterDataList[got_a_live_one].race + " race, from the realm of " + characterDataList[got_a_live_one].realm;
-            console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
+            //console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           };
           // Either:
           // 0 = 'He is/ She is/ They are of the A race, from the realm of B'
@@ -2436,13 +2441,13 @@ function apiLOTR (eventLOTR,lotrWho){
           };
           if ((characterDataList[got_a_live_one].height == '') || (characterDataList[got_a_live_one].hair == '' || various_trap)) {
             extent_unknown = extent_unknown + 2; // 0, 1, 2 or 3
-            console.log("DEBUG [apiLOTR]> Either height or hair colour is unknown, or various");
+            //console.log("DEBUG [apiLOTR]> Either height or hair colour is unknown, or various");
           } else if (extent_unknown == 1) {
             lotrBlurb = lotrBlurb + clean_up_text2 + " in height with " + clean_up_text1 + " hair.";
-            console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
+            //console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           } else {
             lotrBlurb = lotrBlurb + "; with " + clean_up_text1 + " hair, and a height of " + clean_up_text2 + ".";
-            console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
+            //console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           };
           // Either:
           // 0 = 'He is/ She is/ They are of the A race, from the realm of B; with C hair, and a height of D.'
@@ -2472,13 +2477,13 @@ function apiLOTR (eventLOTR,lotrWho){
             };
           };
           if ((characterDataList[got_a_live_one].birth == '') || (characterDataList[got_a_live_one].death == '') && (extent_unknown == 3)) {
-            console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
+            //console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
             lotrBlurb = lotrBlurb + "a complete mystery to me! 😞 You might have better luck with the Wiki.";
           } else if ((characterDataList[got_a_live_one].birth == '') || (characterDataList[got_a_live_one].death == '') && (extent_unknown == 2)) {
-            console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
+            //console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
             lotrBlurb = lotrBlurb + ". More than that, I don't know! 🤔 Find our more at the Wiki.";
           } else if ((characterDataList[got_a_live_one].birth == '') || (characterDataList[got_a_live_one].death == '') && (extent_unknown == 1)) {
-            console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
+            //console.log("DEBUG [apiLOTR]> Either birth or death is unknown");
             lotrBlurb = lotrBlurb + " 😊 The Wiki can tell you more.";
           } else if (extent_unknown == 3) {
             lotrBlurb = lotrBlurb + "a stranger to me but I can tell you they were born " + clean_up_text1 + " and concluded their story " + clean_up_text2 + ". 🤔 Find our more at the Wiki.";
@@ -2487,34 +2492,45 @@ function apiLOTR (eventLOTR,lotrWho){
           } else { // 1 or 0
             lotrBlurb = lotrBlurb + " I can also tell you they were born " + clean_up_text1 + " and finished their adventure " + clean_up_text2 + ". 😃 Check out the Wiki.";
           };
-// make a function?
-          lotrBlurb = lotrBlurb.replace(/\s(\w+\s)\1/, " $1"); // Cleans consecutive repeated words
-
 // look up a quote?
-
+          lotrBlurb = fixStutter(lotrBlurb);
           // FA First Age, SA Second Age, TA Third Age, FO Fourth Age
           lotrBlurb = replaceAll(lotrBlurb,' FA ', ' First Age ');
           lotrBlurb = replaceAll(lotrBlurb,' SA ', ' Second Age ');
           lotrBlurb = replaceAll(lotrBlurb,' TA ', ' Third Age ');
           lotrBlurb = replaceAll(lotrBlurb,' FO ', ' Fourth Age ');
           lotrBlurb = properNouns(lotrBlurb);
-          console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
+          //console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
+          console.log("INFO [apiLOTR]> Action: apiLOTR.postLinkButton";
+          console.log("INFO [apiLOTR]> Reponse: Successful";
           postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,lotrBlurb,'Wiki ' + characterDataList[got_a_live_one].name);
           return;
         } else {
-          // Could not find a match
+          // Could not find a match... though not possible
           console.log("ERROR [apiLOTR]> No Luck");
+          console.log("INFO [apiLOTR]> Action: apiLOTR.sendTextDirect";
+          console.log("INFO [apiLOTR]> Reponse: Unuccessful";
+          lotrBlurb = MSG_LOTR_OOPS[randomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + toTitleCase(lotrWho) + '?'; // Required within sendTextDirect
+          sendTextDirect(postEvent,marvelText);
           return;
         };
       } else {
         // Could be status code 404 or some other response i.e. valid block BUT not results
         console.log("ERROR [apiLOTR]> Error getting results e.g. 404");
+        console.log("INFO [apiLOTR]> Action: apiLOTR.sendTextDirect";
+        console.log("INFO [apiLOTR]> Reponse: Unsuccessful";
+        lotrBlurb = MSG_LOTR_OOPS[randomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + toTitleCase(lotrWho) + '?'; // Required within sendTextDirect
+        sendTextDirect(postEvent,marvelText);
         return;
       };
     }); // res.on('end'
   }); // http.get
   req.on('error', function(e) { // Catches failures to connect to the API
     console.log("ERROR [apiLOTR]> Error getting to API: " + e);
+    console.log("INFO [apiLOTR]> Action: apiLOTR.sendTextDirect";
+    console.log("INFO [apiLOTR]> Reponse: Unsuccessful";
+    lotrBlurb = MSG_LOTR_OOPS[randomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + toTitleCase(lotrWho) + '?'; // Required within sendTextDirect
+    sendTextDirect(postEvent,marvelText);
     return;
   }); // req.on('error'
 }
