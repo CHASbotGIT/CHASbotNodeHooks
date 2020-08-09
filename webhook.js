@@ -782,19 +782,23 @@ function escapeRegExp(str) {
     return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
 }
 function replaceAll(str, find, replace) {
-    return str.replace(new RegExp(escapeRegExp(find), 'ig'), replace); // ig cas insensitve for search
+    return str.replace(new RegExp(escapeRegExp(find), 'ig'), replace); // ig case insensitve for search
 }
-function properNouns(strInput) {
+function properNouns(str) {
+  let regex_dynamic = '';
   for (var i = 0; i < PROPER_NOUNS_DAYS.length; i += 1) {
-    strInput = replaceAll(strInput,PROPER_NOUNS_DAYS[i],PROPER_NOUNS_DAYS[i]);
+    regex_dynamic = "/"+PROPER_NOUNS_DAYS[i]+"/ig";
+    str = strInput.replace(regex_dynamic, PROPER_NOUNS_DAYS[i]);
   };
   for (var i = 0; i < PROPER_NOUNS_MONTHS.length; i += 1) {
-    strInput = replaceAll(strInput,PROPER_NOUNS_MONTHS[i],PROPER_NOUNS_MONTHS[i]);
+    regex_dynamic = "/"+PROPER_NOUNS_MONTHS[i]+"/ig";
+    str = strInput.replace(regex_dynamic, PROPER_NOUNS_MONTHS[i]);
   };
-  for (var i = 0; i < PROPER_NOUNS_DAYS.length; i += 1) {
-    strInput = replaceAll(strInput,PROPER_NOUNS_NAMES[i],PROPER_NOUNS_NAMES[i]);
+  for (var i = 0; i < PROPER_NOUNS_NAMES.length; i += 1) {
+    regex_dynamic = "/"+PROPER_NOUNS_NAMES[i]+"/ig";
+    str = strInput.replace(regex_dynamic, PROPER_NOUNS_NAMES[i]);
   };
-  return strInput;
+  return str;
 }
 function toTitleCase(str) {
   return str.replace(/\w\S*/g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
