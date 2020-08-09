@@ -2501,15 +2501,15 @@ function apiLOTR (eventLOTR,lotrWho){
           lotrBlurb = replaceAll(lotrBlurb,' FO ', ' Fourth Age ');
           lotrBlurb = properNouns(lotrBlurb);
           //console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
-          console.log("INFO [apiLOTR]> Action: apiLOTR.postLinkButton";
-          console.log("INFO [apiLOTR]> Reponse: Successful";
+          console.log("INFO [apiLOTR]> Action: apiLOTR.postLinkButton");
+          console.log("INFO [apiLOTR]> Reponse: Successful");
           postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,lotrBlurb,'Wiki ' + characterDataList[got_a_live_one].name);
           return;
         } else {
           // Could not find a match... though not possible
           console.log("ERROR [apiLOTR]> No Luck");
-          console.log("INFO [apiLOTR]> Action: apiLOTR.sendTextDirect";
-          console.log("INFO [apiLOTR]> Reponse: Unuccessful";
+          console.log("INFO [apiLOTR]> Action: apiLOTR.sendTextDirect");
+          console.log("INFO [apiLOTR]> Reponse: Unuccessful");
           lotrBlurb = MSG_LOTR_OOPS[randomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + toTitleCase(lotrWho) + '?'; // Required within sendTextDirect
           sendTextDirect(postEvent,marvelText);
           return;
@@ -2517,8 +2517,8 @@ function apiLOTR (eventLOTR,lotrWho){
       } else {
         // Could be status code 404 or some other response i.e. valid block BUT not results
         console.log("ERROR [apiLOTR]> Error getting results e.g. 404");
-        console.log("INFO [apiLOTR]> Action: apiLOTR.sendTextDirect";
-        console.log("INFO [apiLOTR]> Reponse: Unsuccessful";
+        console.log("INFO [apiLOTR]> Action: apiLOTR.sendTextDirect");
+        console.log("INFO [apiLOTR]> Reponse: Unsuccessful");
         lotrBlurb = MSG_LOTR_OOPS[randomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + toTitleCase(lotrWho) + '?'; // Required within sendTextDirect
         sendTextDirect(postEvent,marvelText);
         return;
@@ -2527,8 +2527,8 @@ function apiLOTR (eventLOTR,lotrWho){
   }); // http.get
   req.on('error', function(e) { // Catches failures to connect to the API
     console.log("ERROR [apiLOTR]> Error getting to API: " + e);
-    console.log("INFO [apiLOTR]> Action: apiLOTR.sendTextDirect";
-    console.log("INFO [apiLOTR]> Reponse: Unsuccessful";
+    console.log("INFO [apiLOTR]> Action: apiLOTR.sendTextDirect");
+    console.log("INFO [apiLOTR]> Reponse: Unsuccessful");
     lotrBlurb = MSG_LOTR_OOPS[randomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + toTitleCase(lotrWho) + '?'; // Required within sendTextDirect
     sendTextDirect(postEvent,marvelText);
     return;
