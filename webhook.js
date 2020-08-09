@@ -2564,7 +2564,7 @@ function apiLOTR (eventLOTR,lotrWho){
                   console.log("DEBUG [apiLOTR]> Quote Picked: " + quotePick);
                   for (var loop_films = 0; loop_films < LOTR_MOVIES.length; loop_films++) {
                     if (LOTR_MOVIES[loop_films].includes(quoteList[quotePick].movie)) {
-                      movie_quote = " Quoted in:" + LOTR_MOVIES[loop_films].replace(quoteList[quotePick].movie,'') + ': ';
+                      movie_quote = " Quoted in " + LOTR_MOVIES[loop_films].replace(quoteList[quotePick].movie,'') + ': ';
                       console.log("DEBUG [apiLOTR]> Film: " + movie_quote);
                       break;
                     }; // if (LOTR_MOVIES[loop_films]
