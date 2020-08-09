@@ -2524,7 +2524,7 @@ function apiLOTR (eventLOTR,lotrWho){
           lotrBlurb = properNouns(lotrBlurb); // Tidy proper pronouns
           let movie_quote = '';
           url_path = '/v1/character/' + characterDataList[got_a_live_one]._id + "/quote"
-          console.log("DEBUG [apiLOTR]> Quotes URL: " + URL_API_LOTR + url_path);
+          //console.log("DEBUG [apiLOTR]> Quotes URL: " + URL_API_LOTR + url_path);
           const requestOptions2nd = {
             hostname: URL_API_LOTR,
             path: url_path,
@@ -2540,7 +2540,7 @@ function apiLOTR (eventLOTR,lotrWho){
             res.on('end', function() {
               let quoteData = JSON.parse(body2nd);
               let quoteData_legible = JSON.stringify(quoteData);
-              console.log("DEBUG [apiLOTR]> Quote JSON: " + quoteData_legible);
+              //console.log("DEBUG [apiLOTR]> Quote JSON: " + quoteData_legible);
               // Correct responses start with "docs" i.e. no status code 200 to help verify
               if (quoteData_legible.includes('docs')) {
                 let quoteList = quoteData.docs;
@@ -2559,6 +2559,7 @@ function apiLOTR (eventLOTR,lotrWho){
                   // if there wasn't a movie named then skip the quote
                   if (movie_quote!= '') {
                     let quote_placeholder = quoteList[quotePick].dialog;
+                    console.log("DEBUG [apiLOTR]> Quote Raw: " + quote_placeholder);
                     quote_placeholder = quote_placeholder.trim(); // leading/trailing whitespace
                     quote_placeholder = quote_placeholder.replace(/ , /,''); // extra commas
                     quote_placeholder = quote_placeholder.replace(/\s+(\W)/g, "$1"); // pre-punctuation spaces
@@ -2569,7 +2570,7 @@ function apiLOTR (eventLOTR,lotrWho){
                     movie_quote = movie_quote + quote_placeholder;
                   };
                 }; // if (quoteListCount
-                console.log("DEBUG [apiLOTR]> Quote: " + movie_quote);
+                console.log("DEBUG [apiLOTR]> Full Quote: " + movie_quote);
                 lotrBlurb = lotrBlurb + movie_quote;
                 lotrBlurb = trimTo(640,lotrBlurb); // Make sure the message isn't over-long
                 console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
