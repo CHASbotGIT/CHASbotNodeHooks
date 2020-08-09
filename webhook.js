@@ -2571,7 +2571,7 @@ function apiLOTR (eventLOTR,lotrWho){
 
                     var regex_punctuation = new RegExp("[?!;:.,]", 'g');
 
-                    quote_placeholder = quote_placeholder.replace(regex_punctuation,"$0 "); // add minimal space after punctuation
+                    quote_placeholder = quote_placeholder.replace(regex_punctuation,"$& "); // add minimal space after punctuation
                     console.log("DEBUG [apiLOTR]> Quote add minimal spaces after punctuation: " + quote_placeholder);
 
                     quote_placeholder = quote_placeholder.replace(/ , /,''); // extra commas
