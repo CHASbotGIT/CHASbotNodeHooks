@@ -2420,7 +2420,7 @@ function apiLOTR (eventLOTR,lotrWho){
           let clean_up_text1 = '';
           let clean_up_text2 = '';
           let various_trap = false;
-          lotrBlurb = "This is the best match I can find for " + toTitleCase(lotrWho) + ".\n";
+          lotrBlurb = "This is the best match I can find for " + toTitleCase(lotrWho) + ". ";
           //console.log("DEBUG [apiLOTR]> Gender: " + characterDataList[got_a_live_one].gender);
           if (characterDataList[got_a_live_one].gender == 'Male') {
             lotrBlurb = lotrBlurb + "He is ";
@@ -2545,35 +2545,32 @@ function apiLOTR (eventLOTR,lotrWho){
               if (quoteData_legible.includes('docs')) {
                 let quoteList = quoteData.docs;
                 let quoteListCount = quoteList.length;
-                console.log("DEBUG [apiLOTR]> Quotes Retrieved No.: " + quoteListCount);
+                //console.log("DEBUG [apiLOTR]> Quotes Retrieved No.: " + quoteListCount);
                 if (quoteListCount > 0) {
                   let quotePick = randomBetween(0,quoteListCount-1)
-                  console.log("DEBUG [apiLOTR]> Quote Picked: " + quotePick);
+                  //console.log("DEBUG [apiLOTR]> Quote Picked: " + quotePick);
                   for (var loop_films = 0; loop_films < LOTR_MOVIES.length; loop_films++) {
                     if (LOTR_MOVIES[loop_films].includes(quoteList[quotePick].movie)) {
                       movie_quote = " Quoted in " + LOTR_MOVIES[loop_films].replace(quoteList[quotePick].movie,'') + ' 💬 ';
-                      console.log("DEBUG [apiLOTR]> Film: " + movie_quote);
+                      //console.log("DEBUG [apiLOTR]> Film: " + movie_quote);
                       break;
                     }; // if (LOTR_MOVIES[loop_films]
                   }; // (var loop_films
                   // if there wasn't a movie named then skip the quote
                   if (movie_quote!= '') {
                     let quote_placeholder = quoteList[quotePick].dialog;
-                    console.log("DEBUG [apiLOTR]> Quote Raw: " + quote_placeholder);
+                    //console.log("DEBUG [apiLOTR]> Quote Raw: " + quote_placeholder);
                     quote_placeholder = quote_placeholder.trim(); // leading/trailing whitespace
                     quote_placeholder = quote_placeholder.replace(/ , /,''); // extra commas
                     quote_placeholder = quote_placeholder.replace(/\s+(\W)/g, "$1"); // pre-punctuation spaces
                     quote_placeholder = quote_placeholder.replace(/\s\s+/g, ' '); // internal whitespace
-                    //quote_placeholder = quote_placeholder.replace(/.,/,'.'); // extra commas
-                    //quote_placeholder = quote_placeholder.replace(/!,/,'!');
-                    //quote_placeholder = quote_placeholder.replace(/?,/,'?');
                     movie_quote = movie_quote + quote_placeholder;
                   };
                 }; // if (quoteListCount
-                console.log("DEBUG [apiLOTR]> Full Quote: " + movie_quote);
+                //console.log("DEBUG [apiLOTR]> Full Quote: " + movie_quote);
                 lotrBlurb = lotrBlurb + movie_quote;
                 lotrBlurb = trimTo(640,lotrBlurb); // Make sure the message isn't over-long
-                console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
+                //console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
                 console.log("INFO [apiLOTR]> Action: apiLOTR.postLinkButton");
                 console.log("INFO [apiLOTR]> Reponse: Successful");
                 postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,lotrBlurb,'Wiki ' + characterDataList[got_a_live_one].name);
@@ -2584,7 +2581,7 @@ function apiLOTR (eventLOTR,lotrWho){
           req2nd.on('error', function(e) { // Catches failures to connect to the API
             console.log("ERROR [apiLOTR]> Error getting to API (for quote): " + e);
             lotrBlurb = trimTo(640,lotrBlurb); // Make sure the message isn't over-long
-            console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
+            //console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
             console.log("INFO [apiLOTR]> Action: apiLOTR.postLinkButton");
             console.log("INFO [apiLOTR]> Reponse: Successful");
             postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,lotrBlurb,'Wiki ' + characterDataList[got_a_live_one].name);
