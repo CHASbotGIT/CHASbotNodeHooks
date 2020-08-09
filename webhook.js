@@ -386,6 +386,16 @@ var CARD_DECK  = [
 "♣A","♣2","♣3","♣4","♣5","♣6","♣7","♣8","♣9","♣10","♣J","♣Q","♣K"];
 var CARD_PROMPTS = [
   "I've picked... ","This time I've drawn... ","I've selected... ","You're card is... "];
+// LOTR
+var LOTR_MOVIES = [
+  "5cd95395de30eff6ebccde56🎞️ The Lord of the Rings Series",
+  "5cd95395de30eff6ebccde57🎞️ The Hobbit Series",
+  "5cd95395de30eff6ebccde58🎥 The Unexpected Journey (2012)",
+  "5cd95395de30eff6ebccde59📽️ The Desolation of Smaug (2013)",
+  "5cd95395de30eff6ebccde5a🎬 The Battle of the Five Armies (2014)",
+  "5cd95395de30eff6ebccde5b🎥 The Two Towers (2001)",
+  "5cd95395de30eff6ebccde5c📽️ The Fellowship of the Ring (2002)",
+  "5cd95395de30eff6ebccde5d🎬 The Return of the King (2003)"];
 // Survey/Quiz
 const PRIZES = ["🎉","🎈","💰","🎁","👏","🌹","💐","🍹","🍸","🍺","🍷","🍾","🍰","💋","🎖️","🍀"];
 var SURVEY_VIABLE = true;
@@ -2501,7 +2511,6 @@ function apiLOTR (eventLOTR,lotrWho){
           } else { // 1 or 0
             lotrBlurb = lotrBlurb + " I can also tell you they were born " + clean_up_text1 + " and finished their adventure " + clean_up_text2 + ". 😃 Check out the Wiki.";
           };
-
 // look up a quote? Does this work nested?????
 /*
 {"docs":
@@ -2515,9 +2524,8 @@ function apiLOTR (eventLOTR,lotrWho){
   "character":"5cd99d4bde30eff6ebccfc07"},
 {"_id":"5cd96e05de30eff6ebcceb64","dialog":"' i vethed... n' i onnad. Boe bedich go Frodo. Han b'd l'n.","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb65","dialog":"Ma nathach hi gwannathach or minuial archened?","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb6d","dialog":"Nach gwannatha sin?","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},{"_id":"5cd96e05de30eff6ebcceb7b","dialog":"Estelio guru l'n ne dagor.     Ethelithach.","movie":"5cd95395de30eff6ebccde5b","character":"5cd99d4bde30eff6ebccfc07"},
 */
-
-          //url_path = '/v1/character/' + characterDataList[got_a_live_one]._id + "/quote"
-          url_path = '/v1/movie';
+          let movie_quote = '';
+          url_path = '/v1/character/' + characterDataList[got_a_live_one]._id + "/quote"
           console.log("DEBUG [apiLOTR]> Quotes URL: " + URL_API_LOTR + url_path);
           const requestOptions2nd = {
             hostname: URL_API_LOTR,
@@ -2535,14 +2543,30 @@ function apiLOTR (eventLOTR,lotrWho){
               let quoteData = JSON.parse(body2nd);
               let quoteData_legible = JSON.stringify(quoteData);
               console.log("DEBUG [apiLOTR]> Quote JSON: " + quoteData_legible);
-
+              // Correct responses start with "docs" i.e. no status code 200 to help verify
+              if (quoteData_legible.includes('docs')) {
+                let quoteList = quoteData.docs;
+                let quoteListCount = quoteList.length;
+                console.log("DEBUG [apiLOTR]> Quotes Retrieved No.: " + quoteListCount);
+                if (quoteListCount > 0) {
+                  let quotePick = randomBetween(0,quoteListCount-1)
+                  for (var loop_films = 0; loop_films < LOTR_MOVIES.length; loop_films++) {
+                    if (LOTR_MOVIES[loop_films].includes(quoteList[quotePick].movie)) {
+                      movie_quote = "Quoted in:" + LOTR_MOVIES[loop_films].replace(quoteList[quotePick].movie,'') + ': ';
+                      console.log("DEBUG [apiLOTR]> Film: " + movie_quote);
+                      break;
+                    }; // if (LOTR_MOVIES[loop_films]
+                  }; // (var loop_films
+                  movie_quote = movie_quote + quoteList[quotePick].dialog;
+                  console.log("DEBUG [apiLOTR]> Quote: " + movie_quote);
+                }; // if (quoteListCount
+              }; // if (quoteData_legible
             }); // res.on('end'
           }); // http.get
           req2nd.on('error', function(e) { // Catches failures to connect to the API
-            console.log("ERROR [apiLOTR]> Error getting to API: " + e);
+            console.log("ERROR [apiLOTR]> Error getting to API (for quote): " + e);
           }); // req.on('error'
-
-
+          lotrBlub = lotrBlub + movie_quote;
           lotrBlurb = fixStutter(lotrBlurb);
           // FA First Age, SA Second Age, TA Third Age, FO Fourth Age
           lotrBlurb = replaceAll(lotrBlurb,' FA ', ' First Age ');
@@ -2553,7 +2577,8 @@ function apiLOTR (eventLOTR,lotrWho){
           lotrBlurb = replaceAll(lotrBlurb,' YS ', ' Years of the Sun ');
           lotrBlurb = replaceAll(lotrBlurb,' YL ', ' Years of the Lamps ');
           lotrBlurb = replaceAll(lotrBlurb,' VY ', ' Valian Years ');
-          lotrBlurb = properNouns(lotrBlurb);
+          lotrBlurb = properNouns(lotrBlurb); // Tidy proper pronouns
+          lotrBlub = trimTo(640.lotrBlub); // Make sure the message isn't over-long
           //console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
           console.log("INFO [apiLOTR]> Action: apiLOTR.postLinkButton");
           console.log("INFO [apiLOTR]> Reponse: Successful");
