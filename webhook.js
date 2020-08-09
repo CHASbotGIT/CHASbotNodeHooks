@@ -2480,7 +2480,7 @@ function apiLOTR (eventLOTR,lotrWho){
           lotrBlurb = replaceAll(lotrBlurb,' SA ', ' Second Age ');
           lotrBlurb = replaceAll(lotrBlurb,' TA ', ' Third Age ');
           lotrBlurb = replaceAll(lotrBlurb,' FO ', ' Fourth Age ');
-          //lotrBlurb = properNouns(lotrBlurb);
+          lotrBlurb = properNouns(lotrBlurb);
           console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
           postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,lotrBlurb,'Wiki ' + characterDataList[got_a_live_one].name);
           return;
