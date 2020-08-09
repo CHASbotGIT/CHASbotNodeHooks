@@ -2557,7 +2557,8 @@ function apiLOTR (eventLOTR,lotrWho){
                       break;
                     }; // if (LOTR_MOVIES[loop_films]
                   }; // (var loop_films
-                  movie_quote = movie_quote + quoteList[quotePick].dialog;
+                  // if there wasn't a movie named then skip the quote
+                  if (movie_quote!= '') {movie_quote = movie_quote + quoteList[quotePick].dialog};
                   console.log("DEBUG [apiLOTR]> Quote: " + movie_quote);
                 }; // if (quoteListCount
               }; // if (quoteData_legible
@@ -2566,7 +2567,7 @@ function apiLOTR (eventLOTR,lotrWho){
           req2nd.on('error', function(e) { // Catches failures to connect to the API
             console.log("ERROR [apiLOTR]> Error getting to API (for quote): " + e);
           }); // req.on('error'
-          lotrBlub = lotrBlub + movie_quote;
+          lotrBlurb = lotrBlurb + movie_quote;
           lotrBlurb = fixStutter(lotrBlurb); // i.e. doubled words
           // FA First Age, SA Second Age, TA Third Age, FO Fourth Age
           lotrBlurb = replaceAll(lotrBlurb,' FA ', ' First Age ');
