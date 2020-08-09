@@ -2570,7 +2570,13 @@ function apiLOTR (eventLOTR,lotrWho){
                     }; // if (LOTR_MOVIES[loop_films]
                   }; // (var loop_films
                   // if there wasn't a movie named then skip the quote
-                  if (movie_quote!= '') {movie_quote = movie_quote + quoteList[quotePick].dialog};
+                  if (movie_quote!= '') {
+                    let quote_placeholder = quoteList[quotePick].dialog;
+                    quote_placeholder = quote_placeholder.trim(); // leading/trailing whitespace
+                    quote_placeholder = quote_placeholder.replace(/\s+(\W)/g, "$1"); // pre-punctuation spaces
+                    quote_placeholder = quote_placeholder.replace(/\s\s+/g, ' '); // internal whitespace
+                    movie_quote = movie_quote + quote_placeholder;
+                  };
                   console.log("DEBUG [apiLOTR]> Quote: " + movie_quote);
                   lotrBlurb = lotrBlurb + movie_quote;
                   lotrBlurb = trimTo(640,lotrBlurb); // Make sure the message isn't over-long
