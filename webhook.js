@@ -2425,8 +2425,8 @@ function apiLOTR (eventLOTR,lotrWho){
             clean_up_text1 = clean_up_text1.replace(/,/g, ""); // birth without commas
             if (clean_up_text1.length > 2) {
               let first_letter = clean_up_text1.charAt(0); // hold first letter
-              if (first_letter == 'B') {first_letter = 'b'}; // Before is common
-              //first_letter = first_letter.toLowerCase(); // make lowercase
+              //if (first_letter == 'B') {first_letter = 'b'}; // Before is common
+              first_letter = first_letter.toLowerCase(); // make lowercase
               //if (first_letter == 't') {first_letter = 'T'}; // TA is valid
               clean_up_text1 = clean_up_text1.substr(1); // drop first character
               clean_up_text1 = first_letter + clean_up_text1; // at lowercase first character back
@@ -2435,8 +2435,8 @@ function apiLOTR (eventLOTR,lotrWho){
             clean_up_text2 = clean_up_text2.replace(/,/g, "");
             if (clean_up_text2.length > 2) {
               let first_letter = clean_up_text2.charAt(0);
-              if (first_letter == 'B') {first_letter = 'b'};
-              //first_letter = first_letter.toLowerCase();
+              //if (first_letter == 'B') {first_letter = 'b'};
+              first_letter = first_letter.toLowerCase();
               //if (first_letter == 't') {first_letter = 'T'};
               clean_up_text2 = clean_up_text2.substr(1);
               clean_up_text2 = first_letter + clean_up_text2;
@@ -2459,6 +2459,11 @@ function apiLOTR (eventLOTR,lotrWho){
             lotrBlurb = lotrBlurb + " I can also tell you they were born " + clean_up_text1 + " and finished their adventure " + clean_up_text2 + ". 😃 Check out the Wiki.";
           };
           lotrBlurb = lotrBlurb.replace(/\s(\w+\s)\1/, " $1"); // Cleans consecutive repeated words
+          // FA First Age, SA Second Age, TA Third Age, FO Fourth Age
+          lotrBlurb = lotrBlurb.replace(/ FA /ig, ' First Age '); // ig ignores case i.e. fa, FA, fA, Fa
+          lotrBlurb = lotrBlurb.replace(/ SA /ig, ' Second Age ');
+          lotrBlurb = lotrBlurb.replace(/ TA /ig, ' Third Age ');
+          lotrBlurb = lotrBlurb.replace(/ FO /ig, ' Fourth Age ');
           console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
           postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,lotrBlurb,'Wiki ' + characterDataList[got_a_live_one].name);
           return;
