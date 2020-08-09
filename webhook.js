@@ -2579,7 +2579,7 @@ function apiLOTR (eventLOTR,lotrWho){
           lotrBlurb = replaceAll(lotrBlurb,' YL ', ' Years of the Lamps ');
           lotrBlurb = replaceAll(lotrBlurb,' VY ', ' Valian Years ');
           lotrBlurb = properNouns(lotrBlurb); // Tidy proper pronouns
-          lotrBlub = trimTo(640,lotrBlub); // Make sure the message isn't over-long
+          lotrBlurb = trimTo(640,lotrBlurb); // Make sure the message isn't over-long
           console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
           console.log("INFO [apiLOTR]> Action: apiLOTR.postLinkButton");
           console.log("INFO [apiLOTR]> Reponse: Successful");
