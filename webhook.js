@@ -2511,7 +2511,7 @@ function apiLOTR (eventLOTR,lotrWho){
           console.log("INFO [apiLOTR]> Action: apiLOTR.sendTextDirect");
           console.log("INFO [apiLOTR]> Reponse: Unuccessful");
           lotrBlurb = MSG_LOTR_OOPS[randomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + toTitleCase(lotrWho) + '?'; // Required within sendTextDirect
-          sendTextDirect(postEvent,marvelText);
+          sendTextDirect(eventLOTR,lotrBlurb);
           return;
         };
       } else {
@@ -2520,7 +2520,7 @@ function apiLOTR (eventLOTR,lotrWho){
         console.log("INFO [apiLOTR]> Action: apiLOTR.sendTextDirect");
         console.log("INFO [apiLOTR]> Reponse: Unsuccessful");
         lotrBlurb = MSG_LOTR_OOPS[randomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + toTitleCase(lotrWho) + '?'; // Required within sendTextDirect
-        sendTextDirect(postEvent,marvelText);
+        sendTextDirect(eventLOTR,lotrBlurb);
         return;
       };
     }); // res.on('end'
@@ -2530,7 +2530,7 @@ function apiLOTR (eventLOTR,lotrWho){
     console.log("INFO [apiLOTR]> Action: apiLOTR.sendTextDirect");
     console.log("INFO [apiLOTR]> Reponse: Unsuccessful");
     lotrBlurb = MSG_LOTR_OOPS[randomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + toTitleCase(lotrWho) + '?'; // Required within sendTextDirect
-    sendTextDirect(postEvent,marvelText);
+    sendTextDirect(eventLOTR,lotrBlurb);
     return;
   }); // req.on('error'
 }
