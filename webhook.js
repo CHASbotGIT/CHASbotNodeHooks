@@ -2421,8 +2421,8 @@ console.log("DEBUG [apiLOTR]> Gender: " + characterDataList[got_a_live_one].gend
           //console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           let extent_unknown = 0;
 console.log("DEBUG [apiLOTR]> Race: " + characterDataList[got_a_live_one].race);
-console.log("DEBUG [apiLOTR]> Race: " + characterDataList[got_a_live_one].realm);
-          if ((characterDataList[got_a_live_one].race == '') || (characterDataList[got_a_live_one].realm == '')) {
+console.log("DEBUG [apiLOTR]> Realm: " + characterDataList[got_a_live_one].realm);
+          if ((characterDataList[got_a_live_one].race == '') && (characterDataList[got_a_live_one].realm == '')) {
             extent_unknown = extent_unknown + 1; // 0 or 1
             //console.log("DEBUG [apiLOTR]> Either race or realm is unknown");
           } else if ((characterDataList[got_a_live_one].race != '') && (characterDataList[got_a_live_one].realm != '')) {
