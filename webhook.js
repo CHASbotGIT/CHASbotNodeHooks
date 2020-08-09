@@ -2359,7 +2359,7 @@ function apiLOTR (eventLOTR,lotrWho){
   let lotrBlurb = '';
   let lotrWhoMatch = '';
   let lotrWhoLower = '';
-  let url_path = '/v1/characte';
+  let url_path = '/v1/character';
   // Set URL with authorisation header i.e. API key not sent in URL
   const requestOptions = {
     hostname: URL_API_LOTR,
@@ -2417,17 +2417,18 @@ function apiLOTR (eventLOTR,lotrWho){
           } else {
             lotrBlurb = lotrBlurb + "They are ";
           };
-
-// Try one or other for better result
-
           //console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
           let extent_unknown = 0;
           if ((characterDataList[got_a_live_one].race == '') || (characterDataList[got_a_live_one].realm == '')) {
             extent_unknown = extent_unknown + 1; // 0 or 1
             //console.log("DEBUG [apiLOTR]> Either race or realm is unknown");
-          } else {
+          } else if ((characterDataList[got_a_live_one].race != '') && (characterDataList[got_a_live_one].realm != '')) {
             lotrBlurb = lotrBlurb + "of the " + characterDataList[got_a_live_one].race + " race, from the realm of " + characterDataList[got_a_live_one].realm;
             //console.log("DEBUG [apiLOTR]> Blurb so far is: " + lotrBlurb);
+          } else if ((characterDataList[got_a_live_one].race != '') {
+            lotrBlurb = lotrBlurb + "of the " + characterDataList[got_a_live_one].race + " race";
+          } else {
+            lotrBlurb = lotrBlurb + "from the realm of " + characterDataList[got_a_live_one].realm;
           };
           // Either:
           // 0 = 'He is/ She is/ They are of the A race, from the realm of B'
