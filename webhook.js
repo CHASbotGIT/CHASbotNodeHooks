@@ -111,8 +111,6 @@ var MSG_STAR_RATING = [
   "I'd give it a better than average ⭐⭐⭐🍅🍅. Pop it on.",
   "Well worth the watching ⭐⭐⭐⭐🍅, give it a go.",
   "Wow, a fantastic ⭐⭐⭐⭐⭐. In my humble opinion. you must watch."];
-var MSG_WEEKDAYS = [
-  "Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 var MSG_THUMBS = ["👍👍👍","👍👍👎","👍👎👎","👎👎👎"];
 var MSG_EVENTS_OOPS = [
   "📆 Oops, that's not something I could find...",
@@ -225,6 +223,12 @@ const REGEX_END = '.+';
 // For keeping track of senders
 var SENDERS = new Array ();
 // Functional
+var PROPER_NOUNS_MONTHS = [
+  "January","February","March","April","May","June","July","August","September","October","November","December"];
+var PROPER_NOUNS_DAYS = [
+  "Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+var PROPER_NOUNS_NAMES = [
+  "Rachel House", "Robin House", "CHAS"];
 var TIME_OF_DAY = [
   [22,"Getting late"],[19,"Good evening"],[18,"Time for tea"],[13,"Afternoon"],[12,"Lunch time"],
   [11,"Time for Elevenses"],[8,"Morning"],[7,"Breakfast time"],[6,"Another day another dollar"],
@@ -774,11 +778,23 @@ function inPlayID (id_to_find) {
 
 // String and number handling functions
 // ====================================
-function escapeRegExp(str) {
-    return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+function escapeRegExp(inputString) {
+    return inputString.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
 }
-function replaceAll(str, find, replace) {
-    return str.replace(new RegExp(escapeRegExp(find), 'ig'), replace);
+function replaceAll(inputString, find, replace) {
+    return inputString.replace(new RegExp(escapeRegExp(find), 'ig'), replace); // ig cas insensitve for search
+}
+function properNouns(inputString) {
+  for (var i = 0; i < PROPER_NOUNS_DAYS.length; i += 1) {
+    inputString = replaceAll(inputString,PROPER_NOUNS_DAYS[i],PROPER_NOUNS_DAYS[i]);
+  };
+  for (var i = 0; i < PROPER_NOUNS_MONTHS.length; i += 1) {
+    inputString = replaceAll(inputString,PROPER_NOUNS_MONTHS[i],PROPER_NOUNS_MONTHS[i]);
+  };
+  for (var i = 0; i < PROPER_NOUNS_DAYS.length; i += 1) {
+    inputString = replaceAll(inputString,PROPER_NOUNS_NAMES[i],PROPER_NOUNS_NAMES[i]);
+  };
+  return inputString;
 }
 function toTitleCase(inputString) {
   return inputString.replace(/\w\S*/g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
@@ -796,10 +812,10 @@ function trimTo(trim_length,inputString) {
   if (inputString.length > trim_length) {inputString = inputString.slice(0,trim_length-1) + "🤐"};
   return inputString;
 }
-function xLength(str) {
+function xLength(inputString) {
   //http://blog.jonnew.com/posts/poo-dot-length-equals-two
   const joiner = "\u{200D}";
-  const split = str.split(joiner);
+  const split = inputString.split(joiner);
   let count = 0;
   for (const s of split) {
     //removing the variation selectors
@@ -2188,7 +2204,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
             if (tdyDate > epDate) {
               epBlurb = movieDbData.episodes[i].overview;
               let weekday_value = epDate.getDay();
-              //epBlurb = "The last episode I saw was on " + MSG_WEEKDAYS[weekday_value] + ", it was the one where: " + epBlurb;
+              //epBlurb = "The last episode I saw was on " + PROPER_NOUNS_DAYS[weekday_value] + ", it was the one where: " + epBlurb;
               //console.log("DEBUG [apiFilmTV]> Easties result: " + epBlurb);
               MOVIEDB_RECORDS[record_index][0] = true;
               MOVIEDB_RECORDS[record_index][1] = epBlurb;
@@ -2460,15 +2476,11 @@ function apiLOTR (eventLOTR,lotrWho){
           };
           lotrBlurb = lotrBlurb.replace(/\s(\w+\s)\1/, " $1"); // Cleans consecutive repeated words
           // FA First Age, SA Second Age, TA Third Age, FO Fourth Age
-          lotrBlurb = replaceAll(lotrBlurb,' TA ', ' Third Age');
-          lotrBlurb = lotrBlurb.replace(/ FA /ig, ' First Age '); // ig ignores case i.e. fa, FA, fA, Fa
-          lotrBlurb = lotrBlurb.replace(/ SA /ig, ' Second Age ');
-          //lotrBlurb = lotrBlurb.replace(/ TA /ig, ' Third Age ');
-          lotrBlurb = lotrBlurb.replace(/ FO /ig, ' Fourth Age ');
-
-
-          // Proper name tidy up.... NEW FUNCTION
-
+          lotrBlurb = replaceAll(lotrBlurb,' FA ', ' First Age ');
+          lotrBlurb = replaceAll(lotrBlurb,' SA ', ' Second Age ');
+          lotrBlurb = replaceAll(lotrBlurb,' TA ', ' Third Age ');
+          lotrBlurb = replaceAll(lotrBlurb,' FO ', ' Fourth Age ');
+          lotrBlurb = properNouns(lotrBlurb);
           console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
           postLinkButton(eventLOTR,characterDataList[got_a_live_one].wikiUrl,lotrBlurb,'Wiki ' + characterDataList[got_a_live_one].name);
           return;
