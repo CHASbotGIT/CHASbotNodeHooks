@@ -314,7 +314,7 @@ var WEATHER_GIFS = [
   "1d/eb/z98LmXpq day 721",
   "0f/61/FCn1GAAr day 701",
   "6d/da/XcKVM4EB day 741",
-  "5c/9e/H4Wk9GCj night 800",
+  "f9/70/k0JGk0WH night 800",
   "ed/ab/Fzq4hS68 day 321, 520, 521, 531",
   "9d/c3/wiKQBmSp day 522",
   "b7/5d/KqF87CiA day 620, 621",
@@ -1762,7 +1762,6 @@ async function sendViaDialogV2(eventSend) {
           // Match the id to the weather icon
           let findId = ' ' + weatherId.toString();
           let hr = getHoursUK();
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'+hr);
           let day_or_night = '';
           let weathericonId = URL_IMG_PREFIX2;
           if (hr >= UTC_DAWN && hr <= UTC_DUSK) { day_or_night = 'day' } else { day_or_night = 'night' };
