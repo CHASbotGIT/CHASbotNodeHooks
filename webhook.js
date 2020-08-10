@@ -201,12 +201,13 @@ var HOOKS = ['fundraising','cards','weather']; // List of UNIQUE hook names, get
 var HOOKS_CUSTOM = [];
 
 // End-points
-const URL_GIPHY = "https://api.giphy.com/v1/gifs/random";
-const URL_MOVIEDB = "https://api.themoviedb.org/3/";
 const URL_CHAT_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages";
+const URL_API_GIPHY = "https://api.giphy.com/v1/gifs/random";
+const URL_API_MOVIEDB = "https://api.themoviedb.org/3/";
 const URL_API_WEATHER = "https://api.openweathermap.org/data/2.5/weather?APPID=";
 const URL_API_MARVEL = "https://gateway.marvel.com:443/v1/public/characters?nameStartsWith=";
 const URL_API_LOTR = "the-one-api.herokuapp.com";
+// URLs
 const URL_SEARCH_GOOGLE = "https://www.google.com/search?q=";
 const URL_SEARCH_WIKI = "https://en.wikipedia.org/w/index.php?search=";
 const URL_SEARCH_BEEB = "https://www.bbc.co.uk/search?q=";
@@ -1755,7 +1756,7 @@ async function sendViaDialogV2(eventSend) {
           let day_or_night = '';
           let weathericonId = URL_IMG_PREFIX2;
           if (hr >= 7 && hr <= 21) { day_or_night = 'day' } else { day_or_night = 'night' };
-          //console.log("DEBUG [sendViaDialogV2]> Weather Id" + findId + " [" + day_or_night + "]");
+          console.log("DEBUG [sendViaDialogV2]> Weather Id" + findId + " [" + day_or_night + "]");
           for (var loop_icons = 0; loop_icons < WEATHER_GIFS.length; loop_icons++) {
             if (WEATHER_GIFS[loop_icons].includes(findId) && WEATHER_GIFS[loop_icons].includes(day_or_night)) {
               weathericonId = weathericonId + WEATHER_GIFS[loop_icons].slice(0, 14) + URL_GIF_SUFFIX;
@@ -2151,7 +2152,7 @@ function postFilmTV(postEvent,record_index) {
 function apiGIPHY(eventGiphy,giphy_tag,giphy_rating,passText) {
   // Ratings are Y; G; PG; PG-13; R
   //console.log("DEBUG [apiGIPHY]> Input: " + giphy_tag + ", " + giphy_rating + ", " + passText);
-  const base_url = URL_GIPHY;
+  const base_url = URL_API_GIPHY;
   const params_url = "?api_key=" + KEY_API_GIPHY + "&tag=" + giphy_tag + "&rating=" + giphy_rating;
   let url = base_url + params_url;
   // e.g. https://api.giphy.com/v1/gifs/random?api_key=5LqK0fRD8cNeyelbovZKnuBVGcEGHytv&tag=robot&rating=G
@@ -2190,7 +2191,7 @@ function apiGIPHY(eventGiphy,giphy_tag,giphy_rating,passText) {
 function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
   //console.log("DEBUG [apiFilmTV]> Input: " + nameFilmTV + ", " + episode_find + ", " + tv_film + ", " + record_index);
   let epBlurb = ''; // return value
-  const base_url = URL_MOVIEDB + "search/";
+  const base_url = URL_API_MOVIEDB + "search/";
   const params_url = "api_key=" + KEY_API_MOVIEDB;
   const movie_url = "movie?";
   const tv_url = "tv?";
@@ -2200,7 +2201,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
   else if (tv_film == 'film') { var url = base_url + movie_url + params_url + query_url };
   // e.g. https://api.themoviedb.org/3/search/movie?api_key={api_key}&query=Jack+Reacher
   // id 1871 is Eastenders; Season 33 is 2017
-  if (episode_find) { url = URL_MOVIEDB + "tv/1871/season/33?api_key=" + KEY_API_MOVIEDB + "&language=en-US" };
+  if (episode_find) { url = URL_API_MOVIEDB + "tv/1871/season/33?api_key=" + KEY_API_MOVIEDB + "&language=en-US" };
   //console.log("DEBUG [apiFilmTV]> URL: " + url);
   http.get(url, function(res) {
     let api_url = replaceAll(url,KEY_API_MOVIEDB,'<SECRET>');
