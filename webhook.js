@@ -861,7 +861,7 @@ function getHoursUK() {
   let utc_hr = new Date().getHours();
   utc_hr = utc_hr + UTC_BST_GMT; // Either GMT adds 0, or BST adds 1
   if (utc_hr == 24) { utc_hr = 0 };
-  return hr
+  return utc_hr;
 }
 
 function customGreeting(senderID,greet) {
