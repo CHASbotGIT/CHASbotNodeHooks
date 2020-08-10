@@ -204,7 +204,7 @@ var HOOKS_CUSTOM = [];
 const URL_GIPHY = "https://api.giphy.com/v1/gifs/random";
 const URL_MOVIEDB = "https://api.themoviedb.org/3/";
 const URL_CHAT_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages";
-const URL_API_WEATHER = "http://api.openweathermap.org/data/2.5/weather?APPID=";
+const URL_API_WEATHER = "https://api.openweathermap.org/data/2.5/weather?APPID=";
 const URL_API_MARVEL = "https://gateway.marvel.com:443/v1/public/characters?nameStartsWith=";
 const URL_API_LOTR = "the-one-api.herokuapp.com";
 const URL_SEARCH_GOOGLE = "https://www.google.com/search?q=";
@@ -2386,7 +2386,7 @@ function apiLOTR (eventLOTR,lotrWho){
     }
   }
   var req = http.get(requestOptions, function(res) {
-    console.log("API Request [LOTR]: https://www." + URL_API_LOTR + '/' + url_path);
+    console.log("API Request [LOTR]: https://" + URL_API_LOTR + '/' + url_path);
     let body = "";
     // Data comes through in chunks
     res.on('data', function (chunk) { body += chunk });
@@ -2546,7 +2546,7 @@ function apiLOTR (eventLOTR,lotrWho){
             }
           }
           var req2nd = http.get(requestOptions2nd, function(res) {
-            console.log("API Request [LOTR]: https://www." + URL_API_LOTR + url_path);
+            console.log("API Request [LOTR]: https://" + URL_API_LOTR + url_path);
             let body2nd = "";
             // Data comes through in chunks
             res.on('data', function (chunk) { body2nd += chunk });
