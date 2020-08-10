@@ -800,6 +800,33 @@ function inPlayID (id_to_find) {
 
 // String and number handling functions
 // ====================================
+function cleanInput(str) {
+  let emoticon_up_count = 0;
+  for (var i = 0; i < EMOTICON_UP.length; i++) {
+    var pos = str.indexOf(EMOTICON_UP[i]);
+    while(pos > -1){
+        ++emoticon_up_count;
+        pos = str.indexOf(EMOTICON_UP[i], ++pos);
+    }; // Count +ve emoticons
+    str = replaceAll(str, EMOTICON_UP[i], ''); // Then remove them
+  };
+  let emoticon_down_count = 0;
+  for (var i = 0; i < EMOTICON_DOWN.length; i++) {
+    var pos = str.indexOf(EMOTICON_DOWN[i]);
+    while(pos > -1){
+        ++emoticon_down_count;
+        pos = str.indexOf(EMOTICON_DOWN[i], ++pos);
+    }; // Count -ve emoticons
+    str = replaceAll(str, EMOTICON_DOWN[i], ''); // Then remove them
+  };
+  // Lowercase
+  str = str.toLowerCase();
+  // Strip out non-alphanumeric
+  str = str.replace(/[^A-Za-z0-9-\s]/g,'');
+  // Contract white space
+  let outboundText = str.replace(/\s\s+/g, ' ');
+  return [outboundText,emoticon_up_count,emoticon_down_count];
+}
 function fixStutter(str) {
     return str.replace(/\s(\w+\s)\1/, " $1")
 }
@@ -905,34 +932,6 @@ function customGreeting(senderID,greet) {
   };
   //console.log("DEBUG [customGreeting]> Greeting: " + build_greeting);
   return build_greeting;
-}
-
-function cleanInput(inboundText) {
-  let emoticon_up_count = 0;
-  for (var i = 0; i < EMOTICON_UP.length; i++) {
-    var pos = inboundText.indexOf(EMOTICON_UP[i]);
-    while(pos > -1){
-        ++emoticon_up_count;
-        pos = inboundText.indexOf(EMOTICON_UP[i], ++pos);
-    }; // Count +ve emoticons
-    inboundText = replaceAll(inboundText, EMOTICON_UP[i], ''); // Then remove them
-  };
-  let emoticon_down_count = 0;
-  for (var i = 0; i < EMOTICON_DOWN.length; i++) {
-    var pos = inboundText.indexOf(EMOTICON_DOWN[i]);
-    while(pos > -1){
-        ++emoticon_down_count;
-        pos = inboundText.indexOf(EMOTICON_DOWN[i], ++pos);
-    }; // Count -ve emoticons
-    inboundText = replaceAll(inboundText, EMOTICON_DOWN[i], ''); // Then remove them
-  };
-  // Lowercase
-  inboundText = inboundText.toLowerCase();
-  // Strip out non-alphanumeric
-  inboundText = inboundText.replace(/[^A-Za-z0-9-\s]/g,'');
-  // Contract white space
-  let outboundText = inboundText.replace(/\s\s+/g, ' ');
-  return [outboundText,emoticon_up_count,emoticon_down_count];
 }
 
 // Sending template functions
