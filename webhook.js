@@ -307,7 +307,6 @@ CHASABET [25] = ["f6/89/4pwI187X","3c/4f/AguL64HL"]; // Z
 // All images2 prefix and gif suffix - source: https://www.mikeafford.com/store/weather-icons/weather-icon-set-re-03/
 // Maps to https://openweathermap.org/weather-conditions
 const EMPTY_WEATHER_GIF_URL = "https://images2.imgbox.com/c0/d5/dTFWiA7h_o.gif";
-const EMPTY_WEATHER_GIF_URL2 = "https://images22.imgbox.com/c0/d5/dTFWiA7h_o.gif";
 var WEATHER_GIFS = [
   "a7/8c/0ZQ6B9PR day 800",
   "89/6c/S892YW2m day 801, 802",
@@ -420,14 +419,6 @@ function urlExists(url, cb) {
     cb(null, /4\d\d/.test(res.statusCode) === false);
   });
 }
-function imageExists(image_url){
-    var http = new XMLHttpRequest();
-    http.open('HEAD', image_url, false);
-    http.send();
-    return http.status;// != 404;
-}
-console.log("TEST IMAGE: " + imageExists(EMPTY_WEATHER_GIF_URL));
-console.log("TEST IMAGE2: " + imageExists(EMPTY_WEATHER_GIF_URL2));
 
 // Encryption and decryption of files
 var enCrypt = function(text_plain) {
