@@ -307,6 +307,7 @@ CHASABET [25] = ["f6/89/4pwI187X","3c/4f/AguL64HL"]; // Z
 // All images2 prefix and gif suffix - source: https://www.mikeafford.com/store/weather-icons/weather-icon-set-re-03/
 // Maps to https://openweathermap.org/weather-conditions
 const EMPTY_WEATHER_GIF_URL = "https://images2.imgbox.com/c0/d5/dTFWiA7h_o.gif";
+const EMPTY_WEATHER_GIF_URL2 = "https://images22.imgbox.com/c0/d5/dTFWiA7h_o.gif";
 var WEATHER_GIFS = [
   "a7/8c/0ZQ6B9PR day 800",
   "89/6c/S892YW2m day 801, 802",
@@ -412,13 +413,21 @@ var HIGH_SCORE = ["CHASbot",0];
 var MOVIEDB_RECORDS_INDEX = -1;
 var MOVIEDB_RECORDS = new Array();
 
-// Valdate a URL
+// Valdate URLs
 function urlExists(url, cb) {
   request({ url: url, method: 'HEAD' }, function(err, res) {
     if (err) return cb(null, false);
     cb(null, /4\d\d/.test(res.statusCode) === false);
   });
 }
+function imageExists(image_url){
+    var http = new XMLHttpRequest();
+    http.open('HEAD', image_url, false);
+    http.send();
+    return http.status;// != 404;
+}
+console.log("TEST IMAGE: " + imageExists(EMPTY_WEATHER_GIF_URL));
+console.log("TEST IMAGE2: " + imageExists(EMPTY_WEATHER_GIF_URL2));
 
 // Encryption and decryption of files
 var enCrypt = function(text_plain) {
@@ -552,7 +561,7 @@ function loadHooks() {
       };
       HOOKS_CUSTOM[HOOKS_CUSTOM.length] = [true,hook_type,poss_hook_name,poss_hook_url,poss_hook_blurb,poss_hook_btn];
       //console.log("DEBUG [loadHooks]> Valid Hook[" + (HOOKS_CUSTOM.length - 1) + "]: " + HOOKS_CUSTOM[HOOKS_CUSTOM.length - 1]);
-      // More compreheinsice URL check
+      // More comprehensive URL check
       urlExists(poss_hook_url, function(err, exists) {
         //console.log("DEBUG [loadHooks]> URL check: " + poss_hook_url + ' = ' + exists);
         if (!exists) {
