@@ -508,6 +508,7 @@ function deCryptContents () {
   //console.log("DEBUG [deCryptContents]> Contact Card: " + CHAS_FR_LIST);
 }
 
+// Load reference data from files and Db
 function loadHooks() {
   // Load in hooks
   let text_block = fs.readFileSync(FILE_HOOKS, "utf-8");
@@ -2157,6 +2158,8 @@ function postFilmTV(postEvent,record_index) {
   };
 }
 
+// Remote search functions - API
+// =============================
 function apiGIPHY(eventGiphy,giphy_tag,giphy_rating,passText) {
   // Ratings are Y; G; PG; PG-13; R
   //console.log("DEBUG [apiGIPHY]> Input: " + giphy_tag + ", " + giphy_rating + ", " + passText);
@@ -2194,8 +2197,6 @@ function apiGIPHY(eventGiphy,giphy_tag,giphy_rating,passText) {
   }); // http.get(url, function(res)
 }
 
-// Remote search functions - API
-// =============================
 function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
   //console.log("DEBUG [apiFilmTV]> Input: " + nameFilmTV + ", " + episode_find + ", " + tv_film + ", " + record_index);
   let epBlurb = ''; // return value
