@@ -66,6 +66,8 @@ var server_ip_address = '127.0.0.1'; // Only for testing via local NGROK.IO
 const KEEP_ALIVE = 25; // mins
 const TIME_TO_WAIT = 120; // mins
 const UTC_BST_GMT = 1; // Currently BST = UTC + 1
+const UTC_DAWN = 7;
+const UTC_DUSK = 21;
 
 // ********************************************************************************************
 // ********************************************************************************************
@@ -1763,7 +1765,7 @@ async function sendViaDialogV2(eventSend) {
           console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'+hr);
           let day_or_night = '';
           let weathericonId = URL_IMG_PREFIX2;
-          if (hr >= 7 && hr <= 21) { day_or_night = 'day' } else { day_or_night = 'night' };
+          if (hr >= UTC_DAWN && hr <= UTC_DUSK) { day_or_night = 'day' } else { day_or_night = 'night' };
           console.log("DEBUG [sendViaDialogV2]> Weather Id" + findId + " [" + day_or_night + "]");
           for (var loop_icons = 0; loop_icons < WEATHER_GIFS.length; loop_icons++) {
             if (WEATHER_GIFS[loop_icons].includes(findId) && WEATHER_GIFS[loop_icons].includes(day_or_night)) {
