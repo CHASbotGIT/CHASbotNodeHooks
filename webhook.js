@@ -1765,11 +1765,11 @@ async function sendViaDialogV2(eventSend) {
           let day_or_night = '';
           let weathericonId = URL_IMG_PREFIX2;
           if (hr >= UTC_DAWN && hr <= UTC_DUSK) { day_or_night = 'day' } else { day_or_night = 'night' };
-          console.log("DEBUG [sendViaDialogV2]> Weather Id" + findId + " [" + day_or_night + "]");
+          //console.log("DEBUG [sendViaDialogV2]> Weather Id" + findId + " [" + day_or_night + "]");
           for (var loop_icons = 0; loop_icons < WEATHER_GIFS.length; loop_icons++) {
             if (WEATHER_GIFS[loop_icons].includes(findId) && WEATHER_GIFS[loop_icons].includes(day_or_night)) {
               weathericonId = weathericonId + WEATHER_GIFS[loop_icons].slice(0, 14) + URL_GIF_SUFFIX;
-              console.log("DEBUG [sendViaDialogV2]> Weather GIF: " + weathericonId);
+              //console.log("DEBUG [sendViaDialogV2]> Weather GIF: " + weathericonId);
               break;
             }; // if
           }; // for
