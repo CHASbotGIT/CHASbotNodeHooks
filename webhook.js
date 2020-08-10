@@ -1740,6 +1740,7 @@ async function sendViaDialogV2(eventSend) {
       let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
       //console.log("DEBUG [sendViaDialogV2]> Weather Hook URL: " + restUrl);
       request(restUrl, function (err, response, body) {
+        console.log("API Request [OW]: " + URL_API_WEATHER + '<SECRET>&q=' + city);
         if (!err && response.statusCode == 200) { // Successful response
           let json = JSON.parse(body);
           //console.log("DEBUG [sendViaDialogV2]> Weather Hook JSON: " + body);
@@ -2157,6 +2158,8 @@ function apiGIPHY(eventGiphy,giphy_tag,giphy_rating,passText) {
   //console.log("DEBUG [apiGIPHY]> URL: " + url);
   http.get(url, function(res) {
     //console.log("DEBUG [apiGIPHY]> GIPHY Response Code: " + res.statusCode);
+    let api_url = replaceAll(url,KEY_API_GIPHY,'<SECRET>');
+    console.log("API Request [GIPHY]: " + api_url);
     let body = "";
     res.on('data', function (chunk) { body += chunk });
     res.on('end', function() {
@@ -2200,6 +2203,8 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
   if (episode_find) { url = URL_MOVIEDB + "tv/1871/season/33?api_key=" + KEY_API_MOVIEDB + "&language=en-US" };
   //console.log("DEBUG [apiFilmTV]> URL: " + url);
   http.get(url, function(res) {
+    let api_url = replaceAll(url,KEY_API_MOVIEDB,'<SECRET>');
+    console.log("API Request [MDB]: " + api_url);
     //console.log("DEBUG [apiFilmTV]> MovieDb Response Code: " + res.statusCode);
     // In the event of API reporting down i.e. 503, then return null results on one pass and exit on other
     if (res.statusCode === 503) {
@@ -2313,6 +2318,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
   //console.log("DEBUG [apiMarvelChar]> Lookup: " + url);
   // Call on the URL to get a response
   http.get(url, function(res) {
+    console.log("API Request [MARVEL]: " + URL_API_MARVEL + marvelWhoShort + "&limit=" + marvelLimit + "&apikey=<SECRET>&ts=" + ts + "&hash=<SECRET>"
     let body = "";
     // Data comes through in chunks
     res.on('data', function (chunk) { body += chunk });
@@ -2380,6 +2386,7 @@ function apiLOTR (eventLOTR,lotrWho){
     }
   }
   var req = http.get(requestOptions, function(res) {
+    console.log("API Request [LOTR]: https://www." + URL_API_LOTR + '/' + url_path);
     let body = "";
     // Data comes through in chunks
     res.on('data', function (chunk) { body += chunk });
@@ -2539,6 +2546,7 @@ function apiLOTR (eventLOTR,lotrWho){
             }
           }
           var req2nd = http.get(requestOptions2nd, function(res) {
+            console.log("API Request [LOTR]: https://www." + URL_API_LOTR + url_path);
             let body2nd = "";
             // Data comes through in chunks
             res.on('data', function (chunk) { body2nd += chunk });
