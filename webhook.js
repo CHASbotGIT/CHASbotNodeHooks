@@ -2318,7 +2318,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
   //console.log("DEBUG [apiMarvelChar]> Lookup: " + url);
   // Call on the URL to get a response
   http.get(url, function(res) {
-    console.log("API Request [MARVEL]: " + URL_API_MARVEL + marvelWhoShort + "&limit=" + marvelLimit + "&apikey=<SECRET>&ts=" + ts + "&hash=<SECRET>"
+    console.log("API Request [MARVEL]: " + URL_API_MARVEL + marvelWhoShort + "&limit=" + marvelLimit + "&apikey=<SECRET>&ts=" + ts + "&hash=<SECRET>");
     let body = "";
     // Data comes through in chunks
     res.on('data', function (chunk) { body += chunk });
