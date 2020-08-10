@@ -65,6 +65,7 @@ var server_ip_address = '127.0.0.1'; // Only for testing via local NGROK.IO
 // Timings
 const KEEP_ALIVE = 25; // mins
 const TIME_TO_WAIT = 120; // mins
+const UTC_BST_GMT = 1; // Currently BST = UTC + 1
 
 // ********************************************************************************************
 // ********************************************************************************************
@@ -856,6 +857,12 @@ function minsConvert(minsIn) {
 function randomBetween(min,max) {
   return Math.floor(Math.random()*(max-min+1)+min);
 }
+function getHoursUK() {
+  let utc_hr = new Date().getHours();
+  utc_hr = utc_hr + UTC_BST_GMT; // Either GMT adds 0, or BST adds 1
+  if (utc_hr == 24) { utc_hr = 0 };
+  return hr
+}
 
 function customGreeting(senderID,greet) {
   //console.log("DEBUG [customGreeting]> " + senderID);
@@ -882,7 +889,7 @@ function customGreeting(senderID,greet) {
   // if ( we know who the person is AND ( either they've not had a name check OR been a while since name check))
   if (IDS_VIABLE && (IDS_TIMESTAMP[id_index] == null||new Date().getTime() - IDS_TIMESTAMP[id_index] > minsConvert(TIME_TO_WAIT))) {
     //console.log("DEBUG [customGreeting]> Interval in mins since last message has been: " + minsConvert(TIME_TO_WAIT));
-    let hr = new Date().getHours();
+    let hr = getHoursUK();
     for (var loop_hour = 0; loop_hour < TIME_OF_DAY.length; loop_hour++) {
       if (hr >= TIME_OF_DAY[loop_hour][0]) {
         build_greeting = TIME_OF_DAY[loop_hour][1];
@@ -1752,7 +1759,7 @@ async function sendViaDialogV2(eventSend) {
           let weatherId = json.weather[0].id;
           // Match the id to the weather icon
           let findId = ' ' + weatherId.toString();
-          let hr = new Date().getHours();
+          let hr = getHoursUK();
           console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'+hr);
           let day_or_night = '';
           let weathericonId = URL_IMG_PREFIX2;
