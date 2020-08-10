@@ -1775,7 +1775,7 @@ async function sendViaDialogV2(eventSend) {
             }; // if
           }; // for
           // Catch missing GIF
-          if (weathericonId == URL_IMG_PREFIX) { weathericonId = EMPTY_WEATHER_GIF_URL };
+          if (weathericonId == URL_IMG_PREFIX2) { weathericonId = EMPTY_WEATHER_GIF_URL };
           console.log("DEBUG [sendViaDialogV2]> Weather GIF URL: " + weathericonId);
           postImage(eventSend,weathericonId,true,hookText);
           return;
