@@ -1753,6 +1753,7 @@ async function sendViaDialogV2(eventSend) {
           // Match the id to the weather icon
           let findId = ' ' + weatherId.toString();
           let hr = new Date().getHours();
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>'+hr);
           let day_or_night = '';
           let weathericonId = URL_IMG_PREFIX2;
           if (hr >= 7 && hr <= 21) { day_or_night = 'day' } else { day_or_night = 'night' };
