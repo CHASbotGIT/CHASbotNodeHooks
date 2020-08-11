@@ -1003,15 +1003,15 @@ CHASbot.post('/webhook', (req, res) => {
            alt_message_type = event.message.attachments[0].type;
            sticker_path = sticker_path + alt_message_type + ". Try just words instead.";
         };
-        // Pick up on stickers - identify degrees of like
+        // Pick up on stickers - identify degrees of like (thumbs up)
         if (event.message && event.message.sticker_id) {
           let sticker_code = event.message.sticker_id;
           alt_message_type = 'sticker';
-          if ( sticker_code == 369239263222822 ) {
+          if ( sticker_code == 369239263222822 ) { // Like
             sticker_path = MSG_INTERCEPTS[1][numRandomBetween(0,MSG_INTERCEPTS[1].length-1)];
-          } else if ( sticker_code == 369239343222814 ) {
+          } else if ( sticker_code == 369239343222814 ) { // Like like
             sticker_path = MSG_INTERCEPTS[2][numRandomBetween(0,MSG_INTERCEPTS[2].length-1)];
-          } else if (sticker_code == 369239383222810 ) {
+          } else if (sticker_code == 369239383222810 ) { // Like like like
             sticker_path = MSG_INTERCEPTS[3][numRandomBetween(0,MSG_INTERCEPTS[3].length-1)];
           } else {
             sticker_path = MSG_INTERCEPTS[4][numRandomBetween(0,MSG_INTERCEPTS[4].length-1)];
@@ -1050,9 +1050,9 @@ CHASbot.post('/webhook', (req, res) => {
           if (analyse_text == '') { // Clean response would otherwise be empty
             empty_input = true;
             if (good_vibe > bad_vibe) {
-              analyse_text = "i'm happy"; // More happy emojis than not
+              analyse_text = "i am ecstatic"; // More happy emojis than not
             } else if (bad_vibe > good_vibe) {
-              analyse_text = "i'm sad"; // More sad emojis than not
+              analyse_text = "cheer me up"; // More sad emojis than not
             } else {
               analyse_text = "help"; // Nothing to go on
             };
