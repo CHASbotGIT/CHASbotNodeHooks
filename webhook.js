@@ -86,7 +86,7 @@ const server = CHASbot.listen(server_port, () => {
 // Keep Heroku alive
 setInterval(function() {
     http.get(URL_CHASBOT);
-}, minsConvert(KEEP_ALIVE));
+}, mnsConvert(KEEP_ALIVE));
 // ********************************************************************************************
 // ********************************************************************************************
 
@@ -240,7 +240,7 @@ var PROPER_NOUNS_DAYS = [
   "Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 var PROPER_NOUNS_NAMES = [
   "Rachel House", "Robin House", "CHAS"];
-// Add any new proper arrays to properNouns()
+// Add any new proper arrays to strProper()
 var TIME_OF_DAY = [
   [22,"Getting late"],[19,"Good evening"],[18,"Time for tea"],[13,"Afternoon"],[12,"Lunch time"],
   [11,"Time for Elevenses"],[8,"Morning"],[7,"Breakfast time"],[6,"Another day another dollar"],
@@ -440,14 +440,14 @@ var deCrypt = function(text_obscure) {
   //console.log("DEBUG [deCrypt]> deciphered: " + dec);
   return dec.toString();
 }
-function enCryptFileContents () {
+function enCryptContents () {
   let text_block = fs.readFileSync(FILE_TO_BE_ENCRYPTED, "utf-8");
   let text_block_split = text_block.split("\n");
   let stream = fs.createWriteStream(FILE_ENCRYPTED, "utf-8");
   stream.once('open', function(fd) {
     let stream_loop = 0;
     for (stream_loop = 0; stream_loop < text_block_split.length; stream_loop++) {
-      //console.log("DEBUG [enCryptFileContents]> " + text_block_split[stream_loop]);
+      //console.log("DEBUG [enCryptContents]> " + text_block_split[stream_loop]);
       if (stream_loop == text_block_split.length - 1 ) {
         stream.write(enCrypt(text_block_split[stream_loop])); // Last line
       } else {
@@ -542,12 +542,12 @@ function loadHooks() {
       let poss_hook_btn = '';
       let hook_type = 'image';
       if (poss_hook.length > 2) {
-        poss_hook_blurb = trimTo(640,poss_hook[2]); // Limit
+        poss_hook_blurb = strTrimTo(640,poss_hook[2]); // Limit
         if (poss_hook_blurb == '') { continue }; // There should be message text
         hook_type = 'image_text';
       };
       if (poss_hook.length > 3) {
-        poss_hook_btn = trimTo(20,poss_hook[3]); // Limit
+        poss_hook_btn = strTrimTo(20,poss_hook[3]); // Limit
         if (poss_hook_btn == '') { continue }; // There should be button text
         hook_type = 'button';
       };
@@ -712,7 +712,7 @@ function highScore(read_write) {
 loadHooks();
 // Load in encrypted information
 // Update Constants FILE_TO_BE_ENCRYPTED (input) and FILE_ENCRYPTED (output)
-//enCryptFileContents(); // Run once to encrypt files
+//enCryptContents(); // Run once to encrypt files
 deCryptContents(); // Normal runtime configuration
 var CHAS_EVENTS_VIABLE = loadCalendar();
 //console.log("DEBUG [postloadCalendar]> Viable? " + CHAS_EVENTS_VIABLE);
@@ -801,7 +801,7 @@ function inPlayID (id_to_find) {
 
 // String and number handling functions
 // ====================================
-function cleanInput(str) {
+function strStandardise(str) {
   let emoticon_up_count = 0;
   for (var i = 0; i < EMOTICON_UP.length; i++) {
     var pos = str.indexOf(EMOTICON_UP[i]);
@@ -809,7 +809,7 @@ function cleanInput(str) {
         ++emoticon_up_count;
         pos = str.indexOf(EMOTICON_UP[i], ++pos);
     }; // Count +ve emoticons
-    str = replaceAll(str, EMOTICON_UP[i], ''); // Then remove them
+    str = strReplaceAll(str, EMOTICON_UP[i], ''); // Then remove them
   };
   let emoticon_down_count = 0;
   for (var i = 0; i < EMOTICON_DOWN.length; i++) {
@@ -818,7 +818,7 @@ function cleanInput(str) {
         ++emoticon_down_count;
         pos = str.indexOf(EMOTICON_DOWN[i], ++pos);
     }; // Count -ve emoticons
-    str = replaceAll(str, EMOTICON_DOWN[i], ''); // Then remove them
+    str = strReplaceAll(str, EMOTICON_DOWN[i], ''); // Then remove them
   };
   // Lowercase
   str = str.toLowerCase();
@@ -828,16 +828,16 @@ function cleanInput(str) {
   let outboundText = str.replace(/\s\s+/g, ' ');
   return [outboundText,emoticon_up_count,emoticon_down_count];
 }
-function fixStutter(str) {
+function strFixStutter(str) {
     return str.replace(/\s(\w+\s)\1/, " $1")
 }
-function escapeRegExp(str) {
+function strEscRegExp(str) {
     return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
 }
-function replaceAll(str, find, replace) {
-    return str.replace(new RegExp(escapeRegExp(find), 'ig'), replace); // ig case insensitve for search
+function strReplaceAll(str, find, replace) {
+    return str.replace(new RegExp(strEscRegExp(find), 'ig'), replace); // ig case insensitve for search
 }
-function properNouns(str) {
+function strProper(str) {
   for (var i = 0; i < PROPER_NOUNS_DAYS.length; i += 1) {
     var regex_dynamic = new RegExp(PROPER_NOUNS_DAYS[i], 'ig');
     str = str.replace(regex_dynamic, PROPER_NOUNS_DAYS[i]);
@@ -852,10 +852,10 @@ function properNouns(str) {
   };
   return str;
 }
-function toTitleCase(str) {
+function strTitleCase(str) {
   return str.replace(/\w\S*/g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
-function firstAlpha(str) {
+function strFirstAlpha(str) {
   for (var i = 0; i < str.length; i += 1) {
     if ((str.charAt(i) >= 'A' && str.charAt(i) <= 'Z') ||
         (str.charAt(i) >= 'a' && str.charAt(i) <= 'z')) {
@@ -864,11 +864,11 @@ function firstAlpha(str) {
   };
   return '';
 }
-function trimTo(trim_length,str) {
+function strTrimTo(trim_length,str) {
   if (str.length > trim_length) {str = str.slice(0,trim_length-1) + "🤐"};
   return str;
 }
-function xLength(str) {
+function strEmojiLength(str) {
   //http://blog.jonnew.com/posts/poo-dot-length-equals-two
   const joiner = "\u{200D}";
   const split = str.split(joiner);
@@ -881,23 +881,62 @@ function xLength(str) {
   //assuming the joiners are used appropriately
   return count / split.length;
 }
-function minsConvert(minsIn) {
-  return minsIn*60*1000;
+function strLottery(size, lowest, highest, ball_or_star) {
+  //console.log("DEBUG [strLottery]> Lottery Generator");
+  // Euro-millions - 5 unique numbers 1-50 + 2 unique numbers 1-12
+  // UK Lottery - 6 unique numbers 1-59
+  // Scottish Lottery - 5 unique numbers 1-49
+  var strLotteryString = '';
+  var numbers = [];
+	for (var i = 0; i < size; i++) {
+		var add = true;
+		var randomNumber = Math.floor(Math.random() * highest) + 1;
+		for(var y = 0; y < highest; y++) {
+			if(numbers[y] == randomNumber) {
+				add = false;
+			};
+		};
+		if (add) {
+			numbers.push(randomNumber);
+      //console.log("DEBUG [strLottery]> Number picked: " + randomNumber);
+		} else {
+			i--;
+		};
+	};
+  // Number sort
+	var highestNumber = 0;
+	for (var m = 0; m < numbers.length; m++) {
+		for (var n = m + 1; n < numbers.length; n++) {
+			if (numbers[n] < numbers[m]) {
+			  highestNumber = numbers[m];
+				numbers[m] = numbers[n];
+				numbers[n] = highestNumber;
+			}; // if
+		}; // for
+	}; // for
+  strLotteryString = '';
+  if (ball_or_star == 'ball') {
+    //console.log("DEBUG [strLottery]> Ball");
+    strLotteryString = strLotteryString + '🔮 ';
+    for (var q = 0; q < numbers.length; q++) {
+      strLotteryString = strLotteryString + numbers[q].toString();
+      if (q != (numbers.length-1)) { strLotteryString = strLotteryString + ', ' };
+    }; // for
+  } else {
+    //console.log("DEBUG [strLottery]> Star");
+    strLotteryString = strLotteryString + '⭐ ';
+    for (var q = 0; q < numbers.length; q++) {
+      strLotteryString = strLotteryString + numbers[q].toString();
+      if (q != (numbers.length-1)) { strLotteryString = strLotteryString + ', ' };
+    }; // for
+  }; // if
+  //console.log("DEBUG [strLottery]> Numbers string: " + strLotteryString);
+  return strLotteryString;
 }
-function randomBetween(min,max) {
-  return Math.floor(Math.random()*(max-min+1)+min);
-}
-function getHoursUK() {
-  let utc_hr = new Date().getHours();
-  utc_hr = utc_hr + UTC_BST_GMT; // Either GMT adds 0, or BST adds 1
-  if (utc_hr == 24) { utc_hr = 0 };
-  return utc_hr;
-}
-
-function customGreeting(senderID,greet) {
-  //console.log("DEBUG [customGreeting]> " + senderID);
+function strGreeting(senderID,greet) {
+  //console.log("DEBUG [strGreeting]> " + senderID);
   let build_greeting = '';
-  let fb_who = FB_UNKNOWN[randomBetween(0,FB_UNKNOWN.length-1)];
+  let fb_who = FB_UNKNOWN[numRandomBetween(0,FB_UNKNOWN.length-1)];
   let fb_who_known = false;
   let match_id = 0;
   let id_index = 0;
@@ -905,11 +944,11 @@ function customGreeting(senderID,greet) {
     for (var find_index = 0; find_index < IDS_TOTAL; find_index++) {
       // 1,3,5 etc.
       match_id = IDS_LIST[find_index * IDS_BLOCK_SIZE + 1];
-      //console.log("DEBUG [customGreeting]> Find match for ID (" + senderID + "): " + match_id);
+      //console.log("DEBUG [strGreeting]> Find match for ID (" + senderID + "): " + match_id);
       if (match_id == senderID) {
         id_index = find_index; // Got our match
         fb_who = IDS_LIST[find_index * IDS_BLOCK_SIZE];
-        //console.log("DEBUG [customGreeting]> Matched to: " + fb_who);
+        //console.log("DEBUG [strGreeting]> Matched to: " + fb_who);
         break;
       }; // if
     }; // for
@@ -917,27 +956,39 @@ function customGreeting(senderID,greet) {
   if (!greet) { return fb_who }; // Return only a name
   // Prime personalised response
   // if ( we know who the person is AND ( either they've not had a name check OR been a while since name check))
-  if (IDS_VIABLE && (IDS_TIMESTAMP[id_index] == null||new Date().getTime() - IDS_TIMESTAMP[id_index] > minsConvert(TIME_TO_WAIT))) {
-    //console.log("DEBUG [customGreeting]> Interval in mins since last message has been: " + minsConvert(TIME_TO_WAIT));
-    let hr = getHoursUK();
+  if (IDS_VIABLE && (IDS_TIMESTAMP[id_index] == null||new Date().getTime() - IDS_TIMESTAMP[id_index] > mnsConvert(TIME_TO_WAIT))) {
+    //console.log("DEBUG [strGreeting]> Interval in mins since last message has been: " + mnsConvert(TIME_TO_WAIT));
+    let hr = hrsGetUK();
     for (var loop_hour = 0; loop_hour < TIME_OF_DAY.length; loop_hour++) {
       if (hr >= TIME_OF_DAY[loop_hour][0]) {
         build_greeting = TIME_OF_DAY[loop_hour][1];
         break;
       }; // if
     }; // for
-    build_greeting = build_greeting + ' ' + fb_who + '. ' + MSG_RANDOM_COMPLIMENT[randomBetween(0,MSG_RANDOM_COMPLIMENT.length-1)] + ' ';
+    build_greeting = build_greeting + ' ' + fb_who + '. ' + MSG_RANDOM_COMPLIMENT[numRandomBetween(0,MSG_RANDOM_COMPLIMENT.length-1)] + ' ';
     // Set the time the ID received a name check
     IDS_TIMESTAMP[id_index] = new Date().getTime();
-    console.log("NAME CHECK: [customGreeting]> " + fb_who + ", ID: " + senderID + " @ " + IDS_TIMESTAMP[id_index]);
+    console.log("NAME CHECK: [strGreeting]> " + fb_who + ", ID: " + senderID + " @ " + IDS_TIMESTAMP[id_index]);
   };
-  //console.log("DEBUG [customGreeting]> Greeting: " + build_greeting);
+  //console.log("DEBUG [strGreeting]> Greeting: " + build_greeting);
   return build_greeting;
+}
+function numRandomBetween(min,max) {
+  return Math.floor(Math.random()*(max-min+1)+min);
+}
+function mnsConvert(minsIn) {
+  return minsIn*60*1000;
+}
+function hrsGetUK() {
+  let utc_hr = new Date().getHours();
+  utc_hr = utc_hr + UTC_BST_GMT; // Either GMT adds 0, or BST adds 1
+  if (utc_hr == 24) { utc_hr = 0 };
+  return utc_hr;
 }
 
 // Sending template functions
 // ==========================
-// Handling all messages in and processing special cases
+// Handling all messages back and processing special cases
 CHASbot.post('/webhook', (req, res) => {
   if (req.body.object === 'page') {
     req.body.entry.forEach((entry) => {
@@ -948,7 +999,7 @@ CHASbot.post('/webhook', (req, res) => {
         let alt_message_type = '';
         // Pick up on non-text messages
         if (event.message && event.message.attachments) {
-           sticker_path = MSG_INTERCEPTS[0][randomBetween(0,MSG_INTERCEPTS[0].length-1)];
+           sticker_path = MSG_INTERCEPTS[0][numRandomBetween(0,MSG_INTERCEPTS[0].length-1)];
            alt_message_type = event.message.attachments[0].type;
            sticker_path = sticker_path + alt_message_type + ". Try just words instead.";
         };
@@ -957,25 +1008,29 @@ CHASbot.post('/webhook', (req, res) => {
           let sticker_code = event.message.sticker_id;
           alt_message_type = 'sticker';
           if ( sticker_code == 369239263222822 ) {
-            sticker_path = MSG_INTERCEPTS[1][randomBetween(0,MSG_INTERCEPTS[1].length-1)];
+            sticker_path = MSG_INTERCEPTS[1][numRandomBetween(0,MSG_INTERCEPTS[1].length-1)];
           } else if ( sticker_code == 369239343222814 ) {
-            sticker_path = MSG_INTERCEPTS[2][randomBetween(0,MSG_INTERCEPTS[2].length-1)];
+            sticker_path = MSG_INTERCEPTS[2][numRandomBetween(0,MSG_INTERCEPTS[2].length-1)];
           } else if (sticker_code == 369239383222810 ) {
-            sticker_path = MSG_INTERCEPTS[3][randomBetween(0,MSG_INTERCEPTS[3].length-1)];
+            sticker_path = MSG_INTERCEPTS[3][numRandomBetween(0,MSG_INTERCEPTS[3].length-1)];
           } else {
-            sticker_path = MSG_INTERCEPTS[4][randomBetween(0,MSG_INTERCEPTS[4].length-1)];
+            sticker_path = MSG_INTERCEPTS[4][numRandomBetween(0,MSG_INTERCEPTS[4].length-1)];
           };
         };
         if (sticker_path != '') {
+
+
           //console.log("DEBUG [postWebhook_route]> Hangman Initiated");
+
+
           console.log("INFO [postWebhook]> Sender: " + sender);
           console.log("INFO [postWebhook]> Request: Non-text");
-          console.log("INFO [postWebhook]> Action: postWebhook.sendTextDirect");
+          console.log("INFO [postWebhook]> Action: postWebhook.deliverTextDirect");
           console.log("INFO [postWebhook]> Response: " + sticker_path);
           if (alt_message_type == 'image') {
             apiGIPHY(event,'robot','G',sticker_path);
           } else {
-            sendTextDirect(event,sticker_path);
+            deliverTextDirect(event,sticker_path);
           };
         };
         if (event.message && event.message.text) {
@@ -987,12 +1042,12 @@ CHASbot.post('/webhook', (req, res) => {
           };
           let hold_that_thought = event.message.text;
           // CLEAN INPUT
-          let cleanResults = cleanInput(event.message.text);
+          let cleanResults = strStandardise(event.message.text);
           let analyse_text = cleanResults[0];
           let good_vibe = cleanResults[1];
           let bad_vibe = cleanResults[2];
           let empty_input = false;
-          if (analyse_text == '') { // Clean response woud otherwise be empty
+          if (analyse_text == '') { // Clean response would otherwise be empty
             empty_input = true;
             if (good_vibe > bad_vibe) {
               analyse_text = "i'm happy"; // More happy emojis than not
@@ -1005,18 +1060,18 @@ CHASbot.post('/webhook', (req, res) => {
           if (!inPlay('survey',sender_index)) { event.message.text = analyse_text };
           //console.log("DEBUG [postWebhook]> Cleaned input: " + cleanResults[0] + ' (Emoji +ve ' + cleanResults[1] + ',-ve ' + cleanResults[2] + ')');
           // Feel the vibe
-          sendThinking(event,'on');
+          deliverThinking(event,'on');
           let vibeText = '';
           if (good_vibe > ((bad_vibe+2)*3)-2) { // Minimum 5 = +ve
-            vibeText = MSG_INTERCEPTS[5][randomBetween(0,MSG_INTERCEPTS[5].length-1)];
+            vibeText = MSG_INTERCEPTS[5][numRandomBetween(0,MSG_INTERCEPTS[5].length-1)];
           } else if (bad_vibe > ((good_vibe+2)*3)-2) { // Minimum 5 = -ve
-            vibeText = MSG_INTERCEPTS[6][randomBetween(0,MSG_INTERCEPTS[6].length-1)];
+            vibeText = MSG_INTERCEPTS[6][numRandomBetween(0,MSG_INTERCEPTS[6].length-1)];
           } else if (good_vibe + bad_vibe > 4 && good_vibe + bad_vibe < 10) { // Minimum 5 = mixed
-            vibeText = MSG_INTERCEPTS[7][randomBetween(0,MSG_INTERCEPTS[7].length-1)];
+            vibeText = MSG_INTERCEPTS[7][numRandomBetween(0,MSG_INTERCEPTS[7].length-1)];
           } else if (good_vibe + bad_vibe > 9) { // Minimum 10 = lots
-            vibeText = MSG_INTERCEPTS[8][randomBetween(0,MSG_INTERCEPTS[8].length-1)];
+            vibeText = MSG_INTERCEPTS[8][numRandomBetween(0,MSG_INTERCEPTS[8].length-1)];
           };
-          if (vibeText != '' && !empty_input) { sendTextDirect(event,vibeText) };
+          if (vibeText != '' && !empty_input) { deliverTextDirect(event,vibeText) };
           // *************************
           // Check for custom triggers
           let position_in_analyse_text = -1;
@@ -1026,7 +1081,7 @@ CHASbot.post('/webhook', (req, res) => {
           let adminMessage = '';
           let routeEvent = event;
           if (position_in_analyse_text > 0 && sender == KEY_ADMIN) {
-            sendThinking(event,'off');
+            deliverThinking(event,'off');
             route_to = hold_that_thought.slice(KEY_ADMIN_TRIGGER.length,KEY_ADMIN_TRIGGER.length+15);
             adminMessage = hold_that_thought;
             adminMessage = adminMessage.slice(KEY_ADMIN_TRIGGER.length+15,adminMessage.length);
@@ -1041,13 +1096,13 @@ CHASbot.post('/webhook', (req, res) => {
           //console.log("DEBUG [postWebhook]> " + TRIGGER_FEELING_LUCKY + " search result: " + position_in_analyse_text);
           let chasbotText = '';
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
-            let cat = randomBetween(0,4); // 0 to 4
-            let ind = randomBetween(1,6); // 1 to 6
+            let cat = numRandomBetween(0,4); // 0 to 4
+            let ind = numRandomBetween(1,6); // 1 to 6
             event.message.text = HELP_PROMPTS[cat][ind];
             analyse_text = event.message.text;
             analyse_text = analyse_text.toLowerCase();
             chasbotText = '*' + event.message.text + '*';
-            sendTextDirect(event,chasbotText); // Send a sudo-request
+            deliverTextDirect(event,chasbotText); // Send a sudo-request
             inPlayPause(sender_index); // Pause all in-play
             // FLOW: Sudo request replace 'feeling lucky'
           };
@@ -1144,8 +1199,8 @@ CHASbot.post('/webhook', (req, res) => {
                 console.log('QUIZ [' + QUIZ_NAME + '],' + sender + ',' + survey_question_number + ',' + event.message.text);
               };
               let check_winner = event.message.text;
-              check_winner = cleanInput(check_winner)[0];
-              let winner = cleanInput(QUIZ[survey_question_number-1])[0];
+              check_winner = strStandardise(check_winner)[0];
+              let winner = strStandardise(QUIZ[survey_question_number-1])[0];
               //console.log("DEBUG [postWebhook]> Check input: " + check_winner + " Against answer: " + winner);
               if (check_winner == winner) {
 		            //console.log("DEBUG [postWebhook]> Won a point");
@@ -1225,7 +1280,7 @@ CHASbot.post('/webhook', (req, res) => {
           if (CHAS_BIOGS_VIABLE && position_in_analyse_text > 0) {
             trigger_path = TRIGGER_HANGMAN;
             if (SENDERS[sender_index][7] == ''||inPlay('hangman',sender_index)) { // New game
-              hangman_word = CHAS_BIOGS[randomBetween(1,CHAS_BIOGS_TOTAL) * CHAS_BIOGS_BLOCK_SIZE - 2];
+              hangman_word = CHAS_BIOGS[numRandomBetween(1,CHAS_BIOGS_TOTAL) * CHAS_BIOGS_BLOCK_SIZE - 2];
               hangman_word = hangman_word.toLowerCase();
               //console.log("DEBUG [postWebhook]> Mystery name: " + hangman_word);
               // swap out spaces for under_scores
@@ -1299,7 +1354,7 @@ CHASbot.post('/webhook', (req, res) => {
             if (string_length > 0) {
               trigger_path = TRIGGER_MARVEL;
               hero_who = analyse_text.slice(starting_point,ending_point);
-              hero_who = toTitleCase(hero_who);
+              hero_who = strTitleCase(hero_who);
               analyse_text = trigger_path; // Clean extra
             };
           };
@@ -1315,7 +1370,7 @@ CHASbot.post('/webhook', (req, res) => {
             if (string_length > 0) {
               trigger_path = TRIGGER_LOTR;
               hero_who = analyse_text.slice(starting_point,ending_point);
-              hero_who = toTitleCase(hero_who);
+              hero_who = strTitleCase(hero_who);
               analyse_text = trigger_path; // Clean extra
             };
           };
@@ -1330,11 +1385,11 @@ CHASbot.post('/webhook', (req, res) => {
             if (position_in_analyse_text > 0 && !one_is_enough && !inPlay('survey',sender_index)) {
               // Found a lottery trigger
               one_is_enough = true; // Single
-              uk_lotto = genLottery(6,1,59,"ball"); // UK
+              uk_lotto = strLottery(6,1,59,"ball"); // UK
               //console.log("DEBUG [postWebhook]> Lottery UK: " + uk_lotto);
-              scot_lotto = genLottery(5,1,49,"ball"); // Scot
+              scot_lotto = strLottery(5,1,49,"ball"); // Scot
               //console.log("DEBUG [postWebhook]> Lottery Scottish: " + scot_lotto);
-              euro_lotto = genLottery(5,1,50,"ball") + ' ' + genLottery(2,1,12,"star"); // Euro
+              euro_lotto = strLottery(5,1,50,"ball") + ' ' + strLottery(2,1,12,"star"); // Euro
               //console.log("DEBUG [postWebhook]> Lottery Scottish: " + euro_lotto);
               trigger_path = TRIGGER_LOTTERY[0];
               search_term = analyse_text.slice(starting_point,ending_point);
@@ -1369,7 +1424,7 @@ CHASbot.post('/webhook', (req, res) => {
             if (string_length > 0) {
               // Strip string to first viable letter
               alpha = analyse_text.slice(starting_point,ending_point);
-              alpha = firstAlpha(alpha);
+              alpha = strFirstAlpha(alpha);
               if (alpha != '') {
                 trigger_path = TRIGGER_CHASABET_1;
                 analyse_text = trigger_path; // Clean extra
@@ -1422,14 +1477,14 @@ CHASbot.post('/webhook', (req, res) => {
           // Pick a response route
           if (trigger_path == KEY_ADMIN_TRIGGER) {
             //console.log("DEBUG [postWebhook_route]> Admin: " + KEY_ADMIN_TRIGGER);
-            sendTextDirect(routeEvent,adminMessage);
+            deliverTextDirect(routeEvent,adminMessage);
           } else if (inPlay('survey',sender_index)) { // Survey first - ignores
             //console.log("DEBUG [postWebhook_route]> Survey");
             // Pause other in_play?
-            sendQuestion_playSurvey(event);
+            deliverQuestion_playSurvey(event);
           } else if (trigger_path == TRIGGER_HELP) {
             //console.log("DEBUG [postWebhook_route]> Help: " + HELP_INDEX);
-            genLottery(6,1,49,'ball');
+            strLottery(6,1,49,'ball');
             console.log("INFO [postWebhook]> Sender: " + sender);
             console.log("INFO [postWebhook]> Request: " + TRIGGER_HELP);
             console.log("INFO [postWebhook]> Action: postWebhook.postImage");
@@ -1446,7 +1501,7 @@ CHASbot.post('/webhook', (req, res) => {
             lookupAlpha(event,alpha);
           } else if (trigger_path == TRIGGER_CHAS_EVENTS && CHAS_EVENTS_VIABLE) {
             //console.log("DEBUG [postWebhook_route]> CHAS event: " + event_name);
-            lookupEntry(event,event_name);
+            lookupEvent(event,event_name);
           } else if (trigger_path == TRIGGER_CHAS_BIOGS && CHAS_BIOGS_VIABLE) {
             //console.log("DEBUG [postWebhook_route]> CHAS bios: " + biogs_name);
             lookupBiogs(event,biogs_name);
@@ -1473,15 +1528,15 @@ CHASbot.post('/webhook', (req, res) => {
             //console.log("DEBUG [postWebhook_route]> Hangman Initiated");
             console.log("INFO [postWebhook]> Sender: " + sender);
             console.log("INFO [postWebhook]> Request: " + TRIGGER_HANGMAN);
-            console.log("INFO [postWebhook]> Action: postWebhook.sendTextDirect");
+            console.log("INFO [postWebhook]> Action: postWebhook.deliverTextDirect");
             console.log("INFO [postWebhook]> Response: Hangman Mystery Name is " + hangman_word);
-            sendTextDirect(event,chasbotText);
+            deliverTextDirect(event,chasbotText);
           } else if (inPlay('hangman',sender_index)) {
             //console.log("DEBUG [postWebhook_route]> Hangman Guess: " + hangman_guess);
             playHangman(event,hangman_guess);
           } else {
             //console.log("DEBUG [postWebhook_route]> No special cases, send via APIAI");
-            sendViaDialogV2(event);
+            bounceViaDialogV2(event);
           }
         }
       });
@@ -1490,9 +1545,9 @@ CHASbot.post('/webhook', (req, res) => {
   }
 });
 
-function sendTemplate(eventSend,messageData,plusText,messageText) {
+function deliverTemplate(eventSend,messageData,plusText,messageText) {
   // messageData set outside of function call
-  sendThinking(eventSend,'off');
+  deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   request({
     uri: URL_CHAT_ENDPOINT,
@@ -1505,18 +1560,18 @@ function sendTemplate(eventSend,messageData,plusText,messageText) {
     }
   }, function (error, response) {
     if (error) {
-        console.log("ERROR [sendTemplate]> Error sending template message: ", error);
+        console.log("ERROR [deliverTemplate]> Error sending template message: ", error);
     } else if (response.body.error) {
-        console.log("ERROR [sendTemplate]> Undefined: ", response.body.error);
+        console.log("ERROR [deliverTemplate]> Undefined: ", response.body.error);
     }
   });
-  if (plusText) { sendTextDirect(eventSend,messageText) };
+  if (plusText) { deliverTextDirect(eventSend,messageText) };
 }
 
-function sendQuestion_playSurvey(eventSend) {
-  //console.log("DEBUG [sendQuestion_playSurvey]> " + SURVEY_NAME + "In Progress");
+function deliverQuestion_playSurvey(eventSend) {
+  //console.log("DEBUG [deliverQuestion_playSurvey]> " + SURVEY_NAME + "In Progress");
   // 0:id_of_sender,1:survey_in_play,4:survey_question
-  sendThinking(eventSend,'off');
+  deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   let custom_id = inPlayID(sender);
   let survey_question_number = SENDERS[custom_id][4];
@@ -1529,7 +1584,7 @@ function sendQuestion_playSurvey(eventSend) {
       qstn = MSG_SURVEY_THANKS;
     } else { // Quiz - Final Score
       if (SENDERS[custom_id][5] > HIGH_SCORE[1]) {
-        let sender_name = customGreeting(sender,false);
+        let sender_name = strGreeting(sender,false);
         qstn = "🏆 You are our new high scorer on " + SENDERS[custom_id][5] + "! Congratulations " + sender_name + ".";
         HIGH_SCORE[1] = SENDERS[custom_id][5];
         HIGH_SCORE[0] = sender_name;
@@ -1539,7 +1594,7 @@ function sendQuestion_playSurvey(eventSend) {
         qstn = "🏆 You are an equal high scorer on " + SENDERS[custom_id][5] + "!";
       } else {
         qstn = "You scored " + SENDERS[custom_id][5] + ", not the top score but everybody wins a prize " +
-               PRIZES[randomBetween(0,PRIZES.length-1)] + ". " + HIGH_SCORE[0] + " leads with " + HIGH_SCORE[1] + ".";
+               PRIZES[numRandomBetween(0,PRIZES.length-1)] + ". " + HIGH_SCORE[0] + " leads with " + HIGH_SCORE[1] + ".";
       };
     };
     inPlayClean('survey', custom_id);
@@ -1550,11 +1605,11 @@ function sendQuestion_playSurvey(eventSend) {
   switch (rspns_items) {
     case 1:
       surveyTemplate = {
-        text: trimTo(640,qstn)};
+        text: strTrimTo(640,qstn)};
       break;
     case 2:
       surveyTemplate = {
-        text: trimTo(640,qstn),
+        text: strTrimTo(640,qstn),
         quick_replies:[
               { content_type:"text",
                 title: SURVEY_QUESTIONS[survey_question_number][1],
@@ -1562,7 +1617,7 @@ function sendQuestion_playSurvey(eventSend) {
       break;
     case 3:
       surveyTemplate = {
-        text: trimTo(640,qstn),
+        text: strTrimTo(640,qstn),
         quick_replies:[
               { content_type:"text",
                 title: SURVEY_QUESTIONS[survey_question_number][1],
@@ -1573,7 +1628,7 @@ function sendQuestion_playSurvey(eventSend) {
       break;
     case 4:
       surveyTemplate = {
-        text: trimTo(640,qstn),
+        text: strTrimTo(640,qstn),
         quick_replies:[
               { content_type:"text",
                 title: SURVEY_QUESTIONS[survey_question_number][1],
@@ -1587,7 +1642,7 @@ function sendQuestion_playSurvey(eventSend) {
       break;
     case 5:
       surveyTemplate = {
-        text: trimTo(640,qstn),
+        text: strTrimTo(640,qstn),
         quick_replies:[
               { content_type:"text",
                 title: SURVEY_QUESTIONS[survey_question_number][1],
@@ -1604,7 +1659,7 @@ function sendQuestion_playSurvey(eventSend) {
       break;
     case 6:
       surveyTemplate = {
-        text: trimTo(640,qstn),
+        text: strTrimTo(640,qstn),
         quick_replies:[
               { content_type:"text",
                 title: SURVEY_QUESTIONS[survey_question_number][1],
@@ -1633,15 +1688,15 @@ function sendQuestion_playSurvey(eventSend) {
     }
   }, function (error, response) {
     if (error) {
-      console.log("ERROR [sendQuestion_playSurvey]> Error sending survey message: ", error);
+      console.log("ERROR [deliverQuestion_playSurvey]> Error sending survey message: ", error);
     } else if (response.body.error) {
-      console.log("ERROR [sendQuestion_playSurvey]> Undefined: ", response.body.error);
+      console.log("ERROR [deliverQuestion_playSurvey]> Undefined: ", response.body.error);
     }
   }); // request
   if (inPlay('survey',custom_id)) { SENDERS[custom_id][4] = survey_question_number + 1 };
 }
 
-function sendThinking(eventThink,on_off) {
+function deliverThinking(eventThink,on_off) {
   let sender = eventThink.sender.id;
   request({
     uri: URL_CHAT_ENDPOINT,
@@ -1654,17 +1709,17 @@ function sendThinking(eventThink,on_off) {
     }
   }, function (error, response) {
     if (error) {
-      console.log("ERROR [sendThinking]> Error sending simple message: ", error);
+      console.log("ERROR [deliverThinking]> Error sending simple message: ", error);
     } else if (response.body.error) {
-      console.log("ERROR [sendThinking]> Undefined: ", response.body.error);
+      console.log("ERROR [deliverThinking]> Undefined: ", response.body.error);
     };
   }); // request
 }
 
-function sendTextDirect(eventSend,outbound_text) {
-  sendThinking(eventSend,'off');
+function deliverTextDirect(eventSend,outbound_text) {
+  deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
-  outbound_text = customGreeting(sender,true) + outbound_text;
+  outbound_text = strGreeting(sender,true) + outbound_text;
   request({
     uri: URL_CHAT_ENDPOINT,
     qs: {access_token: KEY_PAGE_ACCESS},
@@ -1673,23 +1728,23 @@ function sendTextDirect(eventSend,outbound_text) {
       messaging_type: 'RESPONSE',
       recipient: {id: sender},
       message: {
-        text: trimTo(640,outbound_text)
+        text: strTrimTo(640,outbound_text)
       }
     }
   }, function (error, response) {
     if (error) {
-      console.log("ERROR [sendTextDirect]> Error sending simple message: ", error);
+      console.log("ERROR [deliverTextDirect]> Error sending simple message: ", error);
     } else if (response.body.error) {
-      console.log("ERROR [sendTextDirect]> Undefined: ", response.body.error);
+      console.log("ERROR [deliverTextDirect]> Undefined: ", response.body.error);
     };
   }); // request
 }
 
 //https://github.com/kamjony/Chatbot-DialogFlowV2-Messenger-NodeJS
-async function sendViaDialogV2(eventSend) {
+async function bounceViaDialogV2(eventSend) {
   let sender = eventSend.sender.id;
   let dialogFlowInbound = eventSend.message.text;
-  console.log("INFO [sendViaDialogV2]> Request from " + sender + ": " + dialogFlowInbound);
+  console.log("INFO [bounceViaDialogV2]> Request from " + sender + ": " + dialogFlowInbound);
   try {
     const sessionPath = sessionClient.projectAgentSessionPath(
       GOOGLE_PROJECT_ID,
@@ -1706,12 +1761,12 @@ async function sendViaDialogV2(eventSend) {
     }; // const
     // Send dialogflow_request and log result
     const responses = await sessionClient.detectIntent(dialogflow_request);
-    //console.log("DEBUG [sendViaDialogV2]: DialogFlow Intent Detected");
+    //console.log("DEBUG [bounceViaDialogV2]: DialogFlow Intent Detected");
     const result = responses[0].queryResult;
-    console.log("INFO [sendViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
+    console.log("INFO [bounceViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
     //let dialogFlowText = result.fulfillmentText; // [LEGACY]
     let dialogFlowHook = result.action;
-    //console.log("DEBUG [sendViaDialogV2]> dialogFlowHook: " + dialogFlowHook);
+    //console.log("DEBUG [bounceViaDialogV2]> dialogFlowHook: " + dialogFlowHook);
     let dialogFlowText = ''
     if (dialogFlowHook != '') { // If there is an 'action' then there likely to be a hook
       if (dialogFlowHook.includes('smalltalk') || dialogFlowHook.includes('unknown') || dialogFlowHook.includes('Default')){
@@ -1722,54 +1777,54 @@ async function sendViaDialogV2(eventSend) {
       dialogFlowText = result.fulfillmentMessages[0].text.text[0];
     }; // else
     if (result.intent) {
-      console.log("INFO [sendViaDialogV2]> Intent to " + sender + ": " + result.intent.displayName);
+      console.log("INFO [bounceViaDialogV2]> Intent to " + sender + ": " + result.intent.displayName);
     } else {
-      console.log("INFO [sendViaDialogV2]> Intent to " + sender + ": NONE MATCHED");
+      console.log("INFO [bounceViaDialogV2]> Intent to " + sender + ": NONE MATCHED");
     };
     // Check for hard-coded hooks
     let hookText = '';
     if (dialogFlowHook === HOOK_WEATHER) {
       // Set a default weather location
-      //console.log("DEBUG [sendViaDialogV2]> HOOK_WEATHER");
+      //console.log("DEBUG [bounceViaDialogV2]> HOOK_WEATHER");
       let city = 'Edinburgh';
       if (typeof responses[0].queryResult.parameters != 'undefined') {
-        //console.log("DEBUG [sendViaDialogV2]> Weather params are defined");
+        //console.log("DEBUG [bounceViaDialogV2]> Weather params are defined");
         const params = responses[0].queryResult.parameters;
         var paramsObject = Object.values(params);
         let paramsJSON = JSON.stringify(paramsObject[0]);
         let paramsParsed = JSON.parse(paramsJSON);
-        //console.log("DEBUG [sendViaDialogV2]> Weather Parameters: " + paramsJSON);
+        //console.log("DEBUG [bounceViaDialogV2]> Weather Parameters: " + paramsJSON);
         if (paramsJSON.includes("geo-city-gb")) {
           city = paramsParsed["geo-city-gb"]["stringValue"];
-          //console.log("DEBUG [sendViaDialogV2]> Weather geo-city-gb found: " + city);
+          //console.log("DEBUG [bounceViaDialogV2]> Weather geo-city-gb found: " + city);
         } else if (paramsJSON.includes("hospice_places")) {
           city = paramsParsed["hospice_places"]["stringValue"];
-          //console.log("DEBUG [sendViaDialogV2]> Weather hospice_places found: " + city);
+          //console.log("DEBUG [bounceViaDialogV2]> Weather hospice_places found: " + city);
         }; // else if
       }; //if (typeof
       let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
-      //console.log("DEBUG [sendViaDialogV2]> Weather Hook URL: " + restUrl);
+      //console.log("DEBUG [bounceViaDialogV2]> Weather Hook URL: " + restUrl);
       request(restUrl, function (err, response, body) {
         console.log("API Request [OW]: " + URL_API_WEATHER + '<SECRET>&q=' + city);
         if (!err && response.statusCode == 200) { // Successful response
           let json = JSON.parse(body);
-          //console.log("DEBUG [sendViaDialogV2]> Weather Hook JSON: " + body);
+          //console.log("DEBUG [bounceViaDialogV2]> Weather Hook JSON: " + body);
           let tempF = ~~(json.main.temp * 9/5 - 459.67);
           let tempC = ~~(json.main.temp - 273.15);
           hookText = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
-          console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
+          console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
           let weatherId = json.weather[0].id;
           // Match the id to the weather icon
           let findId = ' ' + weatherId.toString();
-          let hr = getHoursUK();
+          let hr = hrsGetUK();
           let day_or_night = '';
           let weathericonId = URL_IMG_PREFIX2;
           if (hr >= UTC_DAWN && hr <= UTC_DUSK) { day_or_night = 'day' } else { day_or_night = 'night' };
-          //console.log("DEBUG [sendViaDialogV2]> Weather Id" + findId + " [" + day_or_night + "]");
+          //console.log("DEBUG [bounceViaDialogV2]> Weather Id" + findId + " [" + day_or_night + "]");
           for (var loop_icons = 0; loop_icons < WEATHER_GIFS.length; loop_icons++) {
             if (WEATHER_GIFS[loop_icons].includes(findId) && WEATHER_GIFS[loop_icons].includes(day_or_night)) {
               weathericonId = weathericonId + WEATHER_GIFS[loop_icons].slice(0, 14) + URL_GIF_SUFFIX;
-              //console.log("DEBUG [sendViaDialogV2]> Weather GIF: " + weathericonId);
+              //console.log("DEBUG [bounceViaDialogV2]> Weather GIF: " + weathericonId);
               break;
             }; // if
           }; // for
@@ -1779,30 +1834,30 @@ async function sendViaDialogV2(eventSend) {
           return;
         } else {
           hookText = MSG_NO_WEATHER;
-          console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
+          console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
           postImage(eventSend,EMPTY_WEATHER_GIF_URL,true,hookText);
           return;
         } //else
       }); // } function ) request
     } else if (dialogFlowHook === HOOK_PICKCARD) {
-      //console.log("DEBUG [sendViaDialogV2]> HOOK_PICKCARD");
-      CARD_PICK = CARD_DECK[randomBetween(0,CARD_DECK.length-1)];
-      hookText = CARD_PROMPTS[randomBetween(0,CARD_PROMPTS.length-1)] + CARD_PICK;
-      console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Pick a Card Hook: " + hookText);
-      sendTextDirect(eventSend,hookText);
+      //console.log("DEBUG [bounceViaDialogV2]> HOOK_PICKCARD");
+      CARD_PICK = CARD_DECK[numRandomBetween(0,CARD_DECK.length-1)];
+      hookText = CARD_PROMPTS[numRandomBetween(0,CARD_PROMPTS.length-1)] + CARD_PICK;
+      console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Pick a Card Hook: " + hookText);
+      deliverTextDirect(eventSend,hookText);
       return;
     } else if (dialogFlowHook === HOOK_FUNDRAISING) {
-      //console.log("DEBUG [sendViaDialogV2]> HOOK_FUNDRAISING");
+      //console.log("DEBUG [bounceViaDialogV2]> HOOK_FUNDRAISING");
       hookText = CHAS_FR_LIST;
-      console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Fundraising Hook: " + hookText);
-      sendTextDirect(eventSend,hookText);
+      console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Fundraising Hook: " + hookText);
+      deliverTextDirect(eventSend,hookText);
       return;
     }; // else if (dialogFlowHook
     // Check for custom hooks
     if (HOOKS_CUSTOM.length > 0) {
       for (var i = 0; i < HOOKS_CUSTOM.length; i++) {
         if (HOOKS_CUSTOM[i][0] && dialogFlowHook == HOOKS_CUSTOM[i][2]) { // Found custom
-          console.log("INFO [sendViaDialogV2]> Response to " + sender + " via Custom Hook: " + HOOKS_CUSTOM[i][2] + " (" + HOOKS_CUSTOM[i][1] + ")");
+          console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Custom Hook: " + HOOKS_CUSTOM[i][2] + " (" + HOOKS_CUSTOM[i][1] + ")");
           if (HOOKS_CUSTOM[i][1] == 'image') {
             postImage(eventSend,HOOKS_CUSTOM[i][3],false,'');
             return;
@@ -1819,21 +1874,21 @@ async function sendViaDialogV2(eventSend) {
     // No hooks found - Note that weather request may still be in-flight - it will catch its own errors
     if (dialogFlowHook != HOOK_WEATHER) {
       if (dialogFlowText == '') {dialogFlowText = MSG_NO_HOOK}; // Catch empty dialogflow responses
-      console.log("INFO [sendViaDialogV2]> Response to " + sender + " scripted via dialogflow NLP: " + dialogFlowText);
-      sendTextDirect(eventSend,dialogFlowText);
+      console.log("INFO [bounceViaDialogV2]> Response to " + sender + " scripted via dialogflow NLP: " + dialogFlowText);
+      deliverTextDirect(eventSend,dialogFlowText);
       // Look out for unknown response and cc. admin
       if (result.action == 'input.unknown'||result.action.slice(0,21)=='DefaultFallbackIntent') {
-        let loopbackText = sender + ">>" + customGreeting(sender,false) + ">>" + result.queryText;
-        console.log("ADMIN [sendViaDialogV2]> Feedback: " + loopbackText);
+        let loopbackText = sender + ">>" + strGreeting(sender,false) + ">>" + result.queryText;
+        console.log("ADMIN [bounceViaDialogV2]> Feedback: " + loopbackText);
         let eventLoopback = eventSend;
         eventLoopback.sender.id = KEY_ADMIN;
-        sendTextDirect(eventLoopback,loopbackText);
+        deliverTextDirect(eventLoopback,loopbackText);
       }; //if (result.action
     }; // if (dialogFlowHook
 } catch (e) { // cattch from try - undefined error from async await
-    sendTextDirect(eventSend,MSG_NO_HOOK);
-    console.log("INFO [sendViaDialogV2]> Catch response to " + sender + " via dialogflow NLP: " + MSG_NO_HOOK)
-    console.log("ERROR [sendViaDialogV2]> " + e);
+    deliverTextDirect(eventSend,MSG_NO_HOOK);
+    console.log("INFO [bounceViaDialogV2]> Catch response to " + sender + " via dialogflow NLP: " + MSG_NO_HOOK)
+    console.log("ERROR [bounceViaDialogV2]> " + e);
   } // catch end
 } // function
 
@@ -1849,9 +1904,9 @@ function postImage(postEvent,image_url,plusText,passText) {
     } // attachment
   }; // template
   if (plusText) {
-    sendTemplate(postEvent,imgTemplate,true,passText);
+    deliverTemplate(postEvent,imgTemplate,true,passText);
   } else {
-    sendTemplate(postEvent,imgTemplate,false,'');
+    deliverTemplate(postEvent,imgTemplate,false,'');
   };
 }
 
@@ -1871,7 +1926,7 @@ function postLinkButton(postEvent,link_url,reponse_msg,btn_msg) {
       } // payload
     } // attachment
   }; // template
-  sendTemplate(postEvent,linkTemplate,false,'');
+  deliverTemplate(postEvent,linkTemplate,false,'');
 }
 
 function postMarvel(postEvent,success_result,hero_array) {
@@ -1881,7 +1936,7 @@ function postMarvel(postEvent,success_result,hero_array) {
   let marvelText = '';
   // hero_array = [marvelWho,marvelNote,marvelThumb,marvelURL];
   console.log("INFO [postMarvel]> Sender: " + sender);
-  console.log("INFO [postMarvel]> Request: " + TRIGGER_MARVEL + " " + toTitleCase(hero_array[0]));
+  console.log("INFO [postMarvel]> Request: " + TRIGGER_MARVEL + " " + strTitleCase(hero_array[0]));
   console.log("INFO [postMarvel]> Action: apiMarvelChar.postMarvel");
   if (success_result) {
     console.log("INFO [postMarvel]> Reponse: Successful");
@@ -1892,7 +1947,7 @@ function postMarvel(postEvent,success_result,hero_array) {
           template_type: "generic",
           elements: [
             {
-            title: toTitleCase(hero_array[0]),
+            title: strTitleCase(hero_array[0]),
             image_url: hero_array[2],
             default_action: {
               type: "web_url",
@@ -1904,12 +1959,12 @@ function postMarvel(postEvent,success_result,hero_array) {
         } // payload
       } // attachment
     }; // template
-    marvelText = hero_array[1]; // Required within sendTextDirect
-    sendTemplate(postEvent,marvelTemplate,true,marvelText);
+    marvelText = hero_array[1]; // Required within deliverTextDirect
+    deliverTemplate(postEvent,marvelTemplate,true,marvelText);
   } else {
     console.log("INFO [postMarvel]> Reponse: Unuccessful");
-    marvelText = MSG_HERO_OOPS[randomBetween(0,MSG_HERO_OOPS.length-1)] + ' try something instead of ' + toTitleCase(hero_array[0]) + '?'; // Required within sendTextDirect
-    sendTextDirect(postEvent,marvelText);
+    marvelText = MSG_HERO_OOPS[numRandomBetween(0,MSG_HERO_OOPS.length-1)] + ' try something instead of ' + strTitleCase(hero_array[0]) + '?'; // Required within deliverTextDirect
+    deliverTextDirect(postEvent,marvelText);
   };
 }
 
@@ -1920,7 +1975,7 @@ function postEvents(postEvent,success_result,event_index,event_in) {
   let eventsTemplate = '';
   console.log("INFO [postEvents]> Sender: " + sender);
   console.log("INFO [postEvents]> Request: " + TRIGGER_CHAS_EVENTS + " " + event_in);
-  console.log("INFO [postEvents]> Action: lookupEntry.postEvents");
+  console.log("INFO [postEvents]> Action: lookupEvent.postEvents");
   if (success_result) {
     console.log("INFO [postEvents]> Reponse: Successful");
     let event_name = CHAS_EVENTS_CALENDAR[event_index + 1];
@@ -1945,14 +2000,14 @@ function postEvents(postEvent,success_result,event_index,event_in) {
         } // payload
       } // attachment
     }; // template
-    eventsText = event_detail; // Required within sendTextDirect
-    sendTemplate(postEvent,eventsTemplate,true,eventsText);
+    eventsText = event_detail; // Required within deliverTextDirect
+    deliverTemplate(postEvent,eventsTemplate,true,eventsText);
   } else {
     console.log("INFO [postEvents]> Reponse: Unsuccessful");
-    eventsText = MSG_EVENTS_OOPS[CHAS_EVENTS_OOPS_INDEX] + ' try something instead of ' + toTitleCase(event_in) + '?'; // Required within sendTextDirect
+    eventsText = MSG_EVENTS_OOPS[CHAS_EVENTS_OOPS_INDEX] + ' try something instead of ' + strTitleCase(event_in) + '?'; // Required within deliverTextDirect
     CHAS_EVENTS_OOPS_INDEX++;
     if (CHAS_EVENTS_OOPS_INDEX == MSG_EVENTS_OOPS.length) {CHAS_EVENTS_OOPS_INDEX = 0};
-    sendTextDirect(postEvent,eventsText);
+    deliverTextDirect(postEvent,eventsText);
   };
 }
 
@@ -1967,10 +2022,10 @@ function postBiogs(postEvent,success_result,biogs_index,biogs_name) {
     console.log("INFO [postBiogs]> Reponse: Successful");
     let biogsText = CHAS_BIOGS[biogs_index + 1];
     //console.log("DEBUG [postBiogs]> Result: " + CHAS_BIOGS[biogs_index + 1]);
-    sendTextDirect(postEvent,biogsText);
+    deliverTextDirect(postEvent,biogsText);
   } else {
     console.log("INFO [postBiogs]> Reponse: Unsuccessful");
-    sendViaDialogV2(postEvent);
+    bounceViaDialogV2(postEvent);
   };
 }
 
@@ -1979,7 +2034,7 @@ function postLottery(postEvent,lotto_uk,lotto_euro,lotto_scot) {
   let sender = postEvent.sender.id;
   console.log("INFO [postLottery]> Sender: " + sender);
   console.log("INFO [postLottery]> Request: UK " + lotto_uk + ", Euro "+ lotto_euro + ", Scot " + lotto_scot);
-  console.log("INFO [postLottery]> Action: postSearch.sendTemplate");
+  console.log("INFO [postLottery]> Action: postSearch.deliverTemplate");
   let carouselTemplate = {
     attachment: {
       type: "template",
@@ -2017,7 +2072,7 @@ function postLottery(postEvent,lotto_uk,lotto_euro,lotto_scot) {
     }
   };
   console.log("INFO [postLottery]> Reponse: Lottery Carousel");
-  sendTemplate(postEvent,carouselTemplate,false,'');
+  deliverTemplate(postEvent,carouselTemplate,false,'');
 }
 
 function postSearch(postEvent,search_method,search_term) {
@@ -2025,7 +2080,7 @@ function postSearch(postEvent,search_method,search_term) {
   let sender = postEvent.sender.id;
   console.log("INFO [postSearch]> Sender: " + sender);
   console.log("INFO [postSearch]> Request: " + search_method + ' ' + search_term);
-  console.log("INFO [postSearch]> Action: postSearch.sendTemplate");
+  console.log("INFO [postSearch]> Action: postSearch.deliverTemplate");
   let search_title = '';
   let search_image_url = '';
   let search_url = '';
@@ -2099,10 +2154,10 @@ function postSearch(postEvent,search_method,search_term) {
   };
   if (search_method == "search") {
     console.log("INFO [postSearch]> Reponse: Search Carousel");
-    sendTemplate(postEvent,carouselTemplate,false,'');
+    deliverTemplate(postEvent,carouselTemplate,false,'');
   } else {
     console.log("INFO [postSearch]> Reponse: Simple Search");
-    sendTemplate(postEvent,searchTemplate,false,'');
+    deliverTemplate(postEvent,searchTemplate,false,'');
   };
 }
 
@@ -2114,45 +2169,45 @@ function postFilmTV(postEvent,record_index) {
     MOVIEDB_RECORDS[record_index][7] = true;
     if (MOVIEDB_RECORDS[record_index][1] == 'No TV result' && MOVIEDB_RECORDS[record_index][4] == 'No film result') {
       // No result
-      sendViaDialogV2(postEvent);
+      bounceViaDialogV2(postEvent);
     } else if (MOVIEDB_RECORDS[record_index][1] != 'No TV result' && MOVIEDB_RECORDS[record_index][4] == 'No film result') {
       // TV only
       console.log("INFO [postFilmTV]> Sender: " + sender);
       console.log("INFO [postFilmTV]> Request: MovieDb");
-      console.log("INFO [postFilmTV]> Action: postFilmTV.sendTextDirect");
+      console.log("INFO [postFilmTV]> Action: postFilmTV.deliverTextDirect");
       filmText = "📺 " + MOVIEDB_RECORDS[record_index][1];
       console.log("INFO [postFilmTV]> Reponse: " + filmText);
-      sendTextDirect(postEvent,filmText);
+      deliverTextDirect(postEvent,filmText);
     } else if (MOVIEDB_RECORDS[record_index][1] == 'No TV result' && MOVIEDB_RECORDS[record_index][4] != 'No film result') {
       // Film only
       console.log("INFO [postFilmTV]> Sender: " + sender);
       console.log("INFO [postFilmTV]> Request: MovieDb");
-      console.log("INFO [postFilmTV]> Action: postFilmTV.sendTextDirect");
+      console.log("INFO [postFilmTV]> Action: postFilmTV.deliverTextDirect");
       filmText = "📽️ " + MOVIEDB_RECORDS[record_index][4];
       console.log("INFO [postFilmTV]> Reponse: " + filmText);
-      sendTextDirect(postEvent,filmText);
+      deliverTextDirect(postEvent,filmText);
     } else {
       // Both
       console.log("INFO [postFilmTV]> Sender: " + sender);
       console.log("INFO [postFilmTV]> Request: MovieDb");
-      console.log("INFO [postFilmTV]> Action: postFilmTV.sendTextDirect");
+      console.log("INFO [postFilmTV]> Action: postFilmTV.deliverTextDirect");
       if (MOVIEDB_RECORDS[record_index][2] > MOVIEDB_RECORDS[record_index][5]) {
         filmText = "📺 " + MOVIEDB_RECORDS[record_index][1];
         console.log("INFO [postFilmTV]> Reponse: " + filmText);
-        sendTextDirect(postEvent,filmText);
+        deliverTextDirect(postEvent,filmText);
       } else if (MOVIEDB_RECORDS[record_index][2] < MOVIEDB_RECORDS[record_index][5]) {
         filmText = "📽️ " + MOVIEDB_RECORDS[record_index][4];
         console.log("INFO [postFilmTV]> Reponse: " + filmText);
-        sendTextDirect(postEvent,filmText);
+        deliverTextDirect(postEvent,filmText);
       } else {
-        let pick_one = Math.floor(randomBetween(0,1));
+        let pick_one = Math.floor(numRandomBetween(0,1));
         if (pick_one == 0) {
           filmText = "🎞️ " + MOVIEDB_RECORDS[record_index][1];
         } else {
           filmText = "🎞️ " + MOVIEDB_RECORDS[record_index][4];
         };
         console.log("INFO [postFilmTV]> Reponse: " + filmText);
-        sendTextDirect(postEvent,filmText);
+        deliverTextDirect(postEvent,filmText);
       };
     };
   };
@@ -2170,7 +2225,7 @@ function apiGIPHY(eventGiphy,giphy_tag,giphy_rating,passText) {
   //console.log("DEBUG [apiGIPHY]> URL: " + url);
   http.get(url, function(res) {
     //console.log("DEBUG [apiGIPHY]> GIPHY Response Code: " + res.statusCode);
-    let api_url = replaceAll(url,KEY_API_GIPHY,'<SECRET>');
+    let api_url = strReplaceAll(url,KEY_API_GIPHY,'<SECRET>');
     console.log("API Request [GIPHY]: " + api_url);
     let body = "";
     res.on('data', function (chunk) { body += chunk });
@@ -2185,12 +2240,12 @@ function apiGIPHY(eventGiphy,giphy_tag,giphy_rating,passText) {
           return;
         } else {
           console.log("ERROR [apiGIPHY]> No Results");
-          sendTextDirect(eventGiphy,passText)
+          deliverTextDirect(eventGiphy,passText)
           return;
         };
       } else {
         console.log("ERROR [apiGIPHY]> Response Error");
-        sendTextDirect(eventGiphy,passText)
+        deliverTextDirect(eventGiphy,passText)
         return;
       }; // if (res.statusCode === 200)
     }); // res.on('end', function()
@@ -2213,7 +2268,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
   if (episode_find) { url = URL_API_MOVIEDB + "tv/1871/season/33?api_key=" + KEY_API_MOVIEDB + "&language=en-US" };
   //console.log("DEBUG [apiFilmTV]> URL: " + url);
   http.get(url, function(res) {
-    let api_url = replaceAll(url,KEY_API_MOVIEDB,'<SECRET>');
+    let api_url = strReplaceAll(url,KEY_API_MOVIEDB,'<SECRET>');
     console.log("API Request [MDB]: " + api_url);
     //console.log("DEBUG [apiFilmTV]> MovieDb Response Code: " + res.statusCode);
     // In the event of API reporting down i.e. 503, then return null results on one pass and exit on other
@@ -2338,7 +2393,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
       //console.log("DEBUG [apiMarvelChar]> Character JSON: " + JSON.stringify(characterData));
       if (characterData.code === 200) { // Successful response from Marvel
         if (characterData['data'].count == 0) { // A successful response doesn't mean there was a match
-          //console.log("DEBUG [apiMarvelChar]> Valid URL but no results for " + toTitleCase(marvelWho));
+          //console.log("DEBUG [apiMarvelChar]> Valid URL but no results for " + strTitleCase(marvelWho));
           marvelPost = [marvelWho,marvelNote,marvelThumb,marvelURL];
           postMarvel(eventMarvel,false,marvelPost);
           return;
@@ -2437,7 +2492,7 @@ function apiLOTR (eventLOTR,lotrWho){
           let clean_up_text1 = '';
           let clean_up_text2 = '';
           let various_trap = false;
-          lotrBlurb = "This is the best match I can find for " + toTitleCase(lotrWho) + ". ";
+          lotrBlurb = "This is the best match I can find for " + strTitleCase(lotrWho) + ". ";
           //console.log("DEBUG [apiLOTR]> [0] Gender: " + characterDataList[got_a_live_one].gender);
           if (characterDataList[got_a_live_one].gender == 'Male') {
             lotrBlurb = lotrBlurb + "He is ";
@@ -2534,17 +2589,17 @@ function apiLOTR (eventLOTR,lotrWho){
             lotrBlurb = lotrBlurb + " I can also tell you they were born " + clean_up_text1 + " and finished their adventure " + clean_up_text2 + ". 😃 Check out the Wiki.";
           };
           //console.log("DEBUG [apiLOTR]> [" + extent_unknown + "] Before clean-up: " + lotrBlurb);
-          lotrBlurb = fixStutter(lotrBlurb); // i.e. doubled words
+          lotrBlurb = strFixStutter(lotrBlurb); // i.e. doubled words
           // FA First Age, SA Second Age, TA Third Age, FO Fourth Age
-          lotrBlurb = replaceAll(lotrBlurb,' FA ', ' First Age ');
-          lotrBlurb = replaceAll(lotrBlurb,' SA ', ' Second Age ');
-          lotrBlurb = replaceAll(lotrBlurb,' TA ', ' Third Age ');
-          lotrBlurb = replaceAll(lotrBlurb,' FO ', ' Fourth Age ');
-          lotrBlurb = replaceAll(lotrBlurb,' YT ', ' Years of the Trees ');
-          lotrBlurb = replaceAll(lotrBlurb,' YS ', ' Years of the Sun ');
-          lotrBlurb = replaceAll(lotrBlurb,' YL ', ' Years of the Lamps ');
-          lotrBlurb = replaceAll(lotrBlurb,' VY ', ' Valian Years ');
-          lotrBlurb = properNouns(lotrBlurb); // Tidy proper pronouns
+          lotrBlurb = strReplaceAll(lotrBlurb,' FA ', ' First Age ');
+          lotrBlurb = strReplaceAll(lotrBlurb,' SA ', ' Second Age ');
+          lotrBlurb = strReplaceAll(lotrBlurb,' TA ', ' Third Age ');
+          lotrBlurb = strReplaceAll(lotrBlurb,' FO ', ' Fourth Age ');
+          lotrBlurb = strReplaceAll(lotrBlurb,' YT ', ' Years of the Trees ');
+          lotrBlurb = strReplaceAll(lotrBlurb,' YS ', ' Years of the Sun ');
+          lotrBlurb = strReplaceAll(lotrBlurb,' YL ', ' Years of the Lamps ');
+          lotrBlurb = strReplaceAll(lotrBlurb,' VY ', ' Valian Years ');
+          lotrBlurb = strProper(lotrBlurb); // Tidy proper pronouns
           let movie_quote = '';
           url_path = '/v1/character/' + characterDataList[got_a_live_one]._id + "/quote"
           //console.log("DEBUG [apiLOTR]> Quotes URL: " + URL_API_LOTR + url_path);
@@ -2571,7 +2626,7 @@ function apiLOTR (eventLOTR,lotrWho){
                 let quoteListCount = quoteList.length;
                 //console.log("DEBUG [apiLOTR]> Quotes Retrieved No.: " + quoteListCount);
                 if (quoteListCount > 0) {
-                  let quotePick = randomBetween(0,quoteListCount-1)
+                  let quotePick = numRandomBetween(0,quoteListCount-1)
                   //console.log("DEBUG [apiLOTR]> Quote Picked: " + quotePick);
                   for (var loop_films = 0; loop_films < LOTR_MOVIES.length; loop_films++) {
                     if (LOTR_MOVIES[loop_films].includes(quoteList[quotePick].movie)) {
@@ -2587,7 +2642,7 @@ function apiLOTR (eventLOTR,lotrWho){
                     var regex_punctuation = new RegExp("[?!;:.,]", 'g');
                     quote_placeholder = quote_placeholder.replace(regex_punctuation,"$& "); // add minimal space after punctuation
                     //console.log("DEBUG [apiLOTR]> Quote add minimal spaces after punctuation: " + quote_placeholder);
-                    quote_placeholder = replaceAll(quote_placeholder,' , ','');
+                    quote_placeholder = strReplaceAll(quote_placeholder,' , ','');
                     //console.log("DEBUG [apiLOTR]> Quote extra commas removed: " + quote_placeholder);
                     quote_placeholder = quote_placeholder.replace(/\s+(\W)/g, "$1"); // pre-punctuation spaces
                     //console.log("DEBUG [apiLOTR]> Quote spaces pre-punctuation removed: " + quote_placeholder);
@@ -2600,7 +2655,7 @@ function apiLOTR (eventLOTR,lotrWho){
                 }; // if (quoteListCount
                 //console.log("DEBUG [apiLOTR]> Full Quote: " + movie_quote);
                 lotrBlurb = lotrBlurb + movie_quote;
-                lotrBlurb = trimTo(640,lotrBlurb); // Make sure the message isn't over-long
+                lotrBlurb = strTrimTo(640,lotrBlurb); // Make sure the message isn't over-long
                 //console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
                 console.log("INFO [apiLOTR]> Action: apiLOTR.postLinkButton");
                 console.log("INFO [apiLOTR]> Reponse: Successful");
@@ -2611,7 +2666,7 @@ function apiLOTR (eventLOTR,lotrWho){
           }); // http.get
           req2nd.on('error', function(e) { // Catches failures to connect to the API
             console.log("ERROR [apiLOTR]> Error getting to API (for quote): " + e);
-            lotrBlurb = trimTo(640,lotrBlurb); // Make sure the message isn't over-long
+            lotrBlurb = strTrimTo(640,lotrBlurb); // Make sure the message isn't over-long
             //console.log("DEBUG [apiLOTR]> Final blurb is: " + lotrBlurb);
             console.log("INFO [apiLOTR]> Action: apiLOTR.postLinkButton");
             console.log("INFO [apiLOTR]> Reponse: Successful");
@@ -2621,29 +2676,29 @@ function apiLOTR (eventLOTR,lotrWho){
         } else {
           // Could not find a match... though not possible
           console.log("ERROR [apiLOTR]> No Luck");
-          console.log("INFO [apiLOTR]> Action: apiLOTR.sendTextDirect");
+          console.log("INFO [apiLOTR]> Action: apiLOTR.deliverTextDirect");
           console.log("INFO [apiLOTR]> Reponse: Unuccessful");
-          lotrBlurb = MSG_LOTR_OOPS[randomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + toTitleCase(lotrWho) + '?'; // Required within sendTextDirect
-          sendTextDirect(eventLOTR,lotrBlurb);
+          lotrBlurb = MSG_LOTR_OOPS[numRandomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + strTitleCase(lotrWho) + '?'; // Required within deliverTextDirect
+          deliverTextDirect(eventLOTR,lotrBlurb);
           return;
         };
       } else {
         // Could be status code 404 or some other response i.e. valid block BUT not results
         console.log("ERROR [apiLOTR]> Error getting results e.g. 404");
-        console.log("INFO [apiLOTR]> Action: apiLOTR.sendTextDirect");
+        console.log("INFO [apiLOTR]> Action: apiLOTR.deliverTextDirect");
         console.log("INFO [apiLOTR]> Reponse: Unsuccessful");
-        lotrBlurb = MSG_LOTR_OOPS[randomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + toTitleCase(lotrWho) + '?'; // Required within sendTextDirect
-        sendTextDirect(eventLOTR,lotrBlurb);
+        lotrBlurb = MSG_LOTR_OOPS[numRandomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + strTitleCase(lotrWho) + '?'; // Required within deliverTextDirect
+        deliverTextDirect(eventLOTR,lotrBlurb);
         return;
       };
     }); // res.on('end'
   }); // http.get
   req.on('error', function(e) { // Catches failures to connect to the API
     console.log("ERROR [apiLOTR]> Error getting to API: " + e);
-    console.log("INFO [apiLOTR]> Action: apiLOTR.sendTextDirect");
+    console.log("INFO [apiLOTR]> Action: apiLOTR.deliverTextDirect");
     console.log("INFO [apiLOTR]> Reponse: Unsuccessful");
-    lotrBlurb = MSG_LOTR_OOPS[randomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + toTitleCase(lotrWho) + '?'; // Required within sendTextDirect
-    sendTextDirect(eventLOTR,lotrBlurb);
+    lotrBlurb = MSG_LOTR_OOPS[numRandomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + strTitleCase(lotrWho) + '?'; // Required within deliverTextDirect
+    deliverTextDirect(eventLOTR,lotrBlurb);
     return;
   }); // req.on('error'
 }
@@ -2668,8 +2723,8 @@ function lookupAlpha(eventAlpha,letterTile) {
   postImage(eventAlpha,chasabet_url,false,'');
 }
 
-function lookupEntry(eventEntry,eventName) {
-  //console.log("DEBUG [lookupEntry]> Input: " + eventName);
+function lookupEvent(eventEntry,eventName) {
+  //console.log("DEBUG [lookupEvent]> Input: " + eventName);
   let event_index = -1;
   let eventIn = eventName;
   // Take the input provded by the user...
@@ -2690,11 +2745,11 @@ function lookupEntry(eventEntry,eventName) {
   // Remove spaces just to check the final length of the alpha content
   eventName = eventName.replace(/\s/g, '');
   let stripped_sentence_length = eventName.length;
-  //console.log("DEBUG [lookupEntry]> Cleaned message is: " + compare_to_string);
-  //console.log("DEBUG [lookupEntry]> Length: " + stripped_sentence_length);
+  //console.log("DEBUG [lookupEvent]> Cleaned message is: " + compare_to_string);
+  //console.log("DEBUG [lookupEvent]> Length: " + stripped_sentence_length);
   let error_caught = false; // Gets changed to true, if things go iffy before the end
   if (stripped_sentence_length == 0) {
-    //console.log("DEBUG [lookupEntry]> There is nothing left to compare");
+    //console.log("DEBUG [lookupEvent]> There is nothing left to compare");
     error_caught = true;
   };
   // Variables
@@ -2706,12 +2761,12 @@ function lookupEntry(eventEntry,eventName) {
   let event_loop = 0;
   let keyword_loop = 0;
   // Here we go looping through each set of keywords
-  //console.log("DEBUG [lookupEntry]> Total events: " + CHAS_EVENTS_TOTAL);
+  //console.log("DEBUG [lookupEvent]> Total events: " + CHAS_EVENTS_TOTAL);
   for (event_loop = 0; event_loop < CHAS_EVENTS_TOTAL; event_loop++) {
     // Break up the keywords into an array of individual words
     let sentence_split = CHAS_EVENTS_CALENDAR[event_loop * CHAS_EVENTS_BLOCK_SIZE].split(' ');
     let sentence_length = sentence_split.length;
-    //console.log("DEBUG [lookupEntry]> Number of words: " + sentence_length);
+    //console.log("DEBUG [lookupEvent]> Number of words: " + sentence_length);
     // If there are no keywords at all, the skip the rest of this iteration
     if (sentence_length == 0) {continue};
     // Reset variables for the inner loop
@@ -2729,7 +2784,7 @@ function lookupEntry(eventEntry,eventName) {
       if (!((next_stripped_word == 'the') || (next_stripped_word == 'in') ||
             (next_stripped_word == 'at') || (next_stripped_word == 'on'))) {
         regex_builder = regex_builder + REGEX_START + next_stripped_word + REGEX_MIDDLE;
-        //console.log("DEBUG [lookupEntry]> Next word: " + next_stripped_word);
+        //console.log("DEBUG [lookupEvent]> Next word: " + next_stripped_word);
         stripped_message_count++;
       };
     };
@@ -2737,13 +2792,13 @@ function lookupEntry(eventEntry,eventName) {
     if (stripped_message_count == 0) {continue};
     // Complete the search terms regular expression
     regex_builder = regex_builder + REGEX_END;
-    //console.log("DEBUG [lookupEntry]> Stripped number of words: " + stripped_message_count);
-    //console.log("DEBUG [lookupEntry]> Regex search: " + regex_builder);
+    //console.log("DEBUG [lookupEvent]> Stripped number of words: " + stripped_message_count);
+    //console.log("DEBUG [lookupEvent]> Regex search: " + regex_builder);
     zero_is_a_match = compare_to_string.search(regex_builder);
-    //console.log("DEBUG [lookupEntry]> Match Check: " + zero_is_a_match);
+    //console.log("DEBUG [lookupEvent]> Match Check: " + zero_is_a_match);
     // If there is a match then a value of 0 is returned
     if (zero_is_a_match == 0) {
-      //console.log("DEBUG [lookupEntry]> Matched: " + (event_loop * CHAS_EVENTS_BLOCK_SIZE));
+      //console.log("DEBUG [lookupEvent]> Matched: " + (event_loop * CHAS_EVENTS_BLOCK_SIZE));
       // Sets the index value for the name/keywords for the event
       event_index = event_loop * CHAS_EVENTS_BLOCK_SIZE;
       found_event = true;
@@ -2752,7 +2807,7 @@ function lookupEntry(eventEntry,eventName) {
   };
   // If there is not an event found then things have gone funky
   if (!found_event) {
-    //console.log("DEBUG [lookupEntry]> No matching event found");
+    //console.log("DEBUG [lookupEvent]> No matching event found");
     error_caught = true;
   };
   if (error_caught) {
@@ -2840,7 +2895,7 @@ function lookupBiogs(eventBiogs,personName) {
 
 // 'In-play' functions
 // ===================
-// Note sendQuestion_playSurvey is also an in-play function
+// Note deliverQuestion_playSurvey is also an in-play function
 function playHangman(postEvent,hangman_guess) {
   // 0:id_of_sender,2:hangman_in_play,3:rpsls_in_play,6:hangman_strikes,7:hangman_word,8:hangman_array
   //console.log("DEBUG [playHangman]> Input: " + postEvent);
@@ -2927,9 +2982,9 @@ function playHangman(postEvent,hangman_guess) {
   };
   console.log("INFO [playHangman]> Sender: " + sender);
   console.log("INFO [playHangman]> Request: Hangman guess was " + hangman_guess);
-  console.log("INFO [playHangman]> Action: playHangman.sendTextDirect");
+  console.log("INFO [playHangman]> Action: playHangman.deliverTextDirect");
   console.log("INFO [playHangman]> Response: " + hangmanText);
-  sendTextDirect(postEvent,hangmanText);
+  deliverTextDirect(postEvent,hangmanText);
 }
 
 function playRPSLS(eventRPSLS,pickPlayer) {
@@ -2948,19 +3003,19 @@ function playRPSLS(eventRPSLS,pickPlayer) {
   if (rpsls_action == 1) { // Provide some instructions + prompt
     console.log("INFO [playRPSLS]> Request: " + TRIGGER_RPSLS);
     rpsls_url = URL_IMG_PREFIX + RPSLS_IMGS[0] + URL_IMG_SUFFIX;
-    rpslsText = MSG_RPSLS_INTRO + "\n" + MSG_RPSLS_PROMPT; // Required within sendTextDirect
-    console.log("INFO [playRPSLS]> Action: playRPSLS.postImage_sendTextDirect");
+    rpslsText = MSG_RPSLS_INTRO + "\n" + MSG_RPSLS_PROMPT; // Required within deliverTextDirect
+    console.log("INFO [playRPSLS]> Action: playRPSLS.postImage_deliverTextDirect");
     console.log("INFO [playRPSLS]> Reponse: IMG URL "  + rpsls_url + '; Text: ' + rpslsText);
     postImage(eventRPSLS,rpsls_url,true,rpslsText);
   } else if (rpsls_action == 2) { // Just prompt
     console.log("INFO [playRPSLS]> Request: " + TRIGGER_RPSLS);
-    rpslsText = MSG_RPSLS_PROMPT; // Required within sendTextDirect
-    console.log("INFO [playRPSLS]> Action: playRPSLS.sendTextDirect");
+    rpslsText = MSG_RPSLS_PROMPT; // Required within deliverTextDirect
+    console.log("INFO [playRPSLS]> Action: playRPSLS.deliverTextDirect");
     console.log("INFO [playRPSLS]> Reponse: " + rpslsText);
-    sendTextDirect(eventRPSLS,rpslsText);
+    deliverTextDirect(eventRPSLS,rpslsText);
   } else { // Compare results and show outcome
     console.log("INFO [playRPSLS]> Request: " + pickPlayer);
-    pick_chasbot = RPSLS_VALID[randomBetween(0,4)];
+    pick_chasbot = RPSLS_VALID[numRandomBetween(0,4)];
     let PLAYERvBOT = pickPlayer + pick_chasbot;
     rpslsText = '';
     //console.log("DEBUG [playRPSLS]> PLAYERvBOT: " + PLAYERvBOT);
@@ -2970,9 +3025,9 @@ function playRPSLS(eventRPSLS,pickPlayer) {
       //console.log("DEBUG [playRPSLS]> Win check: " + RPSLS_WIN[find_index]);
       if (PLAYERvBOT == RPSLS_WIN[find_index]) {
         rpsls_url = URL_IMG_PREFIX + RPSLS_IMGS[1 + find_index] + URL_IMG_SUFFIX;
-        rpslsText = "You win. Your " + toTitleCase(pickPlayer) + " ";
+        rpslsText = "You win. Your " + strTitleCase(pickPlayer) + " ";
         rpslsText = rpslsText + RPSLS_OUTCOMES[find_index] + " my ";
-        rpslsText = rpslsText + toTitleCase(pick_chasbot) + ". ";
+        rpslsText = rpslsText + strTitleCase(pick_chasbot) + ". ";
         score_player++;
         break;
       };
@@ -2984,9 +3039,9 @@ function playRPSLS(eventRPSLS,pickPlayer) {
         //console.log("DEBUG [playRPSLS]> Lose check: " + RPSLS_LOSE[find_index]);
         if (PLAYERvBOT == RPSLS_LOSE[find_index]) {
           rpsls_url = URL_IMG_PREFIX + RPSLS_IMGS[11 + find_index] + URL_IMG_SUFFIX;
-          rpslsText = "I win. My " + toTitleCase(pick_chasbot) + " ";
+          rpslsText = "I win. My " + strTitleCase(pick_chasbot) + " ";
           rpslsText = rpslsText + RPSLS_OUTCOMES[find_index] + " your ";
-          rpslsText = rpslsText + toTitleCase(pickPlayer) + ". ";
+          rpslsText = rpslsText + strTitleCase(pickPlayer) + ". ";
           score_bot++;
           break;
         };
@@ -3031,61 +3086,8 @@ function playRPSLS(eventRPSLS,pickPlayer) {
     SENDERS[custom_id][10] = issue_instructions;
     SENDERS[custom_id][11] = score_player;
     SENDERS[custom_id][12] = score_bot;
-    console.log("INFO [playRPSLS]> Action: playRPSLS.postImage_sendTextDirect");
+    console.log("INFO [playRPSLS]> Action: playRPSLS.postImage_deliverTextDirect");
     console.log("INFO [playRPSLS]> Reponse: IMG URL "  + rpsls_url + '; Text: ' + rpslsText);
     postImage(eventRPSLS,rpsls_url,true,rpslsText);
   };
-}
-
-function genLottery(size, lowest, highest, ball_or_star) {
-  //console.log("DEBUG [genLottery]> Lottery Generator");
-  // Euro-millions - 5 unique numbers 1-50 + 2 unique numbers 1-12
-  // UK Lottery - 6 unique numbers 1-59
-  // Scottish Lottery - 5 unique numbers 1-49
-  var genLotteryString = '';
-  var numbers = [];
-	for (var i = 0; i < size; i++) {
-		var add = true;
-		var randomNumber = Math.floor(Math.random() * highest) + 1;
-		for(var y = 0; y < highest; y++) {
-			if(numbers[y] == randomNumber) {
-				add = false;
-			};
-		};
-		if (add) {
-			numbers.push(randomNumber);
-      //console.log("DEBUG [genLottery]> Number picked: " + randomNumber);
-		} else {
-			i--;
-		};
-	};
-  // Number sort
-	var highestNumber = 0;
-	for (var m = 0; m < numbers.length; m++) {
-		for (var n = m + 1; n < numbers.length; n++) {
-			if (numbers[n] < numbers[m]) {
-			  highestNumber = numbers[m];
-				numbers[m] = numbers[n];
-				numbers[n] = highestNumber;
-			}; // if
-		}; // for
-	}; // for
-  genLotteryString = '';
-  if (ball_or_star == 'ball') {
-    //console.log("DEBUG [genLottery]> Ball");
-    genLotteryString = genLotteryString + '🔮 ';
-    for (var q = 0; q < numbers.length; q++) {
-      genLotteryString = genLotteryString + numbers[q].toString();
-      if (q != (numbers.length-1)) { genLotteryString = genLotteryString + ', ' };
-    }; // for
-  } else {
-    //console.log("DEBUG [genLottery]> Star");
-    genLotteryString = genLotteryString + '⭐ ';
-    for (var q = 0; q < numbers.length; q++) {
-      genLotteryString = genLotteryString + numbers[q].toString();
-      if (q != (numbers.length-1)) { genLotteryString = genLotteryString + ', ' };
-    }; // for
-  }; // if
-  //console.log("DEBUG [genLottery]> Numbers string: " + genLotteryString);
-  return genLotteryString;
 }
