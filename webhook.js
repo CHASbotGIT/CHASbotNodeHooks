@@ -2483,8 +2483,8 @@ function apiLOTR (eventLOTR,lotrWho){
       // Correct responses start with "docs" i.e. no status code 200 to help verify
       if (characterData_legible.includes('docs')) {
         let characterDataList = characterData.docs;
-        //console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
-        offlineLOTR(characterDataList);
+        console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
+        if (LOTR_ARRAY.length == 0) { offlineLOTR(characterDataList) };
         let got_a_live_one = -1;
         let validWikiURL = '';
         let levenshtein_lowest = 100;
