@@ -400,6 +400,7 @@ var LOTR_MOVIES = [
   "5cd95395de30eff6ebccde5b🎥 The Two Towers (2001)",
   "5cd95395de30eff6ebccde5c📽️ The Fellowship of the Ring (2002)",
   "5cd95395de30eff6ebccde5d🎬 The Return of the King (2003)"];
+var LOTR_ARRAY = [];
 // Survey/Quiz
 const PRIZES = ["🎉","🎈","💰","🎁","👏","🌹","💐","🍹","🍸","🍺","🍷","🍾","🍰","💋","🎖️","🍀"];
 var SURVEY_VIABLE = true;
@@ -632,7 +633,7 @@ function loadSurvey() {
               // Check that there is a pick question, and that the response is within the range of answers
               // OR number reponse could be a string
               potential_number = parseInt(QUIZ[i],10);
-             //console.log("DEBUG [loadSurvey]> Value = " + potential_number + " Parse (should be number) = " + typeof(potential_number));
+              //console.log("DEBUG [loadSurvey]> Value = " + potential_number + " Parse (should be number) = " + typeof(potential_number));
               if (SURVEY_QUESTIONS[i].length == 1) { // Matching question has free-text response
                 known_string = QUIZ[i];
                //console.log("DEBUG [loadSurvey]> Over-rule number value = " + known_string + " Parse (should be number string) = " + typeof(known_string));
@@ -2435,7 +2436,25 @@ function apiMarvelChar(eventMarvel,marvelWho) {
   });
 }
 
+function offlineLOTR(lotrArray) {
+  var arrayQuote = [];
+  for (var loopArray = 0; loopArray < lotrArray.length; loopArray++) {
+    LOTR_ARRAY.push(lotrArray[loopArray].name,
+      lotrArray[loopArray].gender,
+      lotrArray[loopArray].wikiUrl,
+      lotrArray[loopArray].race,
+      lotrArray[loopArray].height,
+      lotrArray[loopArray].hair,
+      lotrArray[loopArray].birth,
+      lotrArray[loopArray].death,
+      arrayQuote
+    ); // LOTR_ARRAY
+  }; // for
+  console.log("DEBUG [offlineLOTR] Length of stored LOTR: " + LOTR_ARRAY.length);
+}
+
 function apiLOTR (eventLOTR,lotrWho){
+  console.log("DEBUG [apiLOTR] Length of stored LOTR: " + LOTR_ARRAY.length)
   console.log("INFO [apiLOTR]> Sender: " + eventLOTR.sender.id);
   console.log("INFO [apiLOTR]> Request: lotr " + lotrWho);
   let lotrBlurb = '';
@@ -2465,6 +2484,7 @@ function apiLOTR (eventLOTR,lotrWho){
       if (characterData_legible.includes('docs')) {
         let characterDataList = characterData.docs;
         //console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
+        offlineLOTR(characterDataList);
         let got_a_live_one = -1;
         let validWikiURL = '';
         let levenshtein_lowest = 100;
