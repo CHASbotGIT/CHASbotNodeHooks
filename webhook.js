@@ -2439,7 +2439,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
 function offlineLOTR(lotrArray) {
   var arrayQuote = [];
   for (var loopArray = 0; loopArray < lotrArray.length; loopArray++) {
-    LOTR_ARRAY.push(lotrArray[loopArray].name,
+    LOTR_ARRAY.push([lotrArray[loopArray].name,
       lotrArray[loopArray].gender,
       lotrArray[loopArray].wikiUrl,
       lotrArray[loopArray].race,
@@ -2447,8 +2447,7 @@ function offlineLOTR(lotrArray) {
       lotrArray[loopArray].hair,
       lotrArray[loopArray].birth,
       lotrArray[loopArray].death,
-      arrayQuote
-    ); // LOTR_ARRAY
+      arrayQuote]); // LOTR_ARRAY
   }; // for
   console.log("DEBUG [offlineLOTR] Length of stored LOTR: " + LOTR_ARRAY.length);
 }
