@@ -2436,10 +2436,28 @@ function apiMarvelChar(eventMarvel,marvelWho) {
   });
 }
 
-function offlineLOTR(lotrArray) {
+function offlineLOTR(lotrArray,chars_or_quotes,quote_id) {
+  console.log("DEBUG [offlineLOTR] Method: " + chars_or_quotes);
+  if (chars_or_quotes == 'quotes') {
+    console.log("DEBUG [offlineLOTR] ID: " + quote_id);
+    let id_position = -1;
+    for (var loopArray = 0; loopArray < LOTR_ARRAY.length; loopArray++) {
+      if (LOTR_ARRAY[loopArray][0]==quote_id) {
+        id_position = loopArray;
+        console.log("DEBUG [offlineLOTR] ID found at: " + id_position);
+        break;
+      }; // if
+    }; // for
+    for (var loopArray = 0; loopArray < lotrArray.length; loopArray++) {
+      LOTR_ARRAY[id_position][9].push([lotrArray[loopArray].movie,lotrArray[loopArray].dialogue]);
+    }; // for
+    console.log("DEBUG [offlineLOTR] Quotes: " + LOTR_ARRAY[id_position][9].length);
+    return;
+  }; // if
   var arrayQuote = [];
   for (var loopArray = 0; loopArray < lotrArray.length; loopArray++) {
-    LOTR_ARRAY.push([lotrArray[loopArray].name,
+    LOTR_ARRAY.push([lotrArray[loopArray]._id, // [0]
+      lotrArray[loopArray].name,
       lotrArray[loopArray].gender,
       lotrArray[loopArray].wikiUrl,
       lotrArray[loopArray].race,
@@ -2447,9 +2465,9 @@ function offlineLOTR(lotrArray) {
       lotrArray[loopArray].hair,
       lotrArray[loopArray].birth,
       lotrArray[loopArray].death,
-      arrayQuote]); // LOTR_ARRAY
+      arrayQuote]); // [9] LOTR_ARRAY
   }; // for
-  console.log("DEBUG [offlineLOTR] Length of stored LOTR: " + LOTR_ARRAY.length);
+  console.log("DEBUG [offlineLOTR] Characters: " + LOTR_ARRAY.length);
 }
 
 function apiLOTR (eventLOTR,lotrWho){
@@ -2483,7 +2501,7 @@ function apiLOTR (eventLOTR,lotrWho){
       if (characterData_legible.includes('docs')) {
         let characterDataList = characterData.docs;
         console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
-        if (LOTR_ARRAY.length == 0) { offlineLOTR(characterDataList) };
+        if (LOTR_ARRAY.length == 0) { offlineLOTR(characterDataList,'chars','') };
         let got_a_live_one = -1;
         let validWikiURL = '';
         let levenshtein_lowest = 100;
@@ -2646,6 +2664,7 @@ function apiLOTR (eventLOTR,lotrWho){
                 let quoteListCount = quoteList.length;
                 //console.log("DEBUG [apiLOTR]> Quotes Retrieved No.: " + quoteListCount);
                 if (quoteListCount > 0) {
+                  if (LOTR_ARRAY.length == 0) { offlineLOTR(quoteList,'quotes',characterDataList[got_a_live_one]._id) };
                   let quotePick = numRandomBetween(0,quoteListCount-1)
                   //console.log("DEBUG [apiLOTR]> Quote Picked: " + quotePick);
                   for (var loop_films = 0; loop_films < LOTR_MOVIES.length; loop_films++) {
