@@ -1473,9 +1473,10 @@ CHASbot.post('/webhook', (req, res) => {
           if (position_in_analyse_text > 0) {
             inPlayPause(sender_index);
             trigger_path = ''; // Send via default else
+            analyse_text = 'play a game';
           };
           // Pick a response route
-          if (trigger_path == KEY_ADMIN_TRIGGER) {
+          } else if (trigger_path == KEY_ADMIN_TRIGGER) {
             //console.log("DEBUG [postWebhook_route]> Admin: " + KEY_ADMIN_TRIGGER);
             deliverTextDirect(routeEvent,adminMessage);
           } else if (inPlay('survey',sender_index)) { // Survey first - ignores
