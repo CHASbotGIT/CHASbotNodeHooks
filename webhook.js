@@ -686,21 +686,21 @@ function loadSurvey() {
 
 function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
   // Block loads quotes in character array
-  console.log("DEBUG [loadLOTR] Method: " + chars_or_quotes);
+  //console.log("DEBUG [loadLOTR] Method: " + chars_or_quotes);
   if (chars_or_quotes == 'quotes') {
-    console.log("DEBUG [loadLOTR] ID: " + quote_id);
+    //console.log("DEBUG [loadLOTR] ID: " + quote_id);
     let id_position = -1;
     for (var loopArray = 0; loopArray < LOTR_ARRAY.length; loopArray++) {
       if (LOTR_ARRAY[loopArray][0]==quote_id) {
         id_position = loopArray;
-        console.log("DEBUG [loadLOTR] ID found at: " + id_position);
+        //console.log("DEBUG [loadLOTR] ID found at: " + id_position);
         break;
       }; // if
     }; // for
     for (var loopArray = 0; loopArray < lotrArray.length; loopArray++) {
       LOTR_ARRAY[id_position][10].push([lotrArray[loopArray].movie,lotrArray[loopArray].dialog]);
     }; // for
-    console.log("DEBUG [loadLOTR] Quotes: " + LOTR_ARRAY[id_position][10].length);
+    //console.log("DEBUG [loadLOTR] Quotes: " + LOTR_ARRAY[id_position][10].length);
     callback();
   }; // if
   // Block loads in characters
@@ -718,7 +718,7 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
       lotrArray[loopArray].death,
       arrayQuote]); // [10] LOTR_ARRAY
   }; // for
-  console.log("DEBUG [loadLOTR] Characters: " + LOTR_ARRAY.length);
+  //console.log("DEBUG [loadLOTR] Characters: " + LOTR_ARRAY.length);
   callback();
 }
 
@@ -2495,7 +2495,7 @@ function idLOTR(lotrWho){
     }; // if (levenshtein_newest
   }; // for (var character_loop
   // Found best match
-  console.log("DEBUG [idLOTR]> Matched " + LOTR_ARRAY[match_id][0] + " to index " + match_id);
+  //console.log("DEBUG [idLOTR]> Matched " + LOTR_ARRAY[match_id][0] + " to index " + match_id);
   return match_id;
 }
 
@@ -2505,7 +2505,7 @@ function wrapLOTR(match_id,lotrWho) {
   let clean_up_text2 = '';
   let various_trap = false;
   lotrBlurb = "This is the best match I can find for " + strTitleCase(lotrWho) + ". ";
-  console.log("DEBUG [wrapLOTR]> [0] Gender: " + LOTR_ARRAY[match_id][2]);
+  //console.log("DEBUG [wrapLOTR]> [0] Gender: " + LOTR_ARRAY[match_id][2]);
   if (LOTR_ARRAY[match_id][2] == 'Male') {
     lotrBlurb = lotrBlurb + "He is ";
   } else if (LOTR_ARRAY[match_id][2] == 'Female') {
@@ -2513,16 +2513,16 @@ function wrapLOTR(match_id,lotrWho) {
   } else {
     lotrBlurb = lotrBlurb + "They are ";
   };
-  console.log("DEBUG [wrapLOTR]> [0] Blurb so far is: " + lotrBlurb);
+  //console.log("DEBUG [wrapLOTR]> [0] Blurb so far is: " + lotrBlurb);
   let extent_unknown = 0;
-  console.log("DEBUG [wrapLOTR]> Race: " + LOTR_ARRAY[match_id][4]);
-  console.log("DEBUG [wrapLOTR]> Realm: " + LOTR_ARRAY[match_id][5]);
+  //console.log("DEBUG [wrapLOTR]> Race: " + LOTR_ARRAY[match_id][4]);
+  //console.log("DEBUG [wrapLOTR]> Realm: " + LOTR_ARRAY[match_id][5]);
   if ((LOTR_ARRAY[match_id][4] == '') && (LOTR_ARRAY[match_id][5] == '')) {
     extent_unknown = extent_unknown + 1; // 0 or 1
-    console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either race or realm is unknown");
+    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either race or realm is unknown");
   } else if ((LOTR_ARRAY[match_id][4] != '') && (LOTR_ARRAY[match_id][5] != '')) {
     lotrBlurb = lotrBlurb + "of the " + LOTR_ARRAY[match_id][4] + " race, from the " + LOTR_ARRAY[match_id][5] + " realm";
-    console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Blurb so far is: " + lotrBlurb);
+    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Blurb so far is: " + lotrBlurb);
   } else if (LOTR_ARRAY[match_id][4] != '') {
     lotrBlurb = lotrBlurb + "of the " + LOTR_ARRAY[match_id][4] + " race";
   } else {
@@ -2533,8 +2533,8 @@ function wrapLOTR(match_id,lotrWho) {
   // 0 = 'He is/ She is/ They are of the A race'
   // 0 = 'He is/ She is/ They are from the B realm'
   // 1 = 'He is/ She is/ They are '
-  console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Height: " + LOTR_ARRAY[match_id][6]);
-  console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Hair: " + LOTR_ARRAY[match_id][7]);
+  //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Height: " + LOTR_ARRAY[match_id][6]);
+  //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Hair: " + LOTR_ARRAY[match_id][7]);
   if ((LOTR_ARRAY[match_id][6] != '') && (LOTR_ARRAY[match_id][7] != '')) {
     clean_up_text1 = LOTR_ARRAY[match_id][7];
     clean_up_text1 = clean_up_text1.toLowerCase();
@@ -2544,16 +2544,16 @@ function wrapLOTR(match_id,lotrWho) {
   };
   if ((LOTR_ARRAY[match_id][6] == '') || (LOTR_ARRAY[match_id][7] == '' || various_trap)) {
     extent_unknown = extent_unknown + 2; // 0, 1, 2 or 3
-    console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either height or hair colour is unknown, or various");
+    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either height or hair colour is unknown, or various");
   } else if (extent_unknown == 1) {
     lotrBlurb = lotrBlurb + clean_up_text2 + " in height with " + clean_up_text1 + " hair.";
-    console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Blurb so far is: " + lotrBlurb);
+    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Blurb so far is: " + lotrBlurb);
   } else {
     lotrBlurb = lotrBlurb + "; with " + clean_up_text1 + " hair, and a height of " + clean_up_text2 + ".";
-    console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Blurb so far is: " + lotrBlurb);
+    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Blurb so far is: " + lotrBlurb);
   };
-  console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Birth: " + LOTR_ARRAY[match_id][8]);
-  console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Death: " + LOTR_ARRAY[match_id][9]);
+  //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Birth: " + LOTR_ARRAY[match_id][8]);
+  //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Death: " + LOTR_ARRAY[match_id][9]);
   if ((LOTR_ARRAY[match_id][8] != '') && (LOTR_ARRAY[match_id][9] != '')) {
     clean_up_text1 = LOTR_ARRAY[match_id][8]; // birth
     clean_up_text1 = clean_up_text1.replace(/,/g, ""); // birth without commas
@@ -2582,16 +2582,16 @@ function wrapLOTR(match_id,lotrWho) {
   // 2 = 'He is/ She is/ They are from the B realm' <txt>
   // 3 = 'He is/ She is/ They are ' <space>
   if ((LOTR_ARRAY[match_id][8] == '') && (LOTR_ARRAY[match_id][9] == '') && (extent_unknown == 3)) {
-    console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
+    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
     lotrBlurb = lotrBlurb + "a complete mystery to me! 😞 You might have better luck with the Wiki.";
   } else if ((LOTR_ARRAY[match_id][8] == '') && (LOTR_ARRAY[match_id][9] == '') && (extent_unknown == 2)) {
-    console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
+    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
     lotrBlurb = lotrBlurb + ". More than that, I don't know! 🤔 Find our more at the Wiki.";
   } else if ((LOTR_ARRAY[match_id][8] == '') && (LOTR_ARRAY[match_id][9] == '') && (extent_unknown == 1)) {
-    console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
+    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
     lotrBlurb = lotrBlurb + " 😊 The Wiki can tell you more.";
   } else if ((LOTR_ARRAY[match_id][8] == '') && (LOTR_ARRAY[match_id][9] == '') && (extent_unknown == 0)) {
-    console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
+    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
     lotrBlurb = lotrBlurb + " 😃 Check out the Wiki.";
   } else if (extent_unknown == 3) {
     lotrBlurb = lotrBlurb + "a stranger to me but I can tell you they were born " + clean_up_text1 + " and concluded their story " + clean_up_text2 + ". 🤔 Find our more at the Wiki.";
@@ -2600,7 +2600,7 @@ function wrapLOTR(match_id,lotrWho) {
   } else { // 1 or 0
     lotrBlurb = lotrBlurb + " I can also tell you they were born " + clean_up_text1 + " and finished their adventure " + clean_up_text2 + ". 😃 Check out the Wiki.";
   };
-  console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Before clean-up: " + lotrBlurb);
+  //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Before clean-up: " + lotrBlurb);
   lotrBlurb = strFixStutter(lotrBlurb); // i.e. doubled words
   // FA First Age, SA Second Age, TA Third Age, FO Fourth Age
   lotrBlurb = strReplaceAll(lotrBlurb,' FA ', ' First Age ');
@@ -2615,38 +2615,35 @@ function wrapLOTR(match_id,lotrWho) {
   let movie_quote = '';
   // The block below appends if there is a viable quote
   let quoteListCount = LOTR_ARRAY[match_id][10].length;
-
   let quoteArray = LOTR_ARRAY[match_id][10];
-  console.table(quoteArray);
-
-  console.log("DEBUG [wrapLOTR]> Quotes to pick from: " + quoteListCount);
+  //console.log("DEBUG [wrapLOTR]> Quotes to pick from: " + quoteListCount);
   let quotePick = numRandomBetween(0,quoteListCount-1);
-  console.log("DEBUG [wrapLOTR]> Quote Picked: " + quotePick);
+  //console.log("DEBUG [wrapLOTR]> Quote Picked: " + quotePick);
   for (var loop_films = 0; loop_films < LOTR_MOVIES.length; loop_films++) {
     if (LOTR_MOVIES[loop_films].includes(quoteArray[quotePick][0])) {
       movie_quote = " Quoted in " + LOTR_MOVIES[loop_films].replace(quoteArray[quotePick][0],'') + ' 💬 ';
-      console.log("DEBUG [wrapLOTR]> Film: " + movie_quote);
+      //console.log("DEBUG [wrapLOTR]> Film: " + movie_quote);
       break;
     }; // if (LOTR_MOVIES[loop_films]
   }; // (var loop_films
   // if there wasn't a movie named then skip the quote
   if (movie_quote!= '') {
     let quote_placeholder = quoteArray[quotePick][1];
-    console.log("DEBUG [wrapLOTR]> Quote raw: " + quote_placeholder);
+    //console.log("DEBUG [wrapLOTR]> Quote raw: " + quote_placeholder);
     var regex_punctuation = new RegExp("[?!;:.,]", 'g');
     quote_placeholder = quote_placeholder.replace(regex_punctuation,"$& "); // add minimal space after punctuation
-    console.log("DEBUG [wrapLOTR]> Quote add minimal spaces after punctuation: " + quote_placeholder);
+    //console.log("DEBUG [wrapLOTR]> Quote add minimal spaces after punctuation: " + quote_placeholder);
     quote_placeholder = strReplaceAll(quote_placeholder,' , ','');
-    console.log("DEBUG [wrapLOTR]> Quote extra commas removed: " + quote_placeholder);
+    //console.log("DEBUG [wrapLOTR]> Quote extra commas removed: " + quote_placeholder);
     quote_placeholder = quote_placeholder.replace(/\s+(\W)/g, "$1"); // pre-punctuation spaces
-    console.log("DEBUG [wrapLOTR]> Quote spaces pre-punctuation removed: " + quote_placeholder);
+    //console.log("DEBUG [wrapLOTR]> Quote spaces pre-punctuation removed: " + quote_placeholder);
     quote_placeholder = quote_placeholder.replace(/\s\s+/g, ' '); // internal whitespace
-    console.log("DEBUG [wrapLOTR]> Quote padded spaces removed: " + quote_placeholder);
+    //console.log("DEBUG [wrapLOTR]> Quote padded spaces removed: " + quote_placeholder);
     quote_placeholder = quote_placeholder.trim(); // leading/trailing whitespace
-    console.log("DEBUG [wrapLOTR]> Quote leading/trailing whitespace removed: " + quote_placeholder);
+    //console.log("DEBUG [wrapLOTR]> Quote leading/trailing whitespace removed: " + quote_placeholder);
     movie_quote = movie_quote + quote_placeholder;
   }; // if (movie_quote
-  console.log("DEBUG [wrapLOTR]> Full Quote: " + movie_quote);
+  //console.log("DEBUG [wrapLOTR]> Full Quote: " + movie_quote);
   lotrBlurb = lotrBlurb + movie_quote;
   lotrBlurb = strTrimTo(640,lotrBlurb); // Make sure the message isn't over-long
   return lotrBlurb;
@@ -2671,7 +2668,7 @@ function postLOTR(eventLOTR,lotrWho) {
         // Need to get the quotes
         apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
           lotrBlurb = wrapLOTR(match_id,lotrWho);
-          console.log("DEBUG [postLOTR]> Final blurb via API is: " + lotrBlurb);
+          //console.log("DEBUG [postLOTR]> Final blurb via API is: " + lotrBlurb);
           console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
           console.log("INFO [postLOTR]> Reponse: Successful");
           postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
@@ -2687,19 +2684,22 @@ function postLOTR(eventLOTR,lotrWho) {
     }); // apiLOTR('chars'
   } else { // Operating from memeory - not API
     console.log('DEBUG [postLOTR]> Bypass API, operating from memory');
-    let match_id = idLOTR(lotrWho);
+
+console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + lorWho);
+let match_id = idLOTR(lotrWho);
+
     // Check for quotes
-    let quoteListCount = LOTR_ARRAY[match_id][10][0].length;
+    let quoteListCount = LOTR_ARRAY[match_id][10].length;
     if (quoteListCount > 0) {
       lotrBlurb = wrapLOTR(match_id,lotrWho);
-      console.log("DEBUG [postLOTR]> Final blurb via memory is: " + lotrBlurb);
+      //console.log("DEBUG [postLOTR]> Final blurb via memory is: " + lotrBlurb);
       console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
       console.log("INFO [postLOTR]> Reponse: Successful");
       postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
     } else {
       apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
         lotrBlurb = wrapLOTR(match_id,lotrWho);
-        console.log("DEBUG [postLOTR]> Final blurb via memory & API is: " + lotrBlurb);
+        //console.log("DEBUG [postLOTR]> Final blurb via memory & API is: " + lotrBlurb);
         console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
         console.log("INFO [postLOTR]> Reponse: Successful");
         postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
@@ -2709,7 +2709,7 @@ function postLOTR(eventLOTR,lotrWho) {
 }
 
 function apiLOTR (chars_or_quotes,char_id,callback){
-  console.log("DEBUG [apiLOTR] Length of stored LOTR: " + LOTR_ARRAY.length)
+  //console.log("DEBUG [apiLOTR] Length of stored LOTR: " + LOTR_ARRAY.length)
   let url_path = '';
   if (chars_or_quotes == 'chars') {
     url_path = '/v1/character';
@@ -2735,7 +2735,7 @@ function apiLOTR (chars_or_quotes,char_id,callback){
         // Correct responses start with "docs" i.e. no status code 200 to help verify
         if (characterData_legible.includes('docs')) {
           let characterDataList = characterData.docs;
-          console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
+          //console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
           loadLOTR(characterDataList,'chars','', function(){
             callback();
           });
@@ -2752,7 +2752,7 @@ function apiLOTR (chars_or_quotes,char_id,callback){
     }); // req.on('error'
   } else { // quotes API
     url_path = '/v1/character/' + char_id + "/quote"
-    console.log("DEBUG [apiLOTR]> Quotes URL: " + URL_API_LOTR + url_path);
+    //console.log("DEBUG [apiLOTR]> Quotes URL: " + URL_API_LOTR + url_path);
     const requestOptions = {
       hostname: URL_API_LOTR,
       path: url_path,
@@ -2773,12 +2773,9 @@ function apiLOTR (chars_or_quotes,char_id,callback){
         // Correct responses start with "docs" i.e. no status code 200 to help verify
         if (quoteData_legible.includes('docs')) {
           let quoteList = quoteData.docs;
-
-console.log(quoteList);
-
           let quoteListCount = quoteList.length;
           if (quoteListCount > 0) {
-            console.log("DEBUG [apiLOTR]> Quotes Retrieved No.: " + quoteListCount);
+            //console.log("DEBUG [apiLOTR]> Quotes Retrieved No.: " + quoteListCount);
             loadLOTR(quoteList,'quotes',char_id, function(){
               callback();
             });
