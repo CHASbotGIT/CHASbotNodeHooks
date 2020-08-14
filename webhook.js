@@ -2501,7 +2501,9 @@ function apiLOTR (eventLOTR,lotrWho){
       if (characterData_legible.includes('docs')) {
         let characterDataList = characterData.docs;
         console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
+        // ======================== CONSIDER STORING CHARACTERS
         if (LOTR_ARRAY.length == 0) { offlineLOTR(characterDataList,'chars','') };
+        // ======================== CONSIDER STORING CHARACTERS
         let got_a_live_one = -1;
         let validWikiURL = '';
         let levenshtein_lowest = 100;
@@ -2639,7 +2641,8 @@ function apiLOTR (eventLOTR,lotrWho){
           lotrBlurb = strReplaceAll(lotrBlurb,' VY ', ' Valian Years ');
           lotrBlurb = strProper(lotrBlurb); // Tidy proper pronouns
           let movie_quote = '';
-          url_path = '/v1/character/' + characterDataList[got_a_live_one]._id + "/quote"
+          let char_id = characterDataList[got_a_live_one]._id;
+          url_path = '/v1/character/' + char_id + "/quote"
           //console.log("DEBUG [apiLOTR]> Quotes URL: " + URL_API_LOTR + url_path);
           const requestOptions2nd = {
             hostname: URL_API_LOTR,
@@ -2664,7 +2667,21 @@ function apiLOTR (eventLOTR,lotrWho){
                 let quoteListCount = quoteList.length;
                 //console.log("DEBUG [apiLOTR]> Quotes Retrieved No.: " + quoteListCount);
                 if (quoteListCount > 0) {
-                  if (LOTR_ARRAY.length == 0) { offlineLOTR(quoteList,'quotes',characterDataList[got_a_live_one]._id) };
+                  // ======================== CONSIDER STORING QUOTES
+                  if (LOTR_ARRAY.length != 0) { // Characters have been saved
+                    for (var loopArray = 0; loopArray < LOTR_ARRAY.length; loopArray++) { // Check for matching character
+                      if (LOTR_ARRAY[loopArray][0]==char_id) { // Character match
+                        if (LOTR_ARRAY[loopArray][9].length == 0) { // No quotes for character
+                          console.log("DEBUG [apiLOTR]> No stored quotes for ID: " + char_id);
+                          offlineLOTR(quoteList,'quotes',char_id); // populate quotes for character
+                        } else {
+                          console.log("DEBUG [apiLOTR]> " + LOTR_ARRAY[loopArray][9].length + "quote(s) stored for ID: " + char_id);
+                        }; // else
+                        break; // Can leave the for loop
+                      }; // if chars match
+                    }; // for
+                  }; // if characters have been saved
+                  // ======================== CONSIDER STORING QUOTES
                   let quotePick = numRandomBetween(0,quoteListCount-1)
                   //console.log("DEBUG [apiLOTR]> Quote Picked: " + quotePick);
                   for (var loop_films = 0; loop_films < LOTR_MOVIES.length; loop_films++) {
