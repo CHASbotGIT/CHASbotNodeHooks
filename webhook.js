@@ -2474,24 +2474,6 @@ function apiMarvelChar(eventMarvel,marvelWho) {
   });
 }
 
-// ======================== STORE QUOTES
-//if (LOTR_ARRAY.length != 0) { // Characters have been saved
-//for (var loopArray = 0; loopArray < LOTR_ARRAY.length; loopArray++) { // Check for matching character
-//  if (LOTR_ARRAY[loopArray][0]==char_id) { // Character match
-
-
-//    if (LOTR_ARRAY[loopArray][10].length == 0) { // No quotes for character
-//      console.log("DEBUG [apiLOTR]> No stored quotes for ID: " + char_id);
-//  loadLOTR(quoteList,'quotes',char_id); // populate quotes for character
-//    } else {
-//      console.log("DEBUG [apiLOTR]> " + LOTR_ARRAY[loopArray][9].length + " quote(s) stored for ID: " + char_id);
-//    }; // else
-//    break; // Can leave the for loop
-//  }; // if chars match
-//}; // for
-//}; // if characters have been saved
-// ======================== STORE QUOTES
-
 function idLOTR(lotrWho){
   let match_id = -1;
   let lotrWhoMatch = '';
@@ -2527,6 +2509,7 @@ function wrapLOTR(match_id,lotrWho) {
   let clean_up_text1 = '';
   let clean_up_text2 = '';
   let various_trap = false;
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + lotrWho);
   lotrBlurb = "This is the best match I can find for " + strTitleCase(lotrWho) + ". ";
   console.log("DEBUG [wrapLOTR]> [0] Gender: " + LOTR_ARRAY[match_id][2]);
   if (LOTR_ARRAY[match_id][2] == 'Male') {
