@@ -2509,7 +2509,7 @@ function postLOTR(eventLOTR,lotrWho) {
     apiLOTR('chars','',function() {
       console.log('<<<<<<<<<<RESULT WAS WAITED FOR>>>>>>>>>>');
       return;
-    };
+    }); // apiLOTR
     // API function needs to return a response
     // How to make it wait?
     // If error response then need to bomb out with error message or continue on to match
