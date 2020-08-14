@@ -2622,7 +2622,7 @@ function wrapLOTR(match_id,lotrWho) {
   let quoteListCount = LOTR_ARRAY[match_id][10].length;
 
   let tempArray = LOTR_ARRAY[match_id][10];
-  console.table(tempArray);
+  //console.table(tempArray);
 
   console.log("DEBUG [wrapLOTR]> Quotes to pick from: " + quoteListCount);
   let quotePick = numRandomBetween(0,quoteListCount-1);
@@ -2778,6 +2778,9 @@ function apiLOTR (chars_or_quotes,char_id,callback){
         // Correct responses start with "docs" i.e. no status code 200 to help verify
         if (quoteData_legible.includes('docs')) {
           let quoteList = quoteData.docs;
+
+console.log(quoteList);
+
           let quoteListCount = quoteList.length;
           if (quoteListCount > 0) {
             console.log("DEBUG [apiLOTR]> Quotes Retrieved No.: " + quoteListCount);
