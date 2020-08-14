@@ -2740,7 +2740,7 @@ function apiLOTR (chars_or_quotes,char_id){
           //return '404';
           callback();
         };
-      }; // res.on('end'
+      }); // res.on('end'
     }); // var req = http
     req.on('error', function(e) { // Catches failures to connect to the API
       console.log("ERROR [apiLOTR]> Error getting to API: " + e);
