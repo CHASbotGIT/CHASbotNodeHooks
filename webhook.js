@@ -2616,22 +2616,22 @@ function wrapLOTR(match_id,lotrWho) {
   // The block below appends if there is a viable quote
   let quoteListCount = LOTR_ARRAY[match_id][10].length;
 
-  let tempArray = LOTR_ARRAY[match_id][10];
-  console.table(tempArray);
+  let quoteArray = LOTR_ARRAY[match_id][10];
+  console.table(quoteArray);
 
   console.log("DEBUG [wrapLOTR]> Quotes to pick from: " + quoteListCount);
   let quotePick = numRandomBetween(0,quoteListCount-1);
   console.log("DEBUG [wrapLOTR]> Quote Picked: " + quotePick);
   for (var loop_films = 0; loop_films < LOTR_MOVIES.length; loop_films++) {
-    if (LOTR_MOVIES[loop_films].includes(LOTR_ARRAY[match_id][10][0][quotePick])) {
-      movie_quote = " Quoted in " + LOTR_MOVIES[loop_films].replace(LOTR_ARRAY[match_id][10][0][quotePick],'') + ' 💬 ';
+    if (LOTR_MOVIES[loop_films].includes(quoteArray[quotePick][0])) {
+      movie_quote = " Quoted in " + LOTR_MOVIES[loop_films].replace(quoteArray[quotePick][0],'') + ' 💬 ';
       console.log("DEBUG [wrapLOTR]> Film: " + movie_quote);
       break;
     }; // if (LOTR_MOVIES[loop_films]
   }; // (var loop_films
   // if there wasn't a movie named then skip the quote
   if (movie_quote!= '') {
-    let quote_placeholder = LOTR_ARRAY[match_id][10][1][quotePick];
+    let quote_placeholder = quoteArray[quotePick][1];
     console.log("DEBUG [wrapLOTR]> Quote raw: " + quote_placeholder);
     var regex_punctuation = new RegExp("[?!;:.,]", 'g');
     quote_placeholder = quote_placeholder.replace(regex_punctuation,"$& "); // add minimal space after punctuation
