@@ -2675,7 +2675,7 @@ function apiLOTR (eventLOTR,lotrWho){
                           console.log("DEBUG [apiLOTR]> No stored quotes for ID: " + char_id);
                           offlineLOTR(quoteList,'quotes',char_id); // populate quotes for character
                         } else {
-                          console.log("DEBUG [apiLOTR]> " + LOTR_ARRAY[loopArray][9].length + "quote(s) stored for ID: " + char_id);
+                          console.log("DEBUG [apiLOTR]> " + LOTR_ARRAY[loopArray][9].length + " quote(s) stored for ID: " + char_id);
                         }; // else
                         break; // Can leave the for loop
                       }; // if chars match
