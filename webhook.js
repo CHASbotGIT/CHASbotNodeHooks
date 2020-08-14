@@ -2685,7 +2685,7 @@ function postLOTR(eventLOTR,lotrWho) {
     console.log('DEBUG [postLOTR]> LOTR array is empty');
     apiLOTR('chars','', function() {
       console.log('DEBUG [postLOTR]> apiLOTR returned with array length: ' + LOTR_ARRAY.length);
-      if (LOTR_ARRAY.length == 0) {
+      if (LOTR_ARRAY.length != 0) {
         let match_id = idLOTR(lotrWho);
         // Need to get the quotes
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + match_id);
