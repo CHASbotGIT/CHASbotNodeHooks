@@ -2688,6 +2688,8 @@ function postLOTR(eventLOTR,lotrWho) {
       if (LOTR_ARRAY.length == 0) {
         let match_id = idLOTR(lotrWho);
         // Need to get the quotes
+        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + match_id);
+        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + LOTR_ARRAY[match_id][0]);
         apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
           lotrBlurb = wrapLOTR(lotrWho);
           console.log("DEBUG [postLOTR]> Final blurb via API is: " + lotrBlurb);
