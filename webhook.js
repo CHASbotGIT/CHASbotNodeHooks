@@ -2507,7 +2507,7 @@ function postLOTR(eventLOTR,lotrWho) {
     // The array is empty, need to call API function
     console.log('<<<<<<<<<<ARRAY EMPTY>>>>>>>>>>');
     apiLOTR('chars','',function() {
-      console.log('<<<<<<<<<<RESULT WAS WAITED FOR>>>>>>>>>>');
+      console.log('<<<<<<<<<<RESULT WAS WAITED FOR>>>>>>>>>>' + LOTR_ARRAY.length);
       return;
     }); // apiLOTR
     // API function needs to return a response
