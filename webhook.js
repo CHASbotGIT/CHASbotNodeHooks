@@ -2493,7 +2493,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
 
 function postLOTR(eventLOTR,lotrWho) {
   console.log("INFO [postLOTR]> Sender: " + eventLOTR.sender.id);
-  console.log("INFO [postLOTR]> Request: " + lortWho);
+  console.log("INFO [postLOTR]> Request: " + lotrWho);
   let lotrBlurb = '';
   let lotrWhoMatch = '';
   let lotrWhoLower = '';
