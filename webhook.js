@@ -2502,21 +2502,22 @@ function idLOTR(lotrWho){
     lotrWhoMatch = LOTR_ARRAY[character_loop][1];
     lotrWhoMatch = lotrWhoMatch.toLowerCase(); // Retain lotrWho as title case but compare lower
     levenshtein_newest = levenshtein(lotrWhoLower,lotrWhoMatch); // Calculate proximity of names
-    console.log("DEBUG [idLOTR]> Difference :" + lotrWhoLower + " [" + levenshtein_newest + "] " + lotrWhoMatch);
+    //console.log("DEBUG [idLOTR]> Difference :" + lotrWhoLower + " [" + levenshtein_newest + "] " + lotrWhoMatch);
     // Better match but must also have a wiki
     let validWikiURL = LOTR_ARRAY[character_loop][3];
     let validWikiURLstring = JSON.stringify(validWikiURL);
-    console.log("DEBUG [idLOTR]> wikiUrl STRING " + validWikiURLstring);
+    //console.log("DEBUG [idLOTR]> wikiUrl STRING " + validWikiURLstring);
     if (levenshtein_newest < levenshtein_lowest && typeof validWikiURLstring != 'undefined'
         && validWikiURLstring != 'wikiUrlundefined' && validWikiURLstring != '') {
       // Better proximity between terms
       match_id = character_loop; // Best for now
       levenshtein_lowest = levenshtein_newest; // Lower difference
-      console.log("DEBUG [idLOTR]> Best for now [" + levenshtein_lowest + "] is: " + lotrWhoMatch);
-      console.log("DEBUG [idLOTR]> wikiUrl" + LOTR_ARRAY[match_id][3])
+      //console.log("DEBUG [idLOTR]> Best for now [" + levenshtein_lowest + "] is: " + lotrWhoMatch);
+      //console.log("DEBUG [idLOTR]> wikiUrl" + LOTR_ARRAY[match_id][3])
     }; // if (levenshtein_newest
   }; // for (var character_loop
   // Found best match
+  console.log("DEBUG [idLOTR]> Matched " + LOTR_ARRAY[match_id][0] + " to index " + match_id);
   return match_id;
 }
 
