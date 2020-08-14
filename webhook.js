@@ -2709,7 +2709,7 @@ function postLOTR(eventLOTR,lotrWho) {
     let match_id = idLOTR(lotrWho);
     // Check for quotes
     let tempArray = LOTR_ARRAY[match_id][10];
-    console.tables(tempArray);
+    console.table(tempArray);
     let quoteListCount = LOTR_ARRAY[match_id][10][0].length;
     if (quoteListCount > 0) {
       lotrBlurb = wrapLOTR(lotrWho);
