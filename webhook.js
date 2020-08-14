@@ -2703,7 +2703,7 @@ function postLOTR(eventLOTR,lotrWho) {
   }; // (match_id
 }
 
-function apiLOTR (chars_or_quotes,char_id){
+function apiLOTR (chars_or_quotes,char_id,callback){
   console.log("DEBUG [apiLOTR] Length of stored LOTR: " + LOTR_ARRAY.length)
   let url_path = '';
   if (chars_or_quotes == 'chars') {
