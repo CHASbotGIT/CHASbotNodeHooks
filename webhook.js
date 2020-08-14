@@ -706,7 +706,18 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
   // Block loads in characters
   var arrayQuote = [];
   for (var loopArray = 0; loopArray < lotrArray.length; loopArray++) {
-    LOTR_ARRAY.push([lotrArray[loopArray]._id, // [0]
+    LOTR_ARRAY.push([JSON.stringify(lotrArray[loopArray]._id), // [0]
+      JSON.stringify(lotrArray[loopArray].name),
+      JSON.stringify(lotrArray[loopArray].gender),
+      JSON.stringify(lotrArray[loopArray].wikiUrl),
+      JSON.stringify(lotrArray[loopArray].race),
+      JSON.stringify(lotrArray[loopArray].realm),
+      JSON.stringify(lotrArray[loopArray].height),
+      JSON.stringify(lotrArray[loopArray].hair),
+      JSON.stringify(lotrArray[loopArray].birth),
+      JSON.stringify(lotrArray[loopArray].death),
+      arrayQuote]); // [10] LOTR_ARRAY
+    /*LOTR_ARRAY.push([lotrArray[loopArray]._id, // [0]
       lotrArray[loopArray].name,
       lotrArray[loopArray].gender,
       lotrArray[loopArray].wikiUrl,
@@ -716,7 +727,7 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
       lotrArray[loopArray].hair,
       lotrArray[loopArray].birth,
       lotrArray[loopArray].death,
-      arrayQuote]); // [10] LOTR_ARRAY
+      arrayQuote]); // [10] LOTR_ARRAY*/
   }; // for
   console.log("DEBUG [loadLOTR] Characters: " + LOTR_ARRAY.length);
   callback();
@@ -2688,8 +2699,6 @@ function postLOTR(eventLOTR,lotrWho) {
       if (LOTR_ARRAY.length != 0) {
         let match_id = idLOTR(lotrWho);
         // Need to get the quotes
-        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + match_id);
-        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + LOTR_ARRAY[match_id][0]);
         apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
           lotrBlurb = wrapLOTR(lotrWho);
           console.log("DEBUG [postLOTR]> Final blurb via API is: " + lotrBlurb);
