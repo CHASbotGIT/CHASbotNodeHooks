@@ -698,8 +698,6 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
       }; // if
     }; // for
     for (var loopArray = 0; loopArray < lotrArray.length; loopArray++) {
-      console.log(lotrArray[loopArray].dialogue);
-      console.log(JSON.stringify(lotrArray[loopArray].dialogue));
       LOTR_ARRAY[id_position][10].push([lotrArray[loopArray].movie,lotrArray[loopArray].dialogue]);
     }; // for
     console.log("DEBUG [loadLOTR] Quotes: " + LOTR_ARRAY[id_position][10].length);
