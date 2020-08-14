@@ -684,7 +684,7 @@ function loadSurvey() {
   };
 }
 
-function loadLOTR(lotrArray,chars_or_quotes,quote_id) {
+function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
   // Block loads quotes in character array
   console.log("DEBUG [loadLOTR] Method: " + chars_or_quotes);
   if (chars_or_quotes == 'quotes') {
@@ -701,7 +701,7 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id) {
       LOTR_ARRAY[id_position][10].push([lotrArray[loopArray].movie,lotrArray[loopArray].dialogue]);
     }; // for
     console.log("DEBUG [loadLOTR] Quotes: " + LOTR_ARRAY[id_position][10].length);
-    return;
+    callback();
   }; // if
   // Block loads in characters
   var arrayQuote = [];
@@ -719,6 +719,7 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id) {
       arrayQuote]); // [10] LOTR_ARRAY
   }; // for
   console.log("DEBUG [loadLOTR] Characters: " + LOTR_ARRAY.length);
+  callback();
 }
 
 function highScore(read_write) {
@@ -2682,12 +2683,12 @@ function postLOTR(eventLOTR,lotrWho) {
   if (LOTR_ARRAY.length == 0) {
     // The array is empty, need to call API function
     console.log('DEBUG [postLOTR]> LOTR array is empty');
-    apiLOTR('chars','',function() {
+    apiLOTR('chars','', function() {
       console.log('DEBUG [postLOTR]> apiLOTR returned with array length: ' + LOTR_ARRAY.length);
       if (LOTR_ARRAY.length == 0) {
         let match_id = idLOTR(lotrWho);
         // Need to get the quotes
-        apiLOTR('quotes',LOTR_ARRAY[match_id][0],function() {
+        apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
           lotrBlurb = wrapLOTR(lotrWho);
           console.log("DEBUG [postLOTR]> Final blurb via API is: " + lotrBlurb);
           console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
@@ -2715,7 +2716,7 @@ function postLOTR(eventLOTR,lotrWho) {
       console.log("INFO [postLOTR]> Reponse: Successful");
       postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
     } else {
-      apiLOTR('quotes',LOTR_ARRAY[match_id][0],function() {
+      apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
         lotrBlurb = wrapLOTR(lotrWho);
         console.log("DEBUG [postLOTR]> Final blurb via memory & API is: " + lotrBlurb);
         console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
@@ -2754,8 +2755,9 @@ function apiLOTR (chars_or_quotes,char_id,callback){
         if (characterData_legible.includes('docs')) {
           let characterDataList = characterData.docs;
           console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
-          loadLOTR(characterDataList,'chars','');
-          callback();
+          loadLOTR(characterDataList,'chars','', function(){
+            callback();
+          });
         } else {
           // Could be status code 404 or some other response i.e. valid block BUT not results
           console.log("ERROR [apiLOTR]> Error getting characters results e.g. 404");
@@ -2793,8 +2795,9 @@ function apiLOTR (chars_or_quotes,char_id,callback){
           let quoteListCount = quoteList.length;
           if (quoteListCount > 0) {
             console.log("DEBUG [apiLOTR]> Quotes Retrieved No.: " + quoteListCount);
-            loadLOTR(quoteList,'quotes',char_id); // populate quotes for character
-            callback();
+            loadLOTR(quoteList,'quotes',char_id, function(){
+              callback();
+            });
           } else { // if (quoteListCount
             // Could be status code 404 or some other response i.e. valid block BUT not results
             console.log("ERROR [apiLOTR]> Error getting quotes results e.g. 404");
