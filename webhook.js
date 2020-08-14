@@ -2517,6 +2517,7 @@ function postLOTR(eventLOTR,lotrWho) {
     console.log('<<<<<<<<<<ARRAY NOT EMPTY>>>>>>>>>>');
     return;
   };
+  console.log('<<<<<<<<<<JUST KEEPS RUNNING>>>>>>>>>>');
   // This block settles on the best match and analyses the data
   let match_id = -1;
   let validWikiURL = '';
