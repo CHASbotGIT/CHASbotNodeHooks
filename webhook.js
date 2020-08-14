@@ -2509,7 +2509,6 @@ function wrapLOTR(match_id,lotrWho) {
   let clean_up_text1 = '';
   let clean_up_text2 = '';
   let various_trap = false;
-  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + lotrWho);
   lotrBlurb = "This is the best match I can find for " + strTitleCase(lotrWho) + ". ";
   console.log("DEBUG [wrapLOTR]> [0] Gender: " + LOTR_ARRAY[match_id][2]);
   if (LOTR_ARRAY[match_id][2] == 'Male') {
@@ -2672,7 +2671,7 @@ function postLOTR(eventLOTR,lotrWho) {
         let match_id = idLOTR(lotrWho);
         // Need to get the quotes
         apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
-          lotrBlurb = wrapLOTR(lotrWho);
+          lotrBlurb = wrapLOTR(match_id,lotrWho);
           console.log("DEBUG [postLOTR]> Final blurb via API is: " + lotrBlurb);
           console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
           console.log("INFO [postLOTR]> Reponse: Successful");
@@ -2695,14 +2694,14 @@ function postLOTR(eventLOTR,lotrWho) {
     console.table(tempArray);
     let quoteListCount = LOTR_ARRAY[match_id][10][0].length;
     if (quoteListCount > 0) {
-      lotrBlurb = wrapLOTR(lotrWho);
+      lotrBlurb = wrapLOTR(match_id,lotrWho);
       console.log("DEBUG [postLOTR]> Final blurb via memory is: " + lotrBlurb);
       console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
       console.log("INFO [postLOTR]> Reponse: Successful");
       postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
     } else {
       apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
-        lotrBlurb = wrapLOTR(lotrWho);
+        lotrBlurb = wrapLOTR(match_id,lotrWho);
         console.log("DEBUG [postLOTR]> Final blurb via memory & API is: " + lotrBlurb);
         console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
         console.log("INFO [postLOTR]> Reponse: Successful");
