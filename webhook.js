@@ -2683,16 +2683,15 @@ function postLOTR(eventLOTR,lotrWho) {
       quote_placeholder = quote_placeholder.trim(); // leading/trailing whitespace
       console.log("DEBUG [postLOTR]> Quote leading/trailing whitespace removed: " + quote_placeholder);
       movie_quote = movie_quote + quote_placeholder;
-    };
-  }; // if (quoteListCount
-  console.log("DEBUG [postLOTR]> Full Quote: " + movie_quote);
-  lotrBlurb = lotrBlurb + movie_quote;
-  lotrBlurb = strTrimTo(640,lotrBlurb); // Make sure the message isn't over-long
-  console.log("DEBUG [postLOTR]> Final blurb is: " + lotrBlurb);
-  console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
-  console.log("INFO [postLOTR]> Reponse: Successful");
-  postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
-  return;
+    }; // if (movie_quote
+    console.log("DEBUG [postLOTR]> Full Quote: " + movie_quote);
+    lotrBlurb = lotrBlurb + movie_quote;
+    lotrBlurb = strTrimTo(640,lotrBlurb); // Make sure the message isn't over-long
+    console.log("DEBUG [postLOTR]> Final blurb is: " + lotrBlurb);
+    console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
+    console.log("INFO [postLOTR]> Reponse: Successful");
+    postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
+    return;
   } else { // (match_id
     // Could not find a match... though not possible?!
     console.log("ERROR [postLOTR]> No Luck");
