@@ -2692,7 +2692,7 @@ function postLOTR(eventLOTR,lotrWho) {
           console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
           console.log("INFO [postLOTR]> Reponse: Successful");
           postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
-        }; // apiLOTR('quotes'
+        }); // apiLOTR('quotes'
       } else {
         // Array not populated after API call
         console.log("INFO [postLOTR]> Action: apiLOTR.deliverTextDirect");
@@ -2720,7 +2720,7 @@ function postLOTR(eventLOTR,lotrWho) {
         console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
         console.log("INFO [postLOTR]> Reponse: Successful");
         postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
-      }; // apiLOTR('quotes'
+      }); // apiLOTR('quotes'
     }; // if (quoteListCount
   }; // if (LOTR_ARRAY.length
 }
