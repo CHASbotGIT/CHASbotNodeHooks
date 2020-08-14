@@ -1057,11 +1057,6 @@ CHASbot.post('/webhook', (req, res) => {
           };
         };
         if (sticker_path != '') {
-
-
-          //console.log("DEBUG [postWebhook_route]> Hangman Initiated");
-
-
           console.log("INFO [postWebhook]> Sender: " + sender);
           console.log("INFO [postWebhook]> Request: Non-text");
           console.log("INFO [postWebhook]> Action: postWebhook.deliverTextDirect");
@@ -2622,7 +2617,7 @@ function wrapLOTR(match_id,lotrWho) {
   let quoteListCount = LOTR_ARRAY[match_id][10].length;
 
   let tempArray = LOTR_ARRAY[match_id][10];
-  //console.table(tempArray);
+  console.table(tempArray);
 
   console.log("DEBUG [wrapLOTR]> Quotes to pick from: " + quoteListCount);
   let quotePick = numRandomBetween(0,quoteListCount-1);
