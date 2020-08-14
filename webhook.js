@@ -2708,6 +2708,8 @@ function postLOTR(eventLOTR,lotrWho) {
     console.log('DEBUG [postLOTR]> Bypass API, operating from memory');
     let match_id = idLOTR(lotrWho);
     // Check for quotes
+    let tempArray = LOTR_ARRAY[match_id][10];
+    cosole.tables(tempArray);
     let quoteListCount = LOTR_ARRAY[match_id][10][0].length;
     if (quoteListCount > 0) {
       lotrBlurb = wrapLOTR(lotrWho);
