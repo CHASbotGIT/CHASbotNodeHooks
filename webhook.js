@@ -2683,7 +2683,7 @@ function postLOTR(eventLOTR,lotrWho) {
         apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
           lotrBlurb = wrapLOTR(match_id,lotrWho);
           //console.log("DEBUG [postLOTR]> Final blurb via API is: " + lotrBlurb);
-          console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
+          console.log("INFO [postLOTR]> Action: API.postLOTR.postLinkButton");
           console.log("INFO [postLOTR]> Reponse: Successful");
           postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
         }); // apiLOTR('quotes'
@@ -2702,14 +2702,14 @@ function postLOTR(eventLOTR,lotrWho) {
     if (typeof LOTR_ARRAY[match_id][10] != 'undefined') {
       lotrBlurb = wrapLOTR(match_id,lotrWho);
       //console.log("DEBUG [postLOTR]> Final blurb via memory is: " + lotrBlurb);
-      console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
+      console.log("INFO [postLOTR]> Action: stored.postLOTR.postLinkButton");
       console.log("INFO [postLOTR]> Reponse: Successful");
       postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
     } else { // if (typeof LOTR_ARRAY
       apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
         lotrBlurb = wrapLOTR(match_id,lotrWho);
         //console.log("DEBUG [postLOTR]> Final blurb via memory & API is: " + lotrBlurb);
-        console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
+        console.log("INFO [postLOTR]> Action: stored.API.postLOTR.postLinkButton");
         console.log("INFO [postLOTR]> Reponse: Successful");
         postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
       }); // apiLOTR('quotes'
@@ -2746,7 +2746,6 @@ function apiLOTR (chars_or_quotes,char_id,callback){
           let characterDataList = characterData.docs;
           //console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
           loadLOTR(characterDataList,'chars','', function(){
-            console.log (">>>>>>>>>>>>>>>>>>>>>>>>>>>> Characters Call Back");
             callback();
           });
         } else {
@@ -2787,7 +2786,6 @@ function apiLOTR (chars_or_quotes,char_id,callback){
           if (quoteListCount > 0) {
             //console.log("DEBUG [apiLOTR]> Quotes Retrieved No.: " + quoteListCount);
             loadLOTR(quoteList,'quotes',char_id, function(){
-              console.log (">>>>>>>>>>>>>>>>>>>>>>>>>>>> Quotes Call Back");
               callback();
             });
           } else { // if (quoteListCount
