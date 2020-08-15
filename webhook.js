@@ -405,6 +405,7 @@ var LOTR_QUOTES = [];
 
 LOTR_QUOTES[3] = [["SPAM","EGGS","HAM"],
                   [12,24,36]];
+console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + LOTR_QUOTES[3][1][2]); //24              
 console.table(LOTR_QUOTES);
 if (typeof LOTR_QUOTES[2] == 'undefined') {console.log("NOT THERE YET")};
 
