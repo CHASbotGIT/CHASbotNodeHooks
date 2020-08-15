@@ -2713,7 +2713,7 @@ function lookupHero (eventHero,heroWho){
   let heroMatches = []; // May be more than one
   if (HERO_ARRAY.length != 0) { // Array not empty
     for (var character_loop = 0; character_loop < HERO_ARRAY.length; character_loop++) {
-      if (typeof HERO_ARRAY[targetID]) != 'undefined') {
+      if (typeof HERO_ARRAY[targetID] != 'undefined') {
         heroWhoStored = HERO_ARRAY[targetID][0].toLowerCase;
         if (heroWhoStored == heroWhoMatch) {
             heroMatches.push(targetID);
