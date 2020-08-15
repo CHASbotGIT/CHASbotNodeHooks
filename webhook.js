@@ -2716,7 +2716,7 @@ function lookupHero (eventHero,heroWho){
     for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
       if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
         heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase;
-        console.log("DEBUG [lookupHero]> Compare " + heroWhoMatch + " with " + heroWhoStored);
+        console.log("DEBUG [lookupHero]> Compare " + JSON.stringify(heroWhoMatch) + " with " + JSON.stringify(heroWhoStored));
         if (heroWhoStored == heroWhoMatch) {
             heroMatches.push(hero_loop);
             console.log("DEBUG [lookupHero]> Stored match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
@@ -2731,7 +2731,7 @@ function lookupHero (eventHero,heroWho){
         for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
           if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
             heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase;
-            console.log("DEBUG [lookupHero]> Compare " + heroWhoMatch + " with " + heroWhoStored);
+            console.log("DEBUG [lookupHero]> Compare " + JSON.stringify(heroWhoMatch) + " with " + JSON.stringify(heroWhoStored));
             if (heroWhoStored == heroWhoMatch) {
                 heroMatches.push(hero_loop);
                 console.log("DEBUG [lookupHero]> API match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
