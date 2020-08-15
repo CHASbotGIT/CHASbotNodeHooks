@@ -2620,7 +2620,7 @@ function wrapLOTR(match_id,lotrWho) {
   // The block below appends if there is a viable quote
   let quoteListCount = LOTR_ARRAY[match_id][10].length;
   let quoteArray = LOTR_ARRAY[match_id][10];
-  //console.log("DEBUG [wrapLOTR]> Quotes to pick from: " + quoteListCount);
+  console.log("DEBUG [wrapLOTR]> Quotes to pick from: " + quoteListCount);
   let quotePick = numRandomBetween(0,quoteListCount-1);
   //console.log("DEBUG [wrapLOTR]> Quote Picked: " + quotePick);
   for (var loop_films = 0; loop_films < LOTR_MOVIES.length; loop_films++) {
