@@ -687,7 +687,7 @@ function loadSurvey() {
 
 function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
   // Block loads quotes in character array
-  //console.log("DEBUG [loadLOTR] Method: " + chars_or_quotes);
+  //console.log("DEBUG [loadLOTR]> Method: " + chars_or_quotes);
   if (chars_or_quotes == 'quotes') {
     //console.log("DEBUG [loadLOTR]> ID: " + quote_id);
     let id_position = -1;
@@ -1157,6 +1157,7 @@ CHASbot.post('/webhook', (req, res) => {
           //console.log("DEBUG [postWebhook]> " + TRIGGER_HELP + " search result: " + position_in_analyse_text);
           let help_url = '';
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
+            apiHERO(event,'batman');
             trigger_path = TRIGGER_HELP;
             help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
             //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
@@ -2698,8 +2699,30 @@ function apiMarvelChar(eventMarvel,marvelWho) {
   });
 }
 
+function apiHERO (eventHero,heroWho){
+  //https://superheroapi.com/api/3449097715109340/search/batman
+  console.log("DEBUG [apiHERO]> Getting started");
+  let KEY_FOR_NOW = '3449097715109340';
+  let URL_API_HERO = "https://superheroapi.com/api/";
+  const hero_url = URL_API_HERO + KEY_FOR_NOW + "/search/" + heroWho;
+  var req = http.get(hero_url, function(res) {
+    console.log("DEBUG [apiHERO]> Request made");
+    let body = "";
+    // Data comes through in chunks
+    res.on('data', function (chunk) { body += chunk });
+    // When all the data is back, go on to query the full response
+    res.on('end', function() {
+      let heroData = JSON.parse(body);
+      console.log("DEBUG [apiHERO]> Got this back: " + body);
+    }); // res.on('end'
+  }); // http.get(url
+  req.on('error', function(e) { // Catches failures to connect to the API
+    console.log("ERROR [apiHERO]> Error getting to API: " + e);
+  }); // req.on('error'
+}
+
 function apiLOTR (chars_or_quotes,char_id,callback){
-  //console.log("DEBUG [apiLOTR] Length of stored LOTR: " + LOTR_ARRAY.length)
+  //console.log("DEBUG [apiLOTR]> Length of stored LOTR: " + LOTR_ARRAY.length)
   let url_path = '';
   if (chars_or_quotes == 'chars') {
     url_path = '/v1/character';
