@@ -2748,9 +2748,8 @@ function apiHero (heroWho,callback){
   let KEY_FOR_NOW = '3449097715109340';
   let URL_API_HERO = "https://superheroapi.com/api.php/";
   const hero_url = URL_API_HERO + KEY_FOR_NOW + "/search/" + heroWho;
-  console.log("DEBUG [apiHero]> URL:" + hero_url);
   var req = http.get(hero_url, function(res) {
-    console.log("DEBUG [apiHero]> Request made");
+    console.log("API Request [LOTR]: " + hero_url);
     let body = "";
     // Data comes through in chunks
     res.on('data', function (chunk) { body += chunk });
@@ -2778,15 +2777,17 @@ function apiHero (heroWho,callback){
               heroStats.image.url]; // [7]
           }; // if (typeof
         }; // for (var character_loop
+        callback();
       } else {
         console.log("ERROR [apiHero]> No joy bringing back a record");
+        callback();
       }
     }); // res.on('end'
   }); // http.get(url
   req.on('error', function(e) { // Catches failures to connect to the API
     console.log("ERROR [apiHero]> Error getting to API: " + e);
+    callback();
   }); // req.on('error'
-  callback();
 }
 
 function apiLOTR (chars_or_quotes,char_id,callback){
