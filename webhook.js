@@ -1158,9 +1158,9 @@ CHASbot.post('/webhook', (req, res) => {
           let help_url = '';
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
             lookupHero(event,'batman'); // should work
-            lookupHero(event,'btman'); // should not work
-            lookupHero(event,'ironman'); // should work
-            lookupHero(event,'batman'); // should be local
+            //lookupHero(event,'btman'); // should not work
+            //lookupHero(event,'ironman'); // should work
+            //lookupHero(event,'batman'); // should be local
             trigger_path = TRIGGER_HELP;
             help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
             //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
@@ -2750,7 +2750,7 @@ function apiHero (heroWho,callback){
   let URL_API_HERO = "https://superheroapi.com/api.php/";
   const hero_url = URL_API_HERO + KEY_FOR_NOW + "/search/" + heroWho;
   var req = http.get(hero_url, function(res) {
-    console.log("API Request [LOTR]: " + hero_url);
+    console.log("API Request [HERO]: " + hero_url);
     let body = "";
     // Data comes through in chunks
     res.on('data', function (chunk) { body += chunk });
