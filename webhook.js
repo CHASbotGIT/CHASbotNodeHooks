@@ -2712,6 +2712,7 @@ function lookupHero (eventHero,heroWho){
   let heroWhoStored = '';
   let heroMatches = []; // May be more than one
   if (HERO_ARRAY.length != 0) { // Array not empty
+    console.log("DEBUG [lookupHero]> There are values stored");
     for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
       if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
         heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase;
