@@ -688,37 +688,41 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
   // Block loads quotes in character array
   //console.log("DEBUG [loadLOTR] Method: " + chars_or_quotes);
   if (chars_or_quotes == 'quotes') {
-    //console.log("DEBUG [loadLOTR] ID: " + quote_id);
+    console.log("DEBUG [loadLOTR] ID: " + quote_id);
     let id_position = -1;
     for (var loopArray = 0; loopArray < LOTR_ARRAY.length; loopArray++) {
       if (LOTR_ARRAY[loopArray][0]==quote_id) {
         id_position = loopArray;
-        //console.log("DEBUG [loadLOTR] ID found at: " + id_position);
+        console.log("DEBUG [loadLOTR] ID found at: " + id_position);
         break;
       }; // if
     }; // for
-    for (var loopArray = 0; loopArray < lotrArray.length; loopArray++) {
-      LOTR_ARRAY[id_position][10].push([lotrArray[loopArray].movie,lotrArray[loopArray].dialog]);
-    }; // for
-    //console.log("DEBUG [loadLOTR] Quotes: " + LOTR_ARRAY[id_position][10].length);
+    if (LOTR_ARRAY[id_position][10].length == 0) { // No need to populate
+      for (var loopArray = 0; loopArray < lotrArray.length; loopArray++) {
+        LOTR_ARRAY[id_position][10].push([lotrArray[loopArray].movie,lotrArray[loopArray].dialog]);
+      }; // for
+    }
+    console.log("DEBUG [loadLOTR] Quotes: " + LOTR_ARRAY[id_position][10].length);
     callback();
   }; // if
   // Block loads in characters
-  var arrayQuote = [];
-  for (var loopArray = 0; loopArray < lotrArray.length; loopArray++) {
-    LOTR_ARRAY.push([lotrArray[loopArray]._id, // [0]
-      lotrArray[loopArray].name,
-      lotrArray[loopArray].gender,
-      lotrArray[loopArray].wikiUrl,
-      lotrArray[loopArray].race,
-      lotrArray[loopArray].realm,
-      lotrArray[loopArray].height,
-      lotrArray[loopArray].hair,
-      lotrArray[loopArray].birth,
-      lotrArray[loopArray].death,
-      arrayQuote]); // [10] LOTR_ARRAY
-  }; // for
-  //console.log("DEBUG [loadLOTR] Characters: " + LOTR_ARRAY.length);
+  if (chars_or_quotes == 'chars' && LOTR_ARRAY.length == 0) { // Catch multiple calls
+    var arrayQuote = [];
+    for (var loopArray = 0; loopArray < lotrArray.length; loopArray++) {
+      LOTR_ARRAY.push([lotrArray[loopArray]._id, // [0]
+        lotrArray[loopArray].name,
+        lotrArray[loopArray].gender,
+        lotrArray[loopArray].wikiUrl,
+        lotrArray[loopArray].race,
+        lotrArray[loopArray].realm,
+        lotrArray[loopArray].height,
+        lotrArray[loopArray].hair,
+        lotrArray[loopArray].birth,
+        lotrArray[loopArray].death,
+        arrayQuote]); // [10] LOTR_ARRAY
+    }; // for
+  }; // if
+  console.log("DEBUG [loadLOTR] Characters: " + LOTR_ARRAY.length);
   callback();
 }
 
