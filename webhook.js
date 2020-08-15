@@ -708,14 +708,10 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
         break;
       }; // if
     }; // for
-
-
-
     if (typeof LOTR_ARRAY[id_position][10] == 'undefined') { // Can be defined
       let pushArray = [];
       for (var loopArray = 0; loopArray < lotrArray.length; loopArray++) {
         pushArray.push([lotrArray[loopArray].movie,lotrArray[loopArray].dialog]);
-
       }; // for
       LOTR_ARRAY[id_position][10] = pushArray;
       console.log("DEBUG [loadLOTR]> Quotes populated for: " + id_position);
@@ -723,8 +719,6 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
       console.log("DEBUG [loadLOTR]> First film/quote: " + id_position);
       console.table(LOTR_ARRAY[id_position][10][0]);
     }; // if (LOTR_ARRAY[id_position]
-
-
     console.log("DEBUG [loadLOTR]> Quotes: " + LOTR_ARRAY[id_position][10].length);
     callback();
   }; // if (chars_or_quotes
@@ -2641,36 +2635,38 @@ function wrapLOTR(match_id,lotrWho) {
   lotrBlurb = strProper(lotrBlurb); // Tidy proper pronouns
   let movie_quote = '';
   // The block below appends if there is a viable quote
-  let quoteListCount = LOTR_ARRAY[match_id][10].length;
-  let quoteArray = LOTR_ARRAY[match_id][10];
-  console.log("DEBUG [wrapLOTR]> Quotes to pick from: " + quoteListCount);
-  let quotePick = numRandomBetween(0,quoteListCount-1);
-  //console.log("DEBUG [wrapLOTR]> Quote Picked: " + quotePick);
-  for (var loop_films = 0; loop_films < LOTR_MOVIES.length; loop_films++) {
-    if (LOTR_MOVIES[loop_films].includes(quoteArray[quotePick][0])) {
-      movie_quote = " Quoted in " + LOTR_MOVIES[loop_films].replace(quoteArray[quotePick][0],'') + ' 💬 ';
-      //console.log("DEBUG [wrapLOTR]> Film: " + movie_quote);
-      break;
-    }; // if (LOTR_MOVIES[loop_films]
-  }; // (var loop_films
-  // if there wasn't a movie named then skip the quote
-  if (movie_quote!= '') {
-    let quote_placeholder = quoteArray[quotePick][1];
-    //console.log("DEBUG [wrapLOTR]> Quote raw: " + quote_placeholder);
-    var regex_punctuation = new RegExp("[?!;:.,]", 'g');
-    quote_placeholder = quote_placeholder.replace(regex_punctuation,"$& "); // add minimal space after punctuation
-    //console.log("DEBUG [wrapLOTR]> Quote add minimal spaces after punctuation: " + quote_placeholder);
-    quote_placeholder = strReplaceAll(quote_placeholder,' , ','');
-    //console.log("DEBUG [wrapLOTR]> Quote extra commas removed: " + quote_placeholder);
-    quote_placeholder = quote_placeholder.replace(/\s+(\W)/g, "$1"); // pre-punctuation spaces
-    //console.log("DEBUG [wrapLOTR]> Quote spaces pre-punctuation removed: " + quote_placeholder);
-    quote_placeholder = quote_placeholder.replace(/\s\s+/g, ' '); // internal whitespace
-    //console.log("DEBUG [wrapLOTR]> Quote padded spaces removed: " + quote_placeholder);
-    quote_placeholder = quote_placeholder.trim(); // leading/trailing whitespace
-    //console.log("DEBUG [wrapLOTR]> Quote leading/trailing whitespace removed: " + quote_placeholder);
-    movie_quote = movie_quote + quote_placeholder;
-  }; // if (movie_quote
-  //console.log("DEBUG [wrapLOTR]> Full Quote: " + movie_quote);
+  if (typeof LOTR_ARRAY[match_id][10] != 'undefined') {
+    let quoteListCount = LOTR_ARRAY[match_id][10].length;
+    let quoteArray = LOTR_ARRAY[match_id][10];
+    console.log("DEBUG [wrapLOTR]> Quotes to pick from: " + quoteListCount);
+    let quotePick = numRandomBetween(0,quoteListCount-1);
+    //console.log("DEBUG [wrapLOTR]> Quote Picked: " + quotePick);
+    for (var loop_films = 0; loop_films < LOTR_MOVIES.length; loop_films++) {
+      if (LOTR_MOVIES[loop_films].includes(quoteArray[quotePick][0])) {
+        movie_quote = " Quoted in " + LOTR_MOVIES[loop_films].replace(quoteArray[quotePick][0],'') + ' 💬 ';
+        //console.log("DEBUG [wrapLOTR]> Film: " + movie_quote);
+        break;
+      }; // if (LOTR_MOVIES[loop_films]
+    }; // (var loop_films
+    // if there wasn't a movie named then skip the quote
+    if (movie_quote!= '') {
+      let quote_placeholder = quoteArray[quotePick][1];
+      //console.log("DEBUG [wrapLOTR]> Quote raw: " + quote_placeholder);
+      var regex_punctuation = new RegExp("[?!;:.,]", 'g');
+      quote_placeholder = quote_placeholder.replace(regex_punctuation,"$& "); // add minimal space after punctuation
+      //console.log("DEBUG [wrapLOTR]> Quote add minimal spaces after punctuation: " + quote_placeholder);
+      quote_placeholder = strReplaceAll(quote_placeholder,' , ','');
+      //console.log("DEBUG [wrapLOTR]> Quote extra commas removed: " + quote_placeholder);
+      quote_placeholder = quote_placeholder.replace(/\s+(\W)/g, "$1"); // pre-punctuation spaces
+      //console.log("DEBUG [wrapLOTR]> Quote spaces pre-punctuation removed: " + quote_placeholder);
+      quote_placeholder = quote_placeholder.replace(/\s\s+/g, ' '); // internal whitespace
+      //console.log("DEBUG [wrapLOTR]> Quote padded spaces removed: " + quote_placeholder);
+      quote_placeholder = quote_placeholder.trim(); // leading/trailing whitespace
+      //console.log("DEBUG [wrapLOTR]> Quote leading/trailing whitespace removed: " + quote_placeholder);
+      movie_quote = movie_quote + quote_placeholder;
+    }; // if (movie_quote
+    //console.log("DEBUG [wrapLOTR]> Full Quote: " + movie_quote);
+  }; // if (typeof LOTR_ARRAY
   lotrBlurb = lotrBlurb + movie_quote;
   lotrBlurb = strTrimTo(640,lotrBlurb); // Make sure the message isn't over-long
   return lotrBlurb;
@@ -2678,8 +2674,6 @@ function wrapLOTR(match_id,lotrWho) {
 
 // Stop double response on first pass?
 // only quoting first call
-
-
 
 function postLOTR(eventLOTR,lotrWho) {
   console.log("INFO [postLOTR]> Sender: " + eventLOTR.sender.id);
@@ -2722,14 +2716,8 @@ function postLOTR(eventLOTR,lotrWho) {
     let match_id = idLOTR(lotrWho);
     console.log("DEBUG [postLOTR]> Via memory fork looking for: " + lotrWho + " = " + match_id);
 
+    if (typeof LOTR_ARRAY[match_id][10] != 'undefined') {
 
-
-    // Check for quotes
-    let quoteListCount = LOTR_ARRAY[match_id][10].length;
-
-    console.log("DEBUG [postLOTR]> Quotes in memory for: " + match_id + " = " + quoteListCount);
-
-    if (quoteListCount > 0) {
       lotrBlurb = wrapLOTR(match_id,lotrWho);
       console.log("DEBUG [postLOTR]> Final blurb via memory is: " + lotrBlurb);
       console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
