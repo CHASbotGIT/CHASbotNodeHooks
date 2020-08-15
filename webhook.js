@@ -688,12 +688,12 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
   // Block loads quotes in character array
   //console.log("DEBUG [loadLOTR] Method: " + chars_or_quotes);
   if (chars_or_quotes == 'quotes') {
-    console.log("DEBUG [loadLOTR] ID: " + quote_id);
+    console.log("DEBUG [loadLOTR]> ID: " + quote_id);
     let id_position = -1;
     for (var loopArray = 0; loopArray < LOTR_ARRAY.length; loopArray++) {
       if (LOTR_ARRAY[loopArray][0]==quote_id) {
         id_position = loopArray;
-        console.log("DEBUG [loadLOTR] ID found at: " + id_position);
+        console.log("DEBUG [loadLOTR]> ID found at: " + id_position);
         break;
       }; // if
     }; // for
@@ -702,7 +702,7 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
         LOTR_ARRAY[id_position][10].push([lotrArray[loopArray].movie,lotrArray[loopArray].dialog]);
       }; // for
     }
-    console.log("DEBUG [loadLOTR] Quotes: " + LOTR_ARRAY[id_position][10].length);
+    console.log("DEBUG [loadLOTR]> Quotes: " + LOTR_ARRAY[id_position][10].length);
     callback();
   }; // if
   // Block loads in characters
@@ -722,7 +722,7 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
         arrayQuote]); // [10] LOTR_ARRAY
     }; // for
   }; // if
-  console.log("DEBUG [loadLOTR] Characters: " + LOTR_ARRAY.length);
+  console.log("DEBUG [loadLOTR]> Characters: " + LOTR_ARRAY.length);
   callback();
 }
 
