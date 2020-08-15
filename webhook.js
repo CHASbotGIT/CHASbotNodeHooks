@@ -2763,7 +2763,7 @@ function apiHero (heroWho,callback){
         console.log("DEBUG [apiHero]> Got result(s) to play with: " + heroData.results.length);
         let targetID = 0;
         for (var character_loop = 0; character_loop < heroData.results.length; character_loop++) {
-          heroStats = heroData.results[character_loop];
+          let heroStats = heroData.results[character_loop];
           targetID = heroStats.id;
           console.log("DEBUG [apiHero]> Target: " + targetID);
           if (typeof HERO_ARRAY[targetID] == 'undefined') {
