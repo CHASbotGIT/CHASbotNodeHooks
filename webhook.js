@@ -720,27 +720,29 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
       //console.table(LOTR_ARRAY[id_position][10][0]);
     }; // if (LOTR_ARRAY[id_position]
     //console.log("DEBUG [loadLOTR]> Quotes: " + LOTR_ARRAY[id_position][10].length);
+console.log("ABOUT TO CALLBACK QUOTES LOAD >>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
     callback();
-  }; // if (chars_or_quotes
-  // Block loads in characters
-  if (chars_or_quotes == 'chars' && LOTR_ARRAY.length == 0) { // Catch multiple calls
-    var arrayQuote = [];
-    for (var loopArray = 0; loopArray < lotrArray.length; loopArray++) {
-      LOTR_ARRAY.push([lotrArray[loopArray]._id, // [0]
-        lotrArray[loopArray].name,
-        lotrArray[loopArray].gender,
-        lotrArray[loopArray].wikiUrl,
-        lotrArray[loopArray].race,
-        lotrArray[loopArray].realm,
-        lotrArray[loopArray].height,
-        lotrArray[loopArray].hair,
-        lotrArray[loopArray].birth,
-        lotrArray[loopArray].death]); //,
-        //arrayQuote]); // [10] LOTR_ARRAY
-    }; // for
-  }; // if
-  //console.log("DEBUG [loadLOTR]> Characters: " + LOTR_ARRAY.length);
-  callback();
+  } else { // if (chars_or_quotes
+    // Block loads in characters
+    if (chars_or_quotes == 'chars' && LOTR_ARRAY.length == 0) { // Catch multiple calls
+      var arrayQuote = [];
+      for (var loopArray = 0; loopArray < lotrArray.length; loopArray++) {
+        LOTR_ARRAY.push([lotrArray[loopArray]._id, // [0]
+          lotrArray[loopArray].name,
+          lotrArray[loopArray].gender,
+          lotrArray[loopArray].wikiUrl,
+          lotrArray[loopArray].race,
+          lotrArray[loopArray].realm,
+          lotrArray[loopArray].height,
+          lotrArray[loopArray].hair,
+          lotrArray[loopArray].birth,
+          lotrArray[loopArray].death]);
+      }; // for
+    }; // if
+    //console.log("DEBUG [loadLOTR]> Characters: " + LOTR_ARRAY.length);
+console.log("ABOUT TO CALLBACK CHARACTER LOAD >>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    callback();
+  }; // else
 }
 
 function highScore(read_write) {
