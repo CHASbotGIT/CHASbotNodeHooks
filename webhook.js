@@ -2716,7 +2716,7 @@ function lookupHero (eventHero,heroWho){
     for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
       if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
         heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase();
-        if (heroWhoStored == heroWhoMatch) {
+        if (heroWhoStored.includes(heroWhoMatch)) {
             heroMatches.push(hero_loop);
             console.log("DEBUG [lookupHero]> Stored match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
         }; // if (heroWhoStored
@@ -2730,7 +2730,7 @@ function lookupHero (eventHero,heroWho){
         for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
           if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
             heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase();
-            if (heroWhoStored == heroWhoMatch) {
+            if (heroWhoStored.includes(heroWhoMatch)) {
                 heroMatches.push(hero_loop);
                 console.log("DEBUG [lookupHero]> API match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
             }; // if (heroWhoStored
@@ -2742,6 +2742,8 @@ function lookupHero (eventHero,heroWho){
     }); // apiHero(heroWho
   }; // if (heroMatches
 }
+
+//             batman 2
 
 function apiHero (heroWho,callback){
   //https://superheroapi.com/api/3449097715109340/search/batman
