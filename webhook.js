@@ -2712,7 +2712,7 @@ function apiHERO (eventHero,heroWho){
     res.on('data', function (chunk) { body += chunk });
     // When all the data is back, go on to query the full response
     res.on('end', function() {
-      let heroData = JSON.parse(body);
+      //let heroData = JSON.parse(body);
       console.log("DEBUG [apiHERO]> Got this back: " + body);
     }); // res.on('end'
   }); // http.get(url
