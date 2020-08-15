@@ -1157,7 +1157,8 @@ CHASbot.post('/webhook', (req, res) => {
           //console.log("DEBUG [postWebhook]> " + TRIGGER_HELP + " search result: " + position_in_analyse_text);
           let help_url = '';
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
-            apiHERO(event,'batman');
+            apiHERO(event,'batman'); // should work
+            apiHERO(event,'btman'); // should not work
             trigger_path = TRIGGER_HELP;
             help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
             //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
@@ -2699,6 +2700,9 @@ function apiMarvelChar(eventMarvel,marvelWho) {
   });
 }
 
+let HERO_ARRAY = [];
+// [0] id [1] name [3]
+
 function apiHERO (eventHero,heroWho){
   //https://superheroapi.com/api/3449097715109340/search/batman
   console.log("DEBUG [apiHERO]> Getting started");
@@ -2714,8 +2718,13 @@ function apiHERO (eventHero,heroWho){
     // When all the data is back, go on to query the full response
     res.on('end', function() {
       let heroData = JSON.parse(body);
-      console.log("DEBUG [apiHERO]> Got this back: " + heroData);
+      console.log("DEBUG [apiHERO]> Got this back raw: " + body);
       console.log("DEBUG [apiHERO]> Response Code: " + heroData.response);
+      if (typeof heroData.response != 'undefined' && heroData.response = 'success') {
+        console.log("DEBUG [apiHERO]> Got a result to play with");
+      } else {
+        console.log("ERROR [apiHERO]> No joy bringing back a record");
+      }
     }); // res.on('end'
   }); // http.get(url
   req.on('error', function(e) { // Catches failures to connect to the API
