@@ -2725,7 +2725,7 @@ function lookupHero (eventHero,heroWho){
   }; // if (HERO_ARRAY
   if (heroMatches.length == 0) {
     console.log("DEBUG [lookupHero]> No matches stored, trying API");
-    apiHero(heroWho, function(){
+    apiHero(eventHero,heroWho, function(){
       if (HERO_ARRAY.length != 0) { // Array not empty
         for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
           if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
@@ -2743,7 +2743,7 @@ function lookupHero (eventHero,heroWho){
   }; // if (heroMatches
 }
 
-function apiHero (heroWho,callback){
+function apiHero (eventHero,heroWho,callback){
   //https://superheroapi.com/api/3449097715109340/search/batman
   console.log("DEBUG [apiHero]> Getting started");
   let KEY_FOR_NOW = '3449097715109340';
