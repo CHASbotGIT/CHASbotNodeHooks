@@ -2766,7 +2766,7 @@ function apiHero (heroWho,callback){
           heroStats = heroData.results[character_loop];
           targetID = heroStats.id;
           console.log("DEBUG [apiHero]> Target: " + targetID);
-          if (typeof HERO_ARRAY[targetID]) == 'undefined') {
+          if (typeof HERO_ARRAY[targetID] == 'undefined') {
             HERO_ARRAY[targetID]=[
               heroStats.name, // [0]
               heroStats.powerstats.intelligence,
