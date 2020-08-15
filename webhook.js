@@ -2730,7 +2730,7 @@ function lookupHero (eventHero,heroWho){
           if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
             heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase;
             if (heroWhoStored == heroWhoMatch) {
-                heroMatches.push(thero_loop);
+                heroMatches.push(hero_loop);
                 console.log("DEBUG [lookupHero]> API match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
             }; // if (heroWhoStored
           }; // if (typeof
