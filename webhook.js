@@ -2698,7 +2698,6 @@ function postLOTR(eventLOTR,lotrWho) {
           console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
           console.log("INFO [postLOTR]> Reponse: Successful");
           postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
-          return;
         }); // apiLOTR('quotes'
       } else {
         // Array not populated after API call
@@ -2707,7 +2706,6 @@ function postLOTR(eventLOTR,lotrWho) {
         console.log("ERROR [postLOTR]> apiLOTR did not populate array");
         lotrBlurb = MSG_LOTR_OOPS[numRandomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + strTitleCase(lotrWho) + '?'; // Required within deliverTextDirect
         deliverTextDirect(eventLOTR,lotrBlurb);
-        return;
       };
     }); // apiLOTR('chars'
   } else { // Operating from memeory - not API
@@ -2719,17 +2717,15 @@ function postLOTR(eventLOTR,lotrWho) {
       console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
       console.log("INFO [postLOTR]> Reponse: Successful");
       postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
-      return;
-    } else {
+    } else { // if (typeof LOTR_ARRAY
       apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
         lotrBlurb = wrapLOTR(match_id,lotrWho);
         console.log("DEBUG [postLOTR]> Final blurb via memory & API is: " + lotrBlurb);
         console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
         console.log("INFO [postLOTR]> Reponse: Successful");
         postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
-        return;
       }); // apiLOTR('quotes'
-    }; // if (quoteListCount
+    }; // if (typeof LOTR_ARRAY
   }; // if (LOTR_ARRAY.length
 }
 
