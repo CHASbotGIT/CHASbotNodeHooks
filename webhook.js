@@ -1158,9 +1158,9 @@ CHASbot.post('/webhook', (req, res) => {
           let help_url = '';
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
             lookupHero(event,'batman'); // should work
-            //lookupHero(event,'btman'); // should not work
-            //lookupHero(event,'ironman'); // should work
-            //lookupHero(event,'batman'); // should be local
+            lookupHero(event,'btman'); // should not work
+            lookupHero(event,'ironman'); // should work
+            lookupHero(event,'batman'); // should be local
             trigger_path = TRIGGER_HELP;
             help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
             //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
@@ -2708,20 +2708,14 @@ let HERO_ARRAY = [];
 
 function lookupHero (eventHero,heroWho){
   console.log("DEBUG [lookupHero]> Hero to find: " + heroWho);
-  let heroWhoMatch = heroWho.toLowerCase;
-
-console.log(">>>>>>>>>>>>>>>>>>>>>>> match: " + heroWhoMatch);
-
+  let heroWhoMatch = heroWho.toLowerCase();
   let heroWhoStored = '';
   let heroMatches = []; // May be more than one
   if (HERO_ARRAY.length != 0) { // Array not empty
     console.log("DEBUG [lookupHero]> There are values stored");
     for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
       if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
-        heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase;
-
-console.log(">>>>>>>>>>>>>>>>>>>>>>> stored: " + heroWhoStored);
-
+        heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase();
         if (heroWhoStored == heroWhoMatch) {
             heroMatches.push(hero_loop);
             console.log("DEBUG [lookupHero]> Stored match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
@@ -2735,10 +2729,7 @@ console.log(">>>>>>>>>>>>>>>>>>>>>>> stored: " + heroWhoStored);
       if (HERO_ARRAY.length != 0) { // Array not empty
         for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
           if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
-            heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase;
-
-console.log(">>>>>>>>>>>>>>>>>>>>>>> stored: " + heroWhoStored);
-
+            heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase();
             if (heroWhoStored == heroWhoMatch) {
                 heroMatches.push(hero_loop);
                 console.log("DEBUG [lookupHero]> API match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
