@@ -1157,8 +1157,10 @@ CHASbot.post('/webhook', (req, res) => {
           //console.log("DEBUG [postWebhook]> " + TRIGGER_HELP + " search result: " + position_in_analyse_text);
           let help_url = '';
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
-            apiHERO(event,'batman'); // should work
-            apiHERO(event,'btman'); // should not work
+            lookupHero(event,'batman'); // should work
+            lookupHero(event,'btman'); // should not work
+            lookupHero(event,'ironman'); // should work
+            lookupHero(event,'batman'); // should be local
             trigger_path = TRIGGER_HELP;
             help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
             //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
@@ -2701,36 +2703,90 @@ function apiMarvelChar(eventMarvel,marvelWho) {
 }
 
 let HERO_ARRAY = [];
-// [0] id [1] name [3]
 
-function apiHERO (eventHero,heroWho){
+// Title case
+
+function lookupHero (eventHero,heroWho){
+  console.log("DEBUG [lookupHero]> Hero to find: " + heroWho);
+  let heroWhoMatch = heroWho.toLowerCase;
+  let heroWhoStored = '';
+  let heroMatches = []; // May be more than one
+  if (HERO_ARRAY.length != 0) { // Array not empty
+    for (var character_loop = 0; character_loop < HERO_ARRAY.length; character_loop++) {
+      if (typeof HERO_ARRAY[targetID]) != 'undefined') {
+        heroWhoStored = HERO_ARRAY[targetID][0].toLowerCase;
+        if (heroWhoStored == heroWhoMatch) {
+            heroMatches.push(targetID);
+            console.log("DEBUG [lookupHero]> Stored match No. " + heroMatches.length + " for " + HERO_ARRAY[targetID][0] + ": " + targetID);
+        }; // if (heroWhoStored
+      }; // if (typeof
+    }; // for (var character_loop
+  }; // if (HERO_ARRAY
+  if (heroMatches.length == 0) {
+    console.log("DEBUG [lookupHero]> No matches stored, trying API");
+    apiHero(heroWho, function(){
+      if (HERO_ARRAY.length != 0) { // Array not empty
+        for (var character_loop = 0; character_loop < HERO_ARRAY.length; character_loop++) {
+          if (typeof HERO_ARRAY[targetID]) != 'undefined') {
+            heroWhoStored = HERO_ARRAY[targetID][0].toLowerCase;
+            if (heroWhoStored == heroWhoMatch) {
+                heroMatches.push(targetID);
+                console.log("DEBUG [lookupHero]> API match No. " + heroMatches.length + " for " + HERO_ARRAY[targetID][0] + ": " + targetID);
+            }; // if (heroWhoStored
+          }; // if (typeof
+        }; // for (var character_loop
+      } else {
+        console.log("DEBUG [lookupHero]> Hero array is empty");
+      }; // if (HERO_ARRAY
+    }); // apiHero(heroWho
+  }; // if (heroMatches
+}
+
+function apiHero (heroWho,callback){
   //https://superheroapi.com/api/3449097715109340/search/batman
-  console.log("DEBUG [apiHERO]> Getting started");
+  console.log("DEBUG [apiHero]> Getting started");
   let KEY_FOR_NOW = '3449097715109340';
   let URL_API_HERO = "https://superheroapi.com/api.php/";
   const hero_url = URL_API_HERO + KEY_FOR_NOW + "/search/" + heroWho;
-  console.log("DEBUG [apiHERO]> URL:" + hero_url);
+  console.log("DEBUG [apiHero]> URL:" + hero_url);
   var req = http.get(hero_url, function(res) {
-    console.log("DEBUG [apiHERO]> Request made");
+    console.log("DEBUG [apiHero]> Request made");
     let body = "";
     // Data comes through in chunks
     res.on('data', function (chunk) { body += chunk });
     // When all the data is back, go on to query the full response
     res.on('end', function() {
       let heroData = JSON.parse(body);
-      console.log("DEBUG [apiHERO]> Got this back raw: " + body);
-      console.log("DEBUG [apiHERO]> Response Code: " + heroData.response);
+      console.log("DEBUG [apiHero]> Got this back raw: " + body);
+      console.log("DEBUG [apiHero]> Response Code: " + heroData.response);
       if (typeof heroData.response != 'undefined' && heroData.response == 'success') {
-        console.log("DEBUG [apiHERO]> Got a result to play with: " + heroData.results.length);
-        console.log("DEBUG [apiHERO]> Sample: " + heroData.results[0]);
+        console.log("DEBUG [apiHero]> Got result(s) to play with: " + heroData.results.length);
+        let targetID = 0;
+        for (var character_loop = 0; character_loop < heroData.results.length; character_loop++) {
+          heroStats = heroData.results[character_loop];
+          targetID = heroStats.id;
+          console.log("DEBUG [apiHero]> Target: " + targetID);
+          if (typeof HERO_ARRAY[targetID]) == 'undefined') {
+            HERO_ARRAY[targetID]=[
+              heroStats.name, // [0]
+              heroStats.powerstats.intelligence,
+              heroStats.powerstats.strength,
+              heroStats.powerstats.speed,
+              heroStats.powerstats.durability,
+              heroStats.powerstats.power,
+              heroStats.powerstats.combat,
+              heroStats.image.url]; // [7]
+          }; // if (typeof
+        }; // for (var character_loop
       } else {
-        console.log("ERROR [apiHERO]> No joy bringing back a record");
+        console.log("ERROR [apiHero]> No joy bringing back a record");
       }
     }); // res.on('end'
   }); // http.get(url
   req.on('error', function(e) { // Catches failures to connect to the API
-    console.log("ERROR [apiHERO]> Error getting to API: " + e);
+    console.log("ERROR [apiHero]> Error getting to API: " + e);
   }); // req.on('error'
+  callback();
 }
 
 function apiLOTR (chars_or_quotes,char_id,callback){
