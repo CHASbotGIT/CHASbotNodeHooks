@@ -403,9 +403,10 @@ var LOTR_MOVIES = [
 var LOTR_CHARS = [];
 var LOTR_QUOTES = [];
 
-LOTR_QUOTES[3] = "SPAM";
+LOTR_QUOTES[3] = [["SPAM","EGGS","HAM"],
+                  [12,24,36]];
 console.table(LOTR_QUOTES);
-console.log(LOTR_QUOTES[2]);
+if (typeof LOTR_QUOTES[2] == 'undefined') {console.log("NOT THERE YET")};
 
 // Survey/Quiz
 const PRIZES = ["🎉","🎈","💰","🎁","👏","🌹","💐","🍹","🍸","🍺","🍷","🍾","🍰","💋","🎖️","🍀"];
