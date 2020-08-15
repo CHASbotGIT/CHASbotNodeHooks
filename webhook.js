@@ -2703,11 +2703,10 @@ function apiHERO (eventHero,heroWho){
   //https://superheroapi.com/api/3449097715109340/search/batman
   console.log("DEBUG [apiHERO]> Getting started");
   let KEY_FOR_NOW = '3449097715109340';
-  let URL_API_HERO = "https://superheroapi.com/api/";
+  let URL_API_HERO = "https://superheroapi.com/api.php/";
   const hero_url = URL_API_HERO + KEY_FOR_NOW + "/search/" + heroWho;
   console.log("DEBUG [apiHERO]> URL:" + hero_url);
-  //var req =
-  http.get(hero_url, function(res) {
+  var req = http.get(hero_url, function(res) {
     console.log("DEBUG [apiHERO]> Request made");
     let body = "";
     // Data comes through in chunks
@@ -2718,9 +2717,9 @@ function apiHERO (eventHero,heroWho){
       console.log("DEBUG [apiHERO]> Got this back: " + body);
     }); // res.on('end'
   }); // http.get(url
-  //req.on('error', function(e) { // Catches failures to connect to the API
-  //  console.log("ERROR [apiHERO]> Error getting to API: " + e);
-  //}); // req.on('error'
+  req.on('error', function(e) { // Catches failures to connect to the API
+    console.log("ERROR [apiHERO]> Error getting to API: " + e);
+  }); // req.on('error'
 }
 
 function apiLOTR (chars_or_quotes,char_id,callback){
