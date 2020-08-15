@@ -2705,7 +2705,7 @@ function apiHERO (eventHero,heroWho){
   let KEY_FOR_NOW = '3449097715109340';
   let URL_API_HERO = "https://superheroapi.com/api/";
   const hero_url = URL_API_HERO + KEY_FOR_NOW + "/search/" + heroWho;
-  console.log("DEBUG [apiHERO]> URL": + hero_url);
+  console.log("DEBUG [apiHERO]> URL:" + hero_url);
   var req = http.get(hero_url, function(res) {
     console.log("DEBUG [apiHERO]> Request made");
     let body = "";
