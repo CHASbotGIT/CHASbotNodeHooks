@@ -697,14 +697,14 @@ function loadSurvey() {
 
 function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
   // Block loads quotes in character array
-  //console.log("DEBUG [loadLOTR] Method: " + chars_or_quotes);
+  console.log("DEBUG [loadLOTR] Method: " + chars_or_quotes);
   if (chars_or_quotes == 'quotes') {
-    console.log("DEBUG [loadLOTR]> ID: " + quote_id);
+    //console.log("DEBUG [loadLOTR]> ID: " + quote_id);
     let id_position = -1;
     for (var loopArray = 0; loopArray < LOTR_ARRAY.length; loopArray++) {
       if (LOTR_ARRAY[loopArray][0]==quote_id) {
         id_position = loopArray;
-        console.log("DEBUG [loadLOTR]> ID found at: " + id_position);
+        //console.log("DEBUG [loadLOTR]> ID found at: " + id_position);
         break;
       }; // if
     }; // for
@@ -714,12 +714,12 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
         pushArray.push([lotrArray[loopArray].movie,lotrArray[loopArray].dialog]);
       }; // for
       LOTR_ARRAY[id_position][10] = pushArray;
-      console.log("DEBUG [loadLOTR]> Quotes populated for: " + id_position);
-      console.table(LOTR_ARRAY[id_position][10]);
-      console.log("DEBUG [loadLOTR]> First film/quote: " + id_position);
-      console.table(LOTR_ARRAY[id_position][10][0]);
+      //console.log("DEBUG [loadLOTR]> Quotes populated for: " + id_position);
+      //console.table(LOTR_ARRAY[id_position][10]);
+      //console.log("DEBUG [loadLOTR]> First film/quote: " + id_position);
+      //console.table(LOTR_ARRAY[id_position][10][0]);
     }; // if (LOTR_ARRAY[id_position]
-    console.log("DEBUG [loadLOTR]> Quotes: " + LOTR_ARRAY[id_position][10].length);
+    //console.log("DEBUG [loadLOTR]> Quotes: " + LOTR_ARRAY[id_position][10].length);
     callback();
   }; // if (chars_or_quotes
   // Block loads in characters
@@ -739,7 +739,7 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
         //arrayQuote]); // [10] LOTR_ARRAY
     }; // for
   }; // if
-  console.log("DEBUG [loadLOTR]> Characters: " + LOTR_ARRAY.length);
+  //console.log("DEBUG [loadLOTR]> Characters: " + LOTR_ARRAY.length);
   callback();
 }
 
@@ -2673,7 +2673,6 @@ function wrapLOTR(match_id,lotrWho) {
 }
 
 // Stop double response on first pass?
-// only quoting first call
 
 function postLOTR(eventLOTR,lotrWho) {
   console.log("INFO [postLOTR]> Sender: " + eventLOTR.sender.id);
