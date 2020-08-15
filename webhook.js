@@ -1158,9 +1158,9 @@ CHASbot.post('/webhook', (req, res) => {
           let help_url = '';
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
             lookupHero(event,'batman'); // should work
-            lookupHero(event,'btman'); // should not work
-            lookupHero(event,'ironman'); // should work
-            lookupHero(event,'batman'); // should be local
+            //lookupHero(event,'btman'); // should not work
+            //lookupHero(event,'ironman'); // should work
+            //lookupHero(event,'batman'); // should be local
             trigger_path = TRIGGER_HELP;
             help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
             //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
@@ -2716,6 +2716,7 @@ function lookupHero (eventHero,heroWho){
     for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
       if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
         heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase;
+        console.log("DEBUG [lookupHero]> Compare " + heroWhoMatch + " with " + heroWhoStored);
         if (heroWhoStored == heroWhoMatch) {
             heroMatches.push(hero_loop);
             console.log("DEBUG [lookupHero]> Stored match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
@@ -2725,11 +2726,12 @@ function lookupHero (eventHero,heroWho){
   }; // if (HERO_ARRAY
   if (heroMatches.length == 0) {
     console.log("DEBUG [lookupHero]> No matches stored, trying API");
-    apiHero(eventHero,heroWho, function(){
+    apiHero(heroWho, function(){
       if (HERO_ARRAY.length != 0) { // Array not empty
         for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
           if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
             heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase;
+            console.log("DEBUG [lookupHero]> Compare " + heroWhoMatch + " with " + heroWhoStored);
             if (heroWhoStored == heroWhoMatch) {
                 heroMatches.push(hero_loop);
                 console.log("DEBUG [lookupHero]> API match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
@@ -2743,7 +2745,7 @@ function lookupHero (eventHero,heroWho){
   }; // if (heroMatches
 }
 
-function apiHero (eventHero,heroWho,callback){
+function apiHero (heroWho,callback){
   //https://superheroapi.com/api/3449097715109340/search/batman
   console.log("DEBUG [apiHero]> Getting started");
   let KEY_FOR_NOW = '3449097715109340';
