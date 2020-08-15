@@ -2660,15 +2660,16 @@ function postLOTR(eventLOTR,lotrWho) {
   // [10][0] movie [10][1] dialogue
   if (LOTR_ARRAY.length == 0) {
     // The array is empty, need to call API function
-    //console.log("DEBUG [postLOTR]> LOTR array is empty");
+    console.log("DEBUG [postLOTR]> LOTR array is empty");
     apiLOTR('chars','', function() {
-      //console.log("DEBUG [postLOTR]> apiLOTR returned with array length: "" + LOTR_ARRAY.length);
+      console.log("DEBUG [postLOTR]> apiLOTR returned with array length: " + LOTR_ARRAY.length);
       if (LOTR_ARRAY.length != 0) {
         let match_id = idLOTR(lotrWho);
+        console.log("DEBUG [postLOTR]> Via API fork looking for: " + lotrWho + " = " + match_id);
         // Need to get the quotes
         apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
           lotrBlurb = wrapLOTR(match_id,lotrWho);
-          //console.log("DEBUG [postLOTR]> Final blurb via API is: " + lotrBlurb);
+          console.log("DEBUG [postLOTR]> Final blurb via API is: " + lotrBlurb);
           console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
           console.log("INFO [postLOTR]> Reponse: Successful");
           postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
@@ -2683,20 +2684,26 @@ function postLOTR(eventLOTR,lotrWho) {
       };
     }); // apiLOTR('chars'
   } else { // Operating from memeory - not API
-    //console.log("DEBUG [postLOTR]> Bypass API, operating from memory");
+
+
+
     let match_id = idLOTR(lotrWho);
+    console.log("DEBUG [postLOTR]> Via memory fork looking for: " + lotrWho + " = " + match_id);
+
+
+
     // Check for quotes
     let quoteListCount = LOTR_ARRAY[match_id][10].length;
     if (quoteListCount > 0) {
       lotrBlurb = wrapLOTR(match_id,lotrWho);
-      //console.log("DEBUG [postLOTR]> Final blurb via memory is: " + lotrBlurb);
+      console.log("DEBUG [postLOTR]> Final blurb via memory is: " + lotrBlurb);
       console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
       console.log("INFO [postLOTR]> Reponse: Successful");
       postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
     } else {
       apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
         lotrBlurb = wrapLOTR(match_id,lotrWho);
-        //console.log("DEBUG [postLOTR]> Final blurb via memory & API is: " + lotrBlurb);
+        console.log("DEBUG [postLOTR]> Final blurb via memory & API is: " + lotrBlurb);
         console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
         console.log("INFO [postLOTR]> Reponse: Successful");
         postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
