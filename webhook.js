@@ -711,18 +711,23 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
 
 
 
-    if (LOTR_ARRAY[id_position][10].length == 0) { // No need to populate
+    if (typeof (LOTR_ARRAY[id_position][10] == 'undefined') { // Can be defined
+      let pushArray = [];
       for (var loopArray = 0; loopArray < lotrArray.length; loopArray++) {
-        LOTR_ARRAY[id_position][10].push([lotrArray[loopArray].movie,lotrArray[loopArray].dialog]);
-      }; // for
-    }
+        pushArray.push([lotrArray[loopArray].movie,lotrArray[loopArray].dialog]);
 
-    console.table(LOTR_ARRAY[id_position][10])
-    console.table(LOTR_ARRAY[id_position+1][10])
+      }; // for
+      LOTR_ARRAY[id_position][10] = pushArray;
+      console.log("DEBUG [loadLOTR]> Quotes populated for: " + id_position);
+      console.table(LOTR_ARRAY[id_position][10]);
+      console.log("DEBUG [loadLOTR]> First film/quote: " + id_position);
+      console.table(LOTR_ARRAY[id_position][10][0]);
+    }; // if (LOTR_ARRAY[id_position]
+
 
     console.log("DEBUG [loadLOTR]> Quotes: " + LOTR_ARRAY[id_position][10].length);
     callback();
-  }; // if
+  }; // if (chars_or_quotes
   // Block loads in characters
   if (chars_or_quotes == 'chars' && LOTR_ARRAY.length == 0) { // Catch multiple calls
     var arrayQuote = [];
@@ -736,8 +741,8 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
         lotrArray[loopArray].height,
         lotrArray[loopArray].hair,
         lotrArray[loopArray].birth,
-        lotrArray[loopArray].death,
-        arrayQuote]); // [10] LOTR_ARRAY
+        lotrArray[loopArray].death]); //,
+        //arrayQuote]); // [10] LOTR_ARRAY
     }; // for
   }; // if
   console.log("DEBUG [loadLOTR]> Characters: " + LOTR_ARRAY.length);
