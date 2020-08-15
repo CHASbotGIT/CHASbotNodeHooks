@@ -2730,12 +2730,12 @@ function postLOTR(eventLOTR,lotrWho) {
 }
 
 function apiLOTR (chars_or_quotes,char_id,callback){
-  console.log("DEBUG [apiLOTR] Length of stored LOTR: " + LOTR_ARRAY.length)
+  //console.log("DEBUG [apiLOTR] Length of stored LOTR: " + LOTR_ARRAY.length)
   let url_path = '';
   if (chars_or_quotes == 'chars') {
     url_path = '/v1/character';
     // Set URL with authorisation header i.e. API key not sent in URL
-    console.log("DEBUG [apiLOTR]> Character URL: " + URL_API_LOTR + url_path);
+    //console.log("DEBUG [apiLOTR]> Character URL: " + URL_API_LOTR + url_path);
     const requestOptions = {
       hostname: URL_API_LOTR,
       path: url_path,
@@ -2756,8 +2756,9 @@ function apiLOTR (chars_or_quotes,char_id,callback){
         // Correct responses start with "docs" i.e. no status code 200 to help verify
         if (characterData_legible.includes('docs')) {
           let characterDataList = characterData.docs;
-          console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
+          //console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
           loadLOTR(characterDataList,'chars','', function(){
+            console.log (">>>>>>>>>>>>>>>>>>>>>>>>>>>> Characters Call Back");
             callback();
           });
         } else {
@@ -2773,7 +2774,7 @@ function apiLOTR (chars_or_quotes,char_id,callback){
     }); // req.on('error'
   } else { // quotes API
     url_path = '/v1/character/' + char_id + "/quote"
-    console.log("DEBUG [apiLOTR]> Quotes URL: " + URL_API_LOTR + url_path);
+    //console.log("DEBUG [apiLOTR]> Quotes URL: " + URL_API_LOTR + url_path);
     const requestOptions = {
       hostname: URL_API_LOTR,
       path: url_path,
@@ -2790,14 +2791,15 @@ function apiLOTR (chars_or_quotes,char_id,callback){
       res.on('end', function() {
         let quoteData = JSON.parse(body);
         let quoteData_legible = JSON.stringify(quoteData);
-        console.log("DEBUG [apiLOTR]> Quote JSON: " + quoteData_legible);
+        //console.log("DEBUG [apiLOTR]> Quote JSON: " + quoteData_legible);
         // Correct responses start with "docs" i.e. no status code 200 to help verify
         if (quoteData_legible.includes('docs')) {
           let quoteList = quoteData.docs;
           let quoteListCount = quoteList.length;
           if (quoteListCount > 0) {
-            console.log("DEBUG [apiLOTR]> Quotes Retrieved No.: " + quoteListCount);
+            //console.log("DEBUG [apiLOTR]> Quotes Retrieved No.: " + quoteListCount);
             loadLOTR(quoteList,'quotes',char_id, function(){
+              console.log (">>>>>>>>>>>>>>>>>>>>>>>>>>>> Quotes Call Back");
               callback();
             });
           } else { // if (quoteListCount
