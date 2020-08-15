@@ -401,16 +401,6 @@ var LOTR_MOVIES = [
   "5cd95395de30eff6ebccde5c📽️ The Fellowship of the Ring (2002)",
   "5cd95395de30eff6ebccde5d🎬 The Return of the King (2003)"];
 var LOTR_ARRAY = [];
-var LOTR_QUOTES = [];
-
-LOTR_QUOTES[3] = [["SPAM","EGGS","HAM"], // 0
-                  [12,24,36]]; // 1
-                // 0  1  2
-console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + LOTR_QUOTES[3][1][2]); //36
-console.table(LOTR_QUOTES);
-console.table(LOTR_QUOTES[3]);
-console.table(LOTR_QUOTES[3][0]);
-if (typeof LOTR_QUOTES[2] == 'undefined') {console.log("NOT THERE YET")};
 
 // Survey/Quiz
 const PRIZES = ["🎉","🎈","💰","🎁","👏","🌹","💐","🍹","🍸","🍺","🍷","🍾","🍰","💋","🎖️","🍀"];
@@ -697,7 +687,7 @@ function loadSurvey() {
 
 function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
   // Block loads quotes in character array
-  console.log("DEBUG [loadLOTR] Method: " + chars_or_quotes);
+  //console.log("DEBUG [loadLOTR] Method: " + chars_or_quotes);
   if (chars_or_quotes == 'quotes') {
     //console.log("DEBUG [loadLOTR]> ID: " + quote_id);
     let id_position = -1;
@@ -720,7 +710,6 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
       //console.table(LOTR_ARRAY[id_position][10][0]);
     }; // if (LOTR_ARRAY[id_position]
     //console.log("DEBUG [loadLOTR]> Quotes: " + LOTR_ARRAY[id_position][10].length);
-console.log("ABOUT TO CALLBACK QUOTES LOAD >>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
     callback();
   } else { // if (chars_or_quotes
     // Block loads in characters
@@ -740,7 +729,6 @@ console.log("ABOUT TO CALLBACK QUOTES LOAD >>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
       }; // for
     }; // if
     //console.log("DEBUG [loadLOTR]> Characters: " + LOTR_ARRAY.length);
-console.log("ABOUT TO CALLBACK CHARACTER LOAD >>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
     callback();
   }; // else
 }
@@ -2640,7 +2628,7 @@ function wrapLOTR(match_id,lotrWho) {
   if (typeof LOTR_ARRAY[match_id][10] != 'undefined') {
     let quoteListCount = LOTR_ARRAY[match_id][10].length;
     let quoteArray = LOTR_ARRAY[match_id][10];
-    console.log("DEBUG [wrapLOTR]> Quotes to pick from: " + quoteListCount);
+    //console.log("DEBUG [wrapLOTR]> Quotes to pick from: " + quoteListCount);
     let quotePick = numRandomBetween(0,quoteListCount-1);
     //console.log("DEBUG [wrapLOTR]> Quote Picked: " + quotePick);
     for (var loop_films = 0; loop_films < LOTR_MOVIES.length; loop_films++) {
@@ -2674,8 +2662,6 @@ function wrapLOTR(match_id,lotrWho) {
   return lotrBlurb;
 }
 
-// Stop double response on first pass?
-
 function postLOTR(eventLOTR,lotrWho) {
   console.log("INFO [postLOTR]> Sender: " + eventLOTR.sender.id);
   console.log("INFO [postLOTR]> Request: " + lotrWho);
@@ -2687,16 +2673,16 @@ function postLOTR(eventLOTR,lotrWho) {
   // [10][0] movie [10][1] dialogue
   if (LOTR_ARRAY.length == 0) {
     // The array is empty, need to call API function
-    console.log("DEBUG [postLOTR]> LOTR array is empty");
+    //console.log("DEBUG [postLOTR]> LOTR array is empty");
     apiLOTR('chars','', function() {
-      console.log("DEBUG [postLOTR]> apiLOTR returned with array length: " + LOTR_ARRAY.length);
+      //console.log("DEBUG [postLOTR]> apiLOTR returned with array length: " + LOTR_ARRAY.length);
       if (LOTR_ARRAY.length != 0) {
         let match_id = idLOTR(lotrWho);
-        console.log("DEBUG [postLOTR]> Via API fork looking for: " + lotrWho + " = " + match_id);
+        //console.log("DEBUG [postLOTR]> Via API fork looking for: " + lotrWho + " = " + match_id);
         // Need to get the quotes
         apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
           lotrBlurb = wrapLOTR(match_id,lotrWho);
-          console.log("DEBUG [postLOTR]> Final blurb via API is: " + lotrBlurb);
+          //console.log("DEBUG [postLOTR]> Final blurb via API is: " + lotrBlurb);
           console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
           console.log("INFO [postLOTR]> Reponse: Successful");
           postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
@@ -2712,17 +2698,17 @@ function postLOTR(eventLOTR,lotrWho) {
     }); // apiLOTR('chars'
   } else { // Operating from memeory - not API
     let match_id = idLOTR(lotrWho);
-    console.log("DEBUG [postLOTR]> Via memory fork looking for: " + lotrWho + " = " + match_id);
+    //console.log("DEBUG [postLOTR]> Via memory fork looking for: " + lotrWho + " = " + match_id);
     if (typeof LOTR_ARRAY[match_id][10] != 'undefined') {
       lotrBlurb = wrapLOTR(match_id,lotrWho);
-      console.log("DEBUG [postLOTR]> Final blurb via memory is: " + lotrBlurb);
+      //console.log("DEBUG [postLOTR]> Final blurb via memory is: " + lotrBlurb);
       console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
       console.log("INFO [postLOTR]> Reponse: Successful");
       postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
     } else { // if (typeof LOTR_ARRAY
       apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
         lotrBlurb = wrapLOTR(match_id,lotrWho);
-        console.log("DEBUG [postLOTR]> Final blurb via memory & API is: " + lotrBlurb);
+        //console.log("DEBUG [postLOTR]> Final blurb via memory & API is: " + lotrBlurb);
         console.log("INFO [postLOTR]> Action: postLOTR.postLinkButton");
         console.log("INFO [postLOTR]> Reponse: Successful");
         postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
