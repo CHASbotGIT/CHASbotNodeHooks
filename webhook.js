@@ -711,7 +711,7 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
 
 
 
-    if (typeof (LOTR_ARRAY[id_position][10] == 'undefined') { // Can be defined
+    if (typeof LOTR_ARRAY[id_position][10] == 'undefined') { // Can be defined
       let pushArray = [];
       for (var loopArray = 0; loopArray < lotrArray.length; loopArray++) {
         pushArray.push([lotrArray[loopArray].movie,lotrArray[loopArray].dialog]);
