@@ -405,6 +405,7 @@ var LOTR_QUOTES = [];
 
 LOTR_QUOTES[3] = "SPAM";
 console.table(LOTR_QUOTES);
+console.log(LOTR_QUOTES[2]);
 
 // Survey/Quiz
 const PRIZES = ["🎉","🎈","💰","🎁","👏","🌹","💐","🍹","🍸","🍺","🍷","🍾","🍰","💋","🎖️","🍀"];
