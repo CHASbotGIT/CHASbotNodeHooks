@@ -2660,9 +2660,9 @@ function postLOTR(eventLOTR,lotrWho) {
   // [10][0] movie [10][1] dialogue
   if (LOTR_ARRAY.length == 0) {
     // The array is empty, need to call API function
-    console.log('DEBUG [postLOTR]> LOTR array is empty');
+    //console.log("DEBUG [postLOTR]> LOTR array is empty");
     apiLOTR('chars','', function() {
-      console.log('DEBUG [postLOTR]> apiLOTR returned with array length: ' + LOTR_ARRAY.length);
+      //console.log("DEBUG [postLOTR]> apiLOTR returned with array length: "" + LOTR_ARRAY.length);
       if (LOTR_ARRAY.length != 0) {
         let match_id = idLOTR(lotrWho);
         // Need to get the quotes
@@ -2683,11 +2683,8 @@ function postLOTR(eventLOTR,lotrWho) {
       };
     }); // apiLOTR('chars'
   } else { // Operating from memeory - not API
-    console.log('DEBUG [postLOTR]> Bypass API, operating from memory');
-
-console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + lorWho);
-let match_id = idLOTR(lotrWho);
-
+    //console.log("DEBUG [postLOTR]> Bypass API, operating from memory");
+    let match_id = idLOTR(lotrWho);
     // Check for quotes
     let quoteListCount = LOTR_ARRAY[match_id][10].length;
     if (quoteListCount > 0) {
