@@ -2715,6 +2715,7 @@ function apiHERO (eventHero,heroWho){
     res.on('end', function() {
       let heroData = JSON.parse(body);
       console.log("DEBUG [apiHERO]> Got this back: " + heroData);
+      console.log("DEBUG [apiHERO]> Response Code: " + heroData.reponse);
     }); // res.on('end'
   }); // http.get(url
   req.on('error', function(e) { // Catches failures to connect to the API
