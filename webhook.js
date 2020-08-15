@@ -2721,7 +2721,8 @@ function apiHERO (eventHero,heroWho){
       console.log("DEBUG [apiHERO]> Got this back raw: " + body);
       console.log("DEBUG [apiHERO]> Response Code: " + heroData.response);
       if (typeof heroData.response != 'undefined' && heroData.response == 'success') {
-        console.log("DEBUG [apiHERO]> Got a result to play with");
+        console.log("DEBUG [apiHERO]> Got a result to play with: " + heroData.results.length);
+        console.log("DEBUG [apiHERO]> Sample: " + heroData.results[0]);
       } else {
         console.log("ERROR [apiHERO]> No joy bringing back a record");
       }
