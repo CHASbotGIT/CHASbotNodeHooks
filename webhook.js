@@ -2653,6 +2653,10 @@ function wrapLOTR(match_id,lotrWho) {
   return lotrBlurb;
 }
 
+// Stop double response on first pass?
+// only quoting first call
+
+
 function postLOTR(eventLOTR,lotrWho) {
   console.log("INFO [postLOTR]> Sender: " + eventLOTR.sender.id);
   console.log("INFO [postLOTR]> Request: " + lotrWho);
@@ -2698,6 +2702,9 @@ function postLOTR(eventLOTR,lotrWho) {
 
     // Check for quotes
     let quoteListCount = LOTR_ARRAY[match_id][10].length;
+
+    console.log("DEBUG [postLOTR]> Quotes in memory for: " + match_id + " = " + quoteListCount);
+
     if (quoteListCount > 0) {
       lotrBlurb = wrapLOTR(match_id,lotrWho);
       console.log("DEBUG [postLOTR]> Final blurb via memory is: " + lotrBlurb);
