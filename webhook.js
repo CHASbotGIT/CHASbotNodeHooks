@@ -781,8 +781,8 @@ CHASbot.get('/webhook', (req, res) => {
   }
 });
 
-// Sender handling and stacking functions
-// ======================================
+// Sender handling and sequencing functions
+// ========================================
 function inPlayNew(index_id,new_sender) {
   SENDERS[index_id] = [new_sender,        // 0:id_of_sender
                        false,false,false, // 1:survey_in_play,2:hangman_in_play,3:rpsls_in_play
@@ -849,8 +849,8 @@ function inPlayID (id_to_find) {
   return sender_index;
 }
 
-// String and number handling functions
-// ====================================
+// String and number helper functions
+// ==================================
 function strStandardise(str) {
   let emoticon_up_count = 0;
   for (var i = 0; i < EMOTICON_UP.length; i++) {
@@ -1036,9 +1036,10 @@ function hrsGetUK() {
   return utc_hr;
 }
 
-// Sending template functions
-// ==========================
-// Handling all messages back and processing special cases
+// Core Communication Channels
+// ===========================
+// ========= WORK CHAT =======
+// Receiving and sorting all originating messages
 CHASbot.post('/webhook', (req, res) => {
   if (req.body.object === 'page') {
     req.body.entry.forEach((entry) => {
@@ -1591,6 +1592,164 @@ CHASbot.post('/webhook', (req, res) => {
   }
 });
 
+// Core Communication Channels
+// ===========================
+// ======== DIALOGFLOW =======
+// Bouncing un-flitered traffic via NLP
+//https://github.com/kamjony/Chatbot-DialogFlowV2-Messenger-NodeJS
+async function bounceViaDialogV2(eventSend) {
+  let sender = eventSend.sender.id;
+  let dialogFlowInbound = eventSend.message.text;
+  console.log("INFO [bounceViaDialogV2]> Request from " + sender + ": " + dialogFlowInbound);
+  try {
+    const sessionPath = sessionClient.projectAgentSessionPath(
+      GOOGLE_PROJECT_ID,
+      sender
+    ); // try
+    const dialogflow_request = {
+      session: sessionPath,
+      queryInput: {
+        text: {
+          text: dialogFlowInbound,
+          languageCode: 'en-UK',
+        }, // text
+      }, // queryInput
+    }; // const
+    // Send dialogflow_request and log result
+    const responses = await sessionClient.detectIntent(dialogflow_request);
+    //console.log("DEBUG [bounceViaDialogV2]: DialogFlow Intent Detected");
+    const result = responses[0].queryResult;
+    console.log("INFO [bounceViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
+    //let dialogFlowText = result.fulfillmentText; // [LEGACY]
+    let dialogFlowHook = result.action;
+    //console.log("DEBUG [bounceViaDialogV2]> dialogFlowHook: " + dialogFlowHook);
+    let dialogFlowText = ''
+    if (dialogFlowHook != '') { // If there is an 'action' then there likely to be a hook
+      if (dialogFlowHook.includes('smalltalk') || dialogFlowHook.includes('unknown') || dialogFlowHook.includes('Default')){
+        // For dialogflow built-in 'action' exceptons
+        dialogFlowText = result.fulfillmentMessages[0].text.text[0];
+      }; // if (dialogFlowHook
+    } else { // If there is no 'action', there is no hook and therefore will be text
+      dialogFlowText = result.fulfillmentMessages[0].text.text[0];
+    }; // else
+    if (result.intent) {
+      console.log("INFO [bounceViaDialogV2]> Intent to " + sender + ": " + result.intent.displayName);
+    } else {
+      console.log("INFO [bounceViaDialogV2]> Intent to " + sender + ": NONE MATCHED");
+    };
+    // Check for hard-coded hooks
+    let hookText = '';
+    if (dialogFlowHook === HOOK_WEATHER) {
+      // Set a default weather location
+      //console.log("DEBUG [bounceViaDialogV2]> HOOK_WEATHER");
+      let city = 'Edinburgh';
+      if (typeof responses[0].queryResult.parameters != 'undefined') {
+        //console.log("DEBUG [bounceViaDialogV2]> Weather params are defined");
+        const params = responses[0].queryResult.parameters;
+        var paramsObject = Object.values(params);
+        let paramsJSON = JSON.stringify(paramsObject[0]);
+        let paramsParsed = JSON.parse(paramsJSON);
+        //console.log("DEBUG [bounceViaDialogV2]> Weather Parameters: " + paramsJSON);
+        if (paramsJSON.includes("geo-city-gb")) {
+          city = paramsParsed["geo-city-gb"]["stringValue"];
+          //console.log("DEBUG [bounceViaDialogV2]> Weather geo-city-gb found: " + city);
+        } else if (paramsJSON.includes("hospice_places")) {
+          city = paramsParsed["hospice_places"]["stringValue"];
+          //console.log("DEBUG [bounceViaDialogV2]> Weather hospice_places found: " + city);
+        }; // else if
+      }; //if (typeof
+      let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
+      //console.log("DEBUG [bounceViaDialogV2]> Weather Hook URL: " + restUrl);
+      request(restUrl, function (err, response, body) {
+        console.log("API Request [OW]: " + URL_API_WEATHER + '<SECRET>&q=' + city);
+        if (!err && response.statusCode == 200) { // Successful response
+          let json = JSON.parse(body);
+          //console.log("DEBUG [bounceViaDialogV2]> Weather Hook JSON: " + body);
+          let tempF = ~~(json.main.temp * 9/5 - 459.67);
+          let tempC = ~~(json.main.temp - 273.15);
+          hookText = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
+          console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
+          let weatherId = json.weather[0].id;
+          // Match the id to the weather icon
+          let findId = ' ' + weatherId.toString();
+          let hr = hrsGetUK();
+          let day_or_night = '';
+          let weathericonId = URL_IMG_PREFIX2;
+          if (hr >= UTC_DAWN && hr <= UTC_DUSK) { day_or_night = 'day' } else { day_or_night = 'night' };
+          //console.log("DEBUG [bounceViaDialogV2]> Weather Id" + findId + " [" + day_or_night + "]");
+          for (var loop_icons = 0; loop_icons < WEATHER_GIFS.length; loop_icons++) {
+            if (WEATHER_GIFS[loop_icons].includes(findId) && WEATHER_GIFS[loop_icons].includes(day_or_night)) {
+              weathericonId = weathericonId + WEATHER_GIFS[loop_icons].slice(0, 14) + URL_GIF_SUFFIX;
+              //console.log("DEBUG [bounceViaDialogV2]> Weather GIF: " + weathericonId);
+              break;
+            }; // if
+          }; // for
+          // Catch missing GIF
+          if (weathericonId == URL_IMG_PREFIX2) { weathericonId = EMPTY_WEATHER_GIF_URL };
+          postImage(eventSend,weathericonId,true,hookText);
+          return;
+        } else {
+          hookText = MSG_NO_WEATHER;
+          console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
+          postImage(eventSend,EMPTY_WEATHER_GIF_URL,true,hookText);
+          return;
+        } //else
+      }); // } function ) request
+    } else if (dialogFlowHook === HOOK_PICKCARD) {
+      //console.log("DEBUG [bounceViaDialogV2]> HOOK_PICKCARD");
+      CARD_PICK = CARD_DECK[numRandomBetween(0,CARD_DECK.length-1)];
+      hookText = CARD_PROMPTS[numRandomBetween(0,CARD_PROMPTS.length-1)] + CARD_PICK;
+      console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Pick a Card Hook: " + hookText);
+      deliverTextDirect(eventSend,hookText);
+      return;
+    } else if (dialogFlowHook === HOOK_FUNDRAISING) {
+      //console.log("DEBUG [bounceViaDialogV2]> HOOK_FUNDRAISING");
+      hookText = CHAS_FR_LIST;
+      console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Fundraising Hook: " + hookText);
+      deliverTextDirect(eventSend,hookText);
+      return;
+    }; // else if (dialogFlowHook
+    // Check for custom hooks
+    if (HOOKS_CUSTOM.length > 0) {
+      for (var i = 0; i < HOOKS_CUSTOM.length; i++) {
+        if (HOOKS_CUSTOM[i][0] && dialogFlowHook == HOOKS_CUSTOM[i][2]) { // Found custom
+          console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Custom Hook: " + HOOKS_CUSTOM[i][2] + " (" + HOOKS_CUSTOM[i][1] + ")");
+          if (HOOKS_CUSTOM[i][1] == 'image') {
+            postImage(eventSend,HOOKS_CUSTOM[i][3],false,'');
+            return;
+          } else if (HOOKS_CUSTOM[i][1] == 'image_text') {
+            postImage(eventSend,HOOKS_CUSTOM[i][3],true,HOOKS_CUSTOM[i][4]);
+            return;
+          } else if (HOOKS_CUSTOM[i][1] == 'button') {
+            postLinkButton(eventSend,HOOKS_CUSTOM[i][3],HOOKS_CUSTOM[i][4],HOOKS_CUSTOM[i][5]);
+            return;
+          }; // else if... HOOKS_CUSTOM[i][1]
+        }; // if... HOOKS_CUSTOM[i][0]
+      }; // for (var i = 0
+    }; // if (HOOKS_CUSTOM.length
+    // No hooks found - Note that weather request may still be in-flight - it will catch its own errors
+    if (dialogFlowHook != HOOK_WEATHER) {
+      if (dialogFlowText == '') {dialogFlowText = MSG_NO_HOOK}; // Catch empty dialogflow responses
+      console.log("INFO [bounceViaDialogV2]> Response to " + sender + " scripted via dialogflow NLP: " + dialogFlowText);
+      deliverTextDirect(eventSend,dialogFlowText);
+      // Look out for unknown response and cc. admin
+      if (result.action == 'input.unknown'||result.action.slice(0,21)=='DefaultFallbackIntent') {
+        let loopbackText = sender + ">>" + strGreeting(sender,false) + ">>" + result.queryText;
+        console.log("ADMIN [bounceViaDialogV2]> Feedback: " + loopbackText);
+        let eventLoopback = eventSend;
+        eventLoopback.sender.id = KEY_ADMIN;
+        deliverTextDirect(eventLoopback,loopbackText);
+      }; //if (result.action
+    }; // if (dialogFlowHook
+} catch (e) { // cattch from try - undefined error from async await
+    deliverTextDirect(eventSend,MSG_NO_HOOK);
+    console.log("INFO [bounceViaDialogV2]> Catch response to " + sender + " via dialogflow NLP: " + MSG_NO_HOOK)
+    console.log("ERROR [bounceViaDialogV2]> " + e);
+  } // catch end
+} // function
+
+// Delivey Functions - return resposnes
+// ====================================
 function deliverTemplate(eventSend,messageData,plusText,messageText) {
   // messageData set outside of function call
   deliverThinking(eventSend,'off');
@@ -1786,158 +1945,8 @@ function deliverTextDirect(eventSend,outbound_text) {
   }); // request
 }
 
-//https://github.com/kamjony/Chatbot-DialogFlowV2-Messenger-NodeJS
-async function bounceViaDialogV2(eventSend) {
-  let sender = eventSend.sender.id;
-  let dialogFlowInbound = eventSend.message.text;
-  console.log("INFO [bounceViaDialogV2]> Request from " + sender + ": " + dialogFlowInbound);
-  try {
-    const sessionPath = sessionClient.projectAgentSessionPath(
-      GOOGLE_PROJECT_ID,
-      sender
-    ); // try
-    const dialogflow_request = {
-      session: sessionPath,
-      queryInput: {
-        text: {
-          text: dialogFlowInbound,
-          languageCode: 'en-UK',
-        }, // text
-      }, // queryInput
-    }; // const
-    // Send dialogflow_request and log result
-    const responses = await sessionClient.detectIntent(dialogflow_request);
-    //console.log("DEBUG [bounceViaDialogV2]: DialogFlow Intent Detected");
-    const result = responses[0].queryResult;
-    console.log("INFO [bounceViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
-    //let dialogFlowText = result.fulfillmentText; // [LEGACY]
-    let dialogFlowHook = result.action;
-    //console.log("DEBUG [bounceViaDialogV2]> dialogFlowHook: " + dialogFlowHook);
-    let dialogFlowText = ''
-    if (dialogFlowHook != '') { // If there is an 'action' then there likely to be a hook
-      if (dialogFlowHook.includes('smalltalk') || dialogFlowHook.includes('unknown') || dialogFlowHook.includes('Default')){
-        // For dialogflow built-in 'action' exceptons
-        dialogFlowText = result.fulfillmentMessages[0].text.text[0];
-      }; // if (dialogFlowHook
-    } else { // If there is no 'action', there is no hook and therefore will be text
-      dialogFlowText = result.fulfillmentMessages[0].text.text[0];
-    }; // else
-    if (result.intent) {
-      console.log("INFO [bounceViaDialogV2]> Intent to " + sender + ": " + result.intent.displayName);
-    } else {
-      console.log("INFO [bounceViaDialogV2]> Intent to " + sender + ": NONE MATCHED");
-    };
-    // Check for hard-coded hooks
-    let hookText = '';
-    if (dialogFlowHook === HOOK_WEATHER) {
-      // Set a default weather location
-      //console.log("DEBUG [bounceViaDialogV2]> HOOK_WEATHER");
-      let city = 'Edinburgh';
-      if (typeof responses[0].queryResult.parameters != 'undefined') {
-        //console.log("DEBUG [bounceViaDialogV2]> Weather params are defined");
-        const params = responses[0].queryResult.parameters;
-        var paramsObject = Object.values(params);
-        let paramsJSON = JSON.stringify(paramsObject[0]);
-        let paramsParsed = JSON.parse(paramsJSON);
-        //console.log("DEBUG [bounceViaDialogV2]> Weather Parameters: " + paramsJSON);
-        if (paramsJSON.includes("geo-city-gb")) {
-          city = paramsParsed["geo-city-gb"]["stringValue"];
-          //console.log("DEBUG [bounceViaDialogV2]> Weather geo-city-gb found: " + city);
-        } else if (paramsJSON.includes("hospice_places")) {
-          city = paramsParsed["hospice_places"]["stringValue"];
-          //console.log("DEBUG [bounceViaDialogV2]> Weather hospice_places found: " + city);
-        }; // else if
-      }; //if (typeof
-      let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
-      //console.log("DEBUG [bounceViaDialogV2]> Weather Hook URL: " + restUrl);
-      request(restUrl, function (err, response, body) {
-        console.log("API Request [OW]: " + URL_API_WEATHER + '<SECRET>&q=' + city);
-        if (!err && response.statusCode == 200) { // Successful response
-          let json = JSON.parse(body);
-          //console.log("DEBUG [bounceViaDialogV2]> Weather Hook JSON: " + body);
-          let tempF = ~~(json.main.temp * 9/5 - 459.67);
-          let tempC = ~~(json.main.temp - 273.15);
-          hookText = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
-          console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
-          let weatherId = json.weather[0].id;
-          // Match the id to the weather icon
-          let findId = ' ' + weatherId.toString();
-          let hr = hrsGetUK();
-          let day_or_night = '';
-          let weathericonId = URL_IMG_PREFIX2;
-          if (hr >= UTC_DAWN && hr <= UTC_DUSK) { day_or_night = 'day' } else { day_or_night = 'night' };
-          //console.log("DEBUG [bounceViaDialogV2]> Weather Id" + findId + " [" + day_or_night + "]");
-          for (var loop_icons = 0; loop_icons < WEATHER_GIFS.length; loop_icons++) {
-            if (WEATHER_GIFS[loop_icons].includes(findId) && WEATHER_GIFS[loop_icons].includes(day_or_night)) {
-              weathericonId = weathericonId + WEATHER_GIFS[loop_icons].slice(0, 14) + URL_GIF_SUFFIX;
-              //console.log("DEBUG [bounceViaDialogV2]> Weather GIF: " + weathericonId);
-              break;
-            }; // if
-          }; // for
-          // Catch missing GIF
-          if (weathericonId == URL_IMG_PREFIX2) { weathericonId = EMPTY_WEATHER_GIF_URL };
-          postImage(eventSend,weathericonId,true,hookText);
-          return;
-        } else {
-          hookText = MSG_NO_WEATHER;
-          console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Weather Hook: " + hookText);
-          postImage(eventSend,EMPTY_WEATHER_GIF_URL,true,hookText);
-          return;
-        } //else
-      }); // } function ) request
-    } else if (dialogFlowHook === HOOK_PICKCARD) {
-      //console.log("DEBUG [bounceViaDialogV2]> HOOK_PICKCARD");
-      CARD_PICK = CARD_DECK[numRandomBetween(0,CARD_DECK.length-1)];
-      hookText = CARD_PROMPTS[numRandomBetween(0,CARD_PROMPTS.length-1)] + CARD_PICK;
-      console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Pick a Card Hook: " + hookText);
-      deliverTextDirect(eventSend,hookText);
-      return;
-    } else if (dialogFlowHook === HOOK_FUNDRAISING) {
-      //console.log("DEBUG [bounceViaDialogV2]> HOOK_FUNDRAISING");
-      hookText = CHAS_FR_LIST;
-      console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Fundraising Hook: " + hookText);
-      deliverTextDirect(eventSend,hookText);
-      return;
-    }; // else if (dialogFlowHook
-    // Check for custom hooks
-    if (HOOKS_CUSTOM.length > 0) {
-      for (var i = 0; i < HOOKS_CUSTOM.length; i++) {
-        if (HOOKS_CUSTOM[i][0] && dialogFlowHook == HOOKS_CUSTOM[i][2]) { // Found custom
-          console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Custom Hook: " + HOOKS_CUSTOM[i][2] + " (" + HOOKS_CUSTOM[i][1] + ")");
-          if (HOOKS_CUSTOM[i][1] == 'image') {
-            postImage(eventSend,HOOKS_CUSTOM[i][3],false,'');
-            return;
-          } else if (HOOKS_CUSTOM[i][1] == 'image_text') {
-            postImage(eventSend,HOOKS_CUSTOM[i][3],true,HOOKS_CUSTOM[i][4]);
-            return;
-          } else if (HOOKS_CUSTOM[i][1] == 'button') {
-            postLinkButton(eventSend,HOOKS_CUSTOM[i][3],HOOKS_CUSTOM[i][4],HOOKS_CUSTOM[i][5]);
-            return;
-          }; // else if... HOOKS_CUSTOM[i][1]
-        }; // if... HOOKS_CUSTOM[i][0]
-      }; // for (var i = 0
-    }; // if (HOOKS_CUSTOM.length
-    // No hooks found - Note that weather request may still be in-flight - it will catch its own errors
-    if (dialogFlowHook != HOOK_WEATHER) {
-      if (dialogFlowText == '') {dialogFlowText = MSG_NO_HOOK}; // Catch empty dialogflow responses
-      console.log("INFO [bounceViaDialogV2]> Response to " + sender + " scripted via dialogflow NLP: " + dialogFlowText);
-      deliverTextDirect(eventSend,dialogFlowText);
-      // Look out for unknown response and cc. admin
-      if (result.action == 'input.unknown'||result.action.slice(0,21)=='DefaultFallbackIntent') {
-        let loopbackText = sender + ">>" + strGreeting(sender,false) + ">>" + result.queryText;
-        console.log("ADMIN [bounceViaDialogV2]> Feedback: " + loopbackText);
-        let eventLoopback = eventSend;
-        eventLoopback.sender.id = KEY_ADMIN;
-        deliverTextDirect(eventLoopback,loopbackText);
-      }; //if (result.action
-    }; // if (dialogFlowHook
-} catch (e) { // cattch from try - undefined error from async await
-    deliverTextDirect(eventSend,MSG_NO_HOOK);
-    console.log("INFO [bounceViaDialogV2]> Catch response to " + sender + " via dialogflow NLP: " + MSG_NO_HOOK)
-    console.log("ERROR [bounceViaDialogV2]> " + e);
-  } // catch end
-} // function
-
+// Post Functions - Prep Responses For Delivery
+// ============================================
 function postImage(postEvent,image_url,plusText,passText) {
   //console.log("DEBUG [postImage]> Input: " + image_url);
   let imgTemplate = {
@@ -2259,6 +2268,215 @@ function postFilmTV(postEvent,record_index) {
   };
 }
 
+function postLOTR(eventLOTR,lotrWho) {
+  console.log("INFO [postLOTR]> Sender: " + eventLOTR.sender.id);
+  console.log("INFO [postLOTR]> Request: " + lotrWho);
+  let lotrBlurb = '';
+  // LOTR_ARRAY[X]
+  // [0] _id [1] name [2] gender [3] wikiUrl
+  // [4] race [5] realm [6] height [7] hair
+  // [8] birth [9] death
+  // [10][0] movie [10][1] dialogue
+  if (LOTR_ARRAY.length == 0) {
+    // The array is empty, need to call API function
+    //console.log("DEBUG [postLOTR]> LOTR array is empty");
+    apiLOTR('chars','', function() {
+      //console.log("DEBUG [postLOTR]> apiLOTR returned with array length: " + LOTR_ARRAY.length);
+      if (LOTR_ARRAY.length != 0) {
+        let match_id = lookupLOTR(lotrWho);
+        //console.log("DEBUG [postLOTR]> Via API fork looking for: " + lotrWho + " = " + match_id);
+        // Need to get the quotes
+        apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
+          lotrBlurb = wrapLOTR(match_id,lotrWho);
+          //console.log("DEBUG [postLOTR]> Final blurb via API is: " + lotrBlurb);
+          console.log("INFO [postLOTR]> Action: API.postLOTR.postLinkButton");
+          console.log("INFO [postLOTR]> Reponse: Successful");
+          postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
+        }); // apiLOTR('quotes'
+      } else {
+        // Array not populated after API call
+        console.log("INFO [postLOTR]> Action: apiLOTR.deliverTextDirect");
+        console.log("INFO [postLOTR]> Reponse: Unuccessful");
+        console.log("ERROR [postLOTR]> apiLOTR did not populate array");
+        lotrBlurb = MSG_LOTR_OOPS[numRandomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + strTitleCase(lotrWho) + '?'; // Required within deliverTextDirect
+        deliverTextDirect(eventLOTR,lotrBlurb);
+      };
+    }); // apiLOTR('chars'
+  } else { // Operating from memeory - not API
+    let match_id = lookupLOTR(lotrWho);
+    //console.log("DEBUG [postLOTR]> Via memory fork looking for: " + lotrWho + " = " + match_id);
+    if (typeof LOTR_ARRAY[match_id][10] != 'undefined') {
+      lotrBlurb = wrapLOTR(match_id,lotrWho);
+      //console.log("DEBUG [postLOTR]> Final blurb via memory is: " + lotrBlurb);
+      console.log("INFO [postLOTR]> Action: stored.postLOTR.postLinkButton");
+      console.log("INFO [postLOTR]> Reponse: Successful");
+      postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
+    } else { // if (typeof LOTR_ARRAY
+      apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
+        lotrBlurb = wrapLOTR(match_id,lotrWho);
+        //console.log("DEBUG [postLOTR]> Final blurb via memory & API is: " + lotrBlurb);
+        console.log("INFO [postLOTR]> Action: stored.API.postLOTR.postLinkButton");
+        console.log("INFO [postLOTR]> Reponse: Successful");
+        postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
+      }); // apiLOTR('quotes'
+    }; // if (typeof LOTR_ARRAY
+  }; // if (LOTR_ARRAY.length
+}
+
+// Wrap Functions - Prep Responses For Delivery
+// ============================================
+function wrapLOTR(match_id,lotrWho) {
+  let lotrBlurb = '';
+  let clean_up_text1 = '';
+  let clean_up_text2 = '';
+  let various_trap = false;
+  lotrBlurb = "This is the best match I can find for " + strTitleCase(lotrWho) + ". ";
+  //console.log("DEBUG [wrapLOTR]> [0] Gender: " + LOTR_ARRAY[match_id][2]);
+  if (LOTR_ARRAY[match_id][2] == 'Male') {
+    lotrBlurb = lotrBlurb + "He is ";
+  } else if (LOTR_ARRAY[match_id][2] == 'Female') {
+    lotrBlurb = lotrBlurb + "She is ";
+  } else {
+    lotrBlurb = lotrBlurb + "They are ";
+  };
+  //console.log("DEBUG [wrapLOTR]> [0] Blurb so far is: " + lotrBlurb);
+  let extent_unknown = 0;
+  //console.log("DEBUG [wrapLOTR]> Race: " + LOTR_ARRAY[match_id][4]);
+  //console.log("DEBUG [wrapLOTR]> Realm: " + LOTR_ARRAY[match_id][5]);
+  if ((LOTR_ARRAY[match_id][4] == '') && (LOTR_ARRAY[match_id][5] == '')) {
+    extent_unknown = extent_unknown + 1; // 0 or 1
+    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either race or realm is unknown");
+  } else if ((LOTR_ARRAY[match_id][4] != '') && (LOTR_ARRAY[match_id][5] != '')) {
+    lotrBlurb = lotrBlurb + "of the " + LOTR_ARRAY[match_id][4] + " race, from the " + LOTR_ARRAY[match_id][5] + " realm";
+    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Blurb so far is: " + lotrBlurb);
+  } else if (LOTR_ARRAY[match_id][4] != '') {
+    lotrBlurb = lotrBlurb + "of the " + LOTR_ARRAY[match_id][4] + " race";
+  } else {
+    lotrBlurb = lotrBlurb + "from the " + LOTR_ARRAY[match_id][5] + " realm";
+  };
+  // Either:
+  // 0 = 'He is/ She is/ They are of the A race, from the B realm'
+  // 0 = 'He is/ She is/ They are of the A race'
+  // 0 = 'He is/ She is/ They are from the B realm'
+  // 1 = 'He is/ She is/ They are '
+  //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Height: " + LOTR_ARRAY[match_id][6]);
+  //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Hair: " + LOTR_ARRAY[match_id][7]);
+  if ((LOTR_ARRAY[match_id][6] != '') && (LOTR_ARRAY[match_id][7] != '')) {
+    clean_up_text1 = LOTR_ARRAY[match_id][7];
+    clean_up_text1 = clean_up_text1.toLowerCase();
+    clean_up_text2 = LOTR_ARRAY[match_id][6];
+    clean_up_text2 = clean_up_text2.toLowerCase();
+    if (clean_up_text1.includes('various')||clean_up_text2.includes('various')) { various_trap = true };
+  };
+  if ((LOTR_ARRAY[match_id][6] == '') || (LOTR_ARRAY[match_id][7] == '' || various_trap)) {
+    extent_unknown = extent_unknown + 2; // 0, 1, 2 or 3
+    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either height or hair colour is unknown, or various");
+  } else if (extent_unknown == 1) {
+    lotrBlurb = lotrBlurb + clean_up_text2 + " in height with " + clean_up_text1 + " hair.";
+    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Blurb so far is: " + lotrBlurb);
+  } else {
+    lotrBlurb = lotrBlurb + "; with " + clean_up_text1 + " hair, and a height of " + clean_up_text2 + ".";
+    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Blurb so far is: " + lotrBlurb);
+  };
+  //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Birth: " + LOTR_ARRAY[match_id][8]);
+  //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Death: " + LOTR_ARRAY[match_id][9]);
+  if ((LOTR_ARRAY[match_id][8] != '') && (LOTR_ARRAY[match_id][9] != '')) {
+    clean_up_text1 = LOTR_ARRAY[match_id][8]; // birth
+    clean_up_text1 = clean_up_text1.replace(/,/g, ""); // birth without commas
+    if (clean_up_text1.length > 2) {
+      let first_letter = clean_up_text1.charAt(0); // hold first letter
+      first_letter = first_letter.toLowerCase(); // make lowercase
+      clean_up_text1 = clean_up_text1.substr(1); // drop first character
+      clean_up_text1 = first_letter + clean_up_text1; // at lowercase first character back
+    };
+    clean_up_text2 = LOTR_ARRAY[match_id][9]; // death
+    clean_up_text2 = clean_up_text2.replace(/,/g, "");
+    if (clean_up_text2.length > 2) {
+      let first_letter = clean_up_text2.charAt(0);
+      first_letter = first_letter.toLowerCase();
+      clean_up_text2 = clean_up_text2.substr(1);
+      clean_up_text2 = first_letter + clean_up_text2;
+    };
+  };
+  // Either:
+  // 0 = 'He is/ She is/ They are of the A race, from the B realm; with C hair, and a height of D.' <period>
+  // 0 = 'He is/ She is/ They are of the A race; with C hair, and a height of D.' <period>
+  // 0 = 'He is/ She is/ They are from the B realm; with C hair, and a height of D.' <period>
+  // 1 = 'He is/ She is/ They are D in height with C hair.' <period>
+  // 2 = 'He is/ She is/ They are of the A race, from the B realm' <txt>
+  // 2 = 'He is/ She is/ They are of the A race' <txt>
+  // 2 = 'He is/ She is/ They are from the B realm' <txt>
+  // 3 = 'He is/ She is/ They are ' <space>
+  if ((LOTR_ARRAY[match_id][8] == '') && (LOTR_ARRAY[match_id][9] == '') && (extent_unknown == 3)) {
+    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
+    lotrBlurb = lotrBlurb + "a complete mystery to me! 😞 You might have better luck with the Wiki.";
+  } else if ((LOTR_ARRAY[match_id][8] == '') && (LOTR_ARRAY[match_id][9] == '') && (extent_unknown == 2)) {
+    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
+    lotrBlurb = lotrBlurb + ". More than that, I don't know! 🤔 Find our more at the Wiki.";
+  } else if ((LOTR_ARRAY[match_id][8] == '') && (LOTR_ARRAY[match_id][9] == '') && (extent_unknown == 1)) {
+    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
+    lotrBlurb = lotrBlurb + " 😊 The Wiki can tell you more.";
+  } else if ((LOTR_ARRAY[match_id][8] == '') && (LOTR_ARRAY[match_id][9] == '') && (extent_unknown == 0)) {
+    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
+    lotrBlurb = lotrBlurb + " 😃 Check out the Wiki.";
+  } else if (extent_unknown == 3) {
+    lotrBlurb = lotrBlurb + "a stranger to me but I can tell you they were born " + clean_up_text1 + " and concluded their story " + clean_up_text2 + ". 🤔 Find our more at the Wiki.";
+  } else if (extent_unknown == 2) {
+    lotrBlurb = lotrBlurb + ". I can also tell you they were born " + clean_up_text1 + " and ended their journey " + clean_up_text2 + ". 😊 The Wiki has more.";
+  } else { // 1 or 0
+    lotrBlurb = lotrBlurb + " I can also tell you they were born " + clean_up_text1 + " and finished their adventure " + clean_up_text2 + ". 😃 Check out the Wiki.";
+  };
+  //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Before clean-up: " + lotrBlurb);
+  lotrBlurb = strFixStutter(lotrBlurb); // i.e. doubled words
+  // FA First Age, SA Second Age, TA Third Age, FO Fourth Age
+  lotrBlurb = strReplaceAll(lotrBlurb,' FA ', ' First Age ');
+  lotrBlurb = strReplaceAll(lotrBlurb,' SA ', ' Second Age ');
+  lotrBlurb = strReplaceAll(lotrBlurb,' TA ', ' Third Age ');
+  lotrBlurb = strReplaceAll(lotrBlurb,' FO ', ' Fourth Age ');
+  lotrBlurb = strReplaceAll(lotrBlurb,' YT ', ' Years of the Trees ');
+  lotrBlurb = strReplaceAll(lotrBlurb,' YS ', ' Years of the Sun ');
+  lotrBlurb = strReplaceAll(lotrBlurb,' YL ', ' Years of the Lamps ');
+  lotrBlurb = strReplaceAll(lotrBlurb,' VY ', ' Valian Years ');
+  lotrBlurb = strProper(lotrBlurb); // Tidy proper pronouns
+  let movie_quote = '';
+  // The block below appends if there is a viable quote
+  if (typeof LOTR_ARRAY[match_id][10] != 'undefined') {
+    let quoteListCount = LOTR_ARRAY[match_id][10].length;
+    let quoteArray = LOTR_ARRAY[match_id][10];
+    //console.log("DEBUG [wrapLOTR]> Quotes to pick from: " + quoteListCount);
+    let quotePick = numRandomBetween(0,quoteListCount-1);
+    //console.log("DEBUG [wrapLOTR]> Quote Picked: " + quotePick);
+    for (var loop_films = 0; loop_films < LOTR_MOVIES.length; loop_films++) {
+      if (LOTR_MOVIES[loop_films].includes(quoteArray[quotePick][0])) {
+        movie_quote = " Quoted in " + LOTR_MOVIES[loop_films].replace(quoteArray[quotePick][0],'') + ' 💬 ';
+        //console.log("DEBUG [wrapLOTR]> Film: " + movie_quote);
+        break;
+      }; // if (LOTR_MOVIES[loop_films]
+    }; // (var loop_films
+    // if there wasn't a movie named then skip the quote
+    if (movie_quote!= '') {
+      let quote_placeholder = quoteArray[quotePick][1];
+      //console.log("DEBUG [wrapLOTR]> Quote raw: " + quote_placeholder);
+      var regex_punctuation = new RegExp("[?!;:.,]", 'g');
+      quote_placeholder = quote_placeholder.replace(regex_punctuation,"$& "); // add minimal space after punctuation
+      //console.log("DEBUG [wrapLOTR]> Quote add minimal spaces after punctuation: " + quote_placeholder);
+      quote_placeholder = strReplaceAll(quote_placeholder,' , ','');
+      //console.log("DEBUG [wrapLOTR]> Quote extra commas removed: " + quote_placeholder);
+      quote_placeholder = quote_placeholder.replace(/\s+(\W)/g, "$1"); // pre-punctuation spaces
+      //console.log("DEBUG [wrapLOTR]> Quote spaces pre-punctuation removed: " + quote_placeholder);
+      quote_placeholder = quote_placeholder.replace(/\s\s+/g, ' '); // internal whitespace
+      //console.log("DEBUG [wrapLOTR]> Quote padded spaces removed: " + quote_placeholder);
+      quote_placeholder = quote_placeholder.trim(); // leading/trailing whitespace
+      //console.log("DEBUG [wrapLOTR]> Quote leading/trailing whitespace removed: " + quote_placeholder);
+      movie_quote = movie_quote + quote_placeholder;
+    }; // if (movie_quote
+    //console.log("DEBUG [wrapLOTR]> Full Quote: " + movie_quote);
+  }; // if (typeof LOTR_ARRAY
+  lotrBlurb = lotrBlurb + movie_quote;
+  lotrBlurb = strTrimTo(640,lotrBlurb); // Make sure the message isn't over-long
+  return lotrBlurb;
+}
+
 // Remote search functions - API
 // =============================
 function apiGIPHY(eventGiphy,giphy_tag,giphy_rating,passText) {
@@ -2480,243 +2698,6 @@ function apiMarvelChar(eventMarvel,marvelWho) {
   });
 }
 
-function idLOTR(lotrWho){
-  let match_id = -1;
-  let lotrWhoMatch = '';
-  let lotrWhoLower = '';
-  let levenshtein_lowest = 100;
-  let levenshtein_newest = 100;
-  lotrWhoLower = lotrWho.toLowerCase(); // Able to compare both
-  for (var character_loop = 0; character_loop < LOTR_ARRAY.length; character_loop++) {
-    lotrWhoMatch = LOTR_ARRAY[character_loop][1];
-    lotrWhoMatch = lotrWhoMatch.toLowerCase(); // Retain lotrWho as title case but compare lower
-    levenshtein_newest = levenshtein(lotrWhoLower,lotrWhoMatch); // Calculate proximity of names
-    //console.log("DEBUG [idLOTR]> Difference :" + lotrWhoLower + " [" + levenshtein_newest + "] " + lotrWhoMatch);
-    // Better match but must also have a wiki
-    let validWikiURL = LOTR_ARRAY[character_loop][3];
-    let validWikiURLstring = JSON.stringify(validWikiURL);
-    //console.log("DEBUG [idLOTR]> wikiUrl STRING " + validWikiURLstring);
-    if (levenshtein_newest < levenshtein_lowest && typeof validWikiURLstring != 'undefined'
-        && validWikiURLstring != 'wikiUrlundefined' && validWikiURLstring != '') {
-      // Better proximity between terms
-      match_id = character_loop; // Best for now
-      levenshtein_lowest = levenshtein_newest; // Lower difference
-      //console.log("DEBUG [idLOTR]> Best for now [" + levenshtein_lowest + "] is: " + lotrWhoMatch);
-      //console.log("DEBUG [idLOTR]> wikiUrl" + LOTR_ARRAY[match_id][3])
-    }; // if (levenshtein_newest
-  }; // for (var character_loop
-  // Found best match
-  //console.log("DEBUG [idLOTR]> Matched " + LOTR_ARRAY[match_id][0] + " to index " + match_id);
-  return match_id;
-}
-
-function wrapLOTR(match_id,lotrWho) {
-  let lotrBlurb = '';
-  let clean_up_text1 = '';
-  let clean_up_text2 = '';
-  let various_trap = false;
-  lotrBlurb = "This is the best match I can find for " + strTitleCase(lotrWho) + ". ";
-  //console.log("DEBUG [wrapLOTR]> [0] Gender: " + LOTR_ARRAY[match_id][2]);
-  if (LOTR_ARRAY[match_id][2] == 'Male') {
-    lotrBlurb = lotrBlurb + "He is ";
-  } else if (LOTR_ARRAY[match_id][2] == 'Female') {
-    lotrBlurb = lotrBlurb + "She is ";
-  } else {
-    lotrBlurb = lotrBlurb + "They are ";
-  };
-  //console.log("DEBUG [wrapLOTR]> [0] Blurb so far is: " + lotrBlurb);
-  let extent_unknown = 0;
-  //console.log("DEBUG [wrapLOTR]> Race: " + LOTR_ARRAY[match_id][4]);
-  //console.log("DEBUG [wrapLOTR]> Realm: " + LOTR_ARRAY[match_id][5]);
-  if ((LOTR_ARRAY[match_id][4] == '') && (LOTR_ARRAY[match_id][5] == '')) {
-    extent_unknown = extent_unknown + 1; // 0 or 1
-    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either race or realm is unknown");
-  } else if ((LOTR_ARRAY[match_id][4] != '') && (LOTR_ARRAY[match_id][5] != '')) {
-    lotrBlurb = lotrBlurb + "of the " + LOTR_ARRAY[match_id][4] + " race, from the " + LOTR_ARRAY[match_id][5] + " realm";
-    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Blurb so far is: " + lotrBlurb);
-  } else if (LOTR_ARRAY[match_id][4] != '') {
-    lotrBlurb = lotrBlurb + "of the " + LOTR_ARRAY[match_id][4] + " race";
-  } else {
-    lotrBlurb = lotrBlurb + "from the " + LOTR_ARRAY[match_id][5] + " realm";
-  };
-  // Either:
-  // 0 = 'He is/ She is/ They are of the A race, from the B realm'
-  // 0 = 'He is/ She is/ They are of the A race'
-  // 0 = 'He is/ She is/ They are from the B realm'
-  // 1 = 'He is/ She is/ They are '
-  //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Height: " + LOTR_ARRAY[match_id][6]);
-  //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Hair: " + LOTR_ARRAY[match_id][7]);
-  if ((LOTR_ARRAY[match_id][6] != '') && (LOTR_ARRAY[match_id][7] != '')) {
-    clean_up_text1 = LOTR_ARRAY[match_id][7];
-    clean_up_text1 = clean_up_text1.toLowerCase();
-    clean_up_text2 = LOTR_ARRAY[match_id][6];
-    clean_up_text2 = clean_up_text2.toLowerCase();
-    if (clean_up_text1.includes('various')||clean_up_text2.includes('various')) { various_trap = true };
-  };
-  if ((LOTR_ARRAY[match_id][6] == '') || (LOTR_ARRAY[match_id][7] == '' || various_trap)) {
-    extent_unknown = extent_unknown + 2; // 0, 1, 2 or 3
-    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either height or hair colour is unknown, or various");
-  } else if (extent_unknown == 1) {
-    lotrBlurb = lotrBlurb + clean_up_text2 + " in height with " + clean_up_text1 + " hair.";
-    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Blurb so far is: " + lotrBlurb);
-  } else {
-    lotrBlurb = lotrBlurb + "; with " + clean_up_text1 + " hair, and a height of " + clean_up_text2 + ".";
-    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Blurb so far is: " + lotrBlurb);
-  };
-  //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Birth: " + LOTR_ARRAY[match_id][8]);
-  //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Death: " + LOTR_ARRAY[match_id][9]);
-  if ((LOTR_ARRAY[match_id][8] != '') && (LOTR_ARRAY[match_id][9] != '')) {
-    clean_up_text1 = LOTR_ARRAY[match_id][8]; // birth
-    clean_up_text1 = clean_up_text1.replace(/,/g, ""); // birth without commas
-    if (clean_up_text1.length > 2) {
-      let first_letter = clean_up_text1.charAt(0); // hold first letter
-      first_letter = first_letter.toLowerCase(); // make lowercase
-      clean_up_text1 = clean_up_text1.substr(1); // drop first character
-      clean_up_text1 = first_letter + clean_up_text1; // at lowercase first character back
-    };
-    clean_up_text2 = LOTR_ARRAY[match_id][9]; // death
-    clean_up_text2 = clean_up_text2.replace(/,/g, "");
-    if (clean_up_text2.length > 2) {
-      let first_letter = clean_up_text2.charAt(0);
-      first_letter = first_letter.toLowerCase();
-      clean_up_text2 = clean_up_text2.substr(1);
-      clean_up_text2 = first_letter + clean_up_text2;
-    };
-  };
-  // Either:
-  // 0 = 'He is/ She is/ They are of the A race, from the B realm; with C hair, and a height of D.' <period>
-  // 0 = 'He is/ She is/ They are of the A race; with C hair, and a height of D.' <period>
-  // 0 = 'He is/ She is/ They are from the B realm; with C hair, and a height of D.' <period>
-  // 1 = 'He is/ She is/ They are D in height with C hair.' <period>
-  // 2 = 'He is/ She is/ They are of the A race, from the B realm' <txt>
-  // 2 = 'He is/ She is/ They are of the A race' <txt>
-  // 2 = 'He is/ She is/ They are from the B realm' <txt>
-  // 3 = 'He is/ She is/ They are ' <space>
-  if ((LOTR_ARRAY[match_id][8] == '') && (LOTR_ARRAY[match_id][9] == '') && (extent_unknown == 3)) {
-    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
-    lotrBlurb = lotrBlurb + "a complete mystery to me! 😞 You might have better luck with the Wiki.";
-  } else if ((LOTR_ARRAY[match_id][8] == '') && (LOTR_ARRAY[match_id][9] == '') && (extent_unknown == 2)) {
-    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
-    lotrBlurb = lotrBlurb + ". More than that, I don't know! 🤔 Find our more at the Wiki.";
-  } else if ((LOTR_ARRAY[match_id][8] == '') && (LOTR_ARRAY[match_id][9] == '') && (extent_unknown == 1)) {
-    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
-    lotrBlurb = lotrBlurb + " 😊 The Wiki can tell you more.";
-  } else if ((LOTR_ARRAY[match_id][8] == '') && (LOTR_ARRAY[match_id][9] == '') && (extent_unknown == 0)) {
-    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
-    lotrBlurb = lotrBlurb + " 😃 Check out the Wiki.";
-  } else if (extent_unknown == 3) {
-    lotrBlurb = lotrBlurb + "a stranger to me but I can tell you they were born " + clean_up_text1 + " and concluded their story " + clean_up_text2 + ". 🤔 Find our more at the Wiki.";
-  } else if (extent_unknown == 2) {
-    lotrBlurb = lotrBlurb + ". I can also tell you they were born " + clean_up_text1 + " and ended their journey " + clean_up_text2 + ". 😊 The Wiki has more.";
-  } else { // 1 or 0
-    lotrBlurb = lotrBlurb + " I can also tell you they were born " + clean_up_text1 + " and finished their adventure " + clean_up_text2 + ". 😃 Check out the Wiki.";
-  };
-  //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Before clean-up: " + lotrBlurb);
-  lotrBlurb = strFixStutter(lotrBlurb); // i.e. doubled words
-  // FA First Age, SA Second Age, TA Third Age, FO Fourth Age
-  lotrBlurb = strReplaceAll(lotrBlurb,' FA ', ' First Age ');
-  lotrBlurb = strReplaceAll(lotrBlurb,' SA ', ' Second Age ');
-  lotrBlurb = strReplaceAll(lotrBlurb,' TA ', ' Third Age ');
-  lotrBlurb = strReplaceAll(lotrBlurb,' FO ', ' Fourth Age ');
-  lotrBlurb = strReplaceAll(lotrBlurb,' YT ', ' Years of the Trees ');
-  lotrBlurb = strReplaceAll(lotrBlurb,' YS ', ' Years of the Sun ');
-  lotrBlurb = strReplaceAll(lotrBlurb,' YL ', ' Years of the Lamps ');
-  lotrBlurb = strReplaceAll(lotrBlurb,' VY ', ' Valian Years ');
-  lotrBlurb = strProper(lotrBlurb); // Tidy proper pronouns
-  let movie_quote = '';
-  // The block below appends if there is a viable quote
-  if (typeof LOTR_ARRAY[match_id][10] != 'undefined') {
-    let quoteListCount = LOTR_ARRAY[match_id][10].length;
-    let quoteArray = LOTR_ARRAY[match_id][10];
-    //console.log("DEBUG [wrapLOTR]> Quotes to pick from: " + quoteListCount);
-    let quotePick = numRandomBetween(0,quoteListCount-1);
-    //console.log("DEBUG [wrapLOTR]> Quote Picked: " + quotePick);
-    for (var loop_films = 0; loop_films < LOTR_MOVIES.length; loop_films++) {
-      if (LOTR_MOVIES[loop_films].includes(quoteArray[quotePick][0])) {
-        movie_quote = " Quoted in " + LOTR_MOVIES[loop_films].replace(quoteArray[quotePick][0],'') + ' 💬 ';
-        //console.log("DEBUG [wrapLOTR]> Film: " + movie_quote);
-        break;
-      }; // if (LOTR_MOVIES[loop_films]
-    }; // (var loop_films
-    // if there wasn't a movie named then skip the quote
-    if (movie_quote!= '') {
-      let quote_placeholder = quoteArray[quotePick][1];
-      //console.log("DEBUG [wrapLOTR]> Quote raw: " + quote_placeholder);
-      var regex_punctuation = new RegExp("[?!;:.,]", 'g');
-      quote_placeholder = quote_placeholder.replace(regex_punctuation,"$& "); // add minimal space after punctuation
-      //console.log("DEBUG [wrapLOTR]> Quote add minimal spaces after punctuation: " + quote_placeholder);
-      quote_placeholder = strReplaceAll(quote_placeholder,' , ','');
-      //console.log("DEBUG [wrapLOTR]> Quote extra commas removed: " + quote_placeholder);
-      quote_placeholder = quote_placeholder.replace(/\s+(\W)/g, "$1"); // pre-punctuation spaces
-      //console.log("DEBUG [wrapLOTR]> Quote spaces pre-punctuation removed: " + quote_placeholder);
-      quote_placeholder = quote_placeholder.replace(/\s\s+/g, ' '); // internal whitespace
-      //console.log("DEBUG [wrapLOTR]> Quote padded spaces removed: " + quote_placeholder);
-      quote_placeholder = quote_placeholder.trim(); // leading/trailing whitespace
-      //console.log("DEBUG [wrapLOTR]> Quote leading/trailing whitespace removed: " + quote_placeholder);
-      movie_quote = movie_quote + quote_placeholder;
-    }; // if (movie_quote
-    //console.log("DEBUG [wrapLOTR]> Full Quote: " + movie_quote);
-  }; // if (typeof LOTR_ARRAY
-  lotrBlurb = lotrBlurb + movie_quote;
-  lotrBlurb = strTrimTo(640,lotrBlurb); // Make sure the message isn't over-long
-  return lotrBlurb;
-}
-
-function postLOTR(eventLOTR,lotrWho) {
-  console.log("INFO [postLOTR]> Sender: " + eventLOTR.sender.id);
-  console.log("INFO [postLOTR]> Request: " + lotrWho);
-  let lotrBlurb = '';
-  // LOTR_ARRAY[X]
-  // [0] _id [1] name [2] gender [3] wikiUrl
-  // [4] race [5] realm [6] height [7] hair
-  // [8] birth [9] death
-  // [10][0] movie [10][1] dialogue
-  if (LOTR_ARRAY.length == 0) {
-    // The array is empty, need to call API function
-    //console.log("DEBUG [postLOTR]> LOTR array is empty");
-    apiLOTR('chars','', function() {
-      //console.log("DEBUG [postLOTR]> apiLOTR returned with array length: " + LOTR_ARRAY.length);
-      if (LOTR_ARRAY.length != 0) {
-        let match_id = idLOTR(lotrWho);
-        //console.log("DEBUG [postLOTR]> Via API fork looking for: " + lotrWho + " = " + match_id);
-        // Need to get the quotes
-        apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
-          lotrBlurb = wrapLOTR(match_id,lotrWho);
-          //console.log("DEBUG [postLOTR]> Final blurb via API is: " + lotrBlurb);
-          console.log("INFO [postLOTR]> Action: API.postLOTR.postLinkButton");
-          console.log("INFO [postLOTR]> Reponse: Successful");
-          postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
-        }); // apiLOTR('quotes'
-      } else {
-        // Array not populated after API call
-        console.log("INFO [postLOTR]> Action: apiLOTR.deliverTextDirect");
-        console.log("INFO [postLOTR]> Reponse: Unuccessful");
-        console.log("ERROR [postLOTR]> apiLOTR did not populate array");
-        lotrBlurb = MSG_LOTR_OOPS[numRandomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + strTitleCase(lotrWho) + '?'; // Required within deliverTextDirect
-        deliverTextDirect(eventLOTR,lotrBlurb);
-      };
-    }); // apiLOTR('chars'
-  } else { // Operating from memeory - not API
-    let match_id = idLOTR(lotrWho);
-    //console.log("DEBUG [postLOTR]> Via memory fork looking for: " + lotrWho + " = " + match_id);
-    if (typeof LOTR_ARRAY[match_id][10] != 'undefined') {
-      lotrBlurb = wrapLOTR(match_id,lotrWho);
-      //console.log("DEBUG [postLOTR]> Final blurb via memory is: " + lotrBlurb);
-      console.log("INFO [postLOTR]> Action: stored.postLOTR.postLinkButton");
-      console.log("INFO [postLOTR]> Reponse: Successful");
-      postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
-    } else { // if (typeof LOTR_ARRAY
-      apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
-        lotrBlurb = wrapLOTR(match_id,lotrWho);
-        //console.log("DEBUG [postLOTR]> Final blurb via memory & API is: " + lotrBlurb);
-        console.log("INFO [postLOTR]> Action: stored.API.postLOTR.postLinkButton");
-        console.log("INFO [postLOTR]> Reponse: Successful");
-        postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
-      }); // apiLOTR('quotes'
-    }; // if (typeof LOTR_ARRAY
-  }; // if (LOTR_ARRAY.length
-}
-
 function apiLOTR (chars_or_quotes,char_id,callback){
   //console.log("DEBUG [apiLOTR] Length of stored LOTR: " + LOTR_ARRAY.length)
   let url_path = '';
@@ -2805,6 +2786,36 @@ function apiLOTR (chars_or_quotes,char_id,callback){
 
 // Loaded/stored value search functions
 // ====================================
+function lookupLOTR(lotrWho){
+  let match_id = -1;
+  let lotrWhoMatch = '';
+  let lotrWhoLower = '';
+  let levenshtein_lowest = 100;
+  let levenshtein_newest = 100;
+  lotrWhoLower = lotrWho.toLowerCase(); // Able to compare both
+  for (var character_loop = 0; character_loop < LOTR_ARRAY.length; character_loop++) {
+    lotrWhoMatch = LOTR_ARRAY[character_loop][1];
+    lotrWhoMatch = lotrWhoMatch.toLowerCase(); // Retain lotrWho as title case but compare lower
+    levenshtein_newest = levenshtein(lotrWhoLower,lotrWhoMatch); // Calculate proximity of names
+    //console.log("DEBUG [lookupLOTR]> Difference :" + lotrWhoLower + " [" + levenshtein_newest + "] " + lotrWhoMatch);
+    // Better match but must also have a wiki
+    let validWikiURL = LOTR_ARRAY[character_loop][3];
+    let validWikiURLstring = JSON.stringify(validWikiURL);
+    //console.log("DEBUG [lookupLOTR]> wikiUrl STRING " + validWikiURLstring);
+    if (levenshtein_newest < levenshtein_lowest && typeof validWikiURLstring != 'undefined'
+        && validWikiURLstring != 'wikiUrlundefined' && validWikiURLstring != '') {
+      // Better proximity between terms
+      match_id = character_loop; // Best for now
+      levenshtein_lowest = levenshtein_newest; // Lower difference
+      //console.log("DEBUG [lookupLOTR]> Best for now [" + levenshtein_lowest + "] is: " + lotrWhoMatch);
+      //console.log("DEBUG [lookupLOTR]> wikiUrl" + LOTR_ARRAY[match_id][3])
+    }; // if (levenshtein_newest
+  }; // for (var character_loop
+  // Found best match
+  //console.log("DEBUG [lookupLOTR]> Matched " + LOTR_ARRAY[match_id][0] + " to index " + match_id);
+  return match_id;
+}
+
 function lookupAlpha(eventAlpha,letterTile) {
   //console.log("DEBUG [lookupAlpha]> Input: " + letterTile);
   let sender = eventAlpha.sender.id;
