@@ -2731,7 +2731,7 @@ let KEY_API_HERO = '3449097715109340';
 let URL_API_HERO = "https://superheroapi.com/api.php/";
 let HERO_ARRAY = [];
 
-function lookupHero (heroWho){
+function lookupHero (eventHero,heroWho){
   console.log("DEBUG [lookupHero]> Hero to find: " + heroWho);
   let heroWhoMatch = heroWho.toLowerCase();
   let heroWhoStored = '';
@@ -2766,7 +2766,7 @@ function lookupHero (heroWho){
       }; // if (HERO_ARRAY
     }); // apiHero(heroWho
   }; // if (heroMatches
-  return heroMatches;
+  playTopTrumps(eventHero,heroMatches);
 }
 
 function apiHero (heroWho,callback){
@@ -2815,8 +2815,7 @@ function apiHero (heroWho,callback){
   }); // req.on('error'
 }
 
-function playTopTrumps(eventTT,heroWho){
-  let playTT = lookupHero(heroWho);
+function playTopTrumps(eventTT,playTT){
   console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length)
 }
 
