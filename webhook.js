@@ -1163,10 +1163,9 @@ CHASbot.post('/webhook', (req, res) => {
           //console.log("DEBUG [postWebhook]> " + TRIGGER_HELP + " search result: " + position_in_analyse_text);
           let help_url = '';
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
-            lookupHero(event,'man'); // should work
-            //lookupHero(event,'btman'); // should not work
-            //lookupHero(event,'ironman'); // should work
-            //lookupHero(event,'batman'); // should be local
+
+            playTopTrumps(event,'man'); // should work
+
             trigger_path = TRIGGER_HELP;
             help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
             //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
@@ -2817,7 +2816,8 @@ function apiHero (heroWho,callback){
 }
 
 function playTopTrumps(eventTT,herWho){
-
+  let playTT = lookupHero(heroWho);
+  console.log("DEBUG [apiHero]> Possible Top Trumps to select: " + playTT.length)
 }
 
 // =================
