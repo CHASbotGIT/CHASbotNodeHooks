@@ -2871,8 +2871,8 @@ function apiHero (heroWho,callback){
 }
 
 function playTopTrumps(eventTT,playTT){
-  console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length);
   let sender = eventTT.sender.id;
+  console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + "[" + sender + "]");
   let custom_id = inPlayID(sender);
   let trumps_score = SENDERS[custom_id][14];
   let trumps_played = SENDERS[custom_id][15];
@@ -2881,7 +2881,7 @@ function playTopTrumps(eventTT,playTT){
   if (playTT.length == 0) {
     deliverTextDirect(eventTT,"Couldn't find that one");
   } else if (playTT.length == 1) {
-    console.table(SENDERS);
+    console.table(SENDERS[custom_id][15]);
     let responseTT = "Goldilocks: " + playTT[0];
     console.log("DEBUG [playTopTrumps]> Single ID: " + playTT[0]);
     if (trumps_played[playTT[0]]) {responseTT = responseTT + " (picked again!)"};
