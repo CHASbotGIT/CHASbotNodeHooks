@@ -2908,6 +2908,9 @@ function playTopTrumps(eventTT,playTT){
       pad(HERO_ARRAY[tt_id][5],3) + " = 🔋 Power\n" +
       pad(HERO_ARRAY[tt_id][6],3) + " = ⚔️ Combat"
     //console.log("DEBUG [playTopTrumps]> Stats: " + tt_stats);
+
+    tt_stats = strReplaceAll(tt_stats, 'null', '[ ]');
+
     let test_add = parseInt(HERO_ARRAY[tt_id][1]) + parseInt(HERO_ARRAY[tt_id][2]);
     console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
     postImage(eventTT,tt_url,true,tt_stats);
