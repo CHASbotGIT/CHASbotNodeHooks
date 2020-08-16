@@ -2805,7 +2805,7 @@ function deliverCategory_playTrumps(eventSend) {
   let sender = eventSend.sender.id;
   let custom_id = inPlayID(sender);
   let surveyTemplate = {
-    text: "Pick a category to try and beat. If the value on this card is ❓or the card you play, then it will be 50/50 whether you win",
+    text: "Pick a category to try and beat. If the value on this card is ❓or on the card you play, then it will be 50/50 whether you win",
     quick_replies:[
       { content_type:"text",
         title: HERO_STATS[0],
@@ -2960,8 +2960,8 @@ function playTopTrumps(eventTT,playTT){
     tt_stats = strReplaceAll(tt_stats, 'null', ' ❓ ');
     let test_add = parseInt(HERO_ARRAY[tt_id][1]) + parseInt(HERO_ARRAY[tt_id][2]);
     console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
-    //postImage(eventTT,tt_url,true,tt_stats);
-    deliverCategory_playTrumps(eventTT);
+    postImage(eventTT,tt_url,true,tt_stats);
+    //deliverCategory_playTrumps(eventTT);
   } else {
     deliverTextDirect(eventTT,"Too many to pick from: " + playTT.length);
   };
