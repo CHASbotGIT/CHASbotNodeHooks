@@ -2833,10 +2833,13 @@ function lookupHero (eventHero,heroWho){
   } // if (heroMatches
 }
 
+tempHero();
+
 function tempHero(){
 // https://www.superheroapi.com/api.php/3449097715109340/5/powerstats
   for (var character_loop = 1; character_loop < 732; character_loop++) {
-    apiHero(heroWho, function(){});
+    apiHero(character_loop, function(){});
+  }; // for (var character_loop
 }
 
 function apiHero (heroWho,callback){
