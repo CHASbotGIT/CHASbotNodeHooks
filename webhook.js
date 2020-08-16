@@ -2799,13 +2799,6 @@ let HERO_STATS = ["🧠 Intelligence","💪 Strength","💨 Speed","🔋 Durabil
 let URL_API_HERO = "https://superheroapi.com/api.php/";
 let HERO_ARRAY = [];
 
-function wait(ms) {
-    var d = new Date();
-    var d2 = null;
-    do { d2 = new Date(); }
-    while(d2-d < ms);
-}
-
 function deliverCategory_playTrumps(eventSend) {
   console.log("DEBUG [deliverCategory_playTrumps]> In Progress");
   deliverThinking(eventSend,'off');
@@ -2967,10 +2960,8 @@ function playTopTrumps(eventTT,playTT){
     tt_stats = strReplaceAll(tt_stats, 'null', ' ❓ ');
     let test_add = parseInt(HERO_ARRAY[tt_id][1]) + parseInt(HERO_ARRAY[tt_id][2]);
     console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
-    postImage(eventTT,tt_url,true,tt_stats);
-    wait(2000); // Need to do better
+    //postImage(eventTT,tt_url,true,tt_stats);
     deliverCategory_playTrumps(eventTT);
-    //deliverTextDirect(eventTT,responseTT);
   } else {
     deliverTextDirect(eventTT,"Too many to pick from: " + playTT.length);
   };
