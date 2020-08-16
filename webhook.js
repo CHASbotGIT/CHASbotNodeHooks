@@ -2897,12 +2897,12 @@ function playTopTrumps(eventTT,playTT){
     let tt_url = HERO_ARRAY[tt_id][7];
     console.log("DEBUG [playTopTrumps]> Image: " + tt_url);
     let tt_stats = HERO_ARRAY[tt_id][0] + " ID: " + tt_id + "\n" +
-      pad(HERO_ARRAY[tt_id][1],3) + " = 🧠Intelligence\n" +
-      pad(HERO_ARRAY[tt_id][2],3) + " = 💪Strength\n" +
-      pad(HERO_ARRAY[tt_id][3],3) + " = 💨Speed\n" +
-      pad(HERO_ARRAY[tt_id][4],3) + " = ⏲️Durability\n" +
-      pad(HERO_ARRAY[tt_id][5],3) + " = 🔋Power\n" +
-      pad(HERO_ARRAY[tt_id][6],3) + " = ⚔️Combat"
+      pad(HERO_ARRAY[tt_id][1],3) + " = 🧠 Intelligence\n" +
+      pad(HERO_ARRAY[tt_id][2],3) + " = 💪 Strength\n" +
+      pad(HERO_ARRAY[tt_id][3],3) + " = 💨 Speed\n" +
+      pad(HERO_ARRAY[tt_id][4],3) + " = ⏲️ Durability\n" +
+      pad(HERO_ARRAY[tt_id][5],3) + " = 🔋 Power\n" +
+      pad(HERO_ARRAY[tt_id][6],3) + " = ⚔️ Combat"
     console.log("DEBUG [playTopTrumps]> Stats: " + tt_stats);
     postImage(eventTT,tt_url,true,tt_stats);
     //deliverTextDirect(eventTT,responseTT);
