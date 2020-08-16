@@ -1383,6 +1383,7 @@ CHASbot.post('/webhook', (req, res) => {
 
           // Top Trumps - SuperHero API
           // IN DEV
+          console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + analyse_text);
           let hero_who = '';
           if (inPlay('trumps',sender_index)) {
             // TO DO:
@@ -2812,7 +2813,7 @@ function lookupHero (eventHero,heroWho){
 
 function apiHero (heroWho,callback){
   //https://superheroapi.com/api/3449097715109340/search/batman
-  console.log("DEBUG [apiHero]> Getting started");
+  console.log("DEBUG [apiHero]> Getting started with search term: " + heroWho);
   const hero_url = URL_API_HERO + KEY_API_HERO + "/search/" + heroWho;
   var req = http.get(hero_url, function(res) {
     console.log("API Request [HERO]: " + hero_url);
