@@ -2799,41 +2799,20 @@ let HERO_STATS = ["🧠 Intelligence","💪 Strength","💨 Speed","🔋 Durabil
 let URL_API_HERO = "https://superheroapi.com/api.php/";
 let HERO_ARRAY = [];
 
+function wait(ms) {
+    var d = new Date();
+    var d2 = null;
+    do { d2 = new Date(); }
+    while(d2-d < ms);
+}
+
 function deliverCategory_playTrumps(eventSend) {
   console.log("DEBUG [deliverCategory_playTrumps]> In Progress");
   deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   let custom_id = inPlayID(sender);
-  /*let survey_question_number = SENDERS[custom_id][5];
-  let rspns_items = 0;
-  let qstn = '';
-  let surveyTemplate = '';
-  if (survey_question_number == SURVEY_QUESTIONS.length) {
-    rspns_items = 1; // Thanks
-    if (SURVEY_NAME != '') { // Survey
-      qstn = MSG_SURVEY_THANKS;
-    } else { // Quiz - Final Score
-      if (SENDERS[custom_id][6] > HIGH_SCORE[1]) {
-        let sender_name = strGreeting(sender,false);
-        qstn = "🏆 You are our new high scorer on " + SENDERS[custom_id][6] + "! Congratulations " + sender_name + ".";
-        HIGH_SCORE[1] = SENDERS[custom_id][6];
-        HIGH_SCORE[0] = sender_name;
-        highScore('write');
-        console.log('QUIZ [' + QUIZ_NAME + '],' + sender + ', ' + sender_name + ' is new HIGH SCORE on ' + SENDERS[custom_id][6]);
-      } else if (SENDERS[custom_id][6] == HIGH_SCORE[1]) {
-        qstn = "🏆 You are an equal high scorer on " + SENDERS[custom_id][6] + "!";
-      } else {
-        qstn = "You scored " + SENDERS[custom_id][6] + ", not the top score but everybody wins a prize " +
-               PRIZES[numRandomBetween(0,PRIZES.length-1)] + ". " + HIGH_SCORE[0] + " leads with " + HIGH_SCORE[1] + ".";
-      };
-    };
-    inPlayClean('survey', custom_id);
-  } else { // Next question
-    rspns_items = SURVEY_QUESTIONS[survey_question_number].length;
-    qstn = SURVEY_QUESTIONS[survey_question_number][0];
-  }*/
   let surveyTemplate = {
-    text: "Pick a category to try and beat. If the value on this card is ❓or the card you play, then it be 50/50 whehter you win",
+    text: "Pick a category to try and beat. If the value on this card is ❓or the card you play, then it will be 50/50 whether you win",
     quick_replies:[
       { content_type:"text",
         title: HERO_STATS[0],
@@ -2985,12 +2964,11 @@ function playTopTrumps(eventTT,playTT){
       pad(HERO_ARRAY[tt_id][5],3) + " = 🌡️ Power\n" +
       pad(HERO_ARRAY[tt_id][6],3) + " = ⚔️ Combat"
     //console.log("DEBUG [playTopTrumps]> Stats: " + tt_stats);
-
     tt_stats = strReplaceAll(tt_stats, 'null', ' ❓ ');
-
     let test_add = parseInt(HERO_ARRAY[tt_id][1]) + parseInt(HERO_ARRAY[tt_id][2]);
     console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
     postImage(eventTT,tt_url,true,tt_stats);
+    wait(2000); // Need to do better
     deliverCategory_playTrumps(eventTT);
     //deliverTextDirect(eventTT,responseTT);
   } else {
