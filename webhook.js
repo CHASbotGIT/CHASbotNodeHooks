@@ -1384,10 +1384,12 @@ CHASbot.post('/webhook', (req, res) => {
           // Top Trumps - SuperHero API
           // IN DEV
           let hero_who = '';
-          if (inPlay('hangman',sender_index)) {
+          if (inPlay('trumps',sender_index)) {
             // TO DO:
             // For now, 'in play' will just keep looking up characters - until STOP
             hero_who = analyse_text;
+            hero_who = hero_who.trim();
+            hero_who = strTitleCase(hero_who);
             console.log("DEBUG [postWebhook]> In play, trumps: " + hero_who);
           };
           position_in_analyse_text = analyse_text.search(TRIGGER_TOPTRUMPS) + 1;
@@ -1398,6 +1400,8 @@ CHASbot.post('/webhook', (req, res) => {
             trigger_path = TRIGGER_TOPTRUMPS;
             hero_who = strReplaceAll(TRIGGER_TOPTRUMPS,''); // Trusting for now
             hero_who = hero_who.trim();
+            hero_who = strTitleCase(hero_who);
+            console.log("DEBUG [postWebhook]> In play triggered, trumps: " + hero_who);
             // NB ** should probably refactor other stripping methods to this?
             inPlayPause(sender_index); // Pause all in-play...
             inPlaySet('trumps',sender_index); // ...then un-pause 'trumps'
