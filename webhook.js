@@ -179,9 +179,10 @@ var TRIGGER_SEARCH = ['search','google','wiki','beeb'];
 var TRIGGER_LOTTERY = ['lotto','lottery','euromillions','euro-millions'];
 var TRIGGER_MOVIEDB = ['synopsis','watched','watch','catch','seen','see'];
 
-// ╦ ╦╔═╗╔═╗╦╔═╔═╗
-// ╠═╣║ ║║ ║╠╩╗╚═╗
-// ╩ ╩╚═╝╚═╝╩ ╩╚═╝
+//  _  _  ___   ___  _  _____
+// | || |/ _ \ / _ \| |/ / __|
+// | __ | (_) | (_) | ' <\__ \
+// |_||_|\___/ \___/|_|\_\___/
 // DialogFlow fulfilment hard-coded hooks
 // These HOOKS use dialogflow NLP but have hard-coded procedures rather than the user-configured
 // The user-configurted hooks are set up in FILE_HOOKS and accept the following 'card' layouts:
@@ -401,7 +402,6 @@ var LOTR_MOVIES = [
   "5cd95395de30eff6ebccde5c📽️ The Fellowship of the Ring (2002)",
   "5cd95395de30eff6ebccde5d🎬 The Return of the King (2003)"];
 var LOTR_ARRAY = [];
-
 // Survey/Quiz
 const PRIZES = ["🎉","🎈","💰","🎁","👏","🌹","💐","🍹","🍸","🍺","🍷","🍾","🍰","💋","🎖️","🍀"];
 var SURVEY_VIABLE = true;
@@ -510,6 +510,10 @@ function deCryptContents () {
   //console.log("DEBUG [deCryptContents]> Contact Card: " + CHAS_FR_LIST);
 }
 
+//  _    ___   _   ___ ___ _  _  ___
+// | |  / _ \ /_\ |   \_ _| \| |/ __|
+// | |_| (_) / _ \| |) | || .` | (_ |_ _ _
+// |____\___/_/ \_\___/___|_|\_|\___(_|_|_)
 // Load reference data from files and Db
 function loadHooks() {
   // Load in hooks
@@ -1036,9 +1040,11 @@ function hrsGetUK() {
   return utc_hr;
 }
 
-// Core Communication Channels
-// ===========================
-// ========= WORK CHAT =======
+// Core Communication Channels:
+//  __      __       _      ___ _         _
+//  \ \    / /__ _ _| |__  / __| |_  __ _| |_
+//   \ \/\/ / _ \ '_| / / | (__| ' \/ _` |  _|
+//    \_/\_/\___/_| |_\_\  \___|_||_\__,_|\__|
 // Receiving and sorting all originating messages
 CHASbot.post('/webhook', (req, res) => {
   if (req.body.object === 'page') {
@@ -1157,7 +1163,7 @@ CHASbot.post('/webhook', (req, res) => {
           //console.log("DEBUG [postWebhook]> " + TRIGGER_HELP + " search result: " + position_in_analyse_text);
           let help_url = '';
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
-            lookupHero(event,'batman'); // should work
+            lookupHero(event,'man'); // should work
             //lookupHero(event,'btman'); // should not work
             //lookupHero(event,'ironman'); // should work
             //lookupHero(event,'batman'); // should be local
@@ -1596,9 +1602,12 @@ CHASbot.post('/webhook', (req, res) => {
   }
 });
 
-// Core Communication Channels
-// ===========================
-// ======== DIALOGFLOW =======
+// Core Communication Channels:
+//   ___  _      _           ___ _
+//  |   \(_)__ _| |___  __ _| __| |_____ __ __
+//  | |) | / _` | / _ \/ _` | _|| / _ \ V  V /
+//  |___/|_\__,_|_\___/\__, |_| |_\___/\_/\_/ V2
+//                     |___/
 // Bouncing un-flitered traffic via NLP
 //https://github.com/kamjony/Chatbot-DialogFlowV2-Messenger-NodeJS
 async function bounceViaDialogV2(eventSend) {
@@ -1752,6 +1761,11 @@ async function bounceViaDialogV2(eventSend) {
   } // catch end
 } // function
 
+//  ___      _ _
+// |   \ ___| (_)_ _____ _ _ _  _
+// | |) / -_) | \ V / -_) '_| || |
+// |___/\___|_|_|\_/\___|_|  \_, |
+//                           |__/
 // Delivey Functions - return resposnes
 // ====================================
 function deliverTemplate(eventSend,messageData,plusText,messageText) {
@@ -1949,6 +1963,10 @@ function deliverTextDirect(eventSend,outbound_text) {
   }); // request
 }
 
+//  ___        _
+// | _ \___ __| |_
+// |  _/ _ (_-<  _|
+// |_| \___/__/\__|
 // Post Functions - Prep Responses For Delivery
 // ============================================
 function postImage(postEvent,image_url,plusText,passText) {
@@ -2327,6 +2345,11 @@ function postLOTR(eventLOTR,lotrWho) {
   }; // if (LOTR_ARRAY.length
 }
 
+// __      __
+// \ \    / / _ __ _ _ __
+//  \ \/\/ / '_/ _` | '_ \
+//   \_/\_/|_| \__,_| .__/
+//                  |_|
 // Wrap Functions - Prep Responses For Delivery
 // ============================================
 function wrapLOTR(match_id,lotrWho) {
@@ -2702,11 +2725,14 @@ function apiMarvelChar(eventMarvel,marvelWho) {
   });
 }
 
+// TOP TRUMPS IN DEV
+// =================
+const TRIGGER_TOPTRUMPS = 'top trumps';
+let KEY_API_HERO = '3449097715109340';
+let URL_API_HERO = "https://superheroapi.com/api.php/";
 let HERO_ARRAY = [];
 
-// Title case
-
-function lookupHero (eventHero,heroWho){
+function lookupHero (heroWho){
   console.log("DEBUG [lookupHero]> Hero to find: " + heroWho);
   let heroWhoMatch = heroWho.toLowerCase();
   let heroWhoStored = '';
@@ -2741,15 +2767,12 @@ function lookupHero (eventHero,heroWho){
       }; // if (HERO_ARRAY
     }); // apiHero(heroWho
   }; // if (heroMatches
+  return heroMatches;
 }
-
-//             batman 2
 
 function apiHero (heroWho,callback){
   //https://superheroapi.com/api/3449097715109340/search/batman
   console.log("DEBUG [apiHero]> Getting started");
-  let KEY_FOR_NOW = '3449097715109340';
-  let URL_API_HERO = "https://superheroapi.com/api.php/";
   const hero_url = URL_API_HERO + KEY_FOR_NOW + "/search/" + heroWho;
   var req = http.get(hero_url, function(res) {
     console.log("API Request [HERO]: " + hero_url);
@@ -2792,6 +2815,13 @@ function apiHero (heroWho,callback){
     callback();
   }); // req.on('error'
 }
+
+function playTopTrumps(eventTT,herWho){
+
+}
+
+// =================
+// TOP TRUMPS IN DEV
 
 function apiLOTR (chars_or_quotes,char_id,callback){
   //console.log("DEBUG [apiLOTR]> Length of stored LOTR: " + LOTR_ARRAY.length)
@@ -2879,6 +2909,10 @@ function apiLOTR (chars_or_quotes,char_id,callback){
   }; // if (chars_or_quotes
 }
 
+//     _     ___  ___
+//    /_\   | _ \|_ _|
+//   / _ \ _|  _/ | | _
+//  /_/ \_(_)_|(_)___(_)
 // Loaded/stored value search functions
 // ====================================
 function lookupLOTR(lotrWho){
@@ -3099,6 +3133,11 @@ function lookupBiogs(eventBiogs,personName) {
   };
 }
 
+//  ___ _           _
+// | _ \ |__ _ _  _(_)_ _  __ _
+// |  _/ / _` | || | | ' \/ _` |_ _ _
+// |_| |_\__,_|\_, |_|_||_\__, (_|_|_)
+//             |__/       |___/
 // 'In-play' functions
 // ===================
 // Note deliverQuestion_playSurvey is also an in-play function
