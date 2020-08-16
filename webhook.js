@@ -16,6 +16,7 @@ const KEY_VERIFY = process.env.KEY_VERIFY;
 const KEY_CRYPTO = process.env.KEY_CRYPTO;
 const URL_CHASBOT = process.env.APP_URL;
 const URL_POSTGRES = process.env.DATABASE_URL;
+const KEY_API_HERO = process.env.KEY_API_HERO;
 const KEY_API_LOTR = process.env.KEY_API_LOTR;
 const KEY_API_GIPHY = process.env.KEY_API_GIPHY;
 const KEY_DIALOGFLOW = process.env.KEY_DIALOGFLOW;
@@ -1174,9 +1175,6 @@ CHASbot.post('/webhook', (req, res) => {
           //console.log("DEBUG [postWebhook]> " + TRIGGER_HELP + " search result: " + position_in_analyse_text);
           let help_url = '';
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
-
-            lookupHero(event,'man'); // should work
-
             trigger_path = TRIGGER_HELP;
             help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
             //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
@@ -1298,7 +1296,7 @@ CHASbot.post('/webhook', (req, res) => {
             analyse_text = TRIGGER_SURVEY; // Clean extra
           };
           // Rock, Paper, Scissors, Lizard, Spock
-          // 0:id_of_sender,3:rpsls_in_play,9:rpsls_action,10:issue_instructions,11:rpsls_player,12:rpsls_bot
+          // 0:id_of_sender,3:rpsls_in_play,10:rpsls_action,11:issue_instructions,12:rpsls_player,13:rpsls_bot
           let pick_player = TRIGGER_RPSLS;
           if (inPlay('rpsls',sender_index)) { // Only check if we are playing
             // Presume no match unless found
@@ -1337,7 +1335,7 @@ CHASbot.post('/webhook', (req, res) => {
           let hangman_guess = '';
           if (inPlay('hangman',sender_index)) { hangman_guess = analyse_text };
           // FLOW: Typing hangman mid-survey, starts it again
-          // 0:id_of_sendery,2:hangman_in_play,6:hangman_strikes,7:hangman_word,8:hangman_array
+          // 0:id_of_sendery,2:hangman_in_play,7:hangman_strikes,8:hangman_word,9:hangman_array
           position_in_analyse_text = analyse_text.search(TRIGGER_HANGMAN) + 1;
           //console.log("DEBUG [postWebhook]> " + TRIGGER_HANGMAN + " search result: " + position_in_analyse_text);
           let hangman_word = '';
@@ -1382,9 +1380,34 @@ CHASbot.post('/webhook', (req, res) => {
             inPlayPause(sender_index); // Pause all in-play...
             inPlaySet('hangman',sender_index); // ...then un-pause 'hangman'
           };
+
+          // Top Trumps - SuperHero API
+          // IN DEV
+          let hero_who = '';
+          if (inPlay('hangman',sender_index)) {
+            // TO DO:
+            // For now, 'in play' will just keep looking up characters - until STOP
+            hero_who = analyse_text;
+            console.log("DEBUG [postWebhook]> In play, trumps: " + hero_who);
+          };
+          position_in_analyse_text = analyse_text.search(TRIGGER_TOPTRUMPS) + 1;
+          if (position_in_analyse_text > 0){
+            // TO DO:
+            // Intro text on first path - as per RPSL
+            // For now, will just behave like an API i.e. strip search term
+            trigger_path = TRIGGER_TOPTRUMPS;
+            hero_who = strReplaceAll(TRIGGER_TOPTRUMPS,''); // Trusting for now
+            hero_who = hero_who.trim();
+            // NB ** should probably refactor other stripping methods to this?
+            inPlayPause(sender_index); // Pause all in-play...
+            inPlaySet('trumps',sender_index); // ...then un-pause 'trumps'
+          };
+          // IN DEV
+
           //console.log("DEBUG [postWebhook]> In play, survey: " + inPlay('survey',sender_index));
           //console.log("DEBUG [postWebhook]> In play, rpsls: " + inPlay('rpsls',sender_index));
           //console.log("DEBUG [postWebhook]> In play, hangman: " + inPlay('hangman',sender_index));
+          //console.log("DEBUG [postWebhook]> In play, trumps: " + inPlay('trumps',sender_index));
           // FLOW: Remaining triggers each clean out analyse_text, so no other triggers fire
           // ****** API LOOKUP *******
           // TV and film
@@ -1545,9 +1568,8 @@ CHASbot.post('/webhook', (req, res) => {
           if (trigger_path == KEY_ADMIN_TRIGGER) {
             //console.log("DEBUG [postWebhook_route]> Admin: " + KEY_ADMIN_TRIGGER);
             deliverTextDirect(routeEvent,adminMessage);
-          } else if (inPlay('survey',sender_index)) { // Survey first - ignores
+          } else if (inPlay('survey',sender_index)) { // Survey first
             //console.log("DEBUG [postWebhook_route]> Survey");
-            // Pause other in_play?
             deliverQuestion_playSurvey(event);
           } else if (trigger_path == TRIGGER_HELP) {
             //console.log("DEBUG [postWebhook_route]> Help: " + HELP_INDEX);
@@ -1601,6 +1623,11 @@ CHASbot.post('/webhook', (req, res) => {
           } else if (inPlay('hangman',sender_index)) {
             //console.log("DEBUG [postWebhook_route]> Hangman Guess: " + hangman_guess);
             playHangman(event,hangman_guess);
+          } else if (inPlay('trumps',sender_index)) {
+            // IN DEV
+            lookupHero(event,hero_who);
+            deliverTextDirect(event,"🐞 In Development, check the logs... 📝");
+            console.log("DEBUG [postWebhook_route]> Top Trumps: " + hero_who);
           } else {
             //console.log("DEBUG [postWebhook_route]> No special cases, send via APIAI");
             bounceViaDialogV2(event);
@@ -2738,7 +2765,6 @@ function apiMarvelChar(eventMarvel,marvelWho) {
 // TOP TRUMPS IN DEV
 // =================
 const TRIGGER_TOPTRUMPS = 'top trumps';
-let KEY_API_HERO = '3449097715109340';
 let URL_API_HERO = "https://superheroapi.com/api.php/";
 let HERO_ARRAY = [];
 
@@ -3152,7 +3178,7 @@ function lookupBiogs(eventBiogs,personName) {
 // ===================
 // Note deliverQuestion_playSurvey is also an in-play function
 function playHangman(postEvent,hangman_guess) {
-  // 0:id_of_sender,2:hangman_in_play,3:rpsls_in_play,6:hangman_strikes,7:hangman_word,8:hangman_array
+  // 0:id_of_sender,2:hangman_in_play,3:rpsls_in_play,7:hangman_strikes,8:hangman_word,9:hangman_array
   //console.log("DEBUG [playHangman]> Input: " + postEvent);
   let sender = postEvent.sender.id;
   // Take out some possible prefixes
@@ -3243,7 +3269,7 @@ function playHangman(postEvent,hangman_guess) {
 }
 
 function playRPSLS(eventRPSLS,pickPlayer) {
-  // 0:id_of_sender,3:rpsls_in_play,9:rpsls_action,10:issue_instructions,11:rpsls_player,12:rpsls_bot
+  // 0:id_of_sender,3:rpsls_in_play,10:rpsls_action,11:issue_instructions,12:rpsls_player,13:rpsls_bot
   //console.log("DEBUG [playRPSLS]> Round");
   let sender = eventRPSLS.sender.id;
   let custom_id = inPlayID(sender);
