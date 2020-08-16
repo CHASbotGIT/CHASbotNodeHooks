@@ -2781,7 +2781,7 @@ function apiHero (heroWho,callback){
     // When all the data is back, go on to query the full response
     res.on('end', function() {
       let heroData = JSON.parse(body);
-      console.log("DEBUG [apiHero]> Got this back raw: " + body);
+      //console.log("DEBUG [apiHero]> Got this back raw: " + body);
       console.log("DEBUG [apiHero]> Response Code: " + heroData.response);
       if (typeof heroData.response != 'undefined' && heroData.response == 'success') {
         console.log("DEBUG [apiHero]> Got result(s) to play with: " + heroData.results.length);
@@ -2817,7 +2817,7 @@ function apiHero (heroWho,callback){
 
 function playTopTrumps(eventTT,heroWho){
   let playTT = lookupHero(heroWho);
-  console.log("DEBUG [apiHero]> Possible Top Trumps to select: " + playTT.length)
+  console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length)
 }
 
 // =================
