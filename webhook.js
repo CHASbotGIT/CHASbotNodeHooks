@@ -1383,7 +1383,6 @@ CHASbot.post('/webhook', (req, res) => {
 
           // Top Trumps - SuperHero API
           // IN DEV
-          console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + analyse_text);
           let hero_who = '';
           if (inPlay('trumps',sender_index)) {
             // TO DO:
@@ -1399,7 +1398,7 @@ CHASbot.post('/webhook', (req, res) => {
             // Intro text on first path - as per RPSL
             // For now, will just behave like an API i.e. strip search term
             trigger_path = TRIGGER_TOPTRUMPS;
-            hero_who = strReplaceAll(TRIGGER_TOPTRUMPS,''); // Trusting for now
+            hero_who = strReplaceAll(hero_who,TRIGGER_TOPTRUMPS,''); // Trusting for now
             hero_who = hero_who.trim();
             hero_who = strTitleCase(hero_who);
             console.log("DEBUG [postWebhook]> In play triggered, trumps: " + hero_who);
