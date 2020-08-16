@@ -2764,8 +2764,8 @@ function lookupHero (eventHero,heroWho){
       } else {
         console.log("DEBUG [lookupHero]> Hero array is empty");
       }; // if (HERO_ARRAY
-    }); // apiHero(heroWho
-    playTopTrumps(eventHero,heroMatches);
+      playTopTrumps(eventHero,heroMatches);
+    }); // apiHero(heroWho  
   }; // if (heroMatches
 }
 
