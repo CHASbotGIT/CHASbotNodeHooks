@@ -1432,7 +1432,7 @@ CHASbot.post('/webhook', (req, res) => {
             };
           };
           // Marvel
-          let hero_who = ''
+          //let hero_who = ''
           position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_MARVEL) + 1;
           //console.log("DEBUG [postWebhook]> " + TRIGGER_MARVEL + " phrase search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
