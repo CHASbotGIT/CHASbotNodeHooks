@@ -1194,6 +1194,9 @@ CHASbot.post('/webhook', (req, res) => {
           let help_url = '';
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
             trigger_path = TRIGGER_HELP;
+
+            console.table(HERO_ARRAY);
+
             help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
             //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
             chasbotText = "Try typing any of these:";
@@ -2830,10 +2833,17 @@ function lookupHero (eventHero,heroWho){
   } // if (heroMatches
 }
 
+function tempHero(){
+// https://www.superheroapi.com/api.php/3449097715109340/5/powerstats
+  for (var character_loop = 1; character_loop < 732; character_loop++) {
+    apiHero(heroWho, function(){});
+}
+
 function apiHero (heroWho,callback){
   //https://superheroapi.com/api/3449097715109340/search/batman
   console.log("DEBUG [apiHero]> Getting started with search term: " + heroWho);
-  const hero_url = URL_API_HERO + KEY_API_HERO + "/search/" + heroWho;
+  //const hero_url = URL_API_HERO + KEY_API_HERO + "/search/" + heroWho;
+  hero_url = "https://www.superheroapi.com/api.php/3449097715109340/" + heroWho + "/powerstats"
   var req = http.get(hero_url, function(res) {
     console.log("API Request [HERO]: " + hero_url);
     let body = "";
