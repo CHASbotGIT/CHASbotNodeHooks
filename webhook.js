@@ -788,36 +788,44 @@ CHASbot.get('/webhook', (req, res) => {
 // Sender handling and sequencing functions
 // ========================================
 function inPlayNew(index_id,new_sender) {
-  SENDERS[index_id] = [new_sender,        // 0:id_of_sender
-                       false,false,false, // 1:survey_in_play,2:hangman_in_play,3:rpsls_in_play
-                       0,0,               // 4:survey_question,5:quiz_score
-                       0,'',[],           // 6:hangman_strikes,7:hangman_word,8:hangman_array
-                       0,true,0,0];       // 9:rpsls_action,10:issue_instructions,11:rpsls_player,12:rpsls_bot
+  SENDERS[index_id] = [new_sender,              // 0:id_of_sender
+                       false,false,false,false, // 1:survey_in_play,2:hangman_in_play,3:rpsls_in_play,4:trumps_in_play
+                       0,0,                     // 5:survey_question,6:quiz_score
+                       0,'',[],                 // 7:hangman_strikes,8:hangman_word,9:hangman_array
+                       0,true,0,0,              // 10:rpsls_action,11:issue_instructions,12:rpsls_player,13:rpsls_bot
+                       0,[],0,0];               // 14:trumps_score,15:trumps_played,16:trump_tobeat,17:trump_picked
 }
 function inPlay(in_play,index_id) {
   let in_play_index = 0;
   if (in_play == 'survey') { in_play_index = 1 }
   else if (in_play == 'hangman') { in_play_index = 2 }
-  else if (in_play == 'rpsls') { in_play_index = 3 };
+  else if (in_play == 'rpsls') { in_play_index = 3 }
+  else if (in_play == 'trumps') { in_play_index = 4 };
   return SENDERS[index_id][in_play_index];
 }
 function inPlayClean(in_play,index_id) {
   let in_play_index = 0;
   if (in_play == 'survey') {
     in_play_index = 1
-    SENDERS[index_id][4] = 0;
-    SENDERS[index_id][5] = 0;
+    SENDERS[index_id][5] = 0; // survey_question
+    SENDERS[index_id][6] = 0; // quiz_score
   } else if (in_play == 'hangman') {
     in_play_index = 2
-    SENDERS[index_id][6] = 0;
-    SENDERS[index_id][7] = '';
-    SENDERS[index_id][8] = [];
+    SENDERS[index_id][7] = 0;   // hangman_strikes
+    SENDERS[index_id][8] = '';  // hangman_word
+    SENDERS[index_id][9] = [];  // hangman_array
   } else if (in_play == 'rpsls') {
     in_play_index = 3;
-    SENDERS[index_id][9] = 0;
-    SENDERS[index_id][10] = true;
-    SENDERS[index_id][11] = 0;
-    SENDERS[index_id][12] = 0;
+    SENDERS[index_id][10] = 0;    // rpsls_action
+    SENDERS[index_id][11] = true; // issue_instructions
+    SENDERS[index_id][12] = 0;    // rpsls_player
+    SENDERS[index_id][13] = 0;    // rpsls_bot
+  } else if (in_play == 'trumps') {
+    in_play_index = 4;
+    SENDERS[index_id][14] = 0;  // trumps_score
+    SENDERS[index_id][15] = []; // trumps_played
+    SENDERS[index_id][16] = 0;  // trump_tobeat
+    SENDERS[index_id][17] = 0;  // trump_picked
   };
   SENDERS[index_id][in_play_index] = false;
 }
@@ -825,14 +833,16 @@ function inPlaySet(in_play,index_id) {
   let in_play_index = 0;
   if (in_play == 'survey') { in_play_index = 1 }
   else if (in_play == 'hangman') { in_play_index = 2; }
-  else if (in_play == 'rpsls') { in_play_index = 3 };
+  else if (in_play == 'rpsls') { in_play_index = 3 }
+  else if (in_play == 'trumps') { in_play_index = 4 };
   SENDERS[index_id][in_play_index] = true;
 }
 function inPlayUnset(in_play,index_id) {
   let in_play_index = 0;
   if (in_play == 'survey') { in_play_index = 1 }
   else if (in_play == 'hangman') { in_play_index = 2 }
-  else if (in_play == 'rpsls') { in_play_index = 3 };
+  else if (in_play == 'rpsls') { in_play_index = 3 }
+  else if (in_play == 'trumps') { in_play_index = 4 };
   SENDERS[index_id][in_play_index] = false;
 }
 function inPlayPause(index_id) {
@@ -840,7 +850,8 @@ function inPlayPause(index_id) {
   SENDERS[index_id][1] = false;
   SENDERS[index_id][2] = false;
   SENDERS[index_id][3] = false;
-  SENDERS[index_id][9] = 0;
+  SENDERS[index_id][4] = false;
+  SENDERS[index_id][10] = 0;
 }
 function inPlayID (id_to_find) {
   let sender_index = -1;
@@ -1218,7 +1229,7 @@ CHASbot.post('/webhook', (req, res) => {
           //console.log("DEBUG [postWebhook]> In play, rpsls: " + inPlay('rpsls',sender_index));
           //console.log("DEBUG [postWebhook]> In play, hangman: " + inPlay('hangman',sender_index));
           let valid_choice = false;
-          let survey_question_number = SENDERS[sender_index][4];
+          let survey_question_number = SENDERS[sender_index][5];
           if (inPlay('survey',sender_index)) { // Review un-parsed text
             if (SURVEY_QUESTIONS[survey_question_number - 1].length == 1) { // Free text response
               valid_choice = true;
@@ -1259,10 +1270,10 @@ CHASbot.post('/webhook', (req, res) => {
               //console.log("DEBUG [postWebhook]> Check input: " + check_winner + " Against answer: " + winner);
               if (check_winner == winner) {
 		            //console.log("DEBUG [postWebhook]> Won a point");
-                SENDERS[sender_index][5] = SENDERS[sender_index][5] + 1; // Add a point
+                SENDERS[sender_index][6] = SENDERS[sender_index][6] + 1; // Add a point
               };
             } else {
-              SENDERS[sender_index][4] = survey_question_number - 1; // Repeat previous question
+              SENDERS[sender_index][5] = survey_question_number - 1; // Repeat previous question
               // FLOW: Clear out invalid survey responses, 'stop', 'survey' or 'quiz' are still valid
               if (analyse_text != TRIGGER_SURVEY && analyse_text != TRIGGER_QUIZ && analyse_text != TRIGGER_STOP) { analyse_text = '' };
             }
@@ -1291,7 +1302,7 @@ CHASbot.post('/webhook', (req, res) => {
           let pick_player = TRIGGER_RPSLS;
           if (inPlay('rpsls',sender_index)) { // Only check if we are playing
             // Presume no match unless found
-            SENDERS[sender_index][9] = 0;
+            SENDERS[sender_index][10] = 0;
             inPlayUnset('rpsls',sender_index);
             trigger_loop = 0;
             for (trigger_loop = 0; trigger_loop < RPSLS_VALID.length; trigger_loop++) {
@@ -1302,7 +1313,7 @@ CHASbot.post('/webhook', (req, res) => {
                 //console.log("DEBUG [postWebhook]> " + pick_player + " search result: " + position_in_analyse_text);
                 inPlayPause(sender_index); // Pause all in-play...
                 inPlaySet('rpsls',sender_index); // ...then un-pause 'rpsls'
-                SENDERS[sender_index][9] = 3; // Evaluate the choice
+                SENDERS[sender_index][10] = 3; // Evaluate the choice
                 break;
               };
             };
@@ -1315,11 +1326,11 @@ CHASbot.post('/webhook', (req, res) => {
             if (inPlay('rpsls',sender_index)) { inPlayClean('rpsls',sender_index) }; // Reset if already playing
             inPlayPause(sender_index); // Pause all in-play...
             inPlaySet('rpsls',sender_index); // ...then un-pause 'rpsls'
-            if (SENDERS[sender_index][10]) {
-              SENDERS[sender_index][9] = 1; // Provide intsructions + prompt
-              SENDERS[sender_index][10] = false; // Reset instructions
+            if (SENDERS[sender_index][11]) {
+              SENDERS[sender_index][10] = 1; // Provide intsructions + prompt
+              SENDERS[sender_index][11] = false; // Reset instructions
             } else {
-              SENDERS[sender_index][9] = 2; // Prompt only
+              SENDERS[sender_index][10] = 2; // Prompt only
             };
           };
           // Hangman
@@ -1334,7 +1345,7 @@ CHASbot.post('/webhook', (req, res) => {
           let hangman_answer = '';
           if (CHAS_BIOGS_VIABLE && position_in_analyse_text > 0) {
             trigger_path = TRIGGER_HANGMAN;
-            if (SENDERS[sender_index][7] == ''||inPlay('hangman',sender_index)) { // New game
+            if (SENDERS[sender_index][8] == ''||inPlay('hangman',sender_index)) { // New game
               hangman_word = CHAS_BIOGS[numRandomBetween(1,CHAS_BIOGS_TOTAL) * CHAS_BIOGS_BLOCK_SIZE - 2];
               hangman_word = hangman_word.toLowerCase();
               //console.log("DEBUG [postWebhook]> Mystery name: " + hangman_word);
@@ -1352,17 +1363,17 @@ CHASbot.post('/webhook', (req, res) => {
               chasbotText = MSG_HANGMAN_INTRO;
               chasbotText = chasbotText + "\n" + hangman_answer;
               chasbotText = chasbotText + "\n" + MSG_THUMBS[0] + " (0 strikes)";
-              SENDERS[sender_index][7] = hangman_word;
-              SENDERS[sender_index][8] = hangman_answer_array;
+              SENDERS[sender_index][8] = hangman_word;
+              SENDERS[sender_index][9] = hangman_answer_array;
               //console.log("DEBUG [postWebhook]> Hangman Initialise: " + chasbotText);
             } else { // Resume existing game
-              hangman_word = SENDERS[sender_index][7];
-              hangman_answer_array = SENDERS[sender_index][8];
+              hangman_word = SENDERS[sender_index][8];
+              hangman_answer_array = SENDERS[sender_index][9];
               hangman_answer = hangman_answer_array.join(' ');
               chasbotText = MSG_HANGMAN_PROMPT;
               chasbotText = chasbotText + "\n" + hangman_answer;
-              chasbotText = chasbotText + "\n" + MSG_THUMBS[SENDERS[sender_index][6]] + "(" + SENDERS[sender_index][6] + " strike";
-              if (SENDERS[sender_index][6] == 1) {
+              chasbotText = chasbotText + "\n" + MSG_THUMBS[SENDERS[sender_index][7]] + "(" + SENDERS[sender_index][7] + " strike";
+              if (SENDERS[sender_index][7] == 1) {
                 chasbotText = chasbotText + ")";
               } else {
                 chasbotText = chasbotText + "s)";
@@ -1561,7 +1572,7 @@ CHASbot.post('/webhook', (req, res) => {
           } else if (trigger_path == TRIGGER_CHAS_BIOGS && CHAS_BIOGS_VIABLE) {
             //console.log("DEBUG [postWebhook_route]> CHAS bios: " + biogs_name);
             lookupBiogs(event,biogs_name);
-          } else if (SENDERS[sender_index][9] > 0) {
+          } else if (SENDERS[sender_index][10] > 0) {
             //console.log("DEBUG [postWebhook_route]> RPSLSpock: " + pick_player);
             playRPSLS(event,pick_player);
           } else if (trigger_path == TRIGGER_SEARCH[0]) {
@@ -1796,7 +1807,7 @@ function deliverQuestion_playSurvey(eventSend) {
   deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   let custom_id = inPlayID(sender);
-  let survey_question_number = SENDERS[custom_id][4];
+  let survey_question_number = SENDERS[custom_id][5];
   let rspns_items = 0;
   let qstn = '';
   let surveyTemplate = '';
@@ -1805,17 +1816,17 @@ function deliverQuestion_playSurvey(eventSend) {
     if (SURVEY_NAME != '') { // Survey
       qstn = MSG_SURVEY_THANKS;
     } else { // Quiz - Final Score
-      if (SENDERS[custom_id][5] > HIGH_SCORE[1]) {
+      if (SENDERS[custom_id][6] > HIGH_SCORE[1]) {
         let sender_name = strGreeting(sender,false);
-        qstn = "🏆 You are our new high scorer on " + SENDERS[custom_id][5] + "! Congratulations " + sender_name + ".";
-        HIGH_SCORE[1] = SENDERS[custom_id][5];
+        qstn = "🏆 You are our new high scorer on " + SENDERS[custom_id][6] + "! Congratulations " + sender_name + ".";
+        HIGH_SCORE[1] = SENDERS[custom_id][6];
         HIGH_SCORE[0] = sender_name;
         highScore('write');
-        console.log('QUIZ [' + QUIZ_NAME + '],' + sender + ', ' + sender_name + ' is new HIGH SCORE on ' + SENDERS[custom_id][5]);
-      } else if (SENDERS[custom_id][5] == HIGH_SCORE[1]) {
-        qstn = "🏆 You are an equal high scorer on " + SENDERS[custom_id][5] + "!";
+        console.log('QUIZ [' + QUIZ_NAME + '],' + sender + ', ' + sender_name + ' is new HIGH SCORE on ' + SENDERS[custom_id][6]);
+      } else if (SENDERS[custom_id][6] == HIGH_SCORE[1]) {
+        qstn = "🏆 You are an equal high scorer on " + SENDERS[custom_id][6] + "!";
       } else {
-        qstn = "You scored " + SENDERS[custom_id][5] + ", not the top score but everybody wins a prize " +
+        qstn = "You scored " + SENDERS[custom_id][6] + ", not the top score but everybody wins a prize " +
                PRIZES[numRandomBetween(0,PRIZES.length-1)] + ". " + HIGH_SCORE[0] + " leads with " + HIGH_SCORE[1] + ".";
       };
     };
@@ -1915,7 +1926,7 @@ function deliverQuestion_playSurvey(eventSend) {
       console.log("ERROR [deliverQuestion_playSurvey]> Undefined: ", response.body.error);
     }
   }); // request
-  if (inPlay('survey',custom_id)) { SENDERS[custom_id][4] = survey_question_number + 1 };
+  if (inPlay('survey',custom_id)) { SENDERS[custom_id][5] = survey_question_number + 1 };
 }
 
 function deliverThinking(eventThink,on_off) {
@@ -2765,7 +2776,7 @@ function lookupHero (eventHero,heroWho){
         console.log("DEBUG [lookupHero]> Hero array is empty");
       }; // if (HERO_ARRAY
       playTopTrumps(eventHero,heroMatches);
-    }); // apiHero(heroWho  
+    }); // apiHero(heroWho
   }; // if (heroMatches
 }
 
@@ -3151,9 +3162,9 @@ function playHangman(postEvent,hangman_guess) {
   hangman_guess = hangman_guess.replace(/\s/g, '_'); // Swap spaces for under under_scores
   let hangmanText = hangman_guess;
   let custom_id = inPlayID(sender);
-  let hangman_strikes = SENDERS[custom_id][6];
-  let hangman_word = SENDERS[custom_id][7];
-  let hangman_answer_array = SENDERS[custom_id][8];
+  let hangman_strikes = SENDERS[custom_id][7];
+  let hangman_word = SENDERS[custom_id][8];
+  let hangman_answer_array = SENDERS[custom_id][9];
   let clean = false;
   if (hangman_guess == hangman_word) { // Correct answer
     hangman_guess = "Yes! You guessed the mystery staff member, " + hangman_word.toUpperCase() + '!';
@@ -3220,9 +3231,9 @@ function playHangman(postEvent,hangman_guess) {
   if (clean) {
     inPlayClean('hangman',custom_id);
   } else {
-    SENDERS[custom_id][6] = hangman_strikes;
-    SENDERS[custom_id][7] = hangman_word;
-    SENDERS[custom_id][8] = hangman_answer_array;
+    SENDERS[custom_id][7] = hangman_strikes;
+    SENDERS[custom_id][8] = hangman_word;
+    SENDERS[custom_id][9] = hangman_answer_array;
   };
   console.log("INFO [playHangman]> Sender: " + sender);
   console.log("INFO [playHangman]> Request: Hangman guess was " + hangman_guess);
@@ -3239,10 +3250,10 @@ function playRPSLS(eventRPSLS,pickPlayer) {
   let rpslsText = '';
   let rpsls_url = '';
   let pick_chasbot = '';
-  let rpsls_action = SENDERS[custom_id][9];
-  let issue_instructions = SENDERS[custom_id][10];
-  let score_player = SENDERS[custom_id][11];
-  let score_bot = SENDERS[custom_id][12];
+  let rpsls_action = SENDERS[custom_id][10];
+  let issue_instructions = SENDERS[custom_id][11];
+  let score_player = SENDERS[custom_id][12];
+  let score_bot = SENDERS[custom_id][13];
   console.log("INFO [playRPSLS]> Sender: " + sender);
   if (rpsls_action == 1) { // Provide some instructions + prompt
     console.log("INFO [playRPSLS]> Request: " + TRIGGER_RPSLS);
@@ -3326,10 +3337,10 @@ function playRPSLS(eventRPSLS,pickPlayer) {
       rpslsText = rpslsText + "🙂 Level pegging. (Score: CHASbot " + score_bot ;
       rpslsText = rpslsText + ", you " + score_player + ").";
     };
-    SENDERS[custom_id][9] = rpsls_action;
-    SENDERS[custom_id][10] = issue_instructions;
-    SENDERS[custom_id][11] = score_player;
-    SENDERS[custom_id][12] = score_bot;
+    SENDERS[custom_id][10] = rpsls_action;
+    SENDERS[custom_id][11] = issue_instructions;
+    SENDERS[custom_id][12] = score_player;
+    SENDERS[custom_id][13] = score_bot;
     console.log("INFO [playRPSLS]> Action: playRPSLS.postImage_deliverTextDirect");
     console.log("INFO [playRPSLS]> Reponse: IMG URL "  + rpsls_url + '; Text: ' + rpslsText);
     postImage(eventRPSLS,rpsls_url,true,rpslsText);
