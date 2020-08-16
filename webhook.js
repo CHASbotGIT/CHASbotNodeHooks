@@ -1411,7 +1411,7 @@ CHASbot.post('/webhook', (req, res) => {
             hero_who = analyse_text;
             hero_who = hero_who.trim();
             hero_who = strTitleCase(hero_who);
-            console.log("DEBUG [postWebhook]> In play, trumps: " + hero_who);
+            //console.log("DEBUG [postWebhook]> In play, trumps: " + hero_who);
           };
           position_in_analyse_text = analyse_text.search(TRIGGER_TOPTRUMPS) + 1;
           if (position_in_analyse_text > 0){
@@ -1422,7 +1422,7 @@ CHASbot.post('/webhook', (req, res) => {
             hero_who = strReplaceAll(analyse_text,TRIGGER_TOPTRUMPS,''); // Trusting for now
             hero_who = hero_who.trim();
             hero_who = strTitleCase(hero_who);
-            console.log("DEBUG [postWebhook]> In play triggered, trumps: " + hero_who);
+            //console.log("DEBUG [postWebhook]> In play triggered, trumps: " + hero_who);
             // NB ** should probably refactor other stripping methods to this?
             inPlayPause(sender_index); // Pause all in-play...
             inPlaySet('trumps',sender_index); // ...then un-pause 'trumps'
@@ -1652,7 +1652,7 @@ CHASbot.post('/webhook', (req, res) => {
             // IN DEV
             lookupHero(event,hero_who);
             deliverTextDirect(event,"🐞 In Development, check the logs... 📝");
-            console.log("DEBUG [postWebhook_route]> Top Trumps: " + hero_who);
+            //console.log("DEBUG [postWebhook_route]> Top Trumps: " + hero_who);
           } else {
             //console.log("DEBUG [postWebhook_route]> No special cases, send via APIAI");
             bounceViaDialogV2(event);
@@ -2794,24 +2794,24 @@ let URL_API_HERO = "https://superheroapi.com/api.php/";
 let HERO_ARRAY = [];
 
 function lookupHero (eventHero,heroWho){
-  console.log("DEBUG [lookupHero]> Hero to find: " + heroWho);
+  //console.log("DEBUG [lookupHero]> Hero to find: " + heroWho);
   let heroWhoMatch = heroWho.toLowerCase();
   let heroWhoStored = '';
   let heroMatches = []; // May be more than one
   if (HERO_ARRAY.length != 0) { // Array not empty
-    console.log("DEBUG [lookupHero]> There are values stored");
+    //console.log("DEBUG [lookupHero]> There are values stored");
     for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
       if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
         heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase();
         if (heroWhoStored.includes(heroWhoMatch)) {
             heroMatches.push(hero_loop);
-            console.log("DEBUG [lookupHero]> Stored match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
+            //console.log("DEBUG [lookupHero]> Stored match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
         }; // if (heroWhoStored
       }; // if (typeof
     }; // for (var hero_loop
   }; // if (HERO_ARRAY
   if (heroMatches.length == 0) {
-    console.log("DEBUG [lookupHero]> No matches stored, trying API");
+    //console.log("DEBUG [lookupHero]> No matches stored, trying API");
     apiHero(heroWho, function(){
       if (HERO_ARRAY.length != 0) { // Array not empty
         for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
@@ -2819,12 +2819,12 @@ function lookupHero (eventHero,heroWho){
             heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase();
             if (heroWhoStored.includes(heroWhoMatch)) {
                 heroMatches.push(hero_loop);
-                console.log("DEBUG [lookupHero]> API match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
+                //console.log("DEBUG [lookupHero]> API match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
             }; // if (heroWhoStored
           }; // if (typeof
         }; // for (var hero_loop
       } else {
-        console.log("DEBUG [lookupHero]> Hero array is empty");
+        //console.log("DEBUG [lookupHero]> Hero array is empty");
       }; // if (HERO_ARRAY
       playTopTrumps(eventHero,heroMatches); // After API i.e. may be results
     }); // apiHero(heroWho
@@ -2844,9 +2844,9 @@ function tempHero(){
 
 function apiHero (heroWho,callback){
   //https://superheroapi.com/api/3449097715109340/search/batman
-  console.log("DEBUG [apiHero]> Getting started with search term: " + heroWho);
+  //console.log("DEBUG [apiHero]> Getting started with search term: " + heroWho);
   //const hero_url = URL_API_HERO + KEY_API_HERO + "/search/" + heroWho;
-  hero_url = "https://www.superheroapi.com/api.php/3449097715109340/" + heroWho + "/powerstats"
+  let hero_url = "https://www.superheroapi.com/api.php/3449097715109340/" + heroWho + "/powerstats"
   var req = http.get(hero_url, function(res) {
     console.log("API Request [HERO]: " + hero_url);
     let body = "";
@@ -2856,14 +2856,14 @@ function apiHero (heroWho,callback){
     res.on('end', function() {
       let heroData = JSON.parse(body);
       //console.log("DEBUG [apiHero]> Got this back raw: " + body);
-      console.log("DEBUG [apiHero]> Response Code: " + heroData.response);
+      //console.log("DEBUG [apiHero]> Response Code: " + heroData.response);
       if (typeof heroData.response != 'undefined' && heroData.response == 'success') {
-        console.log("DEBUG [apiHero]> Got result(s) to play with: " + heroData.results.length);
+        //console.log("DEBUG [apiHero]> Got result(s) to play with: " + heroData.results.length);
         let targetID = 0;
         for (var character_loop = 0; character_loop < heroData.results.length; character_loop++) {
           let heroStats = heroData.results[character_loop];
           targetID = heroStats.id;
-          console.log("DEBUG [apiHero]> Target: " + targetID);
+          //console.log("DEBUG [apiHero]> Target: " + targetID);
           if (typeof HERO_ARRAY[targetID] == 'undefined') {
             HERO_ARRAY[targetID]=[
               heroStats.name, // [0]
@@ -2891,7 +2891,7 @@ function apiHero (heroWho,callback){
 
 function playTopTrumps(eventTT,playTT){
   let sender = eventTT.sender.id;
-  console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
+  //console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
   let custom_id = inPlayID(sender);
   let trumps_score = SENDERS[custom_id][14];
   let trumps_played = SENDERS[custom_id][15];
@@ -2903,12 +2903,12 @@ function playTopTrumps(eventTT,playTT){
     console.table(SENDERS[custom_id][15]);
     let tt_id = playTT[0];
     let responseTT = "Goldilocks: " + tt_id;
-    console.log("DEBUG [playTopTrumps]> Single ID: " + tt_id);
+    //console.log("DEBUG [playTopTrumps]> Single ID: " + tt_id);
     if (trumps_played[tt_id]) {responseTT = responseTT + " (picked again!)"};
     SENDERS[custom_id][15][tt_id] = true;
     console.table(SENDERS[custom_id][15]);
     let tt_url = HERO_ARRAY[tt_id][7];
-    console.log("DEBUG [playTopTrumps]> Image: " + tt_url);
+    //console.log("DEBUG [playTopTrumps]> Image: " + tt_url);
     let tt_stats = HERO_ARRAY[tt_id][0] + " ID: " + tt_id + "\n" +
       pad(HERO_ARRAY[tt_id][1],3) + " = 🧠 Intelligence\n" +
       pad(HERO_ARRAY[tt_id][2],3) + " = 💪 Strength\n" +
@@ -2916,7 +2916,7 @@ function playTopTrumps(eventTT,playTT){
       pad(HERO_ARRAY[tt_id][4],3) + " = ⏲️ Durability\n" +
       pad(HERO_ARRAY[tt_id][5],3) + " = 🔋 Power\n" +
       pad(HERO_ARRAY[tt_id][6],3) + " = ⚔️ Combat"
-    console.log("DEBUG [playTopTrumps]> Stats: " + tt_stats);
+    //console.log("DEBUG [playTopTrumps]> Stats: " + tt_stats);
     postImage(eventTT,tt_url,true,tt_stats);
     //deliverTextDirect(eventTT,responseTT);
   } else {
