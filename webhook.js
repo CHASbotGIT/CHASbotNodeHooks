@@ -2819,10 +2819,10 @@ function lookupHero (eventHero,heroWho){
       } else {
         console.log("DEBUG [lookupHero]> Hero array is empty");
       }; // if (HERO_ARRAY
-      playTopTrumps(eventHero,heroMatches);
+      playTopTrumps(eventHero,heroMatches); // After API i.e. may be results
     }); // apiHero(heroWho
   } else {
-    playTopTrumps(eventHero,heroMatches);
+    playTopTrumps(eventHero,heroMatches); // After stored successful i.e. will be results
   } // if (heroMatches
 }
 
@@ -2884,11 +2884,23 @@ function playTopTrumps(eventTT,playTT){
     deliverTextDirect(eventTT,"Couldn't find that one");
   } else if (playTT.length == 1) {
     console.table(SENDERS[custom_id][15]);
-    let responseTT = "Goldilocks: " + playTT[0];
-    console.log("DEBUG [playTopTrumps]> Single ID: " + playTT[0]);
-    if (trumps_played[playTT[0]]) {responseTT = responseTT + " (picked again!)"};
-    SENDERS[custom_id][15][playTT[0]] = true;
-    deliverTextDirect(eventTT,responseTT);
+    let tt_id = playTT[0];
+    let responseTT = "Goldilocks: " + tt_id;
+    console.log("DEBUG [playTopTrumps]> Single ID: " + tt_id);
+    if (trumps_played[tt_id]) {responseTT = responseTT + " (picked again!)"};
+    SENDERS[custom_id][15][tt_id] = true;
+    console.table(SENDERS[custom_id][15]);
+    let tt_url = HERO_ARRAY[tt_id].[7];
+    console.log("DEBUG [playTopTrumps]> Image: ") + tt_url);
+    let tt_stats = tt_stats + HERO_ARRAY[tt_id].[1] + " = Intelligence\n" +
+      HERO_ARRAY[tt_id].[2] + " = 🧠Intelligence\n" +
+      HERO_ARRAY[tt_id].[3] + " = 💪Strength\n" +
+      HERO_ARRAY[tt_id].[4] + " = 💨Speed\n" +
+      HERO_ARRAY[tt_id].[5] + " = 🔋Power\n" +
+      HERO_ARRAY[tt_id].[6] + " = ⚔️Combat"
+    console.log("DEBUG [playTopTrumps]> Stats: ") + tt_stats);
+    postImage(eventTT,tt_url,true,tt_stats);
+    //deliverTextDirect(eventTT,responseTT);
   } else {
     deliverTextDirect(eventTT,"Too many to pick from: " + playTT.length);
   };
