@@ -2864,7 +2864,7 @@ function apiHero (heroWho,callback){
 //        let targetID = 0;
 //        for (var character_loop = 0; character_loop < heroData.results.length; character_loop++) {
 //          let heroStats = heroData.results[character_loop];
-          targetID = heroStats.id;
+          let targetID = heroStats.id;
           //console.log("DEBUG [apiHero]> Target: " + targetID);
           if (typeof HERO_ARRAY[targetID] == 'undefined') {
             HERO_ARRAY[targetID]=[
