@@ -810,7 +810,7 @@ function inPlayNew(index_id,new_sender) {
                        0,0,                     // 5:survey_question,6:quiz_score
                        0,'',[],                 // 7:hangman_strikes,8:hangman_word,9:hangman_word
                        0,true,0,0,              // 10:rpsls_action,11:issue_instructions,12:rpsls_player,13:rpsls_bot
-                       0,[],0,0];               // 14:trumps_score,15:trumps_played,16:trump_tobeat,17:trump_picked,18:trump_category
+                       0,[],0,0,''];            // 14:trumps_score,15:trumps_played,16:trump_tobeat,17:trump_picked,18:trump_category
 }
 function inPlay(in_play,index_id) {
   let in_play_index = 0;
@@ -843,6 +843,7 @@ function inPlayClean(in_play,index_id) {
     SENDERS[index_id][15] = []; // trumps_played
     SENDERS[index_id][16] = 0;  // trump_tobeat
     SENDERS[index_id][17] = 0;  // trump_picked
+    SENDERS[index_id][18] = ''; // trump_category
   };
   SENDERS[index_id][in_play_index] = false;
 }
