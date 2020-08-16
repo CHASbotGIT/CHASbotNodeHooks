@@ -2815,7 +2815,7 @@ function apiHero (heroWho,callback){
   }); // req.on('error'
 }
 
-function playTopTrumps(eventTT,herWho){
+function playTopTrumps(eventTT,heroWho){
   let playTT = lookupHero(heroWho);
   console.log("DEBUG [apiHero]> Possible Top Trumps to select: " + playTT.length)
 }
