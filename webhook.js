@@ -2766,7 +2766,7 @@ function lookupHero (eventHero,heroWho){
       }; // if (HERO_ARRAY
     }); // apiHero(heroWho
   }; // if (heroMatches
-  playTopTrumps(eventHero,heroMatches);
+  //playTopTrumps(eventHero,heroMatches);
 }
 
 function apiHero (heroWho,callback){
