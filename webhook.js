@@ -1082,10 +1082,10 @@ function hrsGetUK() {
 CHASbot.post('/webhook', (req, res) => {
   if (req.body.object === 'page') {
     req.body.entry.forEach((entry) => {
-      console.log("ADMIN [postWebhook]> Raw body: " + JSON.parse(entry));
+      console.log("ADMIN [postWebhook]> Raw body: " + JSON.stringify(entry));
       entry.messaging.forEach((event) => {
         //if (event.read && event.read.watermark) { //console.log("DEBUG [postWebhook]> Receipt: " + event.read.watermark) };
-        console.log("ADMIN [postWebhook]> Raw event: " + JSON.parse(event));
+        console.log("ADMIN [postWebhook]> Raw event: " + JSON.stringify(event));
         let sticker_path = '';
         let sender = event.sender.id;
         let alt_message_type = '';
