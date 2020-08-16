@@ -1195,6 +1195,7 @@ CHASbot.post('/webhook', (req, res) => {
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
             trigger_path = TRIGGER_HELP;
 
+            // IN DEV
             console.table(HERO_ARRAY);
 
             help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
@@ -2907,6 +2908,8 @@ function playTopTrumps(eventTT,playTT){
       pad(HERO_ARRAY[tt_id][5],3) + " = 🔋 Power\n" +
       pad(HERO_ARRAY[tt_id][6],3) + " = ⚔️ Combat"
     //console.log("DEBUG [playTopTrumps]> Stats: " + tt_stats);
+    let test_add = HERO_ARRAY[tt_id][1] + HERO_ARRAY[tt_id][2]
+    console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
     postImage(eventTT,tt_url,true,tt_stats);
     //deliverTextDirect(eventTT,responseTT);
   } else {
