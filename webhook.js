@@ -2821,7 +2821,9 @@ function lookupHero (eventHero,heroWho){
       }; // if (HERO_ARRAY
       playTopTrumps(eventHero,heroMatches);
     }); // apiHero(heroWho
-  }; // if (heroMatches
+  } else {
+    playTopTrumps(eventHero,heroMatches);
+  } // if (heroMatches
 }
 
 function apiHero (heroWho,callback){
@@ -2872,7 +2874,7 @@ function apiHero (heroWho,callback){
 
 function playTopTrumps(eventTT,playTT){
   let sender = eventTT.sender.id;
-  console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + "[" + sender + "]");
+  console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
   let custom_id = inPlayID(sender);
   let trumps_score = SENDERS[custom_id][14];
   let trumps_played = SENDERS[custom_id][15];
