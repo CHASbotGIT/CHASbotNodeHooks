@@ -2837,7 +2837,7 @@ tempHero();
 
 function tempHero(){
 // https://www.superheroapi.com/api.php/3449097715109340/5/powerstats
-  for (var character_loop = 1; character_loop < 732; character_loop++) {
+  for (var character_loop = 0; character_loop < 732; character_loop++) {
     apiHero(character_loop, function(){});
   }; // for (var character_loop
 }
@@ -2846,7 +2846,7 @@ function apiHero (heroWho,callback){
   //https://superheroapi.com/api/3449097715109340/search/batman
   //console.log("DEBUG [apiHero]> Getting started with search term: " + heroWho);
   //const hero_url = URL_API_HERO + KEY_API_HERO + "/search/" + heroWho;
-  let hero_url = "https://www.superheroapi.com/api.php/3449097715109340/" + heroWho + "/powerstats"
+  let hero_url = "https://www.superheroapi.com/api.php/3449097715109340/" + heroWho + "/powerstats"; // TEMP
   var req = http.get(hero_url, function(res) {
     console.log("API Request [HERO]: " + hero_url);
     let body = "";
@@ -2859,23 +2859,30 @@ function apiHero (heroWho,callback){
       //console.log("DEBUG [apiHero]> Response Code: " + heroData.response);
       if (typeof heroData.response != 'undefined' && heroData.response == 'success') {
         //console.log("DEBUG [apiHero]> Got result(s) to play with: " + heroData.results.length);
-        let targetID = 0;
-        for (var character_loop = 0; character_loop < heroData.results.length; character_loop++) {
-          let heroStats = heroData.results[character_loop];
+//        let targetID = 0;
+//        for (var character_loop = 0; character_loop < heroData.results.length; character_loop++) {
+//          let heroStats = heroData.results[character_loop];
           targetID = heroStats.id;
           //console.log("DEBUG [apiHero]> Target: " + targetID);
           if (typeof HERO_ARRAY[targetID] == 'undefined') {
             HERO_ARRAY[targetID]=[
               heroStats.name, // [0]
-              heroStats.powerstats.intelligence,
-              heroStats.powerstats.strength,
-              heroStats.powerstats.speed,
-              heroStats.powerstats.durability,
-              heroStats.powerstats.power,
-              heroStats.powerstats.combat,
-              heroStats.image.url]; // [7]
+              heroStats.intelligence,
+              heroStats.strength,
+              heroStats.speed,
+              heroStats.durability,
+              heroStats.power,
+              heroStats.combat]; // [7]
+//              heroStats.name, // [0]
+//              heroStats.powerstats.intelligence,
+//              heroStats.powerstats.strength,
+//              heroStats.powerstats.speed,
+//              heroStats.powerstats.durability,
+//              heroStats.powerstats.power,
+//              heroStats.powerstats.combat,
+//              heroStats.image.url]; // [7]
           }; // if (typeof
-        }; // for (var character_loop
+  //      }; // for (var character_loop
         callback();
       } else {
         console.log("ERROR [apiHero]> No joy bringing back a record");
