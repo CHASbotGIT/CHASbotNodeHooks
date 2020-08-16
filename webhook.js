@@ -788,11 +788,25 @@ CHASbot.get('/webhook', (req, res) => {
 
 // Sender handling and sequencing functions
 // ========================================
+// http://plaintexttools.github.io/plain-text-table/
+// ════════╤═══╤═════════════════╤══════════╤═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+//  Sender │ 0 │ id_of_sender    │ long_int │
+// ════════╪═══╪═════════════════╪══════════╪═════════╤═══╤═════════════════╤═══════╤═══════╤════╤════════════════════╤══════╤════════════╤════╤════════════════╤═══════
+//  Survey │ 1 │ survey_in_play  │ bool     │ Hangman │ 2 │ hangman_in_play │ bool  │ RPSLS │ 3  │ rpsls_in_play      │ bool │ Top Trumps │ 4  │ trumps_in_play │ bool
+// ────────┼───┼─────────────────┼──────────┼─────────┼───┼─────────────────┼───────┼───────┼────┼────────────────────┼──────┼────────────┼────┼────────────────┼───────
+//         │ 5 │ survey_question │ int      │         │ 7 │ hangman_strikes │ int   │       │ 10 │ rpsls_action       │ int  │            │ 14 │ trumps_score   │ int
+//         ├───┼─────────────────┼──────────┤         ├───┼─────────────────┼───────┤       ├────┼────────────────────┼──────┤            ├────┼────────────────┼───────
+//         │ 6 │ quiz_score      │ int      │         │ 8 │ hangman_word    │ str   │       │ 11 │ issue_instructions │ bool │            │ 15 │ trumps_played  │ array
+//         ├───┴─────────────────┴──────────┤         ├───┼─────────────────┼───────┤       ├────┼────────────────────┼──────┤            ├────┼────────────────┼───────
+//         │                                │         │ 9 │ hangman_word    │ array │       │ 12 │ rpsls_player       │ int  │            │ 16 │ trump_tobeat   │ int
+//         │                                │         ├───┴─────────────────┴───────┤       ├────┼────────────────────┼──────┤            ├────┼────────────────┼───────
+//         │                                │         │                             │       │ 13 │ rpsls_bot          │ int  │            │ 17 │ trump_picked   │ int
+// ════════╧════════════════════════════════╧═════════╧═════════════════════════════╧═══════╧════╧════════════════════╧══════╧════════════╧════╧════════════════╧═══════
 function inPlayNew(index_id,new_sender) {
   SENDERS[index_id] = [new_sender,              // 0:id_of_sender
                        false,false,false,false, // 1:survey_in_play,2:hangman_in_play,3:rpsls_in_play,4:trumps_in_play
                        0,0,                     // 5:survey_question,6:quiz_score
-                       0,'',[],                 // 7:hangman_strikes,8:hangman_word,9:hangman_array
+                       0,'',[],                 // 7:hangman_strikes,8:hangman_word,9:hangman_word
                        0,true,0,0,              // 10:rpsls_action,11:issue_instructions,12:rpsls_player,13:rpsls_bot
                        0,[],0,0];               // 14:trumps_score,15:trumps_played,16:trump_tobeat,17:trump_picked
 }
@@ -2857,7 +2871,24 @@ function apiHero (heroWho,callback){
 }
 
 function playTopTrumps(eventTT,playTT){
-  console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length)
+  console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length);
+  let sender = eventTT.sender.id;
+  let custom_id = inPlayID(sender);
+  let trumps_score = SENDERS[custom_id][14];
+  let trumps_played = SENDERS[custom_id][15];
+  let trump_tobeat = SENDERS[custom_id][16];
+  let trump_picked = SENDERS[custom_id][17];
+  if (playTT.length == 0) {
+    deliverTextDirect(eventTT,"Couldn't find that one");
+  } else if (playTT.length == 1) {
+    let responseTT = "Goldilocks: " + playTT[0];
+    console.log("DEBUG [playTopTrumps]> Single ID: " + playTT[0]);
+    if (trumps_played[playTT[0]]) {responseTT = responseTT + " (picked again!)"};
+    trumps_played[playTT[0]] = true;
+    deliverTextDirect(eventTT,responseTT);
+  } else {
+    deliverTextDirect(eventTT,"Too many to pick from: " + playTT.length);
+  };
 }
 
 // =================
