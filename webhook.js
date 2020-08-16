@@ -2854,10 +2854,12 @@ function apiHero (heroWho,callback){
     res.on('data', function (chunk) { body += chunk });
     // When all the data is back, go on to query the full response
     res.on('end', function() {
-      let heroData = JSON.parse(body);
+      let heroStats = JSON.parse(body);
+//      let heroData = JSON.parse(body);
       //console.log("DEBUG [apiHero]> Got this back raw: " + body);
       //console.log("DEBUG [apiHero]> Response Code: " + heroData.response);
-      if (typeof heroData.response != 'undefined' && heroData.response == 'success') {
+//      if (typeof heroData.response != 'undefined' && heroData.response == 'success') {
+      if (typeof heroStats.response != 'undefined' && heroStats.response == 'success') {
         //console.log("DEBUG [apiHero]> Got result(s) to play with: " + heroData.results.length);
 //        let targetID = 0;
 //        for (var character_loop = 0; character_loop < heroData.results.length; character_loop++) {
