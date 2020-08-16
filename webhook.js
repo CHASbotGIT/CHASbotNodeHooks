@@ -2832,7 +2832,7 @@ function deliverCategory_playTrumps(eventSend) {
     rspns_items = SURVEY_QUESTIONS[survey_question_number].length;
     qstn = SURVEY_QUESTIONS[survey_question_number][0];
   }*/
-  surveyTemplate = {
+  let surveyTemplate = {
     text: "Pick a category to try and beat. If the value on this card is ❓or the card you play, then it be 50/50 whehter you win",
     quick_replies:[
       { content_type:"text",
