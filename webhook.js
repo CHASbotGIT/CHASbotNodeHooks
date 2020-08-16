@@ -2881,6 +2881,7 @@ function playTopTrumps(eventTT,playTT){
   if (playTT.length == 0) {
     deliverTextDirect(eventTT,"Couldn't find that one");
   } else if (playTT.length == 1) {
+    console.table(SENDERS);
     let responseTT = "Goldilocks: " + playTT[0];
     console.log("DEBUG [playTopTrumps]> Single ID: " + playTT[0]);
     if (trumps_played[playTT[0]]) {responseTT = responseTT + " (picked again!)"};
