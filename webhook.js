@@ -2892,7 +2892,7 @@ function playTopTrumps(eventTT,playTT){
     console.table(SENDERS[custom_id][15]);
     let tt_url = HERO_ARRAY[tt_id][7];
     console.log("DEBUG [playTopTrumps]> Image: " + tt_url);
-    let tt_stats = tt_stats + HERO_ARRAY[tt_id][1] + " = Intelligence\n" +
+    let tt_stats = HERO_ARRAY[tt_id][1] + " = Intelligence\n" +
       HERO_ARRAY[tt_id][2] + " = 🧠Intelligence\n" +
       HERO_ARRAY[tt_id][3] + " = 💪Strength\n" +
       HERO_ARRAY[tt_id][4] + " = 💨Speed\n" +
