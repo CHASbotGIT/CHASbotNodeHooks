@@ -2772,7 +2772,7 @@ function lookupHero (heroWho){
 function apiHero (heroWho,callback){
   //https://superheroapi.com/api/3449097715109340/search/batman
   console.log("DEBUG [apiHero]> Getting started");
-  const hero_url = URL_API_HERO + KEY_FOR_NOW + "/search/" + heroWho;
+  const hero_url = URL_API_HERO + KEY_API_HERO + "/search/" + heroWho;
   var req = http.get(hero_url, function(res) {
     console.log("API Request [HERO]: " + hero_url);
     let body = "";
