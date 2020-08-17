@@ -2996,7 +2996,7 @@ function playTopTrumps(eventTT,playTT){
     let test_add = parseInt(HERO_ARRAY[tt_id][1]) + parseInt(HERO_ARRAY[tt_id][2]);
     console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
     postImage(eventTT,tt_url,true,tt_stats);
-    //deliverCategory_playTrumps(eventTT);
+    deliverCategory_playTrumps(eventTT);
   } else {
     deliverText(eventTT,"Too many to pick from: " + playTT.length,false,'');
   };
