@@ -1937,7 +1937,6 @@ function deliverTemplate(eventSend,messageData,callback) {
 
 // Top Trumps
 function deliverPictureTT(eventSend,pictureTT,callback){ // call 3rd
-  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> call 3rd");
   // Sent 1st
   let sender = eventSend.sender.id;
   let imgTemplate = {
@@ -1964,12 +1963,10 @@ function deliverPictureTT(eventSend,pictureTT,callback){ // call 3rd
     } else if (response.body.error) {
         console.log("ERROR [deliverTemplate]> Undefined: ", response.body.error);
     }; // if (error)
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> sent 1st");
     callback(); // To deliverMetricsTT
   }); // request({
 }
 function deliverMetricsTT(eventSend,metricsTT,pictureTT,callback){ // call 2nd
-  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> call 2nd");
   deliverPictureTT(eventSend,pictureTT, function(){
     // Sent 2nd
     let sender = eventSend.sender.id;
@@ -1991,18 +1988,15 @@ function deliverMetricsTT(eventSend,metricsTT,pictureTT,callback){ // call 2nd
         console.log("ERROR [deliverText]> Undefined: ", response.body.error);
       }; // if (error)
     }); // request
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> sent 2nd");
     callback(); // To deliverStackTT
   });
 }
 function deliverStackTT(eventSend,metricsTT,pictureTT){ // Call 1st
-  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> call 1st");
   deliverThinking(eventSend,'off');
   deliverMetricsTT(eventSend,metricsTT,pictureTT, async function(){
     // Sent 3rd
     await deliverPause(Q_DELIVERY*1000);
     deliverCategory_playTrumps(eventSend); // Category choice peompt and options
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> sent 3rd");
   });
 }
 
@@ -2927,6 +2921,9 @@ function deliverCategory_playTrumps(eventSend) {
         payload:"<POSTBACK_PAYLOAD>" },
       { content_type:"text",
         title: HERO_STATS[4],
+        payload:"<POSTBACK_PAYLOAD>" }
+      { content_type:"text",
+        title: HERO_STATS[5],
         payload:"<POSTBACK_PAYLOAD>" }]};
     request({
       uri: URL_CHAT_ENDPOINT,
