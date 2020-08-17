@@ -2921,7 +2921,7 @@ function deliverCategory_playTrumps(eventSend) {
         payload:"<POSTBACK_PAYLOAD>" },
       { content_type:"text",
         title: HERO_STATS[4],
-        payload:"<POSTBACK_PAYLOAD>" }
+        payload:"<POSTBACK_PAYLOAD>" },
       { content_type:"text",
         title: HERO_STATS[5],
         payload:"<POSTBACK_PAYLOAD>" }]};
