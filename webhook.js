@@ -103,7 +103,7 @@ const FILE_TO_BE_ENCRYPTED = "./ids_private.txt"; // "./bios_private.txt"  "./fu
 const FILE_ENCRYPTED_FR_CARD = "./fundraising_public.txt";
 const FILE_ENCRYPTED = FILE_ENCRYPTED_IDS; // FILE_ENCRYPTED_FR_CARD FILE_ENCRYPTED_BIOS FILE_ENCRYPTED_IDS
 // Messages
-const MSG_RPSLS_INTRO = "💡 First to five is the champion. Scissors cuts Paper, Paper covers Rock, Rock crushes Lizard, Lizard poisons Spock, Spock smashes Scissors, Scissors decapitates Lizard, Lizard eats Paper, Paper disproves Spock, Spock vaporizes Rock, and Rock crushes Scissors!";
+const MSG_RPSLS_INTRO = "💡 First to five is the champion.\n✌️Scissors cuts Paper✋,\n✋Paper covers Rock👊,\n👊Rock crushes Lizard🤏,\n🤏Lizard poisons Spock🖖,\n🖖Spock smashes Scissors✌️,\n✌️Scissors decapitates Lizard🤏,\n🤏Lizard eats Paper✋,\n✋Paper disproves Spock🖖,\n🖖Spock vaporizes Rock👊, and\n👊Rock crushes Scissors✌️!";
 const MSG_RPSLS_PROMPT = "Choose... Rock, Paper, Scissors, Lizard or Spock?";
 const MSG_HANGMAN_INTRO = "🤔 Figure out the mystery staff member name.\nType a letter to guess, or 'stop'.\nYou are allowed no more than 3 strikes.";
 const MSG_SURVEY_THANKS = "❤️ Thank you for finishing our little survey.";
@@ -180,7 +180,7 @@ var TRIGGER_SEARCH = ['search','google','wiki','beeb'];
 var TRIGGER_LOTTERY = ['lotto','lottery','euromillions','euro-millions'];
 var TRIGGER_MOVIEDB = ['synopsis','watched','watch','catch','seen','see'];
 
-//  _  _  ___   ___  _  _____
+//  _  _  ___   ___  _   _____
 // | || |/ _ \ / _ \| |/ / __|
 // | __ | (_) | (_) | ' <\__ \
 // |_||_|\___/ \___/|_|\_\___/
@@ -369,8 +369,7 @@ var WEATHER_GIFS = [
   "1a/20/q7g8CZnC day 613",
   "d7/eb/1BWWNO4Z night 613",
   "62/aa/uqyQmDMy day 200, 201, 210, 230, 231, 232",
-  "30/1e/yM8bbEDc night 200, 201, 210, 230, 231, 232",
-];
+  "30/1e/yM8bbEDc night 200, 201, 210, 230, 231, 232"];
 var CHASABET_INDEX = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 // Rock Paper Scissors Lizard Spock
 var RPSLS_VALID = ["rock","paper","scissors","lizard","spock"];
@@ -710,9 +709,7 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
       }; // for
       LOTR_ARRAY[id_position][10] = pushArray;
       //console.log("DEBUG [loadLOTR]> Quotes populated for: " + id_position);
-      //console.table(LOTR_ARRAY[id_position][10]);
       //console.log("DEBUG [loadLOTR]> First film/quote: " + id_position);
-      //console.table(LOTR_ARRAY[id_position][10][0]);
     }; // if (LOTR_ARRAY[id_position]
     //console.log("DEBUG [loadLOTR]> Quotes: " + LOTR_ARRAY[id_position][10].length);
     callback();
@@ -730,7 +727,7 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
           lotrArray[loopArray].height,
           lotrArray[loopArray].hair,
           lotrArray[loopArray].birth,
-          lotrArray[loopArray].death]);
+          lotrArray[loopArray].death]); // [9]
       }; // for
     }; // if
     //console.log("DEBUG [loadLOTR]> Characters: " + LOTR_ARRAY.length);
@@ -2569,7 +2566,6 @@ function wrapLOTR(match_id,lotrWho) {
     //console.log("DEBUG [wrapLOTR]> Full Quote: " + movie_quote);
   }; // if (typeof LOTR_ARRAY
   lotrBlurb = lotrBlurb + movie_quote;
-  lotrBlurb = strTrimTo(640,lotrBlurb); // Make sure the message isn't over-long
   return lotrBlurb;
 }
 
@@ -2796,6 +2792,8 @@ function apiMarvelChar(eventMarvel,marvelWho) {
 
 // TOP TRUMPS IN DEV
 // =================
+const MSG_TOPTRUMPS_INTRO = "Let's play Top Trumps to see how many wins you can get in a row. I'll get you started with a Superhero or Villain, you first pick a category you think you can beat, then name a hero or villain. Keep picking categories and naming characters until you are defeated!";
+const MSG_TOPTRUMPS_PROMPT = "Pick a category to try and beat. If the value on this card is ❓ or on the card you play, then it will be 50/50 whether you win";
 const TRIGGER_TOPTRUMPS = 'top trumps';
 let HERO_STATS = ["🧠 Intelligence","💪 Strength","💨 Speed","🔋 Durability","🌡️ Power","⚔️ Combat"];
 let URL_API_HERO = "https://superheroapi.com/api.php/";
@@ -2807,7 +2805,7 @@ function deliverCategory_playTrumps(eventSend) {
   let sender = eventSend.sender.id;
   let custom_id = inPlayID(sender);
   let surveyTemplate = {
-    text: "Pick a category to try and beat. If the value on this card is ❓or on the card you play, then it will be 50/50 whether you win",
+    text: MSG_TOPTRUMPS_PROMPT,
     quick_replies:[
       { content_type:"text",
         title: HERO_STATS[0],
