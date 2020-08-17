@@ -1869,7 +1869,7 @@ function deliverText(eventSend,outbound_text,plusTemplate,messageData) {
   let sender = eventSend.sender.id;
   outbound_text = strGreeting(sender,true) + outbound_text;
   if (plusTemplate) { deliverTemplate(eventSend,messageData, function(){
-      //await deliverPause(Q_DELIVERY * 1000); // function needs to be asynv
+      //await deliverPause(Q_DELIVERY * 1000); // function needs to be async
       request({
         uri: URL_CHAT_ENDPOINT,
         qs: {access_token: KEY_PAGE_ACCESS},
@@ -1936,7 +1936,7 @@ function deliverTemplate(eventSend,messageData,callback) {
 }
 
 // Top Trumps
-async function deliverPictureTT(eventSend,pictureTT,callback){ // call 3rd
+function deliverPictureTT(eventSend,pictureTT,callback){ // call 3rd
   console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> call 3rd");
   // Sent 1st
   let sender = eventSend.sender.id;
@@ -1998,7 +1998,7 @@ function deliverMetricsTT(eventSend,metricsTT,pictureTT,callback){ // call 2nd
 function deliverStackTT(eventSend,metricsTT,pictureTT){ // Call 1st
   console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> call 1st");
   deliverThinking(eventSend,'off');
-  deliverMetricsTT(eventSend,metricsTT,pictureTT, function(){
+  deliverMetricsTT(eventSend,metricsTT,pictureTT, async function(){
     // Sent 3rd
     await deliverPause(Q_DELIVERY*1000);
     deliverCategory_playTrumps(eventSend); // Category choice peompt and options
