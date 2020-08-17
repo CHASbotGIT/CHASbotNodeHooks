@@ -1862,9 +1862,9 @@ function deliverThinking(eventThink,on_off) {
 
 function deliverText(eventSend,outbound_text,plusTemplate,messageData) {
   if (plusTemplate) {
-    console.log("DEBUG [deliverText]> Deliver text preceeded by template: ", outbound_text);
+    //console.log("DEBUG [deliverText]> Deliver text preceeded by template: ", outbound_text);
   } else {
-    console.log("DEBUG [deliverText]> Deliver text: ", outbound_text);
+    //console.log("DEBUG [deliverText]> Deliver text: ", outbound_text);
   }; // if (plusTemplate)
   let sender = eventSend.sender.id;
   outbound_text = strGreeting(sender,true) + outbound_text;
@@ -2084,7 +2084,7 @@ function postImage(postEvent,image_url,plusText,passText) {
     deliverText(postEvent,passText,true,imgTemplate);
   } else {
     deliverTemplate(postEvent,imgTemplate,'');
-  };passText
+  }; // if (plusText)
 }
 
 function postLinkButton(postEvent,link_url,reponse_msg,btn_msg) {
@@ -2835,7 +2835,7 @@ let URL_API_HERO = "https://superheroapi.com/api.php/";
 let HERO_ARRAY = [];
 
 function deliverCategory_playTrumps(eventSend) {
-  console.log("DEBUG [deliverCategory_playTrumps]> In Progress");
+  //console.log("DEBUG [deliverCategory_playTrumps]> In Progress");
   deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   let custom_id = inPlayID(sender);
@@ -2920,7 +2920,7 @@ function lookupHero (eventHero,heroWho){
 
 function apiHero (heroWho,callback){
   //https://superheroapi.com/api/3449097715109340/search/batman
-  console.log("DEBUG [apiHero]> Getting started");
+  //console.log("DEBUG [apiHero]> Getting started");
   const hero_url = URL_API_HERO + KEY_API_HERO + "/search/" + heroWho;
   var req = http.get(hero_url, function(res) {
     console.log("API Request [HERO]: " + hero_url);
@@ -2931,14 +2931,14 @@ function apiHero (heroWho,callback){
     res.on('end', function() {
       let heroData = JSON.parse(body);
       //console.log("DEBUG [apiHero]> Got this back raw: " + body);
-      console.log("DEBUG [apiHero]> Response Code: " + heroData.response);
+      //console.log("DEBUG [apiHero]> Response Code: " + heroData.response);
       if (typeof heroData.response != 'undefined' && heroData.response == 'success') {
-        console.log("DEBUG [apiHero]> Got result(s) to play with: " + heroData.results.length);
+        //console.log("DEBUG [apiHero]> Got result(s) to play with: " + heroData.results.length);
         let targetID = 0;
         for (var character_loop = 0; character_loop < heroData.results.length; character_loop++) {
           let heroStats = heroData.results[character_loop];
           targetID = heroStats.id;
-          console.log("DEBUG [apiHero]> Target: " + targetID);
+          //console.log("DEBUG [apiHero]> Target: " + targetID);
           if (typeof HERO_ARRAY[targetID] == 'undefined') {
             HERO_ARRAY[targetID]=[
               heroStats.name, // [0]
@@ -2994,8 +2994,18 @@ function playTopTrumps(eventTT,playTT){
     //console.log("DEBUG [playTopTrumps]> Stats: " + tt_stats);
     tt_stats = strReplaceAll(tt_stats, 'null', ' ❓ ');
     let test_add = parseInt(HERO_ARRAY[tt_id][1]) + parseInt(HERO_ARRAY[tt_id][2]);
-    console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
-    postImage(eventTT,tt_url,true,tt_stats);
+    //console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
+    let ttTemplate = {
+      attachment: {
+        type: "image",
+        payload: {
+          url: tt_url,
+          is_reusable: true
+        } // payload
+      } // attachment
+    }; // template
+    deliverText(eventTT,tt_stats,true,ttTemplate);
+    //postImage(eventTT,tt_url,true,tt_stats);
     deliverCategory_playTrumps(eventTT);
   } else {
     deliverText(eventTT,"Too many to pick from: " + playTT.length,false,'');
