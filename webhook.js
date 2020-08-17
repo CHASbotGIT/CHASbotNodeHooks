@@ -104,7 +104,7 @@ const FILE_ENCRYPTED_FR_CARD = "./fundraising_public.txt";
 const FILE_ENCRYPTED = FILE_ENCRYPTED_IDS; // FILE_ENCRYPTED_FR_CARD FILE_ENCRYPTED_BIOS FILE_ENCRYPTED_IDS
 // Messages
 const MSG_RPSLS_INTRO = "💡 First to five is the champion.\n✌️Scissors cuts Paper✋,\n✋Paper covers Rock👊,\n👊Rock crushes Lizard🤏,\n🤏Lizard poisons Spock🖖,\n🖖Spock smashes Scissors✌️,\n✌️Scissors decapitates Lizard🤏,\n🤏Lizard eats Paper✋,\n✋Paper disproves Spock🖖,\n🖖Spock vaporizes Rock👊, and\n👊Rock crushes Scissors✌️!";
-const MSG_RPSLS_PROMPT = "Choose... Rock, Paper, Scissors, Lizard or Spock?";
+const MSG_RPSLS_PROMPT = "Choose (type in)... Rock, Paper, Scissors, Lizard or Spock?";
 const MSG_HANGMAN_INTRO = "🤔 Figure out the mystery staff member name.\nType a letter to guess, or 'stop'.\nYou are allowed no more than 3 strikes.";
 const MSG_SURVEY_THANKS = "❤️ Thank you for finishing our little survey.";
 const MSG_HANGMAN_PROMPT = "🤔 Where were we... who is that!\nType a letter, or 'stop'.\nNo more than 3 strikes.";
@@ -225,7 +225,8 @@ const URL_LOTTO_SCOT = "https://www.scottishchildrenslottery.com";
 const URL_LOTTO_EURO = "https://www.national-lottery.co.uk/games/euromillions?";
 const URL_LOTTO_THUMB_UK = "https://images2.imgbox.com/a7/d9/bPkhSTGL_o.png";
 const URL_LOTTO_THUMB_SCOT = "https://images2.imgbox.com/38/2f/Do75wmKv_o.png";
-const URL_LOTTO_THUMB_EURO = "https://images2.imgbox.com/c0/e9/IMp4gYs4_o.png";const URL_IMG_PREFIX = "https://images.imgbox.com/";
+const URL_LOTTO_THUMB_EURO = "https://images2.imgbox.com/c0/e9/IMp4gYs4_o.png";
+const URL_IMG_PREFIX = "https://images.imgbox.com/";
 const URL_IMG_PREFIX2 = "https://images2.imgbox.com/";
 const URL_IMG_SUFFIX = "_o.png";
 const URL_GIF_SUFFIX = "_o.gif";
@@ -1109,12 +1110,12 @@ CHASbot.post('/webhook', (req, res) => {
         if (sticker_path != '') {
           console.log("INFO [postWebhook]> Sender: " + sender);
           console.log("INFO [postWebhook]> Request: Non-text");
-          console.log("INFO [postWebhook]> Action: postWebhook.deliverTextDirect");
+          console.log("INFO [postWebhook]> Action: postWebhook.deliverText");
           console.log("INFO [postWebhook]> Response: " + sticker_path);
           if (alt_message_type == 'image') {
             apiGIPHY(event,'robot','G',sticker_path);
           } else {
-            deliverTextDirect(event,sticker_path);
+            deliverText(event,sticker_path);
           };
         };
         if (event.message && event.message.text) {
@@ -1155,7 +1156,7 @@ CHASbot.post('/webhook', (req, res) => {
           } else if (good_vibe + bad_vibe > 9) { // Minimum 10 = lots
             vibeText = MSG_INTERCEPTS[8][numRandomBetween(0,MSG_INTERCEPTS[8].length-1)];
           };
-          if (vibeText != '' && !empty_input) { deliverTextDirect(event,vibeText) };
+          if (vibeText != '' && !empty_input) { deliverText(event,vibeText) };
           // *************************
           // Check for custom triggers
           let position_in_analyse_text = -1;
@@ -1186,7 +1187,7 @@ CHASbot.post('/webhook', (req, res) => {
             analyse_text = event.message.text;
             analyse_text = analyse_text.toLowerCase();
             chasbotText = '*' + event.message.text + '*';
-            deliverTextDirect(event,chasbotText); // Send a sudo-request
+            deliverText(event,chasbotText); // Send a pseudo-request
             inPlayPause(sender_index); // Pause all in-play
             // FLOW: Sudo request replace 'feeling lucky'
           };
@@ -1596,7 +1597,7 @@ CHASbot.post('/webhook', (req, res) => {
           // Pick a response route
           if (trigger_path == KEY_ADMIN_TRIGGER) {
             //console.log("DEBUG [postWebhook_route]> Admin: " + KEY_ADMIN_TRIGGER);
-            deliverTextDirect(routeEvent,adminMessage);
+            deliverText(routeEvent,adminMessage);
           } else if (inPlay('survey',sender_index)) { // Survey first
             //console.log("DEBUG [postWebhook_route]> Survey");
             deliverQuestion_playSurvey(event);
@@ -1646,16 +1647,16 @@ CHASbot.post('/webhook', (req, res) => {
             //console.log("DEBUG [postWebhook_route]> Hangman Initiated");
             console.log("INFO [postWebhook]> Sender: " + sender);
             console.log("INFO [postWebhook]> Request: " + TRIGGER_HANGMAN);
-            console.log("INFO [postWebhook]> Action: postWebhook.deliverTextDirect");
+            console.log("INFO [postWebhook]> Action: postWebhook.deliverText");
             console.log("INFO [postWebhook]> Response: Hangman Mystery Name is " + hangman_word);
-            deliverTextDirect(event,chasbotText);
+            deliverText(event,chasbotText);
           } else if (inPlay('hangman',sender_index)) {
             //console.log("DEBUG [postWebhook_route]> Hangman Guess: " + hangman_guess);
             playHangman(event,hangman_guess);
           } else if (inPlay('trumps',sender_index)) {
             // IN DEV
             lookupHero(event,hero_who);
-            deliverTextDirect(event,"🐞 In Development, check the logs... 📝");
+            deliverText(event,"🐞 In Development, check the logs... 📝");
             //console.log("DEBUG [postWebhook_route]> Top Trumps: " + hero_who);
           } else {
             //console.log("DEBUG [postWebhook_route]> No special cases, send via APIAI");
@@ -1779,13 +1780,13 @@ async function bounceViaDialogV2(eventSend) {
       CARD_PICK = CARD_DECK[numRandomBetween(0,CARD_DECK.length-1)];
       hookText = CARD_PROMPTS[numRandomBetween(0,CARD_PROMPTS.length-1)] + CARD_PICK;
       console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Pick a Card Hook: " + hookText);
-      deliverTextDirect(eventSend,hookText);
+      deliverText(eventSend,hookText);
       return;
     } else if (dialogFlowHook === HOOK_FUNDRAISING) {
       //console.log("DEBUG [bounceViaDialogV2]> HOOK_FUNDRAISING");
       hookText = CHAS_FR_LIST;
       console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Fundraising Hook: " + hookText);
-      deliverTextDirect(eventSend,hookText);
+      deliverText(eventSend,hookText);
       return;
     }; // else if (dialogFlowHook
     // Check for custom hooks
@@ -1810,18 +1811,18 @@ async function bounceViaDialogV2(eventSend) {
     if (dialogFlowHook != HOOK_WEATHER) {
       if (dialogFlowText == '') {dialogFlowText = MSG_NO_HOOK}; // Catch empty dialogflow responses
       console.log("INFO [bounceViaDialogV2]> Response to " + sender + " scripted via dialogflow NLP: " + dialogFlowText);
-      deliverTextDirect(eventSend,dialogFlowText);
+      deliverText(eventSend,dialogFlowText);
       // Look out for unknown response and cc. admin
       if (result.action == 'input.unknown'||result.action.slice(0,21)=='DefaultFallbackIntent') {
         let loopbackText = sender + ">>" + strGreeting(sender,false) + ">>" + result.queryText;
         console.log("ADMIN [bounceViaDialogV2]> Feedback: " + loopbackText);
         let eventLoopback = eventSend;
         eventLoopback.sender.id = KEY_ADMIN;
-        deliverTextDirect(eventLoopback,loopbackText);
+        deliverText(eventLoopback,loopbackText);
       }; //if (result.action
     }; // if (dialogFlowHook
 } catch (e) { // cattch from try - undefined error from async await
-    deliverTextDirect(eventSend,MSG_NO_HOOK);
+    deliverText(eventSend,MSG_NO_HOOK);
     console.log("INFO [bounceViaDialogV2]> Catch response to " + sender + " via dialogflow NLP: " + MSG_NO_HOOK)
     console.log("ERROR [bounceViaDialogV2]> " + e);
   } // catch end
@@ -1834,6 +1835,14 @@ async function bounceViaDialogV2(eventSend) {
 //                           |__/
 // Delivey Functions - return resposnes
 // ====================================
+
+// function deliverText(eventSend,outbound_text) {
+// many instances of deliverText( circa 40
+// far smaller number of instances...
+// should flip the ,plusText,messageText options to ,plusTemplate, messageData
+// deliverTemplate should be a callback function... i.e.
+// the Template and Text messages should stack... Template delivered and then Text - with opportunity to introduce delay to control the sequence
+
 function deliverTemplate(eventSend,messageData,plusText,messageText) {
   // messageData set outside of function call
   deliverThinking(eventSend,'off');
@@ -1854,7 +1863,7 @@ function deliverTemplate(eventSend,messageData,plusText,messageText) {
         console.log("ERROR [deliverTemplate]> Undefined: ", response.body.error);
     }
   });
-  if (plusText) { deliverTextDirect(eventSend,messageText) };
+  if (plusText) { deliverText(eventSend,messageText) };
 }
 
 function deliverQuestion_playSurvey(eventSend) {
@@ -2005,7 +2014,7 @@ function deliverThinking(eventThink,on_off) {
   }); // request
 }
 
-function deliverTextDirect(eventSend,outbound_text) {
+function deliverText(eventSend,outbound_text) {
   deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   outbound_text = strGreeting(sender,true) + outbound_text;
@@ -2022,9 +2031,9 @@ function deliverTextDirect(eventSend,outbound_text) {
     }
   }, function (error, response) {
     if (error) {
-      console.log("ERROR [deliverTextDirect]> Error sending simple message: ", error);
+      console.log("ERROR [deliverText]> Error sending simple message: ", error);
     } else if (response.body.error) {
-      console.log("ERROR [deliverTextDirect]> Undefined: ", response.body.error);
+      console.log("ERROR [deliverText]> Undefined: ", response.body.error);
     };
   }); // request
 }
@@ -2102,12 +2111,12 @@ function postMarvel(postEvent,success_result,hero_array) {
         } // payload
       } // attachment
     }; // template
-    marvelText = hero_array[1]; // Required within deliverTextDirect
+    marvelText = hero_array[1]; // Required within deliverText
     deliverTemplate(postEvent,marvelTemplate,true,marvelText);
   } else {
     console.log("INFO [postMarvel]> Reponse: Unuccessful");
-    marvelText = MSG_HERO_OOPS[numRandomBetween(0,MSG_HERO_OOPS.length-1)] + ' try something instead of ' + strTitleCase(hero_array[0]) + '?'; // Required within deliverTextDirect
-    deliverTextDirect(postEvent,marvelText);
+    marvelText = MSG_HERO_OOPS[numRandomBetween(0,MSG_HERO_OOPS.length-1)] + ' try something instead of ' + strTitleCase(hero_array[0]) + '?'; // Required within deliverText
+    deliverText(postEvent,marvelText);
   };
 }
 
@@ -2143,14 +2152,14 @@ function postEvents(postEvent,success_result,event_index,event_in) {
         } // payload
       } // attachment
     }; // template
-    eventsText = event_detail; // Required within deliverTextDirect
+    eventsText = event_detail; // Required within deliverText
     deliverTemplate(postEvent,eventsTemplate,true,eventsText);
   } else {
     console.log("INFO [postEvents]> Reponse: Unsuccessful");
-    eventsText = MSG_EVENTS_OOPS[CHAS_EVENTS_OOPS_INDEX] + ' try something instead of ' + strTitleCase(event_in) + '?'; // Required within deliverTextDirect
+    eventsText = MSG_EVENTS_OOPS[CHAS_EVENTS_OOPS_INDEX] + ' try something instead of ' + strTitleCase(event_in) + '?'; // Required within deliverText
     CHAS_EVENTS_OOPS_INDEX++;
     if (CHAS_EVENTS_OOPS_INDEX == MSG_EVENTS_OOPS.length) {CHAS_EVENTS_OOPS_INDEX = 0};
-    deliverTextDirect(postEvent,eventsText);
+    deliverText(postEvent,eventsText);
   };
 }
 
@@ -2165,7 +2174,7 @@ function postBiogs(postEvent,success_result,biogs_index,biogs_name) {
     console.log("INFO [postBiogs]> Reponse: Successful");
     let biogsText = CHAS_BIOGS[biogs_index + 1];
     //console.log("DEBUG [postBiogs]> Result: " + CHAS_BIOGS[biogs_index + 1]);
-    deliverTextDirect(postEvent,biogsText);
+    deliverText(postEvent,biogsText);
   } else {
     console.log("INFO [postBiogs]> Reponse: Unsuccessful");
     bounceViaDialogV2(postEvent);
@@ -2317,31 +2326,31 @@ function postFilmTV(postEvent,record_index) {
       // TV only
       console.log("INFO [postFilmTV]> Sender: " + sender);
       console.log("INFO [postFilmTV]> Request: MovieDb");
-      console.log("INFO [postFilmTV]> Action: postFilmTV.deliverTextDirect");
+      console.log("INFO [postFilmTV]> Action: postFilmTV.deliverText");
       filmText = "📺 " + MOVIEDB_RECORDS[record_index][1];
       console.log("INFO [postFilmTV]> Reponse: " + filmText);
-      deliverTextDirect(postEvent,filmText);
+      deliverText(postEvent,filmText);
     } else if (MOVIEDB_RECORDS[record_index][1] == 'No TV result' && MOVIEDB_RECORDS[record_index][4] != 'No film result') {
       // Film only
       console.log("INFO [postFilmTV]> Sender: " + sender);
       console.log("INFO [postFilmTV]> Request: MovieDb");
-      console.log("INFO [postFilmTV]> Action: postFilmTV.deliverTextDirect");
+      console.log("INFO [postFilmTV]> Action: postFilmTV.deliverText");
       filmText = "📽️ " + MOVIEDB_RECORDS[record_index][4];
       console.log("INFO [postFilmTV]> Reponse: " + filmText);
-      deliverTextDirect(postEvent,filmText);
+      deliverText(postEvent,filmText);
     } else {
       // Both
       console.log("INFO [postFilmTV]> Sender: " + sender);
       console.log("INFO [postFilmTV]> Request: MovieDb");
-      console.log("INFO [postFilmTV]> Action: postFilmTV.deliverTextDirect");
+      console.log("INFO [postFilmTV]> Action: postFilmTV.deliverText");
       if (MOVIEDB_RECORDS[record_index][2] > MOVIEDB_RECORDS[record_index][5]) {
         filmText = "📺 " + MOVIEDB_RECORDS[record_index][1];
         console.log("INFO [postFilmTV]> Reponse: " + filmText);
-        deliverTextDirect(postEvent,filmText);
+        deliverText(postEvent,filmText);
       } else if (MOVIEDB_RECORDS[record_index][2] < MOVIEDB_RECORDS[record_index][5]) {
         filmText = "📽️ " + MOVIEDB_RECORDS[record_index][4];
         console.log("INFO [postFilmTV]> Reponse: " + filmText);
-        deliverTextDirect(postEvent,filmText);
+        deliverText(postEvent,filmText);
       } else {
         let pick_one = Math.floor(numRandomBetween(0,1));
         if (pick_one == 0) {
@@ -2350,7 +2359,7 @@ function postFilmTV(postEvent,record_index) {
           filmText = "🎞️ " + MOVIEDB_RECORDS[record_index][4];
         };
         console.log("INFO [postFilmTV]> Reponse: " + filmText);
-        deliverTextDirect(postEvent,filmText);
+        deliverText(postEvent,filmText);
       };
     };
   };
@@ -2383,11 +2392,11 @@ function postLOTR(eventLOTR,lotrWho) {
         }); // apiLOTR('quotes'
       } else {
         // Array not populated after API call
-        console.log("INFO [postLOTR]> Action: apiLOTR.deliverTextDirect");
+        console.log("INFO [postLOTR]> Action: apiLOTR.deliverText");
         console.log("INFO [postLOTR]> Reponse: Unuccessful");
         console.log("ERROR [postLOTR]> apiLOTR did not populate array");
-        lotrBlurb = MSG_LOTR_OOPS[numRandomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + strTitleCase(lotrWho) + '?'; // Required within deliverTextDirect
-        deliverTextDirect(eventLOTR,lotrBlurb);
+        lotrBlurb = MSG_LOTR_OOPS[numRandomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + strTitleCase(lotrWho) + '?'; // Required within deliverText
+        deliverText(eventLOTR,lotrBlurb);
       };
     }); // apiLOTR('chars'
   } else { // Operating from memeory - not API
@@ -2596,12 +2605,12 @@ function apiGIPHY(eventGiphy,giphy_tag,giphy_rating,passText) {
           return;
         } else {
           console.log("ERROR [apiGIPHY]> No Results");
-          deliverTextDirect(eventGiphy,passText)
+          deliverText(eventGiphy,passText)
           return;
         };
       } else {
         console.log("ERROR [apiGIPHY]> Response Error");
-        deliverTextDirect(eventGiphy,passText)
+        deliverText(eventGiphy,passText)
         return;
       }; // if (res.statusCode === 200)
     }); // res.on('end', function()
@@ -2795,6 +2804,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
 const MSG_TOPTRUMPS_INTRO = "Let's play Top Trumps to see how many wins you can get in a row. I'll get you started with a Superhero or Villain, you first pick a category you think you can beat, then name a hero or villain. Keep picking categories and naming characters until you are defeated!";
 const MSG_TOPTRUMPS_PROMPT = "Pick a category to try and beat. If the value on this card is ❓ or on the card you play, then it will be 50/50 whether you win";
 const TRIGGER_TOPTRUMPS = 'top trumps';
+var HERO_VALID = []; // as per RPSLS
 let HERO_STATS = ["🧠 Intelligence","💪 Strength","💨 Speed","🔋 Durability","🌡️ Power","⚔️ Combat"];
 let URL_API_HERO = "https://superheroapi.com/api.php/";
 let HERO_ARRAY = [];
@@ -2938,7 +2948,7 @@ function playTopTrumps(eventTT,playTT){
   let trump_tobeat = SENDERS[custom_id][16];
   let trump_picked = SENDERS[custom_id][17];
   if (playTT.length == 0) {
-    deliverTextDirect(eventTT,"Couldn't find that one");
+    deliverText(eventTT,"Couldn't find that one");
   } else if (playTT.length == 1) {
     console.table(SENDERS[custom_id][15]);
     let tt_id = playTT[0];
@@ -2963,7 +2973,7 @@ function playTopTrumps(eventTT,playTT){
     postImage(eventTT,tt_url,true,tt_stats);
     //deliverCategory_playTrumps(eventTT);
   } else {
-    deliverTextDirect(eventTT,"Too many to pick from: " + playTT.length);
+    deliverText(eventTT,"Too many to pick from: " + playTT.length);
   };
 }
 
@@ -3374,9 +3384,9 @@ function playHangman(postEvent,hangman_guess) {
   };
   console.log("INFO [playHangman]> Sender: " + sender);
   console.log("INFO [playHangman]> Request: Hangman guess was " + hangman_guess);
-  console.log("INFO [playHangman]> Action: playHangman.deliverTextDirect");
+  console.log("INFO [playHangman]> Action: playHangman.deliverText");
   console.log("INFO [playHangman]> Response: " + hangmanText);
-  deliverTextDirect(postEvent,hangmanText);
+  deliverText(postEvent,hangmanText);
 }
 
 function playRPSLS(eventRPSLS,pickPlayer) {
@@ -3395,16 +3405,16 @@ function playRPSLS(eventRPSLS,pickPlayer) {
   if (rpsls_action == 1) { // Provide some instructions + prompt
     console.log("INFO [playRPSLS]> Request: " + TRIGGER_RPSLS);
     rpsls_url = URL_IMG_PREFIX + RPSLS_IMGS[0] + URL_IMG_SUFFIX;
-    rpslsText = MSG_RPSLS_INTRO + "\n" + MSG_RPSLS_PROMPT; // Required within deliverTextDirect
-    console.log("INFO [playRPSLS]> Action: playRPSLS.postImage_deliverTextDirect");
+    rpslsText = MSG_RPSLS_INTRO + "\n" + MSG_RPSLS_PROMPT; // Required within deliverText
+    console.log("INFO [playRPSLS]> Action: playRPSLS.postImage_deliverText");
     console.log("INFO [playRPSLS]> Reponse: IMG URL "  + rpsls_url + '; Text: ' + rpslsText);
     postImage(eventRPSLS,rpsls_url,true,rpslsText);
   } else if (rpsls_action == 2) { // Just prompt
     console.log("INFO [playRPSLS]> Request: " + TRIGGER_RPSLS);
-    rpslsText = MSG_RPSLS_PROMPT; // Required within deliverTextDirect
-    console.log("INFO [playRPSLS]> Action: playRPSLS.deliverTextDirect");
+    rpslsText = MSG_RPSLS_PROMPT; // Required within deliverText
+    console.log("INFO [playRPSLS]> Action: playRPSLS.deliverText");
     console.log("INFO [playRPSLS]> Reponse: " + rpslsText);
-    deliverTextDirect(eventRPSLS,rpslsText);
+    deliverText(eventRPSLS,rpslsText);
   } else { // Compare results and show outcome
     console.log("INFO [playRPSLS]> Request: " + pickPlayer);
     pick_chasbot = RPSLS_VALID[numRandomBetween(0,4)];
@@ -3478,7 +3488,7 @@ function playRPSLS(eventRPSLS,pickPlayer) {
     SENDERS[custom_id][11] = issue_instructions;
     SENDERS[custom_id][12] = score_player;
     SENDERS[custom_id][13] = score_bot;
-    console.log("INFO [playRPSLS]> Action: playRPSLS.postImage_deliverTextDirect");
+    console.log("INFO [playRPSLS]> Action: playRPSLS.postImage_deliverText");
     console.log("INFO [playRPSLS]> Reponse: IMG URL "  + rpsls_url + '; Text: ' + rpslsText);
     postImage(eventRPSLS,rpsls_url,true,rpslsText);
   };
