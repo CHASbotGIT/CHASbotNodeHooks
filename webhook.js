@@ -1115,7 +1115,7 @@ CHASbot.post('/webhook', (req, res) => {
           if (alt_message_type == 'image') {
             apiGIPHY(event,'robot','G',sticker_path);
           } else {
-            deliverText(event,sticker_path);
+            deliverText(event,sticker_path,false,'');
           };
         };
         if (event.message && event.message.text) {
@@ -1156,7 +1156,7 @@ CHASbot.post('/webhook', (req, res) => {
           } else if (good_vibe + bad_vibe > 9) { // Minimum 10 = lots
             vibeText = MSG_INTERCEPTS[8][numRandomBetween(0,MSG_INTERCEPTS[8].length-1)];
           };
-          if (vibeText != '' && !empty_input) { deliverText(event,vibeText) };
+          if (vibeText != '' && !empty_input) { deliverText(event,vibeText,false,'') };
           // *************************
           // Check for custom triggers
           let position_in_analyse_text = -1;
@@ -1187,7 +1187,7 @@ CHASbot.post('/webhook', (req, res) => {
             analyse_text = event.message.text;
             analyse_text = analyse_text.toLowerCase();
             chasbotText = '*' + event.message.text + '*';
-            deliverText(event,chasbotText); // Send a pseudo-request
+            deliverText(event,chasbotText,false,''); // Send a pseudo-request
             inPlayPause(sender_index); // Pause all in-play
             // FLOW: Sudo request replace 'feeling lucky'
           };
@@ -1597,7 +1597,7 @@ CHASbot.post('/webhook', (req, res) => {
           // Pick a response route
           if (trigger_path == KEY_ADMIN_TRIGGER) {
             //console.log("DEBUG [postWebhook_route]> Admin: " + KEY_ADMIN_TRIGGER);
-            deliverText(routeEvent,adminMessage);
+            deliverText(routeEvent,adminMessage,false,'');
           } else if (inPlay('survey',sender_index)) { // Survey first
             //console.log("DEBUG [postWebhook_route]> Survey");
             deliverQuestion_playSurvey(event);
@@ -1649,14 +1649,14 @@ CHASbot.post('/webhook', (req, res) => {
             console.log("INFO [postWebhook]> Request: " + TRIGGER_HANGMAN);
             console.log("INFO [postWebhook]> Action: postWebhook.deliverText");
             console.log("INFO [postWebhook]> Response: Hangman Mystery Name is " + hangman_word);
-            deliverText(event,chasbotText);
+            deliverText(event,chasbotText,false,'');
           } else if (inPlay('hangman',sender_index)) {
             //console.log("DEBUG [postWebhook_route]> Hangman Guess: " + hangman_guess);
             playHangman(event,hangman_guess);
           } else if (inPlay('trumps',sender_index)) {
             // IN DEV
             lookupHero(event,hero_who);
-            deliverText(event,"🐞 In Development, check the logs... 📝");
+            deliverText(event,"🐞 In Development, check the logs... 📝",false,'');
             //console.log("DEBUG [postWebhook_route]> Top Trumps: " + hero_who);
           } else {
             //console.log("DEBUG [postWebhook_route]> No special cases, send via APIAI");
@@ -1780,13 +1780,13 @@ async function bounceViaDialogV2(eventSend) {
       CARD_PICK = CARD_DECK[numRandomBetween(0,CARD_DECK.length-1)];
       hookText = CARD_PROMPTS[numRandomBetween(0,CARD_PROMPTS.length-1)] + CARD_PICK;
       console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Pick a Card Hook: " + hookText);
-      deliverText(eventSend,hookText);
+      deliverText(eventSend,hookText,false,'');
       return;
     } else if (dialogFlowHook === HOOK_FUNDRAISING) {
       //console.log("DEBUG [bounceViaDialogV2]> HOOK_FUNDRAISING");
       hookText = CHAS_FR_LIST;
       console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Fundraising Hook: " + hookText);
-      deliverText(eventSend,hookText);
+      deliverText(eventSend,hookText,false,'');
       return;
     }; // else if (dialogFlowHook
     // Check for custom hooks
@@ -1811,18 +1811,18 @@ async function bounceViaDialogV2(eventSend) {
     if (dialogFlowHook != HOOK_WEATHER) {
       if (dialogFlowText == '') {dialogFlowText = MSG_NO_HOOK}; // Catch empty dialogflow responses
       console.log("INFO [bounceViaDialogV2]> Response to " + sender + " scripted via dialogflow NLP: " + dialogFlowText);
-      deliverText(eventSend,dialogFlowText);
+      deliverText(eventSend,dialogFlowText,false,'');
       // Look out for unknown response and cc. admin
       if (result.action == 'input.unknown'||result.action.slice(0,21)=='DefaultFallbackIntent') {
         let loopbackText = sender + ">>" + strGreeting(sender,false) + ">>" + result.queryText;
         console.log("ADMIN [bounceViaDialogV2]> Feedback: " + loopbackText);
         let eventLoopback = eventSend;
         eventLoopback.sender.id = KEY_ADMIN;
-        deliverText(eventLoopback,loopbackText);
+        deliverText(eventLoopback,loopbackText,false,'');
       }; //if (result.action
     }; // if (dialogFlowHook
 } catch (e) { // cattch from try - undefined error from async await
-    deliverText(eventSend,MSG_NO_HOOK);
+    deliverText(eventSend,MSG_NO_HOOK,false,'');
     console.log("INFO [bounceViaDialogV2]> Catch response to " + sender + " via dialogflow NLP: " + MSG_NO_HOOK)
     console.log("ERROR [bounceViaDialogV2]> " + e);
   } // catch end
@@ -1833,8 +1833,8 @@ async function bounceViaDialogV2(eventSend) {
 // | |) / -_) | \ V / -_) '_| || |
 // |___/\___|_|_|\_/\___|_|  \_, |
 //                           |__/
-// Delivey Functions - return resposnes
-// ====================================
+// Delivery Functions - return resposnes
+// =====================================
 
 // function deliverText(eventSend,outbound_text) {
 // many instances of deliverText( circa 40
@@ -1843,7 +1843,85 @@ async function bounceViaDialogV2(eventSend) {
 // deliverTemplate should be a callback function... i.e.
 // the Template and Text messages should stack... Template delivered and then Text - with opportunity to introduce delay to control the sequence
 
-function deliverTemplate(eventSend,messageData,plusText,messageText) {
+function deliverThinking(eventThink,on_off) {
+  let sender = eventThink.sender.id;
+  request({
+    uri: URL_CHAT_ENDPOINT,
+    qs: {access_token: KEY_PAGE_ACCESS},
+    method: 'POST',
+    json: {
+      messaging_type: 'RESPONSE',
+      recipient: {id: sender},
+      sender_action: 'typing_' + on_off
+    }
+  }, function (error, response) {
+    if (error) {
+      console.log("ERROR [deliverThinking]> Error sending simple message: ", error);
+    } else if (response.body.error) {
+      console.log("ERROR [deliverThinking]> Undefined: ", response.body.error);
+    };
+  }); // request
+}
+
+function deliverPause(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+const Q_DELIVERY = 2; // seconds to pause sequential messaging
+
+async function deliverText(eventSend,outbound_text,plusTemplate,messageData) {
+  if (plusTemplate) {
+    console.log("DEBUG [deliverText]> Deliver text preceeded by template: ", outbound_text);
+  } else {
+    console.log("DEBUG [deliverText]> Deliver text: ", outbound_text);
+  }; // if (plusTemplate)
+  let sender = eventSend.sender.id;
+  outbound_text = strGreeting(sender,true) + outbound_text;
+  if (plusTemplate) { deliverTemplate(eventSend,messageData, function(){
+      await deliverPause(Q_DELIVERY * 1000); //
+      request({
+        uri: URL_CHAT_ENDPOINT,
+        qs: {access_token: KEY_PAGE_ACCESS},
+        method: 'POST',
+        json: {
+          messaging_type: 'RESPONSE',
+          recipient: {id: sender},
+          message: {
+            text: strTrimTo(640,outbound_text)
+          }
+        }
+      }, function (error, response) {
+        if (error) {
+          console.log("ERROR [deliverText]> Post deliverTemplate error sending simple message: ", error);
+        } else if (response.body.error) {
+          console.log("ERROR [deliverText]> Post deliverTemplate undefined: ", response.body.error);
+        }; // if (error)
+      }); // request
+    }); // deliverTemplate
+  } else { // if (plusTemplate)
+    deliverThinking(eventSend,'off');
+    request({
+      uri: URL_CHAT_ENDPOINT,
+      qs: {access_token: KEY_PAGE_ACCESS},
+      method: 'POST',
+      json: {
+        messaging_type: 'RESPONSE',
+        recipient: {id: sender},
+        message: {
+          text: strTrimTo(640,outbound_text)
+        }
+      }
+    }, function (error, response) {
+      if (error) {
+        console.log("ERROR [deliverText]> Error sending simple message: ", error);
+      } else if (response.body.error) {
+        console.log("ERROR [deliverText]> Undefined: ", response.body.error);
+      }; // if (error)
+    }); // request
+  };
+}
+
+function deliverTemplate(eventSend,messageData,callback) {
   // messageData set outside of function call
   deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
@@ -1861,9 +1939,9 @@ function deliverTemplate(eventSend,messageData,plusText,messageText) {
         console.log("ERROR [deliverTemplate]> Error sending template message: ", error);
     } else if (response.body.error) {
         console.log("ERROR [deliverTemplate]> Undefined: ", response.body.error);
-    }
-  });
-  if (plusText) { deliverText(eventSend,messageText) };
+    }; // if (error)
+    callback();
+  }); // request({
 }
 
 function deliverQuestion_playSurvey(eventSend) {
@@ -1994,50 +2072,6 @@ function deliverQuestion_playSurvey(eventSend) {
   if (inPlay('survey',custom_id)) { SENDERS[custom_id][5] = survey_question_number + 1 };
 }
 
-function deliverThinking(eventThink,on_off) {
-  let sender = eventThink.sender.id;
-  request({
-    uri: URL_CHAT_ENDPOINT,
-    qs: {access_token: KEY_PAGE_ACCESS},
-    method: 'POST',
-    json: {
-      messaging_type: 'RESPONSE',
-      recipient: {id: sender},
-      sender_action: 'typing_' + on_off
-    }
-  }, function (error, response) {
-    if (error) {
-      console.log("ERROR [deliverThinking]> Error sending simple message: ", error);
-    } else if (response.body.error) {
-      console.log("ERROR [deliverThinking]> Undefined: ", response.body.error);
-    };
-  }); // request
-}
-
-function deliverText(eventSend,outbound_text) {
-  deliverThinking(eventSend,'off');
-  let sender = eventSend.sender.id;
-  outbound_text = strGreeting(sender,true) + outbound_text;
-  request({
-    uri: URL_CHAT_ENDPOINT,
-    qs: {access_token: KEY_PAGE_ACCESS},
-    method: 'POST',
-    json: {
-      messaging_type: 'RESPONSE',
-      recipient: {id: sender},
-      message: {
-        text: strTrimTo(640,outbound_text)
-      }
-    }
-  }, function (error, response) {
-    if (error) {
-      console.log("ERROR [deliverText]> Error sending simple message: ", error);
-    } else if (response.body.error) {
-      console.log("ERROR [deliverText]> Undefined: ", response.body.error);
-    };
-  }); // request
-}
-
 //  ___        _
 // | _ \___ __| |_
 // |  _/ _ (_-<  _|
@@ -2056,10 +2090,10 @@ function postImage(postEvent,image_url,plusText,passText) {
     } // attachment
   }; // template
   if (plusText) {
-    deliverTemplate(postEvent,imgTemplate,true,passText);
+    deliverText(postEvent,passText,true,imgTemplate);
   } else {
-    deliverTemplate(postEvent,imgTemplate,false,'');
-  };
+    deliverTemplate(postEvent,imgTemplate,'');
+  };passText
 }
 
 function postLinkButton(postEvent,link_url,reponse_msg,btn_msg) {
@@ -2078,7 +2112,7 @@ function postLinkButton(postEvent,link_url,reponse_msg,btn_msg) {
       } // payload
     } // attachment
   }; // template
-  deliverTemplate(postEvent,linkTemplate,false,'');
+  deliverTemplate(postEvent,linkTemplate,'');
 }
 
 function postMarvel(postEvent,success_result,hero_array) {
@@ -2111,12 +2145,12 @@ function postMarvel(postEvent,success_result,hero_array) {
         } // payload
       } // attachment
     }; // template
-    marvelText = hero_array[1]; // Required within deliverText
-    deliverTemplate(postEvent,marvelTemplate,true,marvelText);
+    marvelText = hero_array[1];
+    deliverText(postEvent,marvelText,true,marvelTemplate);
   } else {
     console.log("INFO [postMarvel]> Reponse: Unuccessful");
     marvelText = MSG_HERO_OOPS[numRandomBetween(0,MSG_HERO_OOPS.length-1)] + ' try something instead of ' + strTitleCase(hero_array[0]) + '?'; // Required within deliverText
-    deliverText(postEvent,marvelText);
+    deliverText(postEvent,marvelText,false,'');
   };
 }
 
@@ -2153,13 +2187,13 @@ function postEvents(postEvent,success_result,event_index,event_in) {
       } // attachment
     }; // template
     eventsText = event_detail; // Required within deliverText
-    deliverTemplate(postEvent,eventsTemplate,true,eventsText);
+    deliverText(postEvent,eventsText,true,eventsTemplate);
   } else {
     console.log("INFO [postEvents]> Reponse: Unsuccessful");
     eventsText = MSG_EVENTS_OOPS[CHAS_EVENTS_OOPS_INDEX] + ' try something instead of ' + strTitleCase(event_in) + '?'; // Required within deliverText
     CHAS_EVENTS_OOPS_INDEX++;
     if (CHAS_EVENTS_OOPS_INDEX == MSG_EVENTS_OOPS.length) {CHAS_EVENTS_OOPS_INDEX = 0};
-    deliverText(postEvent,eventsText);
+    deliverText(postEvent,eventsText,false,'');
   };
 }
 
@@ -2174,7 +2208,7 @@ function postBiogs(postEvent,success_result,biogs_index,biogs_name) {
     console.log("INFO [postBiogs]> Reponse: Successful");
     let biogsText = CHAS_BIOGS[biogs_index + 1];
     //console.log("DEBUG [postBiogs]> Result: " + CHAS_BIOGS[biogs_index + 1]);
-    deliverText(postEvent,biogsText);
+    deliverText(postEvent,biogsText,false,'');
   } else {
     console.log("INFO [postBiogs]> Reponse: Unsuccessful");
     bounceViaDialogV2(postEvent);
@@ -2224,7 +2258,7 @@ function postLottery(postEvent,lotto_uk,lotto_euro,lotto_scot) {
     }
   };
   console.log("INFO [postLottery]> Reponse: Lottery Carousel");
-  deliverTemplate(postEvent,carouselTemplate,false,'');
+  deliverTemplate(postEvent,carouselTemplate,'');
 }
 
 function postSearch(postEvent,search_method,search_term) {
@@ -2306,10 +2340,10 @@ function postSearch(postEvent,search_method,search_term) {
   };
   if (search_method == "search") {
     console.log("INFO [postSearch]> Reponse: Search Carousel");
-    deliverTemplate(postEvent,carouselTemplate,false,'');
+    deliverTemplate(postEvent,carouselTemplate,'');
   } else {
     console.log("INFO [postSearch]> Reponse: Simple Search");
-    deliverTemplate(postEvent,searchTemplate,false,'');
+    deliverTemplate(postEvent,searchTemplate,'');
   };
 }
 
@@ -2329,7 +2363,7 @@ function postFilmTV(postEvent,record_index) {
       console.log("INFO [postFilmTV]> Action: postFilmTV.deliverText");
       filmText = "📺 " + MOVIEDB_RECORDS[record_index][1];
       console.log("INFO [postFilmTV]> Reponse: " + filmText);
-      deliverText(postEvent,filmText);
+      deliverText(postEvent,filmText,false,'');
     } else if (MOVIEDB_RECORDS[record_index][1] == 'No TV result' && MOVIEDB_RECORDS[record_index][4] != 'No film result') {
       // Film only
       console.log("INFO [postFilmTV]> Sender: " + sender);
@@ -2337,7 +2371,7 @@ function postFilmTV(postEvent,record_index) {
       console.log("INFO [postFilmTV]> Action: postFilmTV.deliverText");
       filmText = "📽️ " + MOVIEDB_RECORDS[record_index][4];
       console.log("INFO [postFilmTV]> Reponse: " + filmText);
-      deliverText(postEvent,filmText);
+      deliverText(postEvent,filmText,false,'');
     } else {
       // Both
       console.log("INFO [postFilmTV]> Sender: " + sender);
@@ -2346,11 +2380,11 @@ function postFilmTV(postEvent,record_index) {
       if (MOVIEDB_RECORDS[record_index][2] > MOVIEDB_RECORDS[record_index][5]) {
         filmText = "📺 " + MOVIEDB_RECORDS[record_index][1];
         console.log("INFO [postFilmTV]> Reponse: " + filmText);
-        deliverText(postEvent,filmText);
+        deliverText(postEvent,filmText,false,'');
       } else if (MOVIEDB_RECORDS[record_index][2] < MOVIEDB_RECORDS[record_index][5]) {
         filmText = "📽️ " + MOVIEDB_RECORDS[record_index][4];
         console.log("INFO [postFilmTV]> Reponse: " + filmText);
-        deliverText(postEvent,filmText);
+        deliverText(postEvent,filmText,false,'');
       } else {
         let pick_one = Math.floor(numRandomBetween(0,1));
         if (pick_one == 0) {
@@ -2359,7 +2393,7 @@ function postFilmTV(postEvent,record_index) {
           filmText = "🎞️ " + MOVIEDB_RECORDS[record_index][4];
         };
         console.log("INFO [postFilmTV]> Reponse: " + filmText);
-        deliverText(postEvent,filmText);
+        deliverText(postEvent,filmText,false,'');
       };
     };
   };
@@ -2396,7 +2430,7 @@ function postLOTR(eventLOTR,lotrWho) {
         console.log("INFO [postLOTR]> Reponse: Unuccessful");
         console.log("ERROR [postLOTR]> apiLOTR did not populate array");
         lotrBlurb = MSG_LOTR_OOPS[numRandomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + strTitleCase(lotrWho) + '?'; // Required within deliverText
-        deliverText(eventLOTR,lotrBlurb);
+        deliverText(eventLOTR,lotrBlurb,false,'');
       };
     }); // apiLOTR('chars'
   } else { // Operating from memeory - not API
@@ -2605,12 +2639,12 @@ function apiGIPHY(eventGiphy,giphy_tag,giphy_rating,passText) {
           return;
         } else {
           console.log("ERROR [apiGIPHY]> No Results");
-          deliverText(eventGiphy,passText)
+          deliverText(eventGiphy,passText,false,'')
           return;
         };
       } else {
         console.log("ERROR [apiGIPHY]> Response Error");
-        deliverText(eventGiphy,passText)
+        deliverText(eventGiphy,passText,false,'')
         return;
       }; // if (res.statusCode === 200)
     }); // res.on('end', function()
@@ -2948,7 +2982,7 @@ function playTopTrumps(eventTT,playTT){
   let trump_tobeat = SENDERS[custom_id][16];
   let trump_picked = SENDERS[custom_id][17];
   if (playTT.length == 0) {
-    deliverText(eventTT,"Couldn't find that one");
+    deliverText(eventTT,"Couldn't find that one",false,'');
   } else if (playTT.length == 1) {
     console.table(SENDERS[custom_id][15]);
     let tt_id = playTT[0];
@@ -2973,7 +3007,7 @@ function playTopTrumps(eventTT,playTT){
     postImage(eventTT,tt_url,true,tt_stats);
     //deliverCategory_playTrumps(eventTT);
   } else {
-    deliverText(eventTT,"Too many to pick from: " + playTT.length);
+    deliverText(eventTT,"Too many to pick from: " + playTT.length,false,'');
   };
 }
 
@@ -3386,7 +3420,7 @@ function playHangman(postEvent,hangman_guess) {
   console.log("INFO [playHangman]> Request: Hangman guess was " + hangman_guess);
   console.log("INFO [playHangman]> Action: playHangman.deliverText");
   console.log("INFO [playHangman]> Response: " + hangmanText);
-  deliverText(postEvent,hangmanText);
+  deliverText(postEvent,hangmanText,false,'');
 }
 
 function playRPSLS(eventRPSLS,pickPlayer) {
@@ -3414,7 +3448,7 @@ function playRPSLS(eventRPSLS,pickPlayer) {
     rpslsText = MSG_RPSLS_PROMPT; // Required within deliverText
     console.log("INFO [playRPSLS]> Action: playRPSLS.deliverText");
     console.log("INFO [playRPSLS]> Reponse: " + rpslsText);
-    deliverText(eventRPSLS,rpslsText);
+    deliverText(eventRPSLS,rpslsText,false,'');
   } else { // Compare results and show outcome
     console.log("INFO [playRPSLS]> Request: " + pickPlayer);
     pick_chasbot = RPSLS_VALID[numRandomBetween(0,4)];
