@@ -1867,7 +1867,7 @@ function deliverPause(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const Q_DELIVERY = 2; // seconds to pause sequential messaging
+const Q_DELIVERY = 1; // seconds to pause sequential messaging
 
 function deliverText(eventSend,outbound_text,plusTemplate,messageData) {
   if (plusTemplate) {
