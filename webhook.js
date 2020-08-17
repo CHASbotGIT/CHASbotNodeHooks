@@ -1935,6 +1935,70 @@ function deliverTemplate(eventSend,messageData,callback) {
   }); // request({
 }
 
+// Top Trumps
+function deliverPictureTT(eventSend,pictureTT,callback){ // call 3rd
+  // Sent 1st
+  let sender = eventSend.sender.id;
+  let imgTemplate = {
+    attachment: {
+      type: "image",
+      payload: {
+        url: pictureTT,
+        is_reusable: true
+      } // payload
+    } // attachment
+  }; // template
+  request({
+    uri: URL_CHAT_ENDPOINT,
+    qs: {access_token: KEY_PAGE_ACCESS},
+    method: 'POST',
+    json: {
+      messaging_type: 'RESPONSE',
+      recipient: {id: sender},
+      message: imgTemplate
+    }
+  }, function (error, response) {
+    if (error) {
+        console.log("ERROR [deliverTemplate]> Error sending template message: ", error);
+    } else if (response.body.error) {
+        console.log("ERROR [deliverTemplate]> Undefined: ", response.body.error);
+    }; // if (error)
+    callback(); // To deliverMetricsTT
+  }); // request({
+}
+function deliverMetricsTT(eventSend,metricsTT,pictureTT,callback){ // call 2nd
+  deliverPictureTT(eventSend,pictureTT, function(){
+    // Sent 2nd
+    let sender = eventSend.sender.id;
+    request({
+      uri: URL_CHAT_ENDPOINT,
+      qs: {access_token: KEY_PAGE_ACCESS},
+      method: 'POST',
+      json: {
+        messaging_type: 'RESPONSE',
+        recipient: {id: sender},
+        message: {
+          text: strTrimTo(640,metricsTT)
+        }
+      }
+    }, function (error, response) {
+      if (error) {
+        console.log("ERROR [deliverText]> Error sending simple message: ", error);
+      } else if (response.body.error) {
+        console.log("ERROR [deliverText]> Undefined: ", response.body.error);
+      }; // if (error)
+    }); // request
+    callback(); // To deliverStackTT
+  });
+}
+function deliverStackTT(eventSend,metricsTT,pictureTT){ // Call 1st
+  deliverThinking(eventSend,'off');
+  deliverMetricsTT(eventSend,metricsTT,pictureTT, function(){
+    // Sent 3rd
+    deliverCategory_playTrumps(eventSend); // Category choice peompt and options
+  });
+}
+
 function deliverQuestion_playSurvey(eventSend) {
   //console.log("DEBUG [deliverQuestion_playSurvey]> " + SURVEY_NAME + "In Progress");
   // 0:id_of_sender,1:survey_in_play,4:survey_question
@@ -2995,18 +3059,7 @@ function playTopTrumps(eventTT,playTT){
     tt_stats = strReplaceAll(tt_stats, 'null', ' ❓ ');
     let test_add = parseInt(HERO_ARRAY[tt_id][1]) + parseInt(HERO_ARRAY[tt_id][2]);
     //console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
-    let ttTemplate = {
-      attachment: {
-        type: "image",
-        payload: {
-          url: tt_url,
-          is_reusable: true
-        } // payload
-      } // attachment
-    }; // template
-    deliverText(eventTT,tt_stats,true,ttTemplate);
-    //postImage(eventTT,tt_url,true,tt_stats);
-    deliverCategory_playTrumps(eventTT);
+    deliverStackTT(eventTT,tt_stats,tt_url);
   } else {
     deliverText(eventTT,"Too many to pick from: " + playTT.length,false,'');
   };
