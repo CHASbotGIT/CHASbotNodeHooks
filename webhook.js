@@ -1869,7 +1869,7 @@ function deliverPause(ms) {
 
 const Q_DELIVERY = 2; // seconds to pause sequential messaging
 
-async function deliverText(eventSend,outbound_text,plusTemplate,messageData) {
+function deliverText(eventSend,outbound_text,plusTemplate,messageData) {
   if (plusTemplate) {
     console.log("DEBUG [deliverText]> Deliver text preceeded by template: ", outbound_text);
   } else {
@@ -1877,7 +1877,7 @@ async function deliverText(eventSend,outbound_text,plusTemplate,messageData) {
   }; // if (plusTemplate)
   let sender = eventSend.sender.id;
   outbound_text = strGreeting(sender,true) + outbound_text;
-  if (plusTemplate) { deliverTemplate(eventSend,messageData, function(){
+  if (plusTemplate) { deliverTemplate(eventSend,messageData, async function(){
       await deliverPause(Q_DELIVERY * 1000); //
       request({
         uri: URL_CHAT_ENDPOINT,
