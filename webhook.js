@@ -1080,10 +1080,10 @@ function hrsGetUK() {
 CHASbot.post('/webhook', (req, res) => {
   if (req.body.object === 'page') {
     req.body.entry.forEach((entry) => {
-      console.log("ADMIN [postWebhook]> Raw body: " + JSON.stringify(entry));
+      //console.log("DEBUG [postWebhook]> Raw entry: " + JSON.stringify(entry));
       entry.messaging.forEach((event) => {
         //if (event.read && event.read.watermark) { //console.log("DEBUG [postWebhook]> Receipt: " + event.read.watermark) };
-        console.log("ADMIN [postWebhook]> Raw event: " + JSON.stringify(event));
+        //console.log("DEBUG [postWebhook]> Raw event: " + JSON.stringify(event));
         let sticker_path = '';
         let sender = event.sender.id;
         let alt_message_type = '';
@@ -1835,13 +1835,10 @@ async function bounceViaDialogV2(eventSend) {
 //                           |__/
 // Delivery Functions - return resposnes
 // =====================================
-
-// function deliverText(eventSend,outbound_text) {
-// many instances of deliverText( circa 40
-// far smaller number of instances...
-// should flip the ,plusText,messageText options to ,plusTemplate, messageData
-// deliverTemplate should be a callback function... i.e.
-// the Template and Text messages should stack... Template delivered and then Text - with opportunity to introduce delay to control the sequence
+/*function deliverPause(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+const Q_DELIVERY = 0; // seconds to pause sequential messaging*/
 
 function deliverThinking(eventThink,on_off) {
   let sender = eventThink.sender.id;
@@ -1863,12 +1860,6 @@ function deliverThinking(eventThink,on_off) {
   }); // request
 }
 
-function deliverPause(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-//const Q_DELIVERY = 0; // seconds to pause sequential messaging
-
 function deliverText(eventSend,outbound_text,plusTemplate,messageData) {
   if (plusTemplate) {
     console.log("DEBUG [deliverText]> Deliver text preceeded by template: ", outbound_text);
@@ -1878,7 +1869,7 @@ function deliverText(eventSend,outbound_text,plusTemplate,messageData) {
   let sender = eventSend.sender.id;
   outbound_text = strGreeting(sender,true) + outbound_text;
   if (plusTemplate) { deliverTemplate(eventSend,messageData, function(){
-      //await deliverPause(Q_DELIVERY * 1000); //
+      //await deliverPause(Q_DELIVERY * 1000); // function needs to be asynv
       request({
         uri: URL_CHAT_ENDPOINT,
         qs: {access_token: KEY_PAGE_ACCESS},
