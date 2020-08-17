@@ -144,6 +144,8 @@ var MSG_INTERCEPTS = [
   ["💥 That’s an awful lot of emoticons you crammed in there, hard to find what you are saying.",
    "💥 Wow, that's a lot more emojis than I can make sense of."]
 ];
+var MSG_TOPTRUMPS_INTRO = "Let's play Top Trumps to see how many wins you can get in a row. I'll get you started with a Superhero or Villain, you first pick a category you think you can beat, then name a hero or villain. Keep picking categories and naming characters until you are defeated!";
+var MSG_TOPTRUMPS_PROMPT = "Pick a category to try and beat. If the value on this card is ❓ or on the card you play, then it will be 50/50 whether you win.";
 var MSG_EVENTS_OOPS = [
   "📆 Oops, that's not something I could find...",
   "📆 Mmmm, not an event that I recognise...",
@@ -173,6 +175,7 @@ const TRIGGER_MARVEL = 'marvel';
 const TRIGGER_LOTR = 'lotr';
 const TRIGGER_CHAS_EVENTS = 'when is';
 const TRIGGER_CHAS_BIOGS = 'who is';
+const TRIGGER_TOPTRUMPS = 'top trumps';
 const TRIGGER_RPSLS = 'bazinga';
 const TRIGGER_HANGMAN = 'hangman';
 const TRIGGER_STOP = 'stop';
@@ -212,6 +215,7 @@ const URL_API_MOVIEDB = "https://api.themoviedb.org/3/";
 const URL_API_WEATHER = "https://api.openweathermap.org/data/2.5/weather?APPID=";
 const URL_API_MARVEL = "https://gateway.marvel.com:443/v1/public/characters?nameStartsWith=";
 const URL_API_LOTR = "the-one-api.herokuapp.com";
+const URL_API_HERO = "https://superheroapi.com/api.php/";
 // URLs
 const URL_SEARCH_GOOGLE = "https://www.google.com/search?q=";
 const URL_SEARCH_WIKI = "https://en.wikipedia.org/w/index.php?search=";
@@ -403,6 +407,9 @@ var LOTR_MOVIES = [
   "5cd95395de30eff6ebccde5c📽️ The Fellowship of the Ring (2002)",
   "5cd95395de30eff6ebccde5d🎬 The Return of the King (2003)"];
 var LOTR_ARRAY = [];
+// TOP TRUMPS
+const HERO_STATS = ["🧠 Intelligence","💪 Strength","💨 Speed","🔋 Durability","🌡️ Power","⚔️ Combat"];
+var HERO_ARRAY = [];
 // Survey/Quiz
 const PRIZES = ["🎉","🎈","💰","🎁","👏","🌹","💐","🍹","🍸","🍺","🍷","🍾","🍰","💋","🎖️","🍀"];
 var SURVEY_VIABLE = true;
@@ -784,7 +791,7 @@ CHASbot.get('/webhook', (req, res) => {
   }
 });
 
-// Sender handling and sequencing functions
+/* Sender handling and sequencing functions
 // ========================================
 // http://plaintexttools.github.io/plain-text-table/
 // ════════╤═══╤═════════════════╤══════════╤═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -801,7 +808,7 @@ CHASbot.get('/webhook', (req, res) => {
 //         │                                │         │                             │       │ 13 │ rpsls_bot          │ int  │            │ 17 │ trump_picked   │ int
 //         │                                │         │                             │       ├────┴────────────────────┴──────┤            ├────┼────────────────┼───────
 //         │                                │         │                             │       │                                │            │ 18 │ trump_category │ str
-// ════════╧════════════════════════════════╧═════════╧═════════════════════════════╧═══════╧════════════════════════════════╧════════════╧════╧════════════════╧═══════
+// ════════╧════════════════════════════════╧═════════╧═════════════════════════════╧═══════╧════════════════════════════════╧════════════╧════╧════════════════╧═══════*/
 function inPlayNew(index_id,new_sender) {
   SENDERS[index_id] = [new_sender,              // 0:id_of_sender
                        false,false,false,false, // 1:survey_in_play,2:hangman_in_play,3:rpsls_in_play,4:trumps_in_play
@@ -1835,10 +1842,11 @@ async function bounceViaDialogV2(eventSend) {
 //                           |__/
 // Delivery Functions - return resposnes
 // =====================================
+const Q_DELIVERY = 1; // seconds to pause sequential messaging
+
 function deliverPause(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-const Q_DELIVERY = 1; // seconds to pause sequential messaging
 
 function deliverThinking(eventThink,on_off) {
   let sender = eventThink.sender.id;
@@ -1935,7 +1943,7 @@ function deliverTemplate(eventSend,messageData,callback) {
   }); // request({
 }
 
-// Top Trumps
+// Top Trumps IN DEV
 function deliverPictureTT(eventSend,pictureTT,callback){ // call 3rd
   // Sent 1st
   let sender = eventSend.sender.id;
@@ -1998,6 +2006,52 @@ function deliverStackTT(eventSend,metricsTT,pictureTT){ // Call 1st
     await deliverPause(Q_DELIVERY*1000);
     deliverCategory_playTrumps(eventSend); // Category choice peompt and options
   });
+}
+function deliverCategory_playTrumps(eventSend) {
+  //console.log("DEBUG [deliverCategory_playTrumps]> In Progress");
+  deliverThinking(eventSend,'off');
+  let sender = eventSend.sender.id;
+  let custom_id = inPlayID(sender);
+  let surveyTemplate = {
+    text: MSG_TOPTRUMPS_PROMPT,
+    quick_replies:[
+      { content_type:"text",
+        title: HERO_STATS[0],
+        payload:"<POSTBACK_PAYLOAD>" },
+      { content_type:"text",
+        title: HERO_STATS[1],
+        payload:"<POSTBACK_PAYLOAD>" },
+      { content_type:"text",
+        title: HERO_STATS[2],
+        payload:"<POSTBACK_PAYLOAD>" },
+      { content_type:"text",
+        title: HERO_STATS[3],
+        payload:"<POSTBACK_PAYLOAD>" },
+      { content_type:"text",
+        title: HERO_STATS[4],
+        payload:"<POSTBACK_PAYLOAD>" },
+      { content_type:"text",
+        title: HERO_STATS[5],
+        payload:"<POSTBACK_PAYLOAD>" }]};
+    request({
+      uri: URL_CHAT_ENDPOINT,
+      qs: {access_token: KEY_PAGE_ACCESS},
+      method: 'POST',
+      json: {
+        messaging_type: 'RESPONSE',
+        recipient: {id: sender},
+        message: surveyTemplate
+    }
+  }, function (error, response) {
+    if (error) {
+      console.log("ERROR [deliverCategory_playTrumps]> Error sending survey message: ", error);
+    } else if (response.body.error) {
+      console.log("ERROR [deliverCategory_playTrumps]> Undefined: ", response.body.error);
+    }
+  }); // request
+  if (inPlay('survey',custom_id)) {
+    //SENDERS[custom_id][5] = survey_question_number + 1
+  };
 }
 
 function deliverQuestion_playSurvey(eventSend) {
@@ -2668,6 +2722,10 @@ function wrapLOTR(match_id,lotrWho) {
   return lotrBlurb;
 }
 
+//     _     ___  ___
+//    /_\   | _ \|_ _|
+//   / _ \ _|  _/ | | _
+//  /_/ \_(_)_|(_)___(_)
 // Remote search functions - API
 // =============================
 function apiGIPHY(eventGiphy,giphy_tag,giphy_rating,passText) {
@@ -2889,189 +2947,6 @@ function apiMarvelChar(eventMarvel,marvelWho) {
   });
 }
 
-// TOP TRUMPS IN DEV
-// =================
-const MSG_TOPTRUMPS_INTRO = "Let's play Top Trumps to see how many wins you can get in a row. I'll get you started with a Superhero or Villain, you first pick a category you think you can beat, then name a hero or villain. Keep picking categories and naming characters until you are defeated!";
-const MSG_TOPTRUMPS_PROMPT = "Pick a category to try and beat. If the value on this card is ❓ or on the card you play, then it will be 50/50 whether you win.";
-const TRIGGER_TOPTRUMPS = 'top trumps';
-var HERO_VALID = []; // as per RPSLS
-let HERO_STATS = ["🧠 Intelligence","💪 Strength","💨 Speed","🔋 Durability","🌡️ Power","⚔️ Combat"];
-let URL_API_HERO = "https://superheroapi.com/api.php/";
-let HERO_ARRAY = [];
-
-function deliverCategory_playTrumps(eventSend) {
-  //console.log("DEBUG [deliverCategory_playTrumps]> In Progress");
-  deliverThinking(eventSend,'off');
-  let sender = eventSend.sender.id;
-  let custom_id = inPlayID(sender);
-  let surveyTemplate = {
-    text: MSG_TOPTRUMPS_PROMPT,
-    quick_replies:[
-      { content_type:"text",
-        title: HERO_STATS[0],
-        payload:"<POSTBACK_PAYLOAD>" },
-      { content_type:"text",
-        title: HERO_STATS[1],
-        payload:"<POSTBACK_PAYLOAD>" },
-      { content_type:"text",
-        title: HERO_STATS[2],
-        payload:"<POSTBACK_PAYLOAD>" },
-      { content_type:"text",
-        title: HERO_STATS[3],
-        payload:"<POSTBACK_PAYLOAD>" },
-      { content_type:"text",
-        title: HERO_STATS[4],
-        payload:"<POSTBACK_PAYLOAD>" },
-      { content_type:"text",
-        title: HERO_STATS[5],
-        payload:"<POSTBACK_PAYLOAD>" }]};
-    request({
-      uri: URL_CHAT_ENDPOINT,
-      qs: {access_token: KEY_PAGE_ACCESS},
-      method: 'POST',
-      json: {
-        messaging_type: 'RESPONSE',
-        recipient: {id: sender},
-        message: surveyTemplate
-    }
-  }, function (error, response) {
-    if (error) {
-      console.log("ERROR [deliverCategory_playTrumps]> Error sending survey message: ", error);
-    } else if (response.body.error) {
-      console.log("ERROR [deliverCategory_playTrumps]> Undefined: ", response.body.error);
-    }
-  }); // request
-  if (inPlay('survey',custom_id)) {
-    //SENDERS[custom_id][5] = survey_question_number + 1
-  };
-}
-
-function lookupHero (eventHero,heroWho){
-  //console.log("DEBUG [lookupHero]> Hero to find: " + heroWho);
-  let heroWhoMatch = heroWho.toLowerCase();
-  let heroWhoStored = '';
-  let heroMatches = []; // May be more than one
-  if (HERO_ARRAY.length != 0) { // Array not empty
-    //console.log("DEBUG [lookupHero]> There are values stored");
-    for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
-      if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
-        heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase();
-        if (heroWhoStored.includes(heroWhoMatch)) {
-            heroMatches.push(hero_loop);
-            //console.log("DEBUG [lookupHero]> Stored match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
-        }; // if (heroWhoStored
-      }; // if (typeof
-    }; // for (var hero_loop
-  }; // if (HERO_ARRAY
-  if (heroMatches.length == 0) {
-    //console.log("DEBUG [lookupHero]> No matches stored, trying API");
-    apiHero(heroWho, function(){
-      if (HERO_ARRAY.length != 0) { // Array not empty
-        for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
-          if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
-            heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase();
-            if (heroWhoStored.includes(heroWhoMatch)) {
-                heroMatches.push(hero_loop);
-                //console.log("DEBUG [lookupHero]> API match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
-            }; // if (heroWhoStored
-          }; // if (typeof
-        }; // for (var hero_loop
-      } else {
-        //console.log("DEBUG [lookupHero]> Hero array is empty");
-      }; // if (HERO_ARRAY
-      playTopTrumps(eventHero,heroMatches); // After API i.e. may be results
-    }); // apiHero(heroWho
-  } else {
-    playTopTrumps(eventHero,heroMatches); // After stored successful i.e. will be results
-  } // if (heroMatches
-}
-
-function apiHero (heroWho,callback){
-  //https://superheroapi.com/api/3449097715109340/search/batman
-  //console.log("DEBUG [apiHero]> Getting started");
-  const hero_url = URL_API_HERO + KEY_API_HERO + "/search/" + heroWho;
-  var req = http.get(hero_url, function(res) {
-    console.log("API Request [HERO]: " + hero_url);
-    let body = "";
-    // Data comes through in chunks
-    res.on('data', function (chunk) { body += chunk });
-    // When all the data is back, go on to query the full response
-    res.on('end', function() {
-      let heroData = JSON.parse(body);
-      //console.log("DEBUG [apiHero]> Got this back raw: " + body);
-      //console.log("DEBUG [apiHero]> Response Code: " + heroData.response);
-      if (typeof heroData.response != 'undefined' && heroData.response == 'success') {
-        //console.log("DEBUG [apiHero]> Got result(s) to play with: " + heroData.results.length);
-        let targetID = 0;
-        for (var character_loop = 0; character_loop < heroData.results.length; character_loop++) {
-          let heroStats = heroData.results[character_loop];
-          targetID = heroStats.id;
-          //console.log("DEBUG [apiHero]> Target: " + targetID);
-          if (typeof HERO_ARRAY[targetID] == 'undefined') {
-            HERO_ARRAY[targetID]=[
-              heroStats.name, // [0]
-              heroStats.powerstats.intelligence,
-              heroStats.powerstats.strength,
-              heroStats.powerstats.speed,
-              heroStats.powerstats.durability,
-              heroStats.powerstats.power,
-              heroStats.powerstats.combat,
-              heroStats.image.url]; // [7]
-          }; // if (typeof
-        }; // for (var character_loop
-        callback();
-      } else {
-        console.log("ERROR [apiHero]> No joy bringing back a record");
-        callback();
-      }
-    }); // res.on('end'
-  }); // http.get(url
-  req.on('error', function(e) { // Catches failures to connect to the API
-    console.log("ERROR [apiHero]> Error getting to API: " + e);
-    callback();
-  }); // req.on('error'
-}
-
-function playTopTrumps(eventTT,playTT){
-  let sender = eventTT.sender.id;
-  //console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
-  let custom_id = inPlayID(sender);
-  let trumps_score = SENDERS[custom_id][14];
-  let trumps_played = SENDERS[custom_id][15];
-  let trump_tobeat = SENDERS[custom_id][16];
-  let trump_picked = SENDERS[custom_id][17];
-  if (playTT.length == 0) {
-    deliverText(eventTT,"Couldn't find that one",false,'');
-  } else if (playTT.length == 1) {
-    console.table(SENDERS[custom_id][15]);
-    let tt_id = playTT[0];
-    let responseTT = "Goldilocks: " + tt_id;
-    //console.log("DEBUG [playTopTrumps]> Single ID: " + tt_id);
-    if (trumps_played[tt_id]) {responseTT = responseTT + " (picked again!)"};
-    SENDERS[custom_id][15][tt_id] = true;
-    console.table(SENDERS[custom_id][15]);
-    let tt_url = HERO_ARRAY[tt_id][7];
-    //console.log("DEBUG [playTopTrumps]> Image: " + tt_url);
-    let tt_stats = HERO_ARRAY[tt_id][0] + " ID: " + tt_id + "\n" +
-      pad(HERO_ARRAY[tt_id][1],3) + " = 🧠 Intelligence\n" +
-      pad(HERO_ARRAY[tt_id][2],3) + " = 💪 Strength\n" +
-      pad(HERO_ARRAY[tt_id][3],3) + " = 💨 Speed\n" +
-      pad(HERO_ARRAY[tt_id][4],3) + " = 🔋 Durability\n" +
-      pad(HERO_ARRAY[tt_id][5],3) + " = 🌡️ Power\n" +
-      pad(HERO_ARRAY[tt_id][6],3) + " = ⚔️ Combat"
-    //console.log("DEBUG [playTopTrumps]> Stats: " + tt_stats);
-    tt_stats = strReplaceAll(tt_stats, 'null', ' ❓ ');
-    let test_add = parseInt(HERO_ARRAY[tt_id][1]) + parseInt(HERO_ARRAY[tt_id][2]);
-    //console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
-    deliverStackTT(eventTT,tt_stats,tt_url);
-  } else {
-    deliverText(eventTT,"Too many to pick from: " + playTT.length,false,'');
-  };
-}
-
-// =================
-// TOP TRUMPS IN DEV
-
 function apiLOTR (chars_or_quotes,char_id,callback){
   //console.log("DEBUG [apiLOTR]> Length of stored LOTR: " + LOTR_ARRAY.length)
   let url_path = '';
@@ -3158,12 +3033,99 @@ function apiLOTR (chars_or_quotes,char_id,callback){
   }; // if (chars_or_quotes
 }
 
-//     _     ___  ___
-//    /_\   | _ \|_ _|
-//   / _ \ _|  _/ | | _
-//  /_/ \_(_)_|(_)___(_)
+function apiHero (heroWho,callback){ // IN DEV
+  //https://superheroapi.com/api/3449097715109340/search/batman
+  //console.log("DEBUG [apiHero]> Getting started");
+  const hero_url = URL_API_HERO + KEY_API_HERO + "/search/" + heroWho;
+  var req = http.get(hero_url, function(res) {
+    console.log("API Request [HERO]: " + hero_url);
+    let body = "";
+    // Data comes through in chunks
+    res.on('data', function (chunk) { body += chunk });
+    // When all the data is back, go on to query the full response
+    res.on('end', function() {
+      let heroData = JSON.parse(body);
+      //console.log("DEBUG [apiHero]> Got this back raw: " + body);
+      //console.log("DEBUG [apiHero]> Response Code: " + heroData.response);
+      if (typeof heroData.response != 'undefined' && heroData.response == 'success') {
+        //console.log("DEBUG [apiHero]> Got result(s) to play with: " + heroData.results.length);
+        let targetID = 0;
+        for (var character_loop = 0; character_loop < heroData.results.length; character_loop++) {
+          let heroStats = heroData.results[character_loop];
+          targetID = heroStats.id;
+          //console.log("DEBUG [apiHero]> Target: " + targetID);
+          if (typeof HERO_ARRAY[targetID] == 'undefined') {
+            HERO_ARRAY[targetID]=[
+              heroStats.name, // [0]
+              heroStats.powerstats.intelligence,
+              heroStats.powerstats.strength,
+              heroStats.powerstats.speed,
+              heroStats.powerstats.durability,
+              heroStats.powerstats.power,
+              heroStats.powerstats.combat,
+              heroStats.image.url]; // [7]
+          }; // if (typeof
+        }; // for (var character_loop
+        callback();
+      } else {
+        console.log("ERROR [apiHero]> No joy bringing back a record");
+        callback();
+      }
+    }); // res.on('end'
+  }); // http.get(url
+  req.on('error', function(e) { // Catches failures to connect to the API
+    console.log("ERROR [apiHero]> Error getting to API: " + e);
+    callback();
+  }); // req.on('error'
+}
+
+//  _             _
+// | |   ___  ___| |___  _ _ __ ___
+// | |__/ _ \/ _ \ / / || | '_ (_-<
+// |____\___/\___/_\_\\_,_| .__/__/
+//                        |_|
 // Loaded/stored value search functions
 // ====================================
+function lookupHero (eventHero,heroWho){ // IN DEV
+  //console.log("DEBUG [lookupHero]> Hero to find: " + heroWho);
+  let heroWhoMatch = heroWho.toLowerCase();
+  let heroWhoStored = '';
+  let heroMatches = []; // May be more than one
+  if (HERO_ARRAY.length != 0) { // Array not empty
+    //console.log("DEBUG [lookupHero]> There are values stored");
+    for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
+      if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
+        heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase();
+        if (heroWhoStored.includes(heroWhoMatch)) {
+            heroMatches.push(hero_loop);
+            //console.log("DEBUG [lookupHero]> Stored match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
+        }; // if (heroWhoStored
+      }; // if (typeof
+    }; // for (var hero_loop
+  }; // if (HERO_ARRAY
+  if (heroMatches.length == 0) {
+    //console.log("DEBUG [lookupHero]> No matches stored, trying API");
+    apiHero(heroWho, function(){
+      if (HERO_ARRAY.length != 0) { // Array not empty
+        for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
+          if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
+            heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase();
+            if (heroWhoStored.includes(heroWhoMatch)) {
+                heroMatches.push(hero_loop);
+                //console.log("DEBUG [lookupHero]> API match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
+            }; // if (heroWhoStored
+          }; // if (typeof
+        }; // for (var hero_loop
+      } else {
+        //console.log("DEBUG [lookupHero]> Hero array is empty");
+      }; // if (HERO_ARRAY
+      playTopTrumps(eventHero,heroMatches); // After API i.e. may be results
+    }); // apiHero(heroWho
+  } else {
+    playTopTrumps(eventHero,heroMatches); // After stored successful i.e. will be results
+  } // if (heroMatches
+}
+
 function lookupLOTR(lotrWho){
   let match_id = -1;
   let lotrWhoMatch = '';
@@ -3583,5 +3545,42 @@ function playRPSLS(eventRPSLS,pickPlayer) {
     console.log("INFO [playRPSLS]> Action: playRPSLS.postImage_deliverText");
     console.log("INFO [playRPSLS]> Reponse: IMG URL "  + rpsls_url + '; Text: ' + rpslsText);
     postImage(eventRPSLS,rpsls_url,true,rpslsText);
+  };
+}
+
+function playTopTrumps(eventTT,playTT){ // IN DEV
+  let sender = eventTT.sender.id;
+  //console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
+  let custom_id = inPlayID(sender);
+  let trumps_score = SENDERS[custom_id][14];
+  let trumps_played = SENDERS[custom_id][15];
+  let trump_tobeat = SENDERS[custom_id][16];
+  let trump_picked = SENDERS[custom_id][17];
+  if (playTT.length == 0) {
+    deliverText(eventTT,"Couldn't find that one",false,'');
+  } else if (playTT.length == 1) {
+    console.table(SENDERS[custom_id][15]);
+    let tt_id = playTT[0];
+    let responseTT = "Goldilocks: " + tt_id;
+    //console.log("DEBUG [playTopTrumps]> Single ID: " + tt_id);
+    if (trumps_played[tt_id]) {responseTT = responseTT + " (picked again!)"};
+    SENDERS[custom_id][15][tt_id] = true;
+    console.table(SENDERS[custom_id][15]);
+    let tt_url = HERO_ARRAY[tt_id][7];
+    //console.log("DEBUG [playTopTrumps]> Image: " + tt_url);
+    let tt_stats = HERO_ARRAY[tt_id][0] + " ID: " + tt_id + "\n" +
+      pad(HERO_ARRAY[tt_id][1],3) + " = 🧠 Intelligence\n" +
+      pad(HERO_ARRAY[tt_id][2],3) + " = 💪 Strength\n" +
+      pad(HERO_ARRAY[tt_id][3],3) + " = 💨 Speed\n" +
+      pad(HERO_ARRAY[tt_id][4],3) + " = 🔋 Durability\n" +
+      pad(HERO_ARRAY[tt_id][5],3) + " = 🌡️ Power\n" +
+      pad(HERO_ARRAY[tt_id][6],3) + " = ⚔️ Combat"
+    //console.log("DEBUG [playTopTrumps]> Stats: " + tt_stats);
+    tt_stats = strReplaceAll(tt_stats, 'null', ' ❓ ');
+    let test_add = parseInt(HERO_ARRAY[tt_id][1]) + parseInt(HERO_ARRAY[tt_id][2]);
+    //console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
+    deliverStackTT(eventTT,tt_stats,tt_url);
+  } else {
+    deliverText(eventTT,"Too many to pick from: " + playTT.length,false,'');
   };
 }
