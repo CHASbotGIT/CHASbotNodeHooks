@@ -1867,7 +1867,7 @@ function deliverPause(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const Q_DELIVERY = 0; // seconds to pause sequential messaging
+//const Q_DELIVERY = 0; // seconds to pause sequential messaging
 
 function deliverText(eventSend,outbound_text,plusTemplate,messageData) {
   if (plusTemplate) {
@@ -1877,8 +1877,8 @@ function deliverText(eventSend,outbound_text,plusTemplate,messageData) {
   }; // if (plusTemplate)
   let sender = eventSend.sender.id;
   outbound_text = strGreeting(sender,true) + outbound_text;
-  if (plusTemplate) { deliverTemplate(eventSend,messageData, async function(){
-      await deliverPause(Q_DELIVERY * 1000); //
+  if (plusTemplate) { deliverTemplate(eventSend,messageData, function(){
+      //await deliverPause(Q_DELIVERY * 1000); //
       request({
         uri: URL_CHAT_ENDPOINT,
         qs: {access_token: KEY_PAGE_ACCESS},
