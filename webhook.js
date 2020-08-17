@@ -1835,10 +1835,10 @@ async function bounceViaDialogV2(eventSend) {
 //                           |__/
 // Delivery Functions - return resposnes
 // =====================================
-/*function deliverPause(ms) {
+function deliverPause(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-const Q_DELIVERY = 0; // seconds to pause sequential messaging*/
+const Q_DELIVERY = 3; // seconds to pause sequential messaging
 
 function deliverThinking(eventThink,on_off) {
   let sender = eventThink.sender.id;
@@ -2000,6 +2000,7 @@ function deliverStackTT(eventSend,metricsTT,pictureTT){ // Call 1st
   deliverThinking(eventSend,'off');
   deliverMetricsTT(eventSend,metricsTT,pictureTT, function(){
     // Sent 3rd
+    deliverPause(Q_DELIVERY*1000);
     deliverCategory_playTrumps(eventSend); // Category choice peompt and options
     console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> sent 3rd");
   });
