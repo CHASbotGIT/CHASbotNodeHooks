@@ -1767,7 +1767,7 @@ async function bounceViaDialogV2(eventSend) {
           for (var loop_icons = 0; loop_icons < WEATHER_GIFS.length; loop_icons++) {
             if (WEATHER_GIFS[loop_icons].includes(findId) && WEATHER_GIFS[loop_icons].includes(day_or_night)) {
               weathericonId = weathericonId + WEATHER_GIFS[loop_icons].slice(0, 14) + URL_GIF_SUFFIX;
-              //console.log("DEBUG [bounceViaDialogV2]> Weather GIF: " + weathericonId);
+              console.log("DEBUG [bounceViaDialogV2]> Weather GIF: " + weathericonId);
               break;
             }; // if
           }; // for
