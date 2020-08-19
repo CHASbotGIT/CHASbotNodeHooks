@@ -3638,7 +3638,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
   console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
   let custom_id = inPlayID(sender);
   //let trumps_score = SENDERS[custom_id][14];
-  //let trumps_played = SENDERS[custom_id][15];
+  let trumps_played = SENDERS[custom_id][15];
   let trump_tobeat = SENDERS[custom_id][16];
   //let trump_picked = SENDERS[custom_id][17];
   let trump_category = SENDERS[custom_id][18];
