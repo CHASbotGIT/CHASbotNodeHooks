@@ -3077,7 +3077,7 @@ function apiHero (heroWho,randomPick,callback){ // IN DEV
           console.log("DEBUG [apiHero]> Target ID requested: " + targetID + ', ID returned: ' + heroData.id);
           if (targetID == heroData.id) {
             HERO_ARRAY[targetID]=[
-              heroDatas.name, // [0]
+              heroData.name, // [0]
               heroData.powerstats.intelligence,
               heroData.powerstats.strength,
               heroData.powerstats.speed,
