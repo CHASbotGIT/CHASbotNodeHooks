@@ -3133,7 +3133,7 @@ function lookupHero (eventHero,heroWho){ // IN DEV
   // 14:trumps_score,15:trumps_played,16:trump_tobeat,17:trump_picked,
   // 8:trump_category,19:trumps_start,20:cat_or_char
   console.log("DEBUG [lookupHero]> Hero to find: " + heroWho);
-  let sender = eventRPSLS.sender.id;
+  let sender = eventHero.sender.id;
   let custom_id = inPlayID(sender);
   let heroWhoMatch = heroWho.toLowerCase();
   let heroWhoStored = '';
