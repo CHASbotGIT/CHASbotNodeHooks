@@ -1426,6 +1426,7 @@ CHASbot.post('/webhook', (req, res) => {
               //analyse_text
               let tt_category_pick = -1;
               let tt_category = '';
+              let tt_loop = 0;
               for (tt_loop = 0; tt_loop < HERO_STATS.length; tt_loop++) {
                 tt_category = strStandardise(HERO_STATS[tt_loop]);
                 if (analyse_text.includes(tt_category)) {
