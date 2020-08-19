@@ -3685,10 +3685,10 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     console.log(">>>>>>>>>>>>>>>>>>>>>>>> Category: " + HERO_STATS[trump_category]);
 
     // Won't work on the CHASbot pick
-    if (!trumps_start) {}
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>> " + HERO_ARRAY[trump_tobeat][0] + " = " + HERO_ARRAY[trump_tobeat][trump_category]);
+    if (!trumps_start) {
+      console.log(">>>>>>>>>>OLD>>>>>>>>>>> " + HERO_ARRAY[trump_tobeat][0] + " = " + HERO_ARRAY[trump_tobeat][trump_category]);
     };
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>> " + HERO_ARRAY[tt_id][0] + " = " + HERO_ARRAY[tt_id][trump_category]);
+    console.log(">>>>>>>>>>NEW>>>>>>>>>>> " + HERO_ARRAY[tt_id][0] + " = " + HERO_ARRAY[tt_id][trump_category]);
 
     //let test_add = parseInt(HERO_ARRAY[tt_id][1]) + parseInt(HERO_ARRAY[tt_id][2]);
     //console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
