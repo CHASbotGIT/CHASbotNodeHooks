@@ -3655,7 +3655,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       SENDERS[custom_id][20] = 'character';
       deliverText(eventTT,"Now that you have picked " + HERO_STATS[trump_category] +
         " as your category, name a Superhero or Villain you think will trump " +
-        HERO_ARRAY[SENDERS[custom_id][16]][0] + ".",false,'');
+        HERO_ARRAY[trump_tobeat][0] + "?",false,'');
     }; // if (cat_or_char
   } else if (playTT.length == 1 && cat_or_char == 'character') {
     // if (trumps_start)
@@ -3683,7 +3683,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     tt_stats = strReplaceAll(tt_stats, 'null', ' ❓ ');
 
     console.log(">>>>>>>>>>>>>>>>>>>>>>>> Category: " + HERO_STATS[trump_category]);
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>> " + HERO_ARRAY[trump_tobeat][0] + ": " + "=" + HERO_ARRAY[trump_tobeat][trump_category]);
+    //console.log(">>>>>>>>>>>>>>>>>>>>>>>> " + HERO_ARRAY[trump_tobeat][0] + ": " + "=" + HERO_ARRAY[trump_tobeat][trump_category]);
     console.log(">>>>>>>>>>>>>>>>>>>>>>>> " + HERO_ARRAY[tt_id][0] + ": " + "=" + HERO_ARRAY[tt_id][trump_category]);
 
     //let test_add = parseInt(HERO_ARRAY[tt_id][1]) + parseInt(HERO_ARRAY[tt_id][2]);
