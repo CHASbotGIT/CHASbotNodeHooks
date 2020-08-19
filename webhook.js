@@ -2019,10 +2019,13 @@ function deliverMetricsTT(eventSend,metricsTT,pictureTT,callback){ // call 2nd
 }
 function deliverStackTT(eventSend,metricsTT,pictureTT){ // Call 1st
   deliverThinking(eventSend,'off');
+  let sender = eventSend.sender.id;
+  let custom_id = inPlayID(sender);
   deliverMetricsTT(eventSend,metricsTT,pictureTT, async function(){
     // Sent 3rd
     await deliverPause(Q_DELIVERY*1000);
     deliverCategory_playTrumps(eventSend); // Category choice peompt and options
+    SENDERS[custom_id][19] = false; // No lomger just started
   });
 }
 function deliverCategory_playTrumps(eventSend) {
@@ -2030,8 +2033,10 @@ function deliverCategory_playTrumps(eventSend) {
   deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   let custom_id = inPlayID(sender);
-  let surveyTemplate = {
-    text: MSG_TOPTRUMPS_PROMPT,
+  let categoryText = MSG_TOPTRUMPS_PROMPT;
+  if (SENDERS[custom_id][19]) { categoryText = MSG_TOPTRUMPS_INTRO };
+  let categoryTemplate = {
+    text: categoryText,
     quick_replies:[
       { content_type:"text",
         title: HERO_STATS[0],
@@ -2058,7 +2063,7 @@ function deliverCategory_playTrumps(eventSend) {
       json: {
         messaging_type: 'RESPONSE',
         recipient: {id: sender},
-        message: surveyTemplate
+        message: categoryTemplate
     }
   }, function (error, response) {
     if (error) {
