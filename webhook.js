@@ -142,8 +142,7 @@ var MSG_INTERCEPTS = [
   ["🤔 I’m either not picking you up very well or you’ve got quite mixed feelings.",
    "🤔 I’m not sure from that mix of emojis, whether you are up or down."],
   ["💥 That’s an awful lot of emoticons you crammed in there, hard to find what you are saying.",
-   "💥 Wow, that's a lot more emojis than I can make sense of."]
-];
+   "💥 Wow, that's a lot more emojis than I can make sense of."]];
 var MSG_TOPTRUMPS_INTRO = "Let's play Top Trumps to see how many wins you can get in a row. I'll get you started with a Superhero or Villain, you first pick a category you think you can beat, then name a hero or villain. Keep picking categories and naming characters until you are defeated!";
 var MSG_TOPTRUMPS_PROMPT = "Pick a category to try and beat. If the value on this card is ❓ or on the card you play, then it will be 50/50 whether you win.";
 var MSG_EVENTS_OOPS = [
@@ -409,6 +408,7 @@ var LOTR_MOVIES = [
 var LOTR_ARRAY = [];
 // TOP TRUMPS
 const HERO_STATS = ["🧠 Intelligence","💪 Strength","💨 Speed","🔋 Durability","🌡️ Power","⚔️ Combat"];
+const HERO_MAX = 731; // https://superheroapi.com/ids.html
 var HERO_ARRAY = [];
 // Survey/Quiz
 const PRIZES = ["🎉","🎈","💰","🎁","👏","🌹","💐","🍹","🍸","🍺","🍷","🍾","🍰","💋","🎖️","🍀"];
@@ -808,14 +808,18 @@ CHASbot.get('/webhook', (req, res) => {
 //         │                                │         │                             │       │ 13 │ rpsls_bot          │ int  │            │ 17 │ trump_picked   │ int
 //         │                                │         │                             │       ├────┴────────────────────┴──────┤            ├────┼────────────────┼───────
 //         │                                │         │                             │       │                                │            │ 18 │ trump_category │ str
+//         │                                │         │                             │       │                                │            ├────┼────────────────┼───────
+//         │                                │         │                             │       │                                │            │ 19 │ trumps_start   │ bool
+//         │                                │         │                             │       │                                │            ├────┼────────────────┼───────
+//         │                                │         │                             │       │                                │            │ 20 │ cat_or_char    │ str
 // ════════╧════════════════════════════════╧═════════╧═════════════════════════════╧═══════╧════════════════════════════════╧════════════╧════╧════════════════╧═══════*/
 function inPlayNew(index_id,new_sender) {
-  SENDERS[index_id] = [new_sender,              // 0:id_of_sender
-                       false,false,false,false, // 1:survey_in_play,2:hangman_in_play,3:rpsls_in_play,4:trumps_in_play
-                       0,0,                     // 5:survey_question,6:quiz_score
-                       0,'',[],                 // 7:hangman_strikes,8:hangman_word,9:hangman_word
-                       0,true,0,0,              // 10:rpsls_action,11:issue_instructions,12:rpsls_player,13:rpsls_bot
-                       0,[],0,0,''];            // 14:trumps_score,15:trumps_played,16:trump_tobeat,17:trump_picked,18:trump_category
+  SENDERS[index_id] = [new_sender,                    // 0:id_of_sender
+                       false,false,false,false,       // 1:survey_in_play,2:hangman_in_play,3:rpsls_in_play,4:trumps_in_play
+                       0,0,                           // 5:survey_question,6:quiz_score
+                       0,'',[],                       // 7:hangman_strikes,8:hangman_word,9:hangman_word
+                       0,true,0,0,                    // 10:rpsls_action,11:issue_instructions,12:rpsls_player,13:rpsls_bot
+                       0,[],0,0,'',true,'character']; // 14:trumps_score,15:trumps_played,16:trump_tobeat,17:trump_picked,18:trump_category,19:trumps_start,20:cat_or_char
 }
 function inPlay(in_play,index_id) {
   let in_play_index = 0;
@@ -844,11 +848,13 @@ function inPlayClean(in_play,index_id) {
     SENDERS[index_id][13] = 0;    // rpsls_bot
   } else if (in_play == 'trumps') {
     in_play_index = 4;
-    SENDERS[index_id][14] = 0;  // trumps_score
-    SENDERS[index_id][15] = []; // trumps_played
-    SENDERS[index_id][16] = 0;  // trump_tobeat
-    SENDERS[index_id][17] = 0;  // trump_picked
-    SENDERS[index_id][18] = ''; // trump_category
+    SENDERS[index_id][14] = 0;          // trumps_score
+    SENDERS[index_id][15] = [];         // trumps_played
+    SENDERS[index_id][16] = 0;          // trump_tobeat
+    SENDERS[index_id][17] = 0;          // trump_picked
+    SENDERS[index_id][18] = '';         // trump_category
+    SENDERS[index_id][19] = true;       // trumps_start
+    SENDERS[index_id][20] = 'category'; // cat_or_char
   };
   SENDERS[index_id][in_play_index] = false;
 }
@@ -1204,10 +1210,6 @@ CHASbot.post('/webhook', (req, res) => {
           let help_url = '';
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
             trigger_path = TRIGGER_HELP;
-
-            // IN DEV
-            console.table(HERO_ARRAY);
-
             help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
             //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
             chasbotText = "Try typing any of these:";
@@ -1219,7 +1221,7 @@ CHASbot.post('/webhook', (req, res) => {
             HELP_INDEX++;
             if (HELP_INDEX > 4) { HELP_INDEX = 0 };
             // FLOW: 'help' trumps all
-            analyse_text = TRIGGER_HELP; // Clean extra
+            analyse_text = TRIGGER_HELP; // clean extra i.e. to prevent other triggers
             inPlayPause(sender_index); // Pause all in-play
           };
           // Search
@@ -1246,7 +1248,7 @@ CHASbot.post('/webhook', (req, res) => {
                   search_term = analyse_text.slice(starting_point,ending_point);
                   //console.log("DEBUG [postWebhook]> Search term: " + search_term);
                   // FLOW: Seperate out search terms - pause all in-play
-                  analyse_text = search_method; // Clean extra
+                  analyse_text = search_method; // clean extra i.e. to prevent other triggers
                   inPlayPause(sender_index); // Pause all in-play
                 };
               };
@@ -1313,20 +1315,20 @@ CHASbot.post('/webhook', (req, res) => {
           position_in_analyse_text = analyse_text.search(TRIGGER_SURVEY) + 1;
           //console.log("DEBUG [postWebhook]> " + TRIGGER_SURVEY + " search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0 && SURVEY_VIABLE && SURVEY_NAME!='') {
-            // FLOW: Typing survey mid-survey, starts it again
+            // FLOW: Typing trigger mid-survey, starts it again
             if (inPlay('survey',sender_index)) { inPlayClean('survey',sender_index) };
             inPlayPause(sender_index); // Pause all in-play...
             inPlaySet('survey',sender_index); // ...then un-pause 'survey'
-            analyse_text = TRIGGER_SURVEY; // Clean extra
+            analyse_text = TRIGGER_SURVEY; // clean extra i.e. to prevent other triggers
           };
           position_in_analyse_text = analyse_text.search(TRIGGER_QUIZ) + 1;
           //console.log("DEBUG [postWebhook]> " + TRIGGER_QUIZ + " search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0 && SURVEY_VIABLE && QUIZ_NAME!='') {
-            // FLOW: Typing survey mid-survey, starts it again
+            // FLOW: Typing trigger mid-survey, starts it again
             if (inPlay('survey',sender_index)) { inPlayClean('survey',sender_index) };
             inPlayPause(sender_index); // Pause all in-play...
             inPlaySet('survey',sender_index); // ...then un-pause 'survey'
-            analyse_text = TRIGGER_SURVEY; // Clean extra
+            analyse_text = TRIGGER_SURVEY; // clean extra i.e. to prevent other triggers
           };
           // Rock, Paper, Scissors, Lizard, Spock
           // 0:id_of_sender,3:rpsls_in_play,10:rpsls_action,11:issue_instructions,12:rpsls_player,13:rpsls_bot
@@ -1340,7 +1342,7 @@ CHASbot.post('/webhook', (req, res) => {
               position_in_analyse_text = analyse_text.search(RPSLS_VALID[trigger_loop]) + 1;
               if (position_in_analyse_text > 0) {
                 pick_player = RPSLS_VALID[trigger_loop];
-                analyse_text = pick_player; // Clean extra
+                analyse_text = pick_player; // clean extra i.e. to prevent other triggers
                 //console.log("DEBUG [postWebhook]> " + pick_player + " search result: " + position_in_analyse_text);
                 inPlayPause(sender_index); // Pause all in-play...
                 inPlaySet('rpsls',sender_index); // ...then un-pause 'rpsls'
@@ -1353,7 +1355,7 @@ CHASbot.post('/webhook', (req, res) => {
           position_in_analyse_text = analyse_text.search(TRIGGER_RPSLS) + 1;
           //console.log("DEBUG [postWebhook]> " + TRIGGER_RPSLS + " search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
-            // FLOW: Typing rpsls mid-survey, starts it again
+            // FLOW: Typing trigger mid-game, starts it again
             if (inPlay('rpsls',sender_index)) { inPlayClean('rpsls',sender_index) }; // Reset if already playing
             inPlayPause(sender_index); // Pause all in-play...
             inPlaySet('rpsls',sender_index); // ...then un-pause 'rpsls'
@@ -1416,28 +1418,43 @@ CHASbot.post('/webhook', (req, res) => {
 
           // Top Trumps - SuperHero API
           // IN DEV
+          // 14:trumps_score,15:trumps_played,16:trump_tobeat,17:trump_picked,18:trump_category,19:trumps_start,20:cat_or_char
           let hero_who = '';
           if (inPlay('trumps',sender_index)) {
-            // TO DO:
-            // For now, 'in play' will just keep looking up characters - until STOP
-            hero_who = analyse_text;
-            hero_who = hero_who.trim();
-            hero_who = strTitleCase(hero_who);
-            //console.log("DEBUG [postWebhook]> In play, trumps: " + hero_who);
-          };
+            // in play - looking for either category OR looking for character name
+            if (SENDERS[sender_index][20] == 'category') {
+              //analyse_text
+              let tt_category_pick = -1;
+              let tt_category = '';
+              for (tt_loop = 0; tt_loop < HERO_STATS.length; tt_loop++) {
+                tt_category = strStandardise(HERO_STATS[tt_loop]);
+                if (analyse_text.includes(tt_category)) {
+                  tt_category_pick = tt_loop;
+                  break;
+                };
+              };
+              SENDERS[sender_index][18] = tt_category_pick;
+              if (tt_category_pick == -1) {
+                console.log("DEBUG [postWebhook]> In play, trumps, no category picked");
+              } else {
+                console.log("DEBUG [postWebhook]> In play, trumps, category: " + HERO_STATS[tt_category_pick]);
+              };
+            } else if (SENDERS[sender_index][20] == 'character') {
+              hero_who = analyse_text;
+              hero_who = hero_who.trim();
+              hero_who = strTitleCase(hero_who);
+              console.log("DEBUG [postWebhook]> In play, trumps, hero to find: " + hero_who);
+            }; // if (SENDERS[sender_index][20]
+          }; // if (inPlay('trumps'
           position_in_analyse_text = analyse_text.search(TRIGGER_TOPTRUMPS) + 1;
           if (position_in_analyse_text > 0){
-            // TO DO:
-            // Intro text on first path - as per RPSL
-            // For now, will just behave like an API i.e. strip search term
             trigger_path = TRIGGER_TOPTRUMPS;
-            hero_who = strReplaceAll(analyse_text,TRIGGER_TOPTRUMPS,''); // Trusting for now
-            hero_who = hero_who.trim();
-            hero_who = strTitleCase(hero_who);
-            //console.log("DEBUG [postWebhook]> In play triggered, trumps: " + hero_who);
-            // NB ** should probably refactor other stripping methods to this?
+            // FLOW: Typing trigger mid-game, starts it again
+            if (inPlay('trumps',sender_index)) { inPlayClean('trumps',sender_index) };
             inPlayPause(sender_index); // Pause all in-play...
             inPlaySet('trumps',sender_index); // ...then un-pause 'trumps'
+            analyse_text = TRIGGER_TOPTRUMPS; // Clean extra i.e. to prevent other triggers
+            console.log("DEBUG [postWebhook]> In play, trumps, triggered");
           };
           // IN DEV
 
@@ -1463,7 +1480,7 @@ CHASbot.post('/webhook', (req, res) => {
                   trigger_path = TRIGGER_MOVIEDB[0];
                   moviedb_term = analyse_text.slice(starting_point,ending_point);
                   //console.log("DEBUG [postWebhook]> Movie or TV title: " + moviedb_term);
-                  analyse_text = trigger_path; // Clean extra
+                  analyse_text = trigger_path; // clean extra i.e. to prevent other triggers
                 };
               };
             };
@@ -1481,7 +1498,7 @@ CHASbot.post('/webhook', (req, res) => {
               trigger_path = TRIGGER_MARVEL;
               hero_who = analyse_text.slice(starting_point,ending_point);
               hero_who = strTitleCase(hero_who);
-              analyse_text = trigger_path; // Clean extra
+              analyse_text = trigger_path; // clean extra i.e. to prevent other triggers
             };
           };
           // Lord of the Rings
@@ -1497,7 +1514,7 @@ CHASbot.post('/webhook', (req, res) => {
               trigger_path = TRIGGER_LOTR;
               hero_who = analyse_text.slice(starting_point,ending_point);
               hero_who = strTitleCase(hero_who);
-              analyse_text = trigger_path; // Clean extra
+              analyse_text = trigger_path; // clean extra i.e. to prevent other triggers
             };
           };
           // ****** Odds 'n' Ends *******
@@ -1553,7 +1570,7 @@ CHASbot.post('/webhook', (req, res) => {
               alpha = strFirstAlpha(alpha);
               if (alpha != '') {
                 trigger_path = TRIGGER_CHASABET_1;
-                analyse_text = trigger_path; // Clean extra
+                analyse_text = trigger_path; // clean extra i.e. to prevent other triggers
               };
             };
           };
@@ -1569,7 +1586,7 @@ CHASbot.post('/webhook', (req, res) => {
             if (string_length > 0) {
               trigger_path = TRIGGER_CHAS_EVENTS;
               event_name = analyse_text.slice(starting_point,ending_point);
-              analyse_text = trigger_path; // Clean extra
+              analyse_text = trigger_path; // clean extra i.e. to prevent other triggers
             };
           };
           // CHAS Biogs
@@ -1589,7 +1606,7 @@ CHASbot.post('/webhook', (req, res) => {
               } else {
                 trigger_path = TRIGGER_CHAS_BIOGS;
                 biogs_name = analyse_text.slice(starting_point,ending_point);
-                analyse_text = trigger_path; // Clean extra
+                analyse_text = trigger_path; // clean extra i.e. to prevent other triggers
               };
             };
           };
@@ -1664,7 +1681,7 @@ CHASbot.post('/webhook', (req, res) => {
             // IN DEV
             lookupHero(event,hero_who);
             deliverText(event,"🐞 In Development, check the logs... 📝",false,'');
-            //console.log("DEBUG [postWebhook_route]> Top Trumps: " + hero_who);
+            console.log("DEBUG [postWebhook_route]> Top Trumps: " + hero_who);
           } else {
             //console.log("DEBUG [postWebhook_route]> No special cases, send via APIAI");
             bounceViaDialogV2(event);
@@ -1767,7 +1784,7 @@ async function bounceViaDialogV2(eventSend) {
           for (var loop_icons = 0; loop_icons < WEATHER_GIFS.length; loop_icons++) {
             if (WEATHER_GIFS[loop_icons].includes(findId) && WEATHER_GIFS[loop_icons].includes(day_or_night)) {
               weathericonId = weathericonId + WEATHER_GIFS[loop_icons].slice(0, 14) + URL_GIF_SUFFIX;
-              console.log("DEBUG [bounceViaDialogV2]> Weather GIF: " + weathericonId);
+              //console.log("DEBUG [bounceViaDialogV2]> Weather GIF: " + weathericonId);
               break;
             }; // if
           }; // for
@@ -3033,10 +3050,15 @@ function apiLOTR (chars_or_quotes,char_id,callback){
   }; // if (chars_or_quotes
 }
 
-function apiHero (heroWho,callback){ // IN DEV
+function apiHero (heroWho,randomPick,callback){ // IN DEV
   //https://superheroapi.com/api/3449097715109340/search/batman
-  //console.log("DEBUG [apiHero]> Getting started");
-  const hero_url = URL_API_HERO + KEY_API_HERO + "/search/" + heroWho;
+  console.log("DEBUG [apiHero]> Getting started");
+  let hero_url = URL_API_HERO + KEY_API_HERO;
+  if (randomPick) {
+    hero_url = hero_url + "/" + heroWho;
+  } else {
+    hero_url = hero_url + "/search/" + heroWho;
+  };
   var req = http.get(hero_url, function(res) {
     console.log("API Request [HERO]: " + hero_url);
     let body = "";
@@ -3045,16 +3067,15 @@ function apiHero (heroWho,callback){ // IN DEV
     // When all the data is back, go on to query the full response
     res.on('end', function() {
       let heroData = JSON.parse(body);
-      //console.log("DEBUG [apiHero]> Got this back raw: " + body);
-      //console.log("DEBUG [apiHero]> Response Code: " + heroData.response);
+      console.log("DEBUG [apiHero]> Got this back raw: " + body);
+      console.log("DEBUG [apiHero]> Response Code: " + heroData.response);
       if (typeof heroData.response != 'undefined' && heroData.response == 'success') {
-        //console.log("DEBUG [apiHero]> Got result(s) to play with: " + heroData.results.length);
+        console.log("DEBUG [apiHero]> Got result(s) to play with: " + heroData.results.length);
         let targetID = 0;
-        for (var character_loop = 0; character_loop < heroData.results.length; character_loop++) {
-          let heroStats = heroData.results[character_loop];
-          targetID = heroStats.id;
-          //console.log("DEBUG [apiHero]> Target: " + targetID);
-          if (typeof HERO_ARRAY[targetID] == 'undefined') {
+        if (randomPick) { // bringing backa single prescribed result
+          targetID = parseInt(heroWho);
+          console.log("DEBUG [apiHero]> Target ID requested: " + targetID + ', ID returned: ' + heroStats.id);
+          if (targetID == heroStats.id) {
             HERO_ARRAY[targetID]=[
               heroStats.name, // [0]
               heroStats.powerstats.intelligence,
@@ -3064,13 +3085,35 @@ function apiHero (heroWho,callback){ // IN DEV
               heroStats.powerstats.power,
               heroStats.powerstats.combat,
               heroStats.image.url]; // [7]
-          }; // if (typeof
-        }; // for (var character_loop
-        callback();
-      } else {
+            console.log("ERROR [apiHero]> Brought back " + heroStats.name + " for ID: " + heroStats.id);
+            callback();
+          } else { // if (targetID == heroStats.id)
+            console.log("ERROR [apiHero]> No joy bringing back a record for ID: " + targetID);
+            callback();
+          }; // if (typeofif (targetID == heroStats.id)
+        } else { // if (randomPick)
+          for (var character_loop = 0; character_loop < heroData.results.length; character_loop++) {
+            let heroStats = heroData.results[character_loop];
+            targetID = heroStats.id;
+            console.log("DEBUG [apiHero]> Target: " + targetID);
+            if (typeof HERO_ARRAY[targetID] == 'undefined') {
+              HERO_ARRAY[targetID]=[
+                heroStats.name, // [0]
+                heroStats.powerstats.intelligence,
+                heroStats.powerstats.strength,
+                heroStats.powerstats.speed,
+                heroStats.powerstats.durability,
+                heroStats.powerstats.power,
+                heroStats.powerstats.combat,
+                heroStats.image.url]; // [7]
+            }; // if (typeof
+          }; // for (var character_loop
+          callback();
+        }; // if (randomPick)
+      } else { // if (typeof heroData.response
         console.log("ERROR [apiHero]> No joy bringing back a record");
         callback();
-      }
+      }; // else
     }); // res.on('end'
   }); // http.get(url
   req.on('error', function(e) { // Catches failures to connect to the API
@@ -3087,43 +3130,66 @@ function apiHero (heroWho,callback){ // IN DEV
 // Loaded/stored value search functions
 // ====================================
 function lookupHero (eventHero,heroWho){ // IN DEV
-  //console.log("DEBUG [lookupHero]> Hero to find: " + heroWho);
+  // 14:trumps_score,15:trumps_played,16:trump_tobeat,17:trump_picked,
+  // 8:trump_category,19:trumps_start,20:cat_or_char
+  console.log("DEBUG [lookupHero]> Hero to find: " + heroWho);
+  let sender = eventRPSLS.sender.id;
+  let custom_id = inPlayID(sender);
   let heroWhoMatch = heroWho.toLowerCase();
   let heroWhoStored = '';
   let heroMatches = []; // May be more than one
-  if (HERO_ARRAY.length != 0) { // Array not empty
-    //console.log("DEBUG [lookupHero]> There are values stored");
-    for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
-      if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
-        heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase();
-        if (heroWhoStored.includes(heroWhoMatch)) {
-            heroMatches.push(hero_loop);
-            //console.log("DEBUG [lookupHero]> Stored match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
-        }; // if (heroWhoStored
-      }; // if (typeof
-    }; // for (var hero_loop
-  }; // if (HERO_ARRAY
-  if (heroMatches.length == 0) {
-    //console.log("DEBUG [lookupHero]> No matches stored, trying API");
-    apiHero(heroWho, function(){
+  if (SENDERS[custom_id][20]=='character'){
+    // lookup characters
+    if (SENDERS[custom_id][19]) { // trumps_start
+      let randomID = rumRandomBetween(1,HERO_MAX);
+      heroWho = randomID.toString();
+      apiHero(heroWho,true, function(){
+        if (typeof HERO_ARRAY[randomID] != 'undefined') {
+          heroMatches.push(randomID);
+          console.log("DEBUG [lookupHero]> Hero was populated for ID: " + randomID);
+        } else {
+          console.log("ERROR [lookupHero]> Hero was NOT populated for ID: " + randomID);
+        }; // if (HERO_ARRAY
+        playTopTrumps(eventHero,heroMatches); // After API i.e. may be results
+      }); // apiHero(heroWho
+    } else { // not trumps start
       if (HERO_ARRAY.length != 0) { // Array not empty
+        console.log("DEBUG [lookupHero]> There are values stored");
         for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
           if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
             heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase();
             if (heroWhoStored.includes(heroWhoMatch)) {
                 heroMatches.push(hero_loop);
-                //console.log("DEBUG [lookupHero]> API match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
+                console.log("DEBUG [lookupHero]> Stored match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
             }; // if (heroWhoStored
           }; // if (typeof
         }; // for (var hero_loop
-      } else {
-        //console.log("DEBUG [lookupHero]> Hero array is empty");
       }; // if (HERO_ARRAY
-      playTopTrumps(eventHero,heroMatches); // After API i.e. may be results
-    }); // apiHero(heroWho
-  } else {
-    playTopTrumps(eventHero,heroMatches); // After stored successful i.e. will be results
-  } // if (heroMatches
+      if (heroMatches.length == 0) {
+        //console.log("DEBUG [lookupHero]> No matches stored, trying API");
+        apiHero(heroWho,false, function(){
+          if (HERO_ARRAY.length != 0) { // Array not empty
+            for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
+              if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
+                heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase();
+                if (heroWhoStored.includes(heroWhoMatch)) {
+                    heroMatches.push(hero_loop);
+                    //console.log("DEBUG [lookupHero]> API match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
+                }; // if (heroWhoStored
+              }; // if (typeof
+            }; // for (var hero_loop
+          } else {
+            console.log("DEBUG [lookupHero]> Hero array is empty");
+          }; // if (HERO_ARRAY
+          playTopTrumps(eventHero,heroMatches); // After API i.e. may be results
+        }); // apiHero(heroWho
+      } else {
+        playTopTrumps(eventHero,heroMatches); // After stored successful i.e. will be results
+      } // if (heroMatches
+    }; // if (HERO_ARRAY.length != 0
+  } else { // category
+    playTopTrumps(eventHero,heroMatches); // Complete bypass of lookup
+  }; // if (SENDERS[custom_id][20]=='character'
 }
 
 function lookupLOTR(lotrWho){
@@ -3548,26 +3614,46 @@ function playRPSLS(eventRPSLS,pickPlayer) {
   };
 }
 
+//.... if just triggered
+// issue extended intructions, then pick a card
+//.... if character round then hero_who to be evaluated
+// looks for blanks, multiples, repeats
+//.... if category round
+// if invalid then pick-again, otherwise score and report
+// win, switch to category round
+// lose, final score and reset
+
 function playTopTrumps(eventTT,playTT){ // IN DEV
+  // 14:trumps_score,15:trumps_played,16:trump_tobeat,17:trump_picked
+  // 18:trump_category,19:trumps_start,20:cat_or_char
+  // Preceded by lookupHero
   let sender = eventTT.sender.id;
-  //console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
+  console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
   let custom_id = inPlayID(sender);
   let trumps_score = SENDERS[custom_id][14];
   let trumps_played = SENDERS[custom_id][15];
   let trump_tobeat = SENDERS[custom_id][16];
   let trump_picked = SENDERS[custom_id][17];
+  let trump_category = SENDERS[custom_id][18];
+  let trumps_start = SENDERS[custom_id][19];
+  let cat_or_char = SENDERS[custom_id][20];
   if (playTT.length == 0) {
+    // If (trumps_start) - should not happen... should be a result - come back and play another time
+    // If (cat_or_char == 'category') then OK
+    // If (cat_or_char == 'character') then OK
     deliverText(eventTT,"Couldn't find that one",false,'');
-  } else if (playTT.length == 1) {
-    console.table(SENDERS[custom_id][15]);
+  } else if (playTT.length == 1 && cat_or_char = 'character') {
+    // if (trumps_start)
+    console.table(trumps_played);
     let tt_id = playTT[0];
-    let responseTT = "Goldilocks: " + tt_id;
-    //console.log("DEBUG [playTopTrumps]> Single ID: " + tt_id);
-    if (trumps_played[tt_id]) {responseTT = responseTT + " (picked again!)"};
-    SENDERS[custom_id][15][tt_id] = true;
+    //let responseTT = "Goldilocks: " + tt_id;
+    console.log("DEBUG [playTopTrumps]> Single ID: " + tt_id);
+    //if (trumps_played[tt_id]) {responseTT = responseTT + " (picked again!)"};
+    SENDERS[custom_id][15][tt_id] = true; // sets true in id array = log of played id
+    SENDERS[custom_id][16] = tt_id; // sets the id represent the card that is in play
     console.table(SENDERS[custom_id][15]);
     let tt_url = HERO_ARRAY[tt_id][7];
-    //console.log("DEBUG [playTopTrumps]> Image: " + tt_url);
+    console.log("DEBUG [playTopTrumps]> Image: " + tt_url);
     let tt_stats = HERO_ARRAY[tt_id][0] + " ID: " + tt_id + "\n" +
       pad(HERO_ARRAY[tt_id][1],3) + " = 🧠 Intelligence\n" +
       pad(HERO_ARRAY[tt_id][2],3) + " = 💪 Strength\n" +
@@ -3575,12 +3661,15 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       pad(HERO_ARRAY[tt_id][4],3) + " = 🔋 Durability\n" +
       pad(HERO_ARRAY[tt_id][5],3) + " = 🌡️ Power\n" +
       pad(HERO_ARRAY[tt_id][6],3) + " = ⚔️ Combat"
-    //console.log("DEBUG [playTopTrumps]> Stats: " + tt_stats);
+    console.log("DEBUG [playTopTrumps]> Stats: " + tt_stats);
     tt_stats = strReplaceAll(tt_stats, 'null', ' ❓ ');
     let test_add = parseInt(HERO_ARRAY[tt_id][1]) + parseInt(HERO_ARRAY[tt_id][2]);
-    //console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
+    console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
+    SENDERS[custom_id][20] = 'category';
     deliverStackTT(eventTT,tt_stats,tt_url);
+
   } else {
+
     deliverText(eventTT,"Too many to pick from: " + playTT.length,false,'');
   };
 }
