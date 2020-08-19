@@ -1424,15 +1424,15 @@ CHASbot.post('/webhook', (req, res) => {
           if (inPlay('trumps',sender_index)) {
             // in play - looking for either category OR looking for character name
             console.table(SENDERS[sender_index]);
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ' + SENDERS[sender_index][20]);
             if (SENDERS[sender_index][20] == 'category') {
               console.log("DEBUG [postWebhook]> In play, trumps, looking for category");
-              //analyse_text
+              console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ' + analyse_text);
               let tt_category_pick = -1;
               let tt_category = '';
               let tt_loop = 0;
               for (tt_loop = 0; tt_loop < HERO_STATS.length; tt_loop++) {
                 tt_category = strStandardise(HERO_STATS[tt_loop]);
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ' + tt_category);
                 if (analyse_text.includes(tt_category)) {
                   tt_category_pick = tt_loop;
                   break;
