@@ -3653,7 +3653,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     } else {
       console.log("DEBUG [playTopTrumps]> No hero is identified BUT is not required");
       SENDERS[custom_id][20] = 'character';
-      deliverText(eventTT,"Now that you have picked " + trump_category + " as your category, name a Superhero or Villain you think will beat " + HERO_ARRAY[SENDERS[custom_id][16]][0],false,'');
+      deliverText(eventTT,"Now that you have picked " + HERO_STATS[trump_category] + " as your category, name a Superhero or Villain you think will beat " + HERO_ARRAY[SENDERS[custom_id][16]][0],false,'');
     }; // if (cat_or_char
   } else if (playTT.length == 1 && cat_or_char == 'character') {
     // if (trumps_start)
