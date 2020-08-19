@@ -143,7 +143,8 @@ var MSG_INTERCEPTS = [
    "🤔 I’m not sure from that mix of emojis, whether you are up or down."],
   ["💥 That’s an awful lot of emoticons you crammed in there, hard to find what you are saying.",
    "💥 Wow, that's a lot more emojis than I can make sense of."]];
-var MSG_TOPTRUMPS_INTRO = "🤖 Let's play Top Trumps to see how many wins you can get in a row. I'll get you started with my choice of a Superhero or Villain.\n1️⃣ First pick a category you think you can beat, then\n2️⃣ name a hero or villain.\nKeep picking categories and naming characters until you are defeated! If the value on this card is ❓ or on the card you play, then it will be 50/50 whether you win.";
+var MSG_TOPTRUMPS_INTRO1 = "🤖 Let's play Top Trumps to see how many wins you can get in a row. I'll get you started with ";
+var MSG_TOPTRUMPS_INTRO2 = ", my choice of a Superhero (or Villain).\n1️⃣ First pick a category you think you can beat, then\n2️⃣ name your hero or villain.\nKeep picking categories and naming characters until you are defeated! If the value on this card is ❓ or on the card you play, then it will be 50/50 whether you win!";
 var MSG_TOPTRUMPS_PROMPT = "Pick a category to try and beat. If the value on this card is ❓ or on the card you play, then it will be 50/50 whether you win.";
 var MSG_EVENTS_OOPS = [
   "📆 Oops, that's not something I could find...",
@@ -1423,6 +1424,7 @@ CHASbot.post('/webhook', (req, res) => {
           if (inPlay('trumps',sender_index)) {
             // in play - looking for either category OR looking for character name
             if (SENDERS[sender_index][20] == 'category') {
+              console.log("DEBUG [postWebhook]> In play, trumps, looking for category");
               //analyse_text
               let tt_category_pick = -1;
               let tt_category = '';
@@ -2034,7 +2036,7 @@ function deliverCategory_playTrumps(eventSend) {
   let sender = eventSend.sender.id;
   let custom_id = inPlayID(sender);
   let categoryText = MSG_TOPTRUMPS_PROMPT;
-  if (SENDERS[custom_id][19]) { categoryText = MSG_TOPTRUMPS_INTRO };
+  if (SENDERS[custom_id][19]) { categoryText = MSG_TOPTRUMPS_INTRO1 + HERO_ARRAY[SENDERS[custom_id][16]][0] + MSG_TOPTRUMPS_INTRO2 };
   let categoryTemplate = {
     text: categoryText,
     quick_replies:[
