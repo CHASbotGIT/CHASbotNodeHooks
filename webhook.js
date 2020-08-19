@@ -3071,7 +3071,6 @@ function apiHero (heroWho,randomPick,callback){ // IN DEV
       console.log("DEBUG [apiHero]> Got this back raw: " + body);
       console.log("DEBUG [apiHero]> Response Code: " + heroData.response);
       if (typeof heroData.response != 'undefined' && heroData.response == 'success') {
-        console.log("DEBUG [apiHero]> Got result(s) to play with: " + heroData.results.length);
         let targetID = 0;
         if (randomPick) { // bringing backa single prescribed result
           targetID = parseInt(heroWho);
