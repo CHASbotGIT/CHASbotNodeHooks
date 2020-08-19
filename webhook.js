@@ -1426,13 +1426,11 @@ CHASbot.post('/webhook', (req, res) => {
             console.table(SENDERS[sender_index]);
             if (SENDERS[sender_index][20] == 'category') {
               console.log("DEBUG [postWebhook]> In play, trumps, looking for category");
-              console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ' + analyse_text);
               let tt_category_pick = -1;
               let tt_category = '';
               let tt_loop = 0;
               for (tt_loop = 0; tt_loop < HERO_STATS.length; tt_loop++) {
                 tt_category = strStandardise(HERO_STATS[tt_loop])[0];
-                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ' + tt_category);
                 if (analyse_text.includes(tt_category)) {
                   tt_category_pick = tt_loop;
                   break;
@@ -1685,7 +1683,6 @@ CHASbot.post('/webhook', (req, res) => {
           } else if (inPlay('trumps',sender_index)) {
             // IN DEV
             lookupHero(event,hero_who);
-            deliverText(event,"🐞 In Development, check the logs... 📝",false,'');
             console.log("DEBUG [postWebhook_route]> Top Trumps: " + hero_who);
           } else {
             //console.log("DEBUG [postWebhook_route]> No special cases, send via APIAI");
@@ -3198,6 +3195,7 @@ function lookupHero (eventHero,heroWho){ // IN DEV
     }; // if (HERO_ARRAY.length != 0
   } else { // category
     playTopTrumps(eventHero,heroMatches); // Complete bypass of lookup
+    console.log("DEBUG [lookupHero]> Hero bypass to [playTopTrumps] for category evaluation");
   }; // if (SENDERS[custom_id][20]=='character'
 }
 
