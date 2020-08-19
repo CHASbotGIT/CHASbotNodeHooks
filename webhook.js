@@ -3142,7 +3142,7 @@ function lookupHero (eventHero,heroWho){ // IN DEV
   if (SENDERS[custom_id][20]=='character'){
     // lookup characters
     if (SENDERS[custom_id][19]) { // trumps_start
-      let randomID = rumRandomBetween(1,HERO_MAX);
+      let randomID = numRandomBetween(1,HERO_MAX);
       heroWho = randomID.toString();
       apiHero(heroWho,true, function(){
         if (typeof HERO_ARRAY[randomID] != 'undefined') {
