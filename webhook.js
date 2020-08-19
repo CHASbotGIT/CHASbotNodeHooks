@@ -3642,7 +3642,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
   let trump_tobeat = SENDERS[custom_id][16];
   //let trump_picked = SENDERS[custom_id][17];
   let trump_category = SENDERS[custom_id][18];
-  //let trumps_start = SENDERS[custom_id][19];
+  let trumps_start = SENDERS[custom_id][19];
   let cat_or_char = SENDERS[custom_id][20];
   if (playTT.length == 0) {
     // If (trumps_start) - should not happen... should be a result - come back and play another time
@@ -3683,8 +3683,12 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     tt_stats = strReplaceAll(tt_stats, 'null', ' ❓ ');
 
     console.log(">>>>>>>>>>>>>>>>>>>>>>>> Category: " + HERO_STATS[trump_category]);
-    //console.log(">>>>>>>>>>>>>>>>>>>>>>>> " + HERO_ARRAY[trump_tobeat][0] + ": " + "=" + HERO_ARRAY[trump_tobeat][trump_category]);
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>> " + HERO_ARRAY[tt_id][0] + ": " + "=" + HERO_ARRAY[tt_id][trump_category]);
+
+    // Won't work on the CHASbot pick
+    if (!trumps_start) {}
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>> " + HERO_ARRAY[trump_tobeat][0] + " = " + HERO_ARRAY[trump_tobeat][trump_category]);
+    };
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>> " + HERO_ARRAY[tt_id][0] + " = " + HERO_ARRAY[tt_id][trump_category]);
 
     //let test_add = parseInt(HERO_ARRAY[tt_id][1]) + parseInt(HERO_ARRAY[tt_id][2]);
     //console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
