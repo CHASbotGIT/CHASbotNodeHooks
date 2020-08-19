@@ -3653,12 +3653,17 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     } else {
       console.log("DEBUG [playTopTrumps]> No hero is identified BUT is not required");
       SENDERS[custom_id][20] = 'character';
-      deliverText(eventTT,"Now that you have picked " + HERO_STATS[trump_category] + " as your category, name a Superhero or Villain you think will beat " + HERO_ARRAY[SENDERS[custom_id][16]][0],false,'');
+      deliverText(eventTT,"Now that you have picked " + HERO_STATS[trump_category] +
+        " as your category, name a Superhero or Villain you think will trump " +
+        HERO_ARRAY[SENDERS[custom_id][16]][0] + ".",false,'');
     }; // if (cat_or_char
   } else if (playTT.length == 1 && cat_or_char == 'character') {
     // if (trumps_start)
     console.table(trumps_played);
     let tt_id = playTT[0];
+
+    SENDERS[custom_id][17] = tt_id;
+
     //let responseTT = "Goldilocks: " + tt_id;
     console.log("DEBUG [playTopTrumps]> Single ID: " + tt_id);
     //if (trumps_played[tt_id]) {responseTT = responseTT + " (picked again!)"};
@@ -3676,13 +3681,17 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       pad(HERO_ARRAY[tt_id][6],3) + " = ⚔️ Combat"
     console.log("DEBUG [playTopTrumps]> Stats: " + tt_stats);
     tt_stats = strReplaceAll(tt_stats, 'null', ' ❓ ');
-    let test_add = parseInt(HERO_ARRAY[tt_id][1]) + parseInt(HERO_ARRAY[tt_id][2]);
+
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>> Category: " + HERO_STATS[trump_category]);
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>> " + HERO_ARRAY[trump_tobeat][0] + ": " + "=" + HERO_ARRAY[trump_tobeat][trump_category]);
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>> " + HERO_ARRAY[tt_id][0] + ": " + "=" + HERO_ARRAY[tt_id][trump_category]);
+
+    //let test_add = parseInt(HERO_ARRAY[tt_id][1]) + parseInt(HERO_ARRAY[tt_id][2]);
+
     console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
     SENDERS[custom_id][20] = 'category';
     deliverStackTT(eventTT,tt_stats,tt_url);
-
   } else {
-
     deliverText(eventTT,"Too many to pick from: " + playTT.length,false,'');
   };
 }
