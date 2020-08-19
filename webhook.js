@@ -3085,7 +3085,7 @@ function apiHero (heroWho,randomPick,callback){ // IN DEV
               heroData.powerstats.power,
               heroData.powerstats.combat,
               heroData.image.url]; // [7]
-            console.log("ERROR [apiHero]> Brought back " + heroStats.name + " for ID: " + heroStats.id);
+            console.log("ERROR [apiHero]> Brought back " + heroData.name + " for ID: " + heroData.id);
             callback();
           } else { // if (targetID == heroStats.id)
             console.log("ERROR [apiHero]> No joy bringing back a record for ID: " + targetID);
