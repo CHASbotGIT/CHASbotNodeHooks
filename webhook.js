@@ -3637,18 +3637,24 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
   let sender = eventTT.sender.id;
   console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
   let custom_id = inPlayID(sender);
-  let trumps_score = SENDERS[custom_id][14];
-  let trumps_played = SENDERS[custom_id][15];
+  //let trumps_score = SENDERS[custom_id][14];
+  //let trumps_played = SENDERS[custom_id][15];
   let trump_tobeat = SENDERS[custom_id][16];
-  let trump_picked = SENDERS[custom_id][17];
+  //let trump_picked = SENDERS[custom_id][17];
   let trump_category = SENDERS[custom_id][18];
-  let trumps_start = SENDERS[custom_id][19];
+  //let trumps_start = SENDERS[custom_id][19];
   let cat_or_char = SENDERS[custom_id][20];
   if (playTT.length == 0) {
     // If (trumps_start) - should not happen... should be a result - come back and play another time
     // If (cat_or_char == 'category') then OK
     // If (cat_or_char == 'character') then OK
-    deliverText(eventTT,"Couldn't find that one",false,'');
+    if (cat_or_char == 'character') {
+      console.log("DEBUG [playTopTrumps]> No hero is identified when character is in scope");
+    } else {
+      console.log("DEBUG [playTopTrumps]> No hero is identified BUT is not required");
+      SENDERS[custom_id][20] = 'character';
+      deliverText(eventTT,"Now that you have picked " + trump_category + " as your category, name a Superhero or Villain you think will beat " + HERO_ARRAY[SENDERS[custom_id][16]][0],false,'');
+    }; // if (cat_or_char
   } else if (playTT.length == 1 && cat_or_char == 'character') {
     // if (trumps_start)
     console.table(trumps_played);
