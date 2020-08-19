@@ -3642,7 +3642,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     // If (cat_or_char == 'category') then OK
     // If (cat_or_char == 'character') then OK
     deliverText(eventTT,"Couldn't find that one",false,'');
-  } else if (playTT.length == 1 && cat_or_char = 'character') {
+  } else if (playTT.length == 1 && cat_or_char == 'character') {
     // if (trumps_start)
     console.table(trumps_played);
     let tt_id = playTT[0];
