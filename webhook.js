@@ -3687,9 +3687,9 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     console.log(">>>>>>>>>>>>>>>>>>>>>>>> " + HERO_ARRAY[tt_id][0] + ": " + "=" + HERO_ARRAY[tt_id][trump_category]);
 
     //let test_add = parseInt(HERO_ARRAY[tt_id][1]) + parseInt(HERO_ARRAY[tt_id][2]);
-
-    console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
+    //console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
     SENDERS[custom_id][20] = 'category';
+
     deliverStackTT(eventTT,tt_stats,tt_url);
   } else {
     deliverText(eventTT,"Too many to pick from: " + playTT.length,false,'');
