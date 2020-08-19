@@ -143,7 +143,7 @@ var MSG_INTERCEPTS = [
    "🤔 I’m not sure from that mix of emojis, whether you are up or down."],
   ["💥 That’s an awful lot of emoticons you crammed in there, hard to find what you are saying.",
    "💥 Wow, that's a lot more emojis than I can make sense of."]];
-var MSG_TOPTRUMPS_INTRO = "Let's play Top Trumps to see how many wins you can get in a row. I'll get you started with a Superhero or Villain, you first pick a category you think you can beat, then name a hero or villain. Keep picking categories and naming characters until you are defeated!";
+var MSG_TOPTRUMPS_INTRO = "🤖 Let's play Top Trumps to see how many wins you can get in a row. I'll get you started with my choice of a Superhero or Villain.\n1️⃣ First pick a category you think you can beat, then\n2️⃣ name a hero or villain.\nKeep picking categories and naming characters until you are defeated! If the value on this card is ❓ or on the card you play, then it will be 50/50 whether you win.";
 var MSG_TOPTRUMPS_PROMPT = "Pick a category to try and beat. If the value on this card is ❓ or on the card you play, then it will be 50/50 whether you win.";
 var MSG_EVENTS_OOPS = [
   "📆 Oops, that's not something I could find...",
