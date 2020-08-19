@@ -3074,17 +3074,17 @@ function apiHero (heroWho,randomPick,callback){ // IN DEV
         let targetID = 0;
         if (randomPick) { // bringing backa single prescribed result
           targetID = parseInt(heroWho);
-          console.log("DEBUG [apiHero]> Target ID requested: " + targetID + ', ID returned: ' + heroStats.id);
-          if (targetID == heroStats.id) {
+          console.log("DEBUG [apiHero]> Target ID requested: " + targetID + ', ID returned: ' + heroData.id);
+          if (targetID == heroData.id) {
             HERO_ARRAY[targetID]=[
-              heroStats.name, // [0]
-              heroStats.powerstats.intelligence,
-              heroStats.powerstats.strength,
-              heroStats.powerstats.speed,
-              heroStats.powerstats.durability,
-              heroStats.powerstats.power,
-              heroStats.powerstats.combat,
-              heroStats.image.url]; // [7]
+              heroDatas.name, // [0]
+              heroData.powerstats.intelligence,
+              heroData.powerstats.strength,
+              heroData.powerstats.speed,
+              heroData.powerstats.durability,
+              heroData.powerstats.power,
+              heroData.powerstats.combat,
+              heroData.image.url]; // [7]
             console.log("ERROR [apiHero]> Brought back " + heroStats.name + " for ID: " + heroStats.id);
             callback();
           } else { // if (targetID == heroStats.id)
