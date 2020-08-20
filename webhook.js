@@ -3658,7 +3658,9 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
         HERO_ARRAY[trump_tobeat][0] + "?",false,'');
     }; // if (cat_or_char
   } else if (playTT.length == 1 && cat_or_char == 'character') {
-    // if (trumps_start)
+
+    // Catch repeat play here... or back in lookup... or further on!
+
     console.table(trumps_played);
     let tt_id = playTT[0];
 
@@ -3688,8 +3690,8 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     let newScore = 0;
     // Won't work on the CHASbot pick
     if (!trumps_start) {
-      oldScore = parseInt(HERO_ARRAY[trump_tobeat][trump_category-1]);
-      newScore = parseInt(HERO_ARRAY[tt_id][trump_category-1]);
+      oldScore = parseInt(HERO_ARRAY[trump_tobeat][trump_category+1]);
+      newScore = parseInt(HERO_ARRAY[tt_id][trump_category+1]);
       let nullScore = parseInt("null");
       console.log('TESTING NULLS}}}}}}}}}}}}}}}}}}}}}}}}}}}}}} ' + nullScore);
       if (newScore >= oldScore) {
