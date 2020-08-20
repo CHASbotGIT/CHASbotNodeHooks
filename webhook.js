@@ -3747,7 +3747,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       console.log("DEBUG [playTopTrumps]> Losing character, end of game");
       tt_stats = "Sorry, no luck with " + HERO_STATS[trump_category] + ", game over."
       if (newScore == -1) { tt_stats = "Oops, you lost the toss of a coin with the ❓ unknown value! " + tt_stats }
-      deliverText(eventTT,"Too many to pick from: " + playTT.length,false,'');
+      deliverText(eventTT,tt_stats,false,'');
       // Loser phrases array TO DO
       // Reset to start
     };
