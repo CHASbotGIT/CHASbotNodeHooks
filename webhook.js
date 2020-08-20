@@ -3694,12 +3694,13 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       newScore = parseInt(HERO_ARRAY[tt_id][trump_category+1]);
       let nullScore = parseInt("null");
       console.log('TESTING NULLS}}}}}}}}}}}}}}}}}}}}}}}}}}}}}} ' + nullScore);
+      if (nullScore = 'NaN') { console.log('50/50 GAMBLE GAMBLE 50/50') }
       if (newScore >= oldScore) {
         SENDERS[custom_id][14] = SENDERS[custom_id][14] + 1;
         console.log('Winner winner chicken dinner: ' + SENDERS[custom_id][14]);
-      } else {
+      } else { // else
         console.log('Looooooooooooooooserrrrrrr!!');
-      }
+      }; // if (newScore >= oldScore)
       console.log(">>>>>>>>>>OLD>>>>>>>>>>> " + HERO_ARRAY[trump_tobeat][0] + " = " + HERO_ARRAY[trump_tobeat][trump_category-1]);
     };
     console.log(">>>>>>>>>>NEW>>>>>>>>>>> " + HERO_ARRAY[tt_id][0] + " = " + HERO_ARRAY[tt_id][trump_category-1]);
