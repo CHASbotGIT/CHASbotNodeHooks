@@ -2025,7 +2025,7 @@ function deliverStackTT(eventSend,metricsTT,msgTT,pictureTT){ // Call 1st
   deliverMetricsTT(eventSend,metricsTT,pictureTT, async function(){
     // Sent 3rd
     await deliverPause(Q_DELIVERY*1000);
-    deliverCategory_playTrumps(eventSend); // Category choice peompt and options
+    deliverCategory_playTrumps(eventSend,msgTT); // Category choice peompt and options
     SENDERS[custom_id][19] = false; // No lomger just started
   });
 }
