@@ -3708,7 +3708,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
 console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ " + oldScore);
 console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ " + newScore);
 
-      if ( oldScore == 'NaN' || newScore == 'NaN' ) {
+      if ((oldScore == 'NaN')||(newScore == 'NaN')) {
         // Flip for winner or loser if either is NaN
         let binary_pick = numRandomBetween(0,1);
         if (binary_pick == 1) { // winner
