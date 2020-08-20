@@ -3704,11 +3704,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     if (!trumps_start) {
       oldScore = parseInt(HERO_ARRAY[trump_tobeat][trump_category+1]);
       newScore = parseInt(HERO_ARRAY[tt_id][trump_category+1]);
-
-console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ " + oldScore);
-console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ " + newScore);
-
-      if ((oldScore == 'NaN')||(newScore == 'NaN')) {
+      if (isNaN(oldScore)||isNAN(newScore)) {
         // Flip for winner or loser if either is NaN
         let binary_pick = numRandomBetween(0,1);
         if (binary_pick == 1) { // winner
