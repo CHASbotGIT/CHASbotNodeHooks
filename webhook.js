@@ -3684,11 +3684,23 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
 
     console.log(">>>>>>>>>>>>>>>>>>>>>>>> Category: " + HERO_STATS[trump_category]);
 
+    let oldScore = 0;
+    let newScore = 0;
     // Won't work on the CHASbot pick
     if (!trumps_start) {
-      console.log(">>>>>>>>>>OLD>>>>>>>>>>> " + HERO_ARRAY[trump_tobeat][0] + " = " + HERO_ARRAY[trump_tobeat][trump_category]);
+      oldScore = parseInt(HERO_ARRAY[trump_tobeat][trump_category-1]);
+      newScore = parseInt(HERO_ARRAY[tt_id][trump_category-1]);
+      let nullScore = parseInt("null");
+      console.log('TESTING NULLS}}}}}}}}}}}}}}}}}}}}}}}}}}}}}} ' + nullScore);
+      if (newScore >= oldScore) {
+        SENDERS[custom_id][14] = SENDERS[custom_id][14] + 1;
+        console.log('Winner winner chicken dinner: ' + SENDERS[custom_id][14]);
+      } else {
+        console.log('Looooooooooooooooserrrrrrr!!');
+      }
+      console.log(">>>>>>>>>>OLD>>>>>>>>>>> " + HERO_ARRAY[trump_tobeat][0] + " = " + HERO_ARRAY[trump_tobeat][trump_category-1]);
     };
-    console.log(">>>>>>>>>>NEW>>>>>>>>>>> " + HERO_ARRAY[tt_id][0] + " = " + HERO_ARRAY[tt_id][trump_category]);
+    console.log(">>>>>>>>>>NEW>>>>>>>>>>> " + HERO_ARRAY[tt_id][0] + " = " + HERO_ARRAY[tt_id][trump_category-1]);
 
     //let test_add = parseInt(HERO_ARRAY[tt_id][1]) + parseInt(HERO_ARRAY[tt_id][2]);
     //console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
