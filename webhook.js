@@ -3645,10 +3645,13 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
 
   if (playTT.length > 0) {
     let playTT_loop = 0;
+    let possibleRepeat = 0;
     for (playTT_loop = 0; playTT_loop < playTT.length; playTT_loop++) {
-      if (trumps_played.includes(playTT[playTT_loop])) { // identify if any of the possible trunps have been played before
+      possibleRepeat = playTT[playTT_loop];
+      console.log("@£@£@£@£@£@£@£@£@£@£@£@£@£@£@ POSSIBLE: " + possibleRepeat);
+      if (trumps_played.includes(possibleRepeat)) { // identify if any of the possible trunps have been played before
         playTT.splice[playTT_loop,1]; // remove any previously played trumps from the possibles
-        console.log("@£@£@£@£@£@£@£@£@£@£@£@£@£@£@ DOUBLE DOUBLE")
+        console.log("@£@£@£@£@£@£@£@£@£@£@£@£@£@£@ DOUBLE DOUBLE"); // TO DO - make this work
       }; // if (trumps_played
     }; // for (playTT_loop = 0
   }; // if (playTT.length
