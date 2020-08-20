@@ -3732,13 +3732,13 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     SENDERS[custom_id][20] = 'category';
     SENDERS[custom_id][16] = SENDERS[custom_id][17];
     if (chicken_dinner){
-      deliverStackTT(eventTT,tt_stats,tt_url);
       if (SENDERS[custom_id][14] > 0) {
         tt_stats = "Wins so far, " + SENDERS[custom_id][14] + ".\n" + tt_stats;
         // Win phrases array TO DO
         if (newScore == 101) { tt_stats = "Lucky, you won the toss of a coin with the ❓ unknown value! "+ tt_stats }
         // Gamble phrases array TO DO
       };
+      deliverStackTT(eventTT,tt_stats,tt_url);
       console.log("DEBUG [playTopTrumps]> Winning character, pick category");
       //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       // [ WINNING TRUMPS CHARACTER PICKED - PICK AGAIN ]
@@ -3752,7 +3752,6 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       // Reset to start
     };
     return;
-
   } else {
     deliverText(eventTT,"Too many to pick from: " + playTT.length,false,'');
     // Deal with multiples
