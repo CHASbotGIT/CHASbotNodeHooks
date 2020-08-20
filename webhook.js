@@ -3648,6 +3648,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     for (playTT_loop = 0; playTT_loop < playTT.length; playTT_loop++) {
       if (trumps_played.includes(playTT[playTT_loop])) { // identify if any of the possible trunps have been played before
         playTT.splice[playTT_loop,1]; // remove any previously played trumps from the possibles
+        console.log("@£@£@£@£@£@£@£@£@£@£@£@£@£@£@ DOUBLE DOUBLE")
       }; // if (trumps_played
     }; // for (playTT_loop = 0
   }; // if (playTT.length
@@ -3744,7 +3745,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
         tt_msg = "Wins so far, " + SENDERS[custom_id][14] + ".\n" + tt_msg;
         // Win phrases array TO DO
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> newScore: " + newScore);
-        if (newScore == 101) { tt_msg = "Lucky, you won the toss of a coin with the ❓ unknown value! " + tt_msg }
+        if (newScore == 101) { tt_msg = "Lucky, you won the toss of a coin with the mystery value! " + tt_msg }
         // Gamble phrases array TO DO
       }; // if (SENDERS[custom_id][14]
 
@@ -3757,10 +3758,12 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       console.log("DEBUG [playTopTrumps]> Losing character, end of game");
       tt_msg = "Sorry, no luck with " + HERO_STATS[trump_category] + ", game over."
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> newScore: " + newScore);
-      if (newScore == -1) { tt_msg = "Oops, you lost the toss of a coin with the ❓ unknown value! " + tt_msg }
+      if (newScore == -1) { tt_msg = "Oops, you lost the toss of a coin with the mystery value! " + tt_msg }
 
-deliverStackTT(eventTT,tt_stats,tt_msg,tt_url);
+      deliverStackTT(eventTT,tt_stats,tt_msg,tt_url);
       // Need also to deliver card WITHOUT prompt TO DO
+
+      // PLAYED BEFORE ????????????????? WARNING
 
       //deliverText(eventTT,tt_stats,false,'');
       // Loser phrases array TO DO
