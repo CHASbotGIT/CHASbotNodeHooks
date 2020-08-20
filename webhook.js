@@ -3186,9 +3186,11 @@ function lookupHero (eventHero,heroWho){ // IN DEV
             console.log("DEBUG [lookupHero]> Hero array is empty");
           }; // if (HERO_ARRAY
           playTopTrumps(eventHero,heroMatches); // After API i.e. may be results
+          console.table(heroMatches);
         }); // apiHero(heroWho
       } else {
         playTopTrumps(eventHero,heroMatches); // After stored successful i.e. will be results
+        console.table(heroMatches);
       } // if (heroMatches
     }; // if (HERO_ARRAY.length != 0
   } else { // category
@@ -3643,6 +3645,9 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
   let trumps_start = SENDERS[custom_id][19];
   let cat_or_char = SENDERS[custom_id][20];
 
+
+
+
   if (playTT.length > 0) {
     let playTT_loop = 0;
     let possibleRepeat = 0;
@@ -3656,6 +3661,9 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     }; // for (playTT_loop = 0
   }; // if (playTT.length
   // All of the previously played possibles have been weeded out
+
+
+
 
   if (playTT.length == 0) {
     // If (trumps_start) - should not happen... should be a result - come back and play another time
