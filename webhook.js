@@ -2018,7 +2018,7 @@ function deliverMetricsTT(eventSend,metricsTT,pictureTT,callback){ // call 2nd
     callback(); // To deliverStackTT
   });
 }
-function deliverStackTT(eventSend,metricsTT,pictureTT){ // Call 1st
+function deliverStackTT(eventSend,metricsTT,msgTT,pictureTT){ // Call 1st
   deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   let custom_id = inPlayID(sender);
@@ -2029,15 +2029,13 @@ function deliverStackTT(eventSend,metricsTT,pictureTT){ // Call 1st
     SENDERS[custom_id][19] = false; // No lomger just started
   });
 }
-function deliverCategory_playTrumps(eventSend) {
+function deliverCategory_playTrumps(eventSend,msgTT) {
   //console.log("DEBUG [deliverCategory_playTrumps]> In Progress");
   deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   let custom_id = inPlayID(sender);
-  let categoryText = MSG_TOPTRUMPS_PROMPT;
-  if (SENDERS[custom_id][19]) { categoryText = MSG_TOPTRUMPS_INTRO1 + HERO_ARRAY[SENDERS[custom_id][16]][0] + MSG_TOPTRUMPS_INTRO2 };
   let categoryTemplate = {
-    text: categoryText,
+    text: msgTT,
     quick_replies:[
       { content_type:"text",
         title: HERO_STATS[0],
@@ -3731,14 +3729,20 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     //console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
     SENDERS[custom_id][20] = 'category';
     SENDERS[custom_id][16] = SENDERS[custom_id][17];
+
+    let tt_msg = MSG_TOPTRUMPS_PROMPT;
+    if (trumps_start) { tt_msg = MSG_TOPTRUMPS_INTRO1 + HERO_ARRAY[SENDERS[custom_id][16]][0] + MSG_TOPTRUMPS_INTRO2 };
+
     if (chicken_dinner){
       if (SENDERS[custom_id][14] > 0) {
-        tt_stats = "Wins so far, " + SENDERS[custom_id][14] + ".\n" + tt_stats;
+        tt_msg = "Wins so far, " + SENDERS[custom_id][14] + ".\n" + tt_msg;
         // Win phrases array TO DO
-        if (newScore == 101) { tt_stats = "Lucky, you won the toss of a coin with the ❓ unknown value! "+ tt_stats }
+        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> newScore: " + newScore);
+        if (newScore == 101) { tt_msg = "Lucky, you won the toss of a coin with the ❓ unknown value! " + tt_msg }
         // Gamble phrases array TO DO
-      };
-      deliverStackTT(eventTT,tt_stats,tt_url);
+      }; // if (SENDERS[custom_id][14]
+
+      deliverStackTT(eventTT,tt_stats,tt_msg,tt_url);
       console.log("DEBUG [playTopTrumps]> Winning character, pick category");
       //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       // [ WINNING TRUMPS CHARACTER PICKED - PICK AGAIN ]
@@ -3746,6 +3750,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     } else {
       console.log("DEBUG [playTopTrumps]> Losing character, end of game");
       tt_stats = "Sorry, no luck with " + HERO_STATS[trump_category] + ", game over."
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> newScore: " + newScore);
       if (newScore == -1) { tt_stats = "Oops, you lost the toss of a coin with the ❓ unknown value! " + tt_stats }
       deliverText(eventTT,tt_stats,false,'');
       // Loser phrases array TO DO
