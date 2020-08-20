@@ -3693,8 +3693,8 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       oldScore = parseInt(HERO_ARRAY[trump_tobeat][trump_category+1]);
       newScore = parseInt(HERO_ARRAY[tt_id][trump_category+1]);
       let nullScore = parseInt("null");
-      console.log('TESTING NULLS}}}}}}}}}}}}}}}}}}}}}}}}}}}}}} ' + nullScore);
-      if (nullScore = 'NaN') { console.log('50/50 GAMBLE GAMBLE 50/50') }
+      //console.log('TESTING NULLS}}}}}}}}}}}}}}}}}}}}}}}}}}}}}} ' + nullScore);
+      //if (nullScore = 'NaN') { console.log('50/50 GAMBLE GAMBLE 50/50') }
       if (newScore >= oldScore) {
         SENDERS[custom_id][14] = SENDERS[custom_id][14] + 1;
         console.log('Winner winner chicken dinner: ' + SENDERS[custom_id][14]);
@@ -3702,12 +3702,13 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
         console.log('Looooooooooooooooserrrrrrr!!');
       }; // if (newScore >= oldScore)
       console.log(">>>>>>>>>>OLD>>>>>>>>>>> " + HERO_ARRAY[trump_tobeat][0] + " = " + HERO_ARRAY[trump_tobeat][trump_category-1]);
-    };
+    }; // if (!trumps_start) {
     console.log(">>>>>>>>>>NEW>>>>>>>>>>> " + HERO_ARRAY[tt_id][0] + " = " + HERO_ARRAY[tt_id][trump_category-1]);
 
     //let test_add = parseInt(HERO_ARRAY[tt_id][1]) + parseInt(HERO_ARRAY[tt_id][2]);
     //console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
     SENDERS[custom_id][20] = 'category';
+    SENDERS[custom_id][16] = SENDERS[custom_id][17];
 
     deliverStackTT(eventTT,tt_stats,tt_url);
   } else {
