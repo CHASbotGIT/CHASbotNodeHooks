@@ -3644,26 +3644,41 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
   let trump_category = SENDERS[custom_id][18];
   let trumps_start = SENDERS[custom_id][19];
   let cat_or_char = SENDERS[custom_id][20];
+
+  if (playTT.length > 0) {
+    let playTT_loop = 0;
+    for (playTT_loop = 0; playTT_loop < playTT.length; playTT_loop++) {
+      if (trumps_played.includes(playTT[playTT_loop])) { // identify if any of the possible trunps have been played before
+        playTT.splice[playTT_loop,1]; // remove any previously played trumps from the possibles
+      }; // if (trumps_played
+    }; // for (playTT_loop = 0
+  }; // if (playTT.length
+  // All of the previously played possibles have been weeded out
+
   if (playTT.length == 0) {
     // If (trumps_start) - should not happen... should be a result - come back and play another time
     // If (cat_or_char == 'category') then OK
     // If (cat_or_char == 'character') then OK
     if (cat_or_char == 'character') {
       console.log("DEBUG [playTopTrumps]> No hero is identified when character is in scope");
-    } else {
+
+    } else { // category has been selected
       console.log("DEBUG [playTopTrumps]> No hero is identified BUT is not required");
       SENDERS[custom_id][20] = 'character';
       deliverText(eventTT,"Now that you have picked " + HERO_STATS[trump_category] +
         " as your category, name a Superhero or Villain you think will trump " +
         HERO_ARRAY[trump_tobeat][0] + "?",false,'');
+      return;
+      //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // [ TRUMPS CATEGORY SET PROPERLY - LOOKING FOR CHARACTER NEXT ]
+      // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }; // if (cat_or_char
   } else if (playTT.length == 1 && cat_or_char == 'character') {
 
-    // Catch repeat play here... or back in lookup... or further on!
-
     console.table(trumps_played);
-    let tt_id = playTT[0];
 
+    let chicken_dinner = true;
+    let tt_id = playTT[0];
     SENDERS[custom_id][17] = tt_id;
 
     //let responseTT = "Goldilocks: " + tt_id;
@@ -3688,18 +3703,25 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
 
     let oldScore = 0;
     let newScore = 0;
-    // Won't work on the CHASbot pick
     if (!trumps_start) {
       oldScore = parseInt(HERO_ARRAY[trump_tobeat][trump_category+1]);
       newScore = parseInt(HERO_ARRAY[tt_id][trump_category+1]);
-      let nullScore = parseInt("null");
-      //console.log('TESTING NULLS}}}}}}}}}}}}}}}}}}}}}}}}}}}}}} ' + nullScore);
-      //if (nullScore = 'NaN') { console.log('50/50 GAMBLE GAMBLE 50/50') }
+      if ( oldScore == 'NaN' || newScore == 'NaN' ) {
+        // Flip for winner or loser if either is NaN
+        let binary_pick = numRandomBetween(0,1);
+        if (binary_pick == 1) { newScore = 101 } else { newScore = -1 };
+        console.log("DEBUG [playTopTrumps]> One of the values is null, so picked either [0]=Lose [1]=Win: " + binary_pick);
+      }; // if ( oldScore == 'NaN'
       if (newScore >= oldScore) {
         SENDERS[custom_id][14] = SENDERS[custom_id][14] + 1;
         console.log('Winner winner chicken dinner: ' + SENDERS[custom_id][14]);
+        // Add a winning comment
+
       } else { // else
+        chicken_dinner = false;
         console.log('Looooooooooooooooserrrrrrr!!');
+        // End game events
+
       }; // if (newScore >= oldScore)
       console.log(">>>>>>>>>>OLD>>>>>>>>>>> " + HERO_ARRAY[trump_tobeat][0] + " = " + oldScore);
     }; // if (!trumps_start) {
@@ -3709,9 +3731,31 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     //console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
     SENDERS[custom_id][20] = 'category';
     SENDERS[custom_id][16] = SENDERS[custom_id][17];
+    if (chicken_dinner){
+      deliverStackTT(eventTT,tt_stats,tt_url);
+      if (SENDERS[custom_id][14] > 0) {
+        tt_stats = "Wins so far, " + SENDERS[custom_id][14] + ".\n" + tt_stats;
+        // Win phrases array TO DO
+        if (newScore == 101) { tt_stats = "Lucky, you won the toss of a coin with the ❓ unknown value! "+ tt_stats }
+        // Gamble phrases array TO DO
+      };
+      console.log("DEBUG [playTopTrumps]> Winning character, pick category");
+      //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // [ WINNING TRUMPS CHARACTER PICKED - PICK AGAIN ]
+      // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    } else {
+      console.log("DEBUG [playTopTrumps]> Losing character, end of game");
+      tt_stats = "Sorry, no luck with " + HERO_STATS[trump_category] + ", game over."
+      if (newScore == -1) { tt_stats = "Oops, you lost the toss of a coin with the ❓ unknown value! " + tt_stats }
+      deliverText(eventTT,"Too many to pick from: " + playTT.length,false,'');
+      // Loser phrases array TO DO
+      // Reset to start
+    };
+    return;
 
-    deliverStackTT(eventTT,tt_stats,tt_url);
   } else {
     deliverText(eventTT,"Too many to pick from: " + playTT.length,false,'');
+    // Deal with multiples
+
   };
 }
