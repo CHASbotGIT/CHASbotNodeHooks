@@ -3702,7 +3702,10 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     //let responseTT = "Goldilocks: " + tt_id;
     console.log("DEBUG [playTopTrumps]> Single ID: " + tt_id);
     //if (trumps_played[tt_id]) {responseTT = responseTT + " (picked again!)"};
-    SENDERS[custom_id][15][tt_id] = true; // sets true in id array = log of played id
+
+
+    SENDERS[custom_id][15].push(tt_id);
+    //SENDERS[custom_id][15][tt_id] = true; // sets true in id array = log of played id
     //SENDERS[custom_id][16] = tt_id; // sets the id represent the card that is in play
     //console.table(SENDERS[custom_id][15]);
     let tt_url = HERO_ARRAY[tt_id][7];
