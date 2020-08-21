@@ -3661,6 +3661,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     }; // for (playTT_loop = 0
   }; // if (playTT.length
 
+  console.table(playTT);
 
   // TO DO - Trapping missing category
 
