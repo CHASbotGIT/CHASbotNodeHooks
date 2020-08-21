@@ -3746,7 +3746,8 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     //let test_add = parseInt(HERO_ARRAY[tt_id][1]) + parseInt(HERO_ARRAY[tt_id][2]);
     //console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
     SENDERS[custom_id][20] = 'category';
-    SENDERS[custom_id][16] = SENDERS[custom_id][17];
+    SENDERS[custom_id][16] = SENDERS[custom_id][17]; // new card becomes old
+    SENDERS[custom_id][15].push(SENDERS[custom_id][16]); // old card stored in list
 
     let tt_msg = MSG_TOPTRUMPS_PROMPT;
     if (trumps_start) { tt_msg = MSG_TOPTRUMPS_INTRO1 + HERO_ARRAY[SENDERS[custom_id][16]][0] + MSG_TOPTRUMPS_INTRO2 };
