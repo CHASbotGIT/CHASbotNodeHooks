@@ -2028,7 +2028,9 @@ function deliverStackTT(eventSend,metricsTT,msgTT,pictureTT,game_over){ // Call 
       await deliverPause(Q_DELIVERY*1000);
       deliverCategory_playTrumps(eventSend,msgTT); // Category choice peompt and options
       SENDERS[custom_id][19] = false; // No lomger just started}
-  }; // f (!game_over)
+    } else { // f (!game_over)
+      deliverText(eventSend,msgTT,false,'');
+    };//
   });
 }
 function deliverCategory_playTrumps(eventSend,msgTT) {
