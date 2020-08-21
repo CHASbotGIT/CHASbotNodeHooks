@@ -3668,7 +3668,6 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       } else {
         tt_msg = "🤖 Oops, I wasn't able to find your choice of hero or villain. Think of another?";
       };
-      tt_msg
       deliverText(eventTT,tt_msg,false,'');
       return;
       //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
