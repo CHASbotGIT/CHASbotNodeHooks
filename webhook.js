@@ -3648,7 +3648,6 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
   let cat_or_char = SENDERS[custom_id][20];
   // Weed out all of the previously played possibles
 
-  [0,1,2,3,4] length 5  - loop 0,1,2,3,4 length -1 - loop 5
   let foundRepeat = false;
   if (playTT.length > 0) {
     let playTT_loop = 0;
