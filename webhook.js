@@ -144,7 +144,7 @@ var MSG_INTERCEPTS = [
   ["💥 That’s an awful lot of emoticons you crammed in there, hard to find what you are saying.",
    "💥 Wow, that's a lot more emojis than I can make sense of."]];
 var MSG_TOPTRUMPS_INTRO1 = "🤖 Let's play Top Trumps to see how many wins you can get in a row. I'll get you started with ";
-var MSG_TOPTRUMPS_INTRO2 = ", my choice of Superhero (or Villain).\n1️⃣ First pick a category you think you can beat, then\n2️⃣ name your hero or villain.\nKeep picking categories and naming characters until you are defeated! If the value on this card is ❓ or on the card you play, then it will be 50/50 whether you win!";
+var MSG_TOPTRUMPS_INTRO2 = ", my choice of hero (or villain).\n1️⃣ First pick a category you think you can beat, then\n2️⃣ name your hero or villain.\nKeep picking categories and naming characters until you are defeated! If the value on my card, or on any card you play, is a mystery (i.e.❓) then it will be 50/50 whether you win!";
 var MSG_TOPTRUMPS_PROMPT = "Pick a category to try and beat. If the value on this card is ❓ or on the card you play, then it will be 50/50 whether you win.";
 var MSG_EVENTS_OOPS = [
   "📆 Oops, that's not something I could find...",
@@ -3635,6 +3635,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
   // 18:trump_category,19:trumps_start,20:cat_or_char
   // Preceded by lookupHero
   let sender = eventTT.sender.id;
+  let tt_msg = MSG_TOPTRUMPS_PROMPT;
   console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
   let custom_id = inPlayID(sender);
   //let trumps_score = SENDERS[custom_id][14];
@@ -3644,40 +3645,42 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
   let trump_category = SENDERS[custom_id][18];
   let trumps_start = SENDERS[custom_id][19];
   let cat_or_char = SENDERS[custom_id][20];
-
-
-
-
+  // Weed out all of the previously played possibles
+  let foundRepeat = false;
   if (playTT.length > 0) {
     let playTT_loop = 0;
     let possibleRepeat = 0;
     for (playTT_loop = 0; playTT_loop < playTT.length; playTT_loop++) {
       possibleRepeat = playTT[playTT_loop];
-      console.log("@£@£@£@£@£@£@£@£@£@£@£@£@£@£@ POSSIBLE: " + possibleRepeat);
       if (trumps_played.includes(possibleRepeat)) { // identify if any of the possible trunps have been played before
         playTT.splice[playTT_loop,1]; // remove any previously played trumps from the possibles
-        console.log("@£@£@£@£@£@£@£@£@£@£@£@£@£@£@ DOUBLE DOUBLE"); // TO DO - make this work
+        foundRepeat = true;
+        console.log("DEBUG [playTopTrumps]> Repeated character removed: " + possibleRepeat);
       }; // if (trumps_played
     }; // for (playTT_loop = 0
   }; // if (playTT.length
-  // All of the previously played possibles have been weeded out
-
-
-
 
   if (playTT.length == 0) {
-    // If (trumps_start) - should not happen... should be a result - come back and play another time
-    // If (cat_or_char == 'category') then OK
-    // If (cat_or_char == 'character') then OK
     if (cat_or_char == 'character') {
       console.log("DEBUG [playTopTrumps]> No hero is identified when character is in scope");
-
+      if (foundRepeat) {
+        tt_msg = "🤖 Maybe I should have said but I won't let you play the same card twice in a game. Think of any other hero or villain?";
+      } else {
+        tt_msg = "🤖 Oops, I wasn't able to find your choice of hero or villain. Think of another?";
+      };
+      tt_msg
+      deliverText(eventTT,tt_msg,false,'');
+      return;
+      //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // [ PROBLEM WITH SETTING A CHARACTER - LOOKING FOR ANOTHER ]
+      // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     } else { // category has been selected
       console.log("DEBUG [playTopTrumps]> No hero is identified BUT is not required");
       SENDERS[custom_id][20] = 'character';
-      deliverText(eventTT,"Now that you have picked " + HERO_STATS[trump_category] +
+      tt_msg = "Now that you have picked " + HERO_STATS[trump_category] +
         " as your category, name a Superhero or Villain you think will trump " +
-        HERO_ARRAY[trump_tobeat][0] + "?",false,'');
+        HERO_ARRAY[trump_tobeat][0] + "?";
+      deliverText(eventTT,tt_msg,false,'');
       return;
       //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       // [ TRUMPS CATEGORY SET PROPERLY - LOOKING FOR CHARACTER NEXT ]
@@ -3749,15 +3752,16 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     SENDERS[custom_id][16] = SENDERS[custom_id][17]; // new card becomes old
     SENDERS[custom_id][15].push(SENDERS[custom_id][16]); // old card stored in list
 
-    let tt_msg = MSG_TOPTRUMPS_PROMPT;
+
     if (trumps_start) { tt_msg = MSG_TOPTRUMPS_INTRO1 + HERO_ARRAY[SENDERS[custom_id][16]][0] + MSG_TOPTRUMPS_INTRO2 };
 
+    tt_msg = '';
     if (chicken_dinner){
       if (SENDERS[custom_id][14] > 0) {
         tt_msg = "Wins so far, " + SENDERS[custom_id][14] + ".\n" + tt_msg;
         // Win phrases array TO DO
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> newScore: " + newScore);
-        if (newScore == 101) { tt_msg = "Lucky, you won the toss of a coin with the mystery value! " + tt_msg }
+        if (newScore == 101) { tt_msg = "🍀 Lucky, you won the toss of a coin with the mystery value! " + tt_msg }
         // Gamble phrases array TO DO
       }; // if (SENDERS[custom_id][14]
 
@@ -3770,7 +3774,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       console.log("DEBUG [playTopTrumps]> Losing character, end of game");
       tt_msg = "Sorry, no luck with " + HERO_STATS[trump_category] + ", game over."
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> newScore: " + newScore);
-      if (newScore == -1) { tt_msg = "Oops, you lost the toss of a coin with the mystery value! " + tt_msg }
+      if (newScore == -1) { tt_msg = "👎 Oops, you lost the toss of a coin with the mystery value! " + tt_msg }
 
       deliverStackTT(eventTT,tt_stats,tt_msg,tt_url);
       // Need also to deliver card WITHOUT prompt TO DO
