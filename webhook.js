@@ -3754,7 +3754,6 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
 
     if (trumps_start) { tt_msg = MSG_TOPTRUMPS_INTRO1 + HERO_ARRAY[SENDERS[custom_id][16]][0] + MSG_TOPTRUMPS_INTRO2 };
 
-    tt_msg = '';
     if (chicken_dinner){
       if (SENDERS[custom_id][14] > 0) {
         tt_msg = "Wins so far, " + SENDERS[custom_id][14] + ".\n" + tt_msg;
