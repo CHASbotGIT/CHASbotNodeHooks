@@ -3647,7 +3647,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
   let trumps_start = SENDERS[custom_id][19];
   let cat_or_char = SENDERS[custom_id][20];
   // Weed out all of the previously played possibles
-  let foundRepeat = false;
+  /*let foundRepeat = false;
   if (playTT.length > 0) {
     let playTT_loop = 0;
     let possibleRepeat = 0;
@@ -3659,9 +3659,9 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
         console.log("DEBUG [playTopTrumps]> Repeated character removed: " + possibleRepeat);
       }; // if (trumps_played
     }; // for (playTT_loop = 0
-  }; // if (playTT.length
+  }; // if (playTT.length*/
 
-  console.table(playTT);
+  //console.table(playTT);
   console.table(trumps_played);
   // TO DO - Trapping missing category
 
