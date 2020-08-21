@@ -3656,6 +3656,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     let loopLength = playTT.length;
     for (playTT_loop = 0; playTT_loop < loopLength; playTT_loop++) {
       loopDown = loopLength - 1 - playTT_loop; // reverse through array
+      colsole.log[">>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + loopDown]
       possibleRepeat = playTT[loopDown];
       if (trumps_played.includes(possibleRepeat)) { // identify if any of the possible trunps have been played before
         playTT.splice[loopDown,1]; // remove any previously played trumps from the possibles
