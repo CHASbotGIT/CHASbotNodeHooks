@@ -3647,21 +3647,26 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
   let trumps_start = SENDERS[custom_id][19];
   let cat_or_char = SENDERS[custom_id][20];
   // Weed out all of the previously played possibles
-  /*let foundRepeat = false;
+
+  [0,1,2,3,4] length 5  - loop 0,1,2,3,4 length -1 - loop 5
+  let foundRepeat = false;
   if (playTT.length > 0) {
     let playTT_loop = 0;
     let possibleRepeat = 0;
-    for (playTT_loop = 0; playTT_loop < playTT.length; playTT_loop++) {
-      possibleRepeat = playTT[playTT_loop];
+    let loopDown = 0;
+    let loopLength = playTT.length;
+    for (playTT_loop = 0; playTT_loop < loopLength; playTT_loop++) {
+      loopDown = loopLength - 1 - playTT_loop; // reverse through array
+      possibleRepeat = playTT[loopDown];
       if (trumps_played.includes(possibleRepeat)) { // identify if any of the possible trunps have been played before
         playTT.splice[playTT_loop,1]; // remove any previously played trumps from the possibles
         foundRepeat = true;
         console.log("DEBUG [playTopTrumps]> Repeated character removed: " + possibleRepeat);
       }; // if (trumps_played
     }; // for (playTT_loop = 0
-  }; // if (playTT.length*/
+  }; // if (playTT.length
 
-  //console.table(playTT);
+  console.table(playTT);
   console.table(trumps_played);
   // TO DO - Trapping missing category
 
