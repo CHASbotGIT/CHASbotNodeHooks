@@ -3662,7 +3662,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
   }; // if (playTT.length
 
   console.table(playTT);
-
+  console.table(trumps_played);
   // TO DO - Trapping missing category
 
 
