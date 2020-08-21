@@ -3740,7 +3740,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
         chicken_dinner = false;
       }; // if (newScore >= oldScore)
     }; // if (!trumps_start)
-    //console.log("DEBUG [playTopTrumps]> Comparison character " + HERO_ARRAY[trump_tobeat][0] + ", with value: " + oldScore);
+    if (!trumps_start) { console.log("DEBUG [playTopTrumps]> Comparison character " + HERO_ARRAY[trump_tobeat][0] + ", with value: " + oldScore) };
     SENDERS[custom_id][20] = 'category'; // set cat_ot_char
     SENDERS[custom_id][16] = SENDERS[custom_id][17]; // new card becomes old trump_tobeat
     if (trumps_start) { tt_msg = MSG_TOPTRUMPS_INTRO1 + HERO_ARRAY[SENDERS[custom_id][16]][0] + MSG_TOPTRUMPS_INTRO2 };
@@ -3758,7 +3758,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     } else {
       console.log("DEBUG [playTopTrumps]> Losing character " + HERO_ARRAY[SENDERS[custom_id][16]][0] + ", GAME OVER, losing value: " + newScore);
-      tt_msg = "Sorry, no luck with " + HERO_STATS[trump_category] + ", game over."
+      tt_msg = "Sorry, no luck with " + HERO_STATS[trump_category] + ", game over... you won " + SENDERS[custom_id][14] + " in a row.";
       if (newScore == -1) { tt_msg = "👎 Oops, you lost the toss of a coin with the mystery value! " + tt_msg }
       deliverStackTT(eventTT,tt_stats,tt_msg,tt_url,true);
       inPlayClean('trumps',custom_id); // clean
