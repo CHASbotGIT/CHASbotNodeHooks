@@ -3704,7 +3704,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     //if (trumps_played[tt_id]) {responseTT = responseTT + " (picked again!)"};
 
 
-    SENDERS[custom_id][15][tt_id].push('true');
+    SENDERS[custom_id][15].push(tt_id);
     //SENDERS[custom_id][15][tt_id] = true; // sets true in id array = log of played id
     //SENDERS[custom_id][16] = tt_id; // sets the id represent the card that is in play
     //console.table(SENDERS[custom_id][15]);
