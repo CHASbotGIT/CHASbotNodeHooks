@@ -3683,8 +3683,9 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     } else { // category has been selected
       if (trump_category == -1) { // invalid category
+        console.log("DEBUG [playTopTrumps]> No valid character picked");
         tt_msg = "🤖 Oops, I wasn't able to recognise that category. Try again by picking a category bubble (no need to type):";
-        deliverCategory_playTrumps(eventSend,tt_msg);
+        deliverCategory_playTrumps(eventTT,tt_msg);
         return;
         //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // [  PROBLEM WITH SETTING A CATEGORY - LOOKING FOR ANOTHER ]
