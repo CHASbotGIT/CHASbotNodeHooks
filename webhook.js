@@ -855,7 +855,7 @@ function inPlayClean(in_play,index_id) {
     SENDERS[index_id][17] = 0;          // trump_picked
     SENDERS[index_id][18] = '';         // trump_category
     SENDERS[index_id][19] = true;       // trumps_start
-    SENDERS[index_id][20] = 'category'; // cat_or_char
+    SENDERS[index_id][20] = 'character'; // cat_or_char
   };
   SENDERS[index_id][in_play_index] = false;
 }
@@ -3774,3 +3774,10 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     // TO DO
   };
 }
+// TO DO - restart after loss
+// DEBUG [playTopTrumps]> Valid character picked
+// TypeError: Cannot read property '0' of undefined
+// at playTopTrumps (/app/webhook.js:3695:35)
+
+// reatart after stop - on character/on category
+// category - seems OK
