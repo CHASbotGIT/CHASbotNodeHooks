@@ -1423,7 +1423,7 @@ CHASbot.post('/webhook', (req, res) => {
           let hero_who = '';
           if (inPlay('trumps',sender_index)) {
             // in play - looking for either category OR looking for character name
-            console.table(SENDERS[sender_index]);
+            //console.table(SENDERS[sender_index]);
             if (SENDERS[sender_index][20] == 'category') {
               console.log("DEBUG [postWebhook]> In play, trumps, looking for category");
               let tt_category_pick = -1;
@@ -3186,11 +3186,11 @@ function lookupHero (eventHero,heroWho){ // IN DEV
             console.log("DEBUG [lookupHero]> Hero array is empty");
           }; // if (HERO_ARRAY
           playTopTrumps(eventHero,heroMatches); // After API i.e. may be results
-          console.table(heroMatches);
+          //console.table(heroMatches);
         }); // apiHero(heroWho
       } else {
         playTopTrumps(eventHero,heroMatches); // After stored successful i.e. will be results
-        console.table(heroMatches);
+        //console.table(heroMatches);
       } // if (heroMatches
     }; // if (HERO_ARRAY.length != 0
   } else { // category
@@ -3637,6 +3637,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
   let sender = eventTT.sender.id;
   let tt_msg = MSG_TOPTRUMPS_PROMPT;
   console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
+  console.table(playTT);
   let custom_id = inPlayID(sender);
   //let trumps_score = SENDERS[custom_id][14];
   let trumps_played = SENDERS[custom_id][15];
@@ -3659,6 +3660,10 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       }; // if (trumps_played
     }; // for (playTT_loop = 0
   }; // if (playTT.length
+
+
+  // TO DO - Trapping missing category
+
 
   if (playTT.length == 0) {
     if (cat_or_char == 'character') {
@@ -3687,7 +3692,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     }; // if (cat_or_char
   } else if (playTT.length == 1 && cat_or_char == 'character') {
 
-    console.table(trumps_played);
+    //console.table(trumps_played);
 
     let chicken_dinner = true;
     let tt_id = playTT[0];
@@ -3698,7 +3703,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     //if (trumps_played[tt_id]) {responseTT = responseTT + " (picked again!)"};
     SENDERS[custom_id][15][tt_id] = true; // sets true in id array = log of played id
     //SENDERS[custom_id][16] = tt_id; // sets the id represent the card that is in play
-    console.table(SENDERS[custom_id][15]);
+    //console.table(SENDERS[custom_id][15]);
     let tt_url = HERO_ARRAY[tt_id][7];
     console.log("DEBUG [playTopTrumps]> Image: " + tt_url);
     let tt_stats = HERO_ARRAY[tt_id][0] + " ID: " + tt_id + "\n" +
