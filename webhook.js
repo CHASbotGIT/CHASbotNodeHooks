@@ -2018,15 +2018,17 @@ function deliverMetricsTT(eventSend,metricsTT,pictureTT,callback){ // call 2nd
     callback(); // To deliverStackTT
   });
 }
-function deliverStackTT(eventSend,metricsTT,msgTT,pictureTT){ // Call 1st
+function deliverStackTT(eventSend,metricsTT,msgTT,pictureTT,game_over){ // Call 1st
   deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   let custom_id = inPlayID(sender);
   deliverMetricsTT(eventSend,metricsTT,pictureTT, async function(){
     // Sent 3rd
-    await deliverPause(Q_DELIVERY*1000);
-    deliverCategory_playTrumps(eventSend,msgTT); // Category choice peompt and options
-    SENDERS[custom_id][19] = false; // No lomger just started
+    if (!game_over) {
+      await deliverPause(Q_DELIVERY*1000);
+      deliverCategory_playTrumps(eventSend,msgTT); // Category choice peompt and options
+      SENDERS[custom_id][19] = false; // No lomger just started}
+  }; // f (!game_over)
   });
 }
 function deliverCategory_playTrumps(eventSend,msgTT) {
@@ -3639,10 +3641,8 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
   console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
   //console.table(playTT);
   let custom_id = inPlayID(sender);
-  //let trumps_score = SENDERS[custom_id][14];
   let trumps_played = SENDERS[custom_id][15];
   let trump_tobeat = SENDERS[custom_id][16];
-  //let trump_picked = SENDERS[custom_id][17];
   let trump_category = SENDERS[custom_id][18];
   let trumps_start = SENDERS[custom_id][19];
   let cat_or_char = SENDERS[custom_id][20];
@@ -3663,11 +3663,6 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       }; // if (trumps_played
     }; // for (playTT_loop = 0
   }; // if (playTT.length
-  //console.table(playTT);
-  //console.table(trumps_played);
-
-  // TO DO - Trapping missing category
-
   if (playTT.length == 0) {
     if (cat_or_char == 'character') {
       console.log("DEBUG [playTopTrumps]> No hero is identified when character is in scope");
@@ -3704,22 +3699,11 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       }; // if (trump_category
     }; // if (cat_or_char
   } else if (playTT.length == 1 && cat_or_char == 'character') {
-
-    //console.table(trumps_played);
-
     let chicken_dinner = true;
     let tt_id = playTT[0];
-    SENDERS[custom_id][17] = tt_id;
-
-    //let responseTT = "Goldilocks: " + tt_id;
+    SENDERS[custom_id][17] = tt_id; // Set trump_picked
+    SENDERS[custom_id][15].push(tt_id); // Add picked card into trumps_played array
     console.log("DEBUG [playTopTrumps]> Single ID: " + tt_id);
-    //if (trumps_played[tt_id]) {responseTT = responseTT + " (picked again!)"};
-
-
-    SENDERS[custom_id][15].push(tt_id);
-    //SENDERS[custom_id][15][tt_id] = true; // sets true in id array = log of played id
-    //SENDERS[custom_id][16] = tt_id; // sets the id represent the card that is in play
-    //console.table(SENDERS[custom_id][15]);
     let tt_url = HERO_ARRAY[tt_id][7];
     console.log("DEBUG [playTopTrumps]> Image: " + tt_url);
     let tt_stats = HERO_ARRAY[tt_id][0] + " ID: " + tt_id + "\n" +
@@ -3731,9 +3715,6 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       pad(HERO_ARRAY[tt_id][6],3) + " = ⚔️ Combat"
     console.log("DEBUG [playTopTrumps]> Stats: " + tt_stats);
     tt_stats = strReplaceAll(tt_stats, 'null', ' ❓ ');
-
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>> Category: " + HERO_STATS[trump_category]);
-
     let oldScore = 0;
     let newScore = 0;
     if (!trumps_start) {
@@ -3751,60 +3732,43 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
         };
         console.log("DEBUG [playTopTrumps]> One of the values is null, so picked either [0]=Lose [1]=Win: " + binary_pick);
       }; // if ( oldScore == 'NaN'
-      if (newScore >= oldScore) {
-        SENDERS[custom_id][14] = SENDERS[custom_id][14] + 1;
-        console.log('Winner winner chicken dinner: ' + SENDERS[custom_id][14]);
-        // Add a winning comment
-
-      } else { // else
+      if (newScore >= oldScore) { // win
+        SENDERS[custom_id][14] = SENDERS[custom_id][14] + 1; // Increase winning cards in a row tally
+      } else { // lose
         chicken_dinner = false;
-        console.log('Looooooooooooooooserrrrrrr!!');
-        // End game events
-
       }; // if (newScore >= oldScore)
-      console.log(">>>>>>>>>>OLD>>>>>>>>>>> " + HERO_ARRAY[trump_tobeat][0] + " = " + oldScore);
-    }; // if (!trumps_start) {
-    console.log(">>>>>>>>>>NEW>>>>>>>>>>> " + HERO_ARRAY[tt_id][0] + " = " + HERO_ARRAY[tt_id][trump_category+1]);
-
-    //let test_add = parseInt(HERO_ARRAY[tt_id][1]) + parseInt(HERO_ARRAY[tt_id][2]);
-    //console.log("DEBUG [playTopTrumps]> Stats: " + test_add);
-    SENDERS[custom_id][20] = 'category';
-    SENDERS[custom_id][16] = SENDERS[custom_id][17]; // new card becomes old
-    //SENDERS[custom_id][15].push(SENDERS[custom_id][16],true); // old card stored in list
-
+    }; // if (!trumps_start)
+    console.log("DEBUG [playTopTrumps]> Comparison character " + HERO_ARRAY[trump_tobeat][0]+ ", with value: " + oldScore);
+    SENDERS[custom_id][20] = 'category'; // set cat_ot_char
+    SENDERS[custom_id][16] = SENDERS[custom_id][17]; // new card becomes old trump_tobeat
     if (trumps_start) { tt_msg = MSG_TOPTRUMPS_INTRO1 + HERO_ARRAY[SENDERS[custom_id][16]][0] + MSG_TOPTRUMPS_INTRO2 };
-
     if (chicken_dinner){
       if (SENDERS[custom_id][14] > 0) {
         tt_msg = "Wins so far, " + SENDERS[custom_id][14] + ".\n" + tt_msg;
         // Win phrases array TO DO
-        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> newScore: " + newScore);
         if (newScore == 101) { tt_msg = "🍀 Lucky, you won the toss of a coin with the mystery value! " + tt_msg }
         // Gamble phrases array TO DO
       }; // if (SENDERS[custom_id][14]
-
-      deliverStackTT(eventTT,tt_stats,tt_msg,tt_url);
-      console.log("DEBUG [playTopTrumps]> Winning character, pick category");
+      deliverStackTT(eventTT,tt_stats,tt_msg,tt_url,false);
+      console.log("DEBUG [playTopTrumps]> Winning character " + HERO_ARRAY[tt_id][0] + ", pick category, winning value: " + newScore);
       //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       // [ WINNING TRUMPS CHARACTER PICKED - PICK AGAIN ]
       // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     } else {
-      console.log("DEBUG [playTopTrumps]> Losing character, end of game");
+      console.log("DEBUG [playTopTrumps]> Losing character " + HERO_ARRAY[tt_id][0] + ", GAME OVER, losing value: " + newScore);
       tt_msg = "Sorry, no luck with " + HERO_STATS[trump_category] + ", game over."
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> newScore: " + newScore);
       if (newScore == -1) { tt_msg = "👎 Oops, you lost the toss of a coin with the mystery value! " + tt_msg }
-
-      deliverStackTT(eventTT,tt_stats,tt_msg,tt_url);
-      // Need also to deliver card WITHOUT prompt TO DO
-
-      //deliverText(eventTT,tt_stats,false,'');
-      // Loser phrases array TO DO
-      // Reset to start
+      deliverStackTT(eventTT,tt_stats,tt_msg,tt_url,true);
+      inPlayClean('trumps',custom_id}; // clean
+      inPlayPause(sender_index); // Pause all in-play...
+      //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // [ LOSING TRUMPS CHARACTER PICKED - GAME OVER ]
+      // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     };
     return;
   } else {
     deliverText(eventTT,"Too many to pick from: " + playTT.length,false,'');
     // Deal with multiples
-
+    // TO DO
   };
 }
