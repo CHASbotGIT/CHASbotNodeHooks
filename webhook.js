@@ -3637,7 +3637,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
   let sender = eventTT.sender.id;
   let tt_msg = MSG_TOPTRUMPS_PROMPT;
   console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
-  console.table(playTT);
+  //console.table(playTT);
   let custom_id = inPlayID(sender);
   //let trumps_score = SENDERS[custom_id][14];
   let trumps_played = SENDERS[custom_id][15];
@@ -3647,7 +3647,6 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
   let trumps_start = SENDERS[custom_id][19];
   let cat_or_char = SENDERS[custom_id][20];
   // Weed out all of the previously played possibles
-
   let foundRepeat = false;
   if (playTT.length > 0) {
     let playTT_loop = 0;
@@ -3656,7 +3655,6 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     let loopLength = playTT.length;
     for (playTT_loop = 0; playTT_loop < loopLength; playTT_loop++) {
       loopDown = loopLength - 1 - playTT_loop; // reverse through array
-      console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" + loopDown);
       possibleRepeat = playTT[loopDown];
       if (trumps_played.includes(possibleRepeat)) { // identify if any of the possible trunps have been played before
         playTT.splice(loopDown,1); // remove any previously played trumps from the possibles
@@ -3665,11 +3663,10 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       }; // if (trumps_played
     }; // for (playTT_loop = 0
   }; // if (playTT.length
+  //console.table(playTT);
+  //console.table(trumps_played);
 
-  console.table(playTT);
-  console.table(trumps_played);
   // TO DO - Trapping missing category
-
 
   if (playTT.length == 0) {
     if (cat_or_char == 'character') {
@@ -3685,16 +3682,25 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       // [ PROBLEM WITH SETTING A CHARACTER - LOOKING FOR ANOTHER ]
       // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     } else { // category has been selected
-      console.log("DEBUG [playTopTrumps]> No hero is identified BUT is not required");
-      SENDERS[custom_id][20] = 'character';
-      tt_msg = "Now that you have picked " + HERO_STATS[trump_category] +
-        " as your category, name a Superhero or Villain you think will trump " +
-        HERO_ARRAY[trump_tobeat][0] + "?";
-      deliverText(eventTT,tt_msg,false,'');
-      return;
-      //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      // [ TRUMPS CATEGORY SET PROPERLY - LOOKING FOR CHARACTER NEXT ]
-      // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      if (trump_category == -1) { // invalid category
+        tt_msg = "🤖 Oops, I wasn't able to recognise that category. Try again by picking a category bubble (no need to type):";
+        deliverCategory_playTrumps(eventSend,tt_msg);
+        return;
+        //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // [  PROBLEM WITH SETTING A CATEGORY - LOOKING FOR ANOTHER ]
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      } else { // valid category
+        console.log("DEBUG [playTopTrumps]> Valid character picked");
+        SENDERS[custom_id][20] = 'character';
+        tt_msg = "Now that you have picked " + HERO_STATS[trump_category] +
+          " as your category, name a Superhero or Villain you think will trump " +
+          HERO_ARRAY[trump_tobeat][0] + "?";
+        deliverText(eventTT,tt_msg,false,'');
+        return;
+        //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        // [ TRUMPS CATEGORY SET PROPERLY - LOOKING FOR CHARACTER NEXT ]
+        // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      }; // if (trump_category
     }; // if (cat_or_char
   } else if (playTT.length == 1 && cat_or_char == 'character') {
 
@@ -3765,7 +3771,6 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
     SENDERS[custom_id][16] = SENDERS[custom_id][17]; // new card becomes old
     //SENDERS[custom_id][15].push(SENDERS[custom_id][16],true); // old card stored in list
 
-
     if (trumps_start) { tt_msg = MSG_TOPTRUMPS_INTRO1 + HERO_ARRAY[SENDERS[custom_id][16]][0] + MSG_TOPTRUMPS_INTRO2 };
 
     if (chicken_dinner){
@@ -3790,8 +3795,6 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
 
       deliverStackTT(eventTT,tt_stats,tt_msg,tt_url);
       // Need also to deliver card WITHOUT prompt TO DO
-
-      // PLAYED BEFORE ????????????????? WARNING
 
       //deliverText(eventTT,tt_stats,false,'');
       // Loser phrases array TO DO
