@@ -3759,7 +3759,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       tt_msg = "Sorry, no luck with " + HERO_STATS[trump_category] + ", game over."
       if (newScore == -1) { tt_msg = "👎 Oops, you lost the toss of a coin with the mystery value! " + tt_msg }
       deliverStackTT(eventTT,tt_stats,tt_msg,tt_url,true);
-      inPlayClean('trumps',custom_id}; // clean
+      inPlayClean('trumps',custom_id); // clean
       inPlayPause(sender_index); // Pause all in-play...
       //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       // [ LOSING TRUMPS CHARACTER PICKED - GAME OVER ]
