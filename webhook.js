@@ -885,6 +885,7 @@ function inPlayPause(index_id) {
   SENDERS[index_id][3] = false;
   SENDERS[index_id][4] = false;
   SENDERS[index_id][10] = 0;
+  SENDERS[index_id][19] = true;
 }
 function inPlayID (id_to_find) {
   let sender_index = -1;
@@ -1456,24 +1457,15 @@ CHASbot.post('/webhook', (req, res) => {
                 //console.log("DEBUG [postWebhook]> In play, trumps, category: " + HERO_STATS[tt_category_pick]);
               };
             } else if (SENDERS[sender_index][20] == 'character') {
-
-console.table(SENDERS[sender_index][21])
-
               if (SENDERS[sender_index][21].length > 0) { // picking from list
                 let tt_char_pick = -1;
                 for (tt_loop = 0; tt_loop < SENDERS[sender_index][21].length; tt_loop++) {
                   tt_category = SENDERS[sender_index][21][tt_loop];
-
-console.log("££££££££££££££££££££££££££££££££££££££ " + tt_category)
-
                   if (analyse_text.includes(tt_category)) {
                     tt_char_pick = tt_loop;
                     break;
                   };
                 };
-
-console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ " + tt_char_pick)
-
                 if (tt_char_pick == -1) { // not picked from bubble
                   //console.log("DEBUG [postWebhook]> In play, trumps, hero bubble not picked when offered; hero to find: " + hero_who);
                   hero_who = analyse_text;
@@ -1482,7 +1474,7 @@ console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ " + tt_char_pick)
                   SENDERS[sender_index][21] = []; // reset bubbles
                 } else { // valid single pick
                   SENDERS[sender_index][17] = SENDERS[sender_index][21][tt_char_pick];
-                  console.log("DEBUG [postWebhook]> In play, trumps, caharacter ID picked: " + SENDERS[sender_index][17]);
+                  //console.log("DEBUG [postWebhook]> In play, trumps, caharacter ID picked: " + SENDERS[sender_index][17]);
                 };
               } else { // going to search for term
                 hero_who = analyse_text;
@@ -3279,12 +3271,12 @@ function lookupHero (eventHero,heroWho){ //
   let heroWhoMatch = heroWho.toLowerCase();
   let heroWhoStored = '';
   let heroMatches = []; // May be more than one
-
-  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-  console.table(SENDERS[custom_id][21]);
-
-
-  if (SENDERS[custom_id][20]=='character' && SENDERS[custom_id][21].length==0){
+  let bypass = false;
+  // Set to start but previous card played i.e. after stop and restart
+  if (SENDERS[custom_id][19] && SENDERS[custom_id][16] != '') { bypass = true };
+  // Charactrer and no carried over list to pick from
+  if (SENDERS[custom_id][20]=='character' && SENDERS[custom_id][21].length==0) { bypass = true };
+  if (bypass){
     // lookup characters
     if (SENDERS[custom_id][19]) { // trumps_start
       let randomID = numRandomBetween(1,HERO_MAX);
@@ -3770,10 +3762,17 @@ function playTopTrumps(eventTT,playTT){
   let tt_msg = MSG_TOPTRUMPS_PROMPT;
   let custom_id = inPlayID(sender);
   if (SENDERS[custom_id][21].length > 0) { // Character selection - down to single result
+    console.log("DEBUG [playTopTrumps]> Single character picked from bubbles")
     playTT = [];
     playTT.push(SENDERS[custom_id][17]);
     SENDERS[custom_id][21] = [];
   };
+  if (SENDERS[custom_id][19] && SENDERS[custom_id][16] != '') {
+    console.log("DEBUG [playTopTrumps]> Restart from last played character")
+    playTT = [];
+    playTT.push(SENDERS[custom_id][16]);
+    SENDERS[custom_id][19] = false;
+  }
   //console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
   let trumps_played = SENDERS[custom_id][15];
   let trump_tobeat = SENDERS[custom_id][16];
@@ -3921,4 +3920,3 @@ function playTopTrumps(eventTT,playTT){
 }
 // TO DO
 // reatart after stop - on character/on category
-// category - seems OK - improve prompting / re-send las card?
