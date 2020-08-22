@@ -813,15 +813,17 @@ CHASbot.get('/webhook', (req, res) => {
 //         │                                │         │                             │       │                                │            │ 19 │ trumps_start   │ bool
 //         │                                │         │                             │       │                                │            ├────┼────────────────┼───────
 //         │                                │         │                             │       │                                │            │ 20 │ cat_or_char    │ str
+//         │                                │         │                             │       │                                │            ├────┼────────────────┼───────
+//         │                                │         │                             │       │                                │            │ 21 │ trumps_xs      │ array
 // ════════╧════════════════════════════════╧═════════╧═════════════════════════════╧═══════╧════════════════════════════════╧════════════╧════╧════════════════╧═══════*/
 function inPlayNew(index_id,new_sender) {
-  SENDERS[index_id] = [new_sender,                    // 0:id_of_sender
-                       false,false,false,false,       // 1:survey_in_play,2:hangman_in_play,3:rpsls_in_play,4:trumps_in_play
-                       0,0,                           // 5:survey_question,6:quiz_score
-                       0,'',[],                       // 7:hangman_strikes,8:hangman_word,9:hangman_word
-                       0,true,0,0,                    // 10:rpsls_action,11:issue_instructions,12:rpsls_player,13:rpsls_bot
-                       0,[],0,0,'',true,'character']; // 14:trumps_score,15:trumps_played,16:trump_tobeat,17:trump_picked,18:trump_category,19:trumps_start,20:cat_or_char
-}
+  SENDERS[index_id] = [new_sender,                        // 0:id_of_sender
+                       false,false,false,false,           // 1:survey_in_play,2:hangman_in_play,3:rpsls_in_play,4:trumps_in_play
+                       0,0,                               // 5:survey_question,6:quiz_score
+                       0,'',[],                           // 7:hangman_strikes,8:hangman_word,9:hangman_word
+                       0,true,0,0,                        // 10:rpsls_action,11:issue_instructions,12:rpsls_player,13:rpsls_bot
+                       0,[],0,0,'',true,'character',[]];  // 14:trumps_score,15:trumps_played,16:trump_tobeat,17:trump_picked,
+}                                                         //    18:trump_category,19:trumps_start,20:cat_or_char,21:trups_xs
 function inPlay(in_play,index_id) {
   let in_play_index = 0;
   if (in_play == 'survey') { in_play_index = 1 }
@@ -834,28 +836,29 @@ function inPlayClean(in_play,index_id) {
   let in_play_index = 0;
   if (in_play == 'survey') {
     in_play_index = 1
-    SENDERS[index_id][5] = 0; // survey_question
-    SENDERS[index_id][6] = 0; // quiz_score
+    SENDERS[index_id][5] = 0;             // survey_question
+    SENDERS[index_id][6] = 0;             // quiz_score
   } else if (in_play == 'hangman') {
     in_play_index = 2
-    SENDERS[index_id][7] = 0;   // hangman_strikes
-    SENDERS[index_id][8] = '';  // hangman_word
-    SENDERS[index_id][9] = [];  // hangman_array
+    SENDERS[index_id][7] = 0;             // hangman_strikes
+    SENDERS[index_id][8] = '';            // hangman_word
+    SENDERS[index_id][9] = [];            // hangman_array
   } else if (in_play == 'rpsls') {
     in_play_index = 3;
-    SENDERS[index_id][10] = 0;    // rpsls_action
-    SENDERS[index_id][11] = true; // issue_instructions
-    SENDERS[index_id][12] = 0;    // rpsls_player
-    SENDERS[index_id][13] = 0;    // rpsls_bot
+    SENDERS[index_id][10] = 0;            // rpsls_action
+    SENDERS[index_id][11] = true;         // issue_instructions
+    SENDERS[index_id][12] = 0;            // rpsls_player
+    SENDERS[index_id][13] = 0;            // rpsls_bot
   } else if (in_play == 'trumps') {
     in_play_index = 4;
-    SENDERS[index_id][14] = 0;          // trumps_score
-    SENDERS[index_id][15] = [];         // trumps_played
-    SENDERS[index_id][16] = 0;          // trump_tobeat
-    SENDERS[index_id][17] = 0;          // trump_picked
-    SENDERS[index_id][18] = '';         // trump_category
-    SENDERS[index_id][19] = true;       // trumps_start
-    SENDERS[index_id][20] = 'character'; // cat_or_char
+    SENDERS[index_id][14] = 0;            // trumps_score
+    SENDERS[index_id][15] = [];           // trumps_played
+    SENDERS[index_id][16] = 0;            // trump_tobeat
+    SENDERS[index_id][17] = 0;            // trump_picked
+    SENDERS[index_id][18] = '';           // trump_category
+    SENDERS[index_id][19] = true;         // trumps_start
+    SENDERS[index_id][20] = 'character';  // cat_or_char
+    SENDERS[index_id][21] = [];           // trups_xs
   };
   SENDERS[index_id][in_play_index] = false;
 }
@@ -1419,16 +1422,16 @@ CHASbot.post('/webhook', (req, res) => {
 
           // Top Trumps - SuperHero API
           // IN DEV
-          // 14:trumps_score,15:trumps_played,16:trump_tobeat,17:trump_picked,18:trump_category,19:trumps_start,20:cat_or_char
+          // 14:trumps_score,15:trumps_played,16:trump_tobeat,17:trump_picked,18:trump_category,19:trumps_start,20:cat_or_char,21:trups_xs
           let hero_who = '';
           if (inPlay('trumps',sender_index)) {
             // in play - looking for either category OR looking for character name
             //console.table(SENDERS[sender_index]);
+            let tt_loop = 0;
             if (SENDERS[sender_index][20] == 'category') {
               console.log("DEBUG [postWebhook]> In play, trumps, looking for category");
               let tt_category_pick = -1;
               let tt_category = '';
-              let tt_loop = 0;
               for (tt_loop = 0; tt_loop < HERO_STATS.length; tt_loop++) {
                 tt_category = strStandardise(HERO_STATS[tt_loop])[0];
                 if (analyse_text.includes(tt_category)) {
@@ -1443,11 +1446,33 @@ CHASbot.post('/webhook', (req, res) => {
                 console.log("DEBUG [postWebhook]> In play, trumps, category: " + HERO_STATS[tt_category_pick]);
               };
             } else if (SENDERS[sender_index][20] == 'character') {
-              hero_who = analyse_text;
-              hero_who = hero_who.trim();
-              hero_who = strTitleCase(hero_who);
-              console.log("DEBUG [postWebhook]> In play, trumps, hero to find: " + hero_who);
-            }; // if (SENDERS[sender_index][20]
+              if (SENDERS[sender_index][21].length > 0) { // picking from list
+                console.table(SENDERS[sender_index][21]);
+                let tt_char_pick = -1;
+                for (tt_loop = 0; tt_loop < SENDERS[sender_index][21].length; tt_loop++) {
+                  tt_category = SENDERS[sender_index][21][tt_loop];
+                  if (analyse_text.includes(tt_category)) {
+                    tt_char_pick = tt_loop;
+                    break;
+                  };
+                };
+                if (tt_char_pick == -1) { // not picked from bubble
+                  console.log("DEBUG [postWebhook]> In play, trumps, hero bubble not picked when offered; hero to find: " + hero_who);
+                  hero_who = analyse_text;
+                  hero_who = hero_who.trim();
+                  hero_who = strTitleCase(hero_who);
+                  SENDERS[sender_index][21] = []; // reset bubbles
+                } else { // valid single pick
+                  SENDERS[sender_index][17] = SENDERS[sender_index][21].[tt_char_pick];
+                  console.log("DEBUG [postWebhook]> In play, trumps, caharacter ID picked: " + SENDERS[sender_index][17]);
+                };
+              } else { // going to search for term
+                hero_who = analyse_text;
+                hero_who = hero_who.trim();
+                hero_who = strTitleCase(hero_who);
+                console.log("DEBUG [postWebhook]> In play, trumps, hero to find: " + hero_who);
+              }; // if (SENDERS[sender_index][21] = array of possibles
+            }; // if (SENDERS[sender_index][20] = character
           }; // if (inPlay('trumps'
           position_in_analyse_text = analyse_text.search(TRIGGER_TOPTRUMPS) + 1;
           if (position_in_analyse_text > 0){
@@ -2026,15 +2051,15 @@ function deliverStackTT(eventSend,metricsTT,msgTT,pictureTT,game_over){ // Call 
     // Sent 3rd
     if (!game_over) {
       await deliverPause(Q_DELIVERY*1000);
-      deliverCategory_playTrumps(eventSend,msgTT); // Category choice peompt and options
+      deliverCategoryTT(eventSend,msgTT); // Category choice peompt and options
       SENDERS[custom_id][19] = false; // No lomger just started}
     } else { // f (!game_over)
       deliverText(eventSend,msgTT,false,'');
     };//
   });
 }
-function deliverCategory_playTrumps(eventSend,msgTT) {
-  //console.log("DEBUG [deliverCategory_playTrumps]> In Progress");
+function deliverCategoryTT(eventSend,msgTT) {
+  //console.log("DEBUG [deliverCategoryTT]> In Progress");
   deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   let custom_id = inPlayID(sender);
@@ -2059,25 +2084,109 @@ function deliverCategory_playTrumps(eventSend,msgTT) {
       { content_type:"text",
         title: HERO_STATS[5],
         payload:"<POSTBACK_PAYLOAD>" }]};
-    request({
-      uri: URL_CHAT_ENDPOINT,
-      qs: {access_token: KEY_PAGE_ACCESS},
-      method: 'POST',
-      json: {
-        messaging_type: 'RESPONSE',
-        recipient: {id: sender},
-        message: categoryTemplate
+  request({
+    uri: URL_CHAT_ENDPOINT,
+    qs: {access_token: KEY_PAGE_ACCESS},
+    method: 'POST',
+    json: {
+      messaging_type: 'RESPONSE',
+      recipient: {id: sender},
+      message: categoryTemplate
     }
   }, function (error, response) {
     if (error) {
-      console.log("ERROR [deliverCategory_playTrumps]> Error sending survey message: ", error);
+      console.log("ERROR [deliverCategoryTT]> Error sending survey message: ", error);
     } else if (response.body.error) {
-      console.log("ERROR [deliverCategory_playTrumps]> Undefined: ", response.body.error);
+      console.log("ERROR [deliverCategoryTT]> Undefined: ", response.body.error);
     }
   }); // request
-  if (inPlay('survey',custom_id)) {
-    //SENDERS[custom_id][5] = survey_question_number + 1
-  };
+}
+function deliverCharChoiceTT(eventSend,msgTT) {
+  //console.log("DEBUG [deliverCharChoiceTT]> In Progress");
+  deliverThinking(eventSend,'off');
+  let sender = eventSend.sender.id;
+  let custom_id = inPlayID(sender);
+  let charBubbles = SENDERS[21].length;
+  let charsTemplate = '';
+  switch (charBubbles) {
+    case 2:
+      charsTemplate = {
+        text: msgTT,
+        quick_replies:[
+              { content_type:"text",
+                title: HERO_ARRAY[SENDERS[21][0]][0] + ' ID: ' + SENDERS[21][0],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: HERO_ARRAY[SENDERS[21][1]][0] + ' ID: ' + SENDERS[21][1],
+                payload:"<POSTBACK_PAYLOAD>" }]};
+      break;
+    case 3:
+      charsTemplate = {
+        text: msgTT,
+        quick_replies:[
+              { content_type:"text",
+                title: HERO_ARRAY[SENDERS[21][0]][0] + ' ID: ' + SENDERS[21][0],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: HERO_ARRAY[SENDERS[21][1]][0] + ' ID: ' + SENDERS[21][1],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: HERO_ARRAY[SENDERS[21][2]][0] + ' ID: ' + SENDERS[21][2],
+                payload:"<POSTBACK_PAYLOAD>" }]};
+      break;
+    case 4:
+      charsTemplate = {
+        text: msgTT,
+        quick_replies:[
+              { content_type:"text",
+                title: HERO_ARRAY[SENDERS[21][0]][0] + ' ID: ' + SENDERS[21][0],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: HERO_ARRAY[SENDERS[21][1]][0] + ' ID: ' + SENDERS[21][1],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: HERO_ARRAY[SENDERS[21][2]][0] + ' ID: ' + SENDERS[21][2],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: HERO_ARRAY[SENDERS[21][3]][0] + ' ID: ' + SENDERS[21][3],
+                payload:"<POSTBACK_PAYLOAD>" }]};
+      break;
+    case 5:
+      charsTemplate = {
+        text: msgTT,
+        quick_replies:[
+              { content_type:"text",
+                title: HERO_ARRAY[SENDERS[21][0]][0] + ' ID: ' + SENDERS[21][0],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: HERO_ARRAY[SENDERS[21][1]][0] + ' ID: ' + SENDERS[21][1],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: HERO_ARRAY[SENDERS[21][2]][0] + ' ID: ' + SENDERS[21][2],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: HERO_ARRAY[SENDERS[21][3]][0] + ' ID: ' + SENDERS[21][3],
+                payload:"<POSTBACK_PAYLOAD>" },
+              { content_type:"text",
+                title: HERO_ARRAY[SENDERS[21][4]][0] + ' ID: ' + SENDERS[21][4],
+                payload:"<POSTBACK_PAYLOAD>" }]};
+  }; // Switch
+  request({
+    uri: URL_CHAT_ENDPOINT,
+    qs: {access_token: KEY_PAGE_ACCESS},
+    method: 'POST',
+    json: {
+      messaging_type: 'RESPONSE',
+      recipient: {id: sender},
+      message: charsTemplate
+    }
+  }, function (error, response) {
+    if (error) {
+      console.log("ERROR [deliverCharChoiceTT]> Error sending survey message: ", error);
+    } else if (response.body.error) {
+      console.log("ERROR [deliverCharChoiceTT]> Undefined: ", response.body.error);
+    }
+  }); // request
 }
 
 function deliverQuestion_playSurvey(eventSend) {
@@ -3139,14 +3248,14 @@ function apiHero (heroWho,randomPick,callback){ // IN DEV
 // ====================================
 function lookupHero (eventHero,heroWho){ // IN DEV
   // 14:trumps_score,15:trumps_played,16:trump_tobeat,17:trump_picked,
-  // 8:trump_category,19:trumps_start,20:cat_or_char
+  // 8:trump_category,19:trumps_start,20:cat_or_char,21:trups_xs
   console.log("DEBUG [lookupHero]> Hero to find: " + heroWho);
   let sender = eventHero.sender.id;
   let custom_id = inPlayID(sender);
   let heroWhoMatch = heroWho.toLowerCase();
   let heroWhoStored = '';
   let heroMatches = []; // May be more than one
-  if (SENDERS[custom_id][20]=='character'){
+  if (SENDERS[custom_id][20]=='character' && SENDERS[custom_id][21].length==0){
     // lookup characters
     if (SENDERS[custom_id][19]) { // trumps_start
       let randomID = numRandomBetween(1,HERO_MAX);
@@ -3636,10 +3745,15 @@ function playRPSLS(eventRPSLS,pickPlayer) {
 
 function playTopTrumps(eventTT,playTT){ // IN DEV
   // 14:trumps_score,15:trumps_played,16:trump_tobeat,17:trump_picked
-  // 18:trump_category,19:trumps_start,20:cat_or_char
+  // 18:trump_category,19:trumps_start,20:cat_or_char,21:trups_xs
   // Preceded by lookupHero
   let sender = eventTT.sender.id;
   let tt_msg = MSG_TOPTRUMPS_PROMPT;
+  if (SENDERS[custom_id][21].length > 0) { // Character selection - down to single result
+    playTT = [];
+    playTT.push(SENDERS[custom_id][17]);
+    SENDERS[custom_id][21] = [];
+  };
   console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
   //console.table(playTT);
   let custom_id = inPlayID(sender);
@@ -3682,7 +3796,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       if (trump_category == -1) { // invalid category
         console.log("DEBUG [playTopTrumps]> No valid character picked");
         tt_msg = "🤖 Oops, I wasn't able to recognise that category. Try again by picking a category bubble (no need to type):";
-        deliverCategory_playTrumps(eventTT,tt_msg);
+        deliverCategoryTT(eventTT,tt_msg);
         return;
         //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // [  PROBLEM WITH SETTING A CATEGORY - LOOKING FOR ANOTHER ]
@@ -3691,7 +3805,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
         console.log("DEBUG [playTopTrumps]> Valid character picked");
         SENDERS[custom_id][20] = 'character';
         tt_msg = "Now that you have picked " + HERO_STATS[trump_category] +
-          " as your category, name a Superhero or Villain you think will trump " +
+          " as your category, name a hero or villain you think will trump " +
           HERO_ARRAY[trump_tobeat][0] + "?";
         deliverText(eventTT,tt_msg,false,'');
         return;
@@ -3753,9 +3867,9 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       }; // if (SENDERS[custom_id][14]
       deliverStackTT(eventTT,tt_stats,tt_msg,tt_url,false);
       console.log("DEBUG [playTopTrumps]> Winning character " + HERO_ARRAY[SENDERS[custom_id][16]][0] + ", pick category, winning value: " + newScore);
-      //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      // [ WINNING TRUMPS CHARACTER PICKED - PICK AGAIN ]
-      // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // [ WINNING TRUMP CHARACTER PICKED - PICK AGAIN ]
+      // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     } else {
       console.log("DEBUG [playTopTrumps]> Losing character " + HERO_ARRAY[SENDERS[custom_id][16]][0] + ", GAME OVER, losing value: " + newScore);
       tt_msg = "Sorry, no luck with " + HERO_STATS[trump_category] + ", game over... you won " + SENDERS[custom_id][14] + " in a row.";
@@ -3763,21 +3877,36 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
       deliverStackTT(eventTT,tt_stats,tt_msg,tt_url,true);
       inPlayClean('trumps',custom_id); // clean
       inPlayPause(custom_id); // Pause all in-play...
-      //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      // [ LOSING TRUMPS CHARACTER PICKED - GAME OVER ]
-      // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      // [ LOSING TRUMP CHARACTER PICKED - GAME OVER ]
+      // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     };
     return;
-  } else {
-    deliverText(eventTT,"Too many to pick from: " + playTT.length,false,'');
-    // Deal with multiples
+  } else if (playTT.length > 1 && cat_or_char == 'character'){
+    console.log("DEBUG [playTopTrumps]> Too many charactrers from search: " + playTT.length);
+    SENDERS[custom_id][21] = playTT; // Copy the possibles array
+    tt_msg = "🤖 Can't be sure who you meant, I found " + playTT.length " possibilities.";
+    if (playTT.length > 5) { tt_msg = tt_msg + " I've cut it down to five." }
+    tt_msg = tt_msg + " Pick one from the selection.";
+    deliverCharChoiceTT(eventTT,tt_msg);
     // TO DO
+    //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // [ TOO MANY RESULTS - PROMPT TO CHOOSE ]
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   };
 }
 // TO DO - restart after loss
-// DEBUG [playTopTrumps]> Valid character picked
-// TypeError: Cannot read property '0' of undefined
-// at playTopTrumps (/app/webhook.js:3695:35)
+// OK
 
+// TO DO - INFO Logging
 // reatart after stop - on character/on category
-// category - seems OK
+// category - seems OK - improve prompting / re-send las card?
+/*Multiples search results
+Store up to five in SENDERS (after weeding)
+From 2 to 5 - give names and IDs
+Re-use survey/quiz template?
+check against array
+(NB should all be stored from search - shouldn’t need API call)
+If not in array and some value entered instead (e.g. possible valid character) - search by name
+If valid (i.e. picked a bubble) - search by ID
+Search by name could draw a blank...*/
