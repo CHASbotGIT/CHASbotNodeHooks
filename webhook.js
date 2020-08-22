@@ -1456,6 +1456,9 @@ CHASbot.post('/webhook', (req, res) => {
                 //console.log("DEBUG [postWebhook]> In play, trumps, category: " + HERO_STATS[tt_category_pick]);
               };
             } else if (SENDERS[sender_index][20] == 'character') {
+
+console.table(SENDERS[sender_index][21])
+
               if (SENDERS[sender_index][21].length > 0) { // picking from list
                 let tt_char_pick = -1;
                 for (tt_loop = 0; tt_loop < SENDERS[sender_index][21].length; tt_loop++) {
@@ -1465,6 +1468,9 @@ CHASbot.post('/webhook', (req, res) => {
                     break;
                   };
                 };
+
+console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^6 " + tt_char_pick)
+
                 if (tt_char_pick == -1) { // not picked from bubble
                   //console.log("DEBUG [postWebhook]> In play, trumps, hero bubble not picked when offered; hero to find: " + hero_who);
                   hero_who = analyse_text;
