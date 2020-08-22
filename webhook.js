@@ -1428,10 +1428,10 @@ CHASbot.post('/webhook', (req, res) => {
             // in play - looking for either category OR looking for character name
             //console.table(SENDERS[sender_index]);
             let tt_loop = 0;
+            let tt_category = '';
             if (SENDERS[sender_index][20] == 'category') {
               console.log("DEBUG [postWebhook]> In play, trumps, looking for category");
               let tt_category_pick = -1;
-              let tt_category = '';
               for (tt_loop = 0; tt_loop < HERO_STATS.length; tt_loop++) {
                 tt_category = strStandardise(HERO_STATS[tt_loop])[0];
                 if (analyse_text.includes(tt_category)) {
