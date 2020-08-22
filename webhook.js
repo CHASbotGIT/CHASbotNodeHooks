@@ -2106,7 +2106,7 @@ function deliverCharChoiceTT(eventSend,msgTT) {
   deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   let custom_id = inPlayID(sender);
-  let charBubbles = SENDERS[21].length;
+  let charBubbles = SENDERS[custom_id][21].length;
   let charsTemplate = '';
   switch (charBubbles) {
     case 2:
@@ -2114,10 +2114,10 @@ function deliverCharChoiceTT(eventSend,msgTT) {
         text: msgTT,
         quick_replies:[
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[21][0]][0] + ' ID: ' + SENDERS[21][0],
+                title: HERO_ARRAY[SENDERS[custom_id][21][0]][0] + ' ID: ' + SENDERS[custom_id][21][0],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[21][1]][0] + ' ID: ' + SENDERS[21][1],
+                title: HERO_ARRAY[SENDERS[custom_id][21][1]][0] + ' ID: ' + SENDERS[custom_id][21][1],
                 payload:"<POSTBACK_PAYLOAD>" }]};
       break;
     case 3:
@@ -2125,13 +2125,13 @@ function deliverCharChoiceTT(eventSend,msgTT) {
         text: msgTT,
         quick_replies:[
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[21][0]][0] + ' ID: ' + SENDERS[21][0],
+                title: HERO_ARRAY[SENDERS[custom_id][21][0]][0] + ' ID: ' + SENDERS[custom_id][21][0],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[21][1]][0] + ' ID: ' + SENDERS[21][1],
+                title: HERO_ARRAY[SENDERS[custom_id][21][1]][0] + ' ID: ' + SENDERS[custom_id][21][1],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[21][2]][0] + ' ID: ' + SENDERS[21][2],
+                title: HERO_ARRAY[SENDERS[custom_id][21][2]][0] + ' ID: ' + SENDERS[custom_id][21][2],
                 payload:"<POSTBACK_PAYLOAD>" }]};
       break;
     case 4:
@@ -2139,16 +2139,16 @@ function deliverCharChoiceTT(eventSend,msgTT) {
         text: msgTT,
         quick_replies:[
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[21][0]][0] + ' ID: ' + SENDERS[21][0],
+                title: HERO_ARRAY[SENDERS[custom_id][21][0]][0] + ' ID: ' + SENDERS[custom_id][21][0],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[21][1]][0] + ' ID: ' + SENDERS[21][1],
+                title: HERO_ARRAY[SENDERS[custom_id][21][1]][0] + ' ID: ' + SENDERS[custom_id][21][1],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[21][2]][0] + ' ID: ' + SENDERS[21][2],
+                title: HERO_ARRAY[SENDERS[custom_id][21][2]][0] + ' ID: ' + SENDERS[custom_id][21][2],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[21][3]][0] + ' ID: ' + SENDERS[21][3],
+                title: HERO_ARRAY[SENDERS[custom_id][21][3]][0] + ' ID: ' + SENDERS[custom_id][21][3],
                 payload:"<POSTBACK_PAYLOAD>" }]};
       break;
     case 5:
@@ -2156,19 +2156,19 @@ function deliverCharChoiceTT(eventSend,msgTT) {
         text: msgTT,
         quick_replies:[
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[21][0]][0] + ' ID: ' + SENDERS[21][0],
+                title: HERO_ARRAY[SENDERS[custom_id][21][0]][0] + ' ID: ' + SENDERS[custom_id][21][0],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[21][1]][0] + ' ID: ' + SENDERS[21][1],
+                title: HERO_ARRAY[SENDERS[custom_id][21][1]][0] + ' ID: ' + SENDERS[custom_id][21][1],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[21][2]][0] + ' ID: ' + SENDERS[21][2],
+                title: HERO_ARRAY[SENDERS[custom_id][21][2]][0] + ' ID: ' + SENDERS[custom_id][21][2],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[21][3]][0] + ' ID: ' + SENDERS[21][3],
+                title: HERO_ARRAY[SENDERS[custom_id][21][3]][0] + ' ID: ' + SENDERS[custom_id][21][3],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[21][4]][0] + ' ID: ' + SENDERS[21][4],
+                title: HERO_ARRAY[SENDERS[custom_id][21][4]][0] + ' ID: ' + SENDERS[custom_id][21][4],
                 payload:"<POSTBACK_PAYLOAD>" }]};
   }; // Switch
   request({
