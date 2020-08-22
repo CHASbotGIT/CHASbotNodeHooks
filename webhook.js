@@ -3775,11 +3775,19 @@ function playTopTrumps(eventTT,playTT){
     playTT.push(SENDERS[custom_id][16]);
     SENDERS[custom_id][19] = false;
     let splceID = -1;
-    for (playTT_loop = 0; playTT_loop < SENDERS[custom_id][20].length; playTT_loop++) {
-        if (SENDERS[custom_id][20][playTT_loop].includes(SENDERS[custom_id][16])) { splceID = playTT_loop }
+    for (playTT_loop = 0; playTT_loop < SENDERS[custom_id][15].length; playTT_loop++) {
+        if (SENDERS[custom_id][15][playTT_loop].includes(SENDERS[custom_id][16])) { splceID = playTT_loop }
     };
+
+console.log(">>>>>>>>>>>>>>>>>>>>>>>>> " + SENDERS[custom_id][16]);
+console.table(SENDERS[custom_id][15]);
+console.log(">>>>>>>>>>>>>>>>>>>>>>>>> " + splceID);
+
     SENDERS[custom_id][20].splice(splceID,1);
-  }
+
+console.table(SENDERS[custom_id][15]);
+
+  }; // if (SENDERS[custom_id][19]
   //console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
   let trumps_played = SENDERS[custom_id][15];
   let trump_tobeat = SENDERS[custom_id][16];
