@@ -3774,7 +3774,7 @@ function playTopTrumps(eventTT,playTT){
     console.log("DEBUG [playTopTrumps]> Restart from last played character")
     playTT = [];
     playTT.push(SENDERS[custom_id][16]);
-    SENDERS[custom_id][19] = false;
+    //SENDERS[custom_id][19] = false;
     let splceID = -1;
 
 console.log(">>>>>>>>>>>>>>>>>>>>>>>>> " + SENDERS[custom_id][16]);
