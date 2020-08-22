@@ -899,7 +899,7 @@ function inPlayID (id_to_find) {
 
 // String and number helper functions
 // ==================================
-var a = ['','one ','two ','three ','four ', 'five ','six ','seven ','eight ','nine ','ten ','eleven ','twelve ','thirteen ','fourteen ','fifteen ','sixteen ','seventeen ','eighteen ','nineteen '];
+/*var a = ['','one ','two ','three ','four ', 'five ','six ','seven ','eight ','nine ','ten ','eleven ','twelve ','thirteen ','fourteen ','fifteen ','sixteen ','seventeen ','eighteen ','nineteen '];
 var b = ['', '', 'twenty','thirty','forty','fifty', 'sixty','seventy','eighty','ninety'];
 function intWords (num) {
   if ((num = num.toString()).length > 9) return 'overflow';
@@ -911,7 +911,7 @@ function intWords (num) {
   str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred ' : '';
   str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + 'only ' : '';
   return str;
-}
+}*/
 function strStandardise(str) {
   let emoticon_up_count = 0;
   for (var i = 0; i < EMOTICON_UP.length; i++) {
