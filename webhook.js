@@ -3885,7 +3885,7 @@ function playTopTrumps(eventTT,playTT){ // IN DEV
   } else if (playTT.length > 1 && cat_or_char == 'character'){
     console.log("DEBUG [playTopTrumps]> Too many charactrers from search: " + playTT.length);
     SENDERS[custom_id][21] = playTT; // Copy the possibles array
-    tt_msg = "🤖 Can't be sure who you meant, I found " + playTT.length " possibilities.";
+    tt_msg = "🤖 Can't be sure who you meant, I found " + playTT.length + " possibilities.";
     if (playTT.length > 5) { tt_msg = tt_msg + " I've cut it down to five." }
     tt_msg = tt_msg + " Pick one from the selection.";
     deliverCharChoiceTT(eventTT,tt_msg);
