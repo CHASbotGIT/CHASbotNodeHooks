@@ -3871,9 +3871,9 @@ function playTopTrumps(eventTT,playTT){
         } else if (wins < 5) {
           tt_msg = wins + " wins so far.\n";
         } else if (wins < 10) {
-          tt_msg = "A solid " + intWords(wins) + " wins to your name.\n";
+          tt_msg = "A solid " + intWords(wins) + "wins to your name.\n";
         } else {
-          tt_msg = "An impressive " + intWords(wins) + " wins to your name.\n";
+          tt_msg = "An impressive " + intWords(wins) + "wins to your name.\n";
         };
         if (newScore == 101) { tt_msg = "🍀 Lucky, you won the toss of a coin with the mystery value! " + tt_msg }
       }; // if (wins > 0)
@@ -3884,7 +3884,7 @@ function playTopTrumps(eventTT,playTT){
       //console.log("DEBUG [playTopTrumps]> Winning character " + HERO_ARRAY[SENDERS[custom_id][16]][0] + ", pick category, winning value: " + newScore);
     } else {
       //console.log("DEBUG [playTopTrumps]> Losing character " + HERO_ARRAY[SENDERS[custom_id][16]][0] + ", GAME OVER, losing value: " + newScore);
-      tt_msg = "Sorry, no luck with " + HERO_STATS[trump_category] + ", game over... you won " + intWords(SENDERS[custom_id][14]) + " in a row.";
+      tt_msg = "Sorry, no luck with " + HERO_STATS[trump_category] + ", game over... you won " + intWords(SENDERS[custom_id][14]) + "in a row.";
       if (newScore == -1) { tt_msg = "👎 Oops, you lost the toss of a coin with the mystery value! " + tt_msg }
       deliverStackTT(eventTT,tt_stats,tt_msg,tt_url,true);
       inPlayClean('trumps',custom_id); // clean
