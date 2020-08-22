@@ -2112,7 +2112,7 @@ function deliverCharChoiceTT(eventSend,msgTT) {
   let send_index = 0;
   let idBubble = 0;
   if (charBubblesNum > 5) { charBubblesNum = 5 };
-  for (send_index = 0; send_index < charBubblesNum-1; send_index++) {
+  for (send_index = 0; send_index < (charBubblesNum - 1); send_index++) {
     idBubble = parseInt(SENDERS[custom_id][21][send_index]);
     txtBubble = HERO_ARRAY[idBubble][0] + ' ID: ' + idBubble;
     charBubbles.push(txtBubble);
