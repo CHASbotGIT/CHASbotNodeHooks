@@ -886,6 +886,7 @@ function inPlayPause(index_id) {
   SENDERS[index_id][4] = false;
   SENDERS[index_id][10] = 0;
   SENDERS[index_id][19] = true;
+  SENDERS[index_id][20] = 'character';
 }
 function inPlayID (id_to_find) {
   let sender_index = -1;
