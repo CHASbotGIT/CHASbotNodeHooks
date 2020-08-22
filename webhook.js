@@ -3784,14 +3784,14 @@ console.table(SENDERS[custom_id][15]);
     for (playTT_loop = 0; playTT_loop < SENDERS[custom_id][15].length; playTT_loop++) {
       possibleRepeat = SENDERS[custom_id][16];
 
-console.log("^^^^^^^^^^^^^^^^^^^^^^^" + indexFind[playTT_loop])
+console.log("^^^^^^^^^^^^^^^^^^^^^^^ " + indexFind[playTT_loop])
 
       //if (indexFind[playTT_loop].includes(possibleRepeat)) { splceID = playTT_loop }
     }; // for (playTT_loop = 0
 
 console.log(">>>>>>>>>>>>>>>>>>>>>>>>> " + splceID);
 
-    SENDERS[custom_id][20].splice(splceID,1);
+    SENDERS[custom_id][20].splice(1,1);
 
 console.table(SENDERS[custom_id][15]);
 
