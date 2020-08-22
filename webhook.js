@@ -3778,7 +3778,7 @@ function playTopTrumps(eventTT,playTT){
     for (playTT_loop = 0; playTT_loop < SENDERS[custom_id][20].length; playTT_loop++) {
         if (SENDERS[custom_id][20][playTT_loop].includes(SENDERS[custom_id][16])) { splceID = playTT_loop }
     };
-    SENDERS[custom_id][20],splice(splceID,1);
+    SENDERS[custom_id][20].splice(splceID,1);
   }
   //console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
   let trumps_played = SENDERS[custom_id][15];
