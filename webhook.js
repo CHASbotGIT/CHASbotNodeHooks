@@ -1463,7 +1463,7 @@ CHASbot.post('/webhook', (req, res) => {
                   hero_who = strTitleCase(hero_who);
                   SENDERS[sender_index][21] = []; // reset bubbles
                 } else { // valid single pick
-                  SENDERS[sender_index][17] = SENDERS[sender_index][21].[tt_char_pick];
+                  SENDERS[sender_index][17] = SENDERS[sender_index][21][tt_char_pick];
                   console.log("DEBUG [postWebhook]> In play, trumps, caharacter ID picked: " + SENDERS[sender_index][17]);
                 };
               } else { // going to search for term
