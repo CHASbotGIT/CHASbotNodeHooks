@@ -3769,6 +3769,7 @@ function playTopTrumps(eventTT,playTT){
     SENDERS[custom_id][21] = [];
   };
   let playTT_loop = 0;
+  let possibleRepeat = 0;
   if (SENDERS[custom_id][19] && SENDERS[custom_id][16] != '') {
     console.log("DEBUG [playTopTrumps]> Restart from last played character")
     playTT = [];
@@ -3779,8 +3780,10 @@ function playTopTrumps(eventTT,playTT){
 console.log(">>>>>>>>>>>>>>>>>>>>>>>>> " + SENDERS[custom_id][16]);
 console.table(SENDERS[custom_id][15]);
 
+    let indexFind = SENDERS[custom_id][15];
     for (playTT_loop = 0; playTT_loop < SENDERS[custom_id][15].length; playTT_loop++) {
-        if (SENDERS[custom_id][15][playTT_loop].includes(SENDERS[custom_id][16])) { splceID = playTT_loop }
+      possibleRepeat = SENDERS[custom_id][16];
+      if (indexFind[playTT_loop].includes(possibleRepeat)) { splceID = playTT_loop }
     }; // for (playTT_loop = 0
 
 console.log(">>>>>>>>>>>>>>>>>>>>>>>>> " + splceID);
@@ -3799,7 +3802,6 @@ console.table(SENDERS[custom_id][15]);
   // Weed out all of the previously played possibles
   let foundRepeat = false;
   if (playTT.length > 0) {
-    let possibleRepeat = 0;
     let loopDown = 0;
     let loopLength = playTT.length;
     for (playTT_loop = 0; playTT_loop < loopLength; playTT_loop++) {
