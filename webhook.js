@@ -3867,18 +3867,16 @@ function playTopTrumps(eventTT,playTT){
       let wins = SENDERS[custom_id][14];
       if (wins > 0) {
         if (wins == 1) {
-          tt_msg = "🏆 First win under your belt.\n"
+          tt_msg = "🏆 First win under your belt.\n";
         } else if (wins < 5) {
-          tt_msg =  wins + " wins so far.\n"
+          tt_msg =  wins + " wins so far.\n";
         } else if (wins < 10) {
-          tt_msg =  "A solid " + intWords(wins) + " wins to your name.\n"
+          tt_msg =  "A solid " + intWords(wins) + " wins to your name.\n";
         } else {
-          tt_msg =  "An impressive " + intWords(wins) + " wins to your name.\n"
+          tt_msg =  "An impressive " + intWords(wins) + " wins to your name.\n";
         };
-        // Win phrases array TO DO
         if (newScore == 101) { tt_msg = "🍀 Lucky, you won the toss of a coin with the mystery value! " + tt_msg }
-        // Gamble phrases array TO DO
-      }; // if (SENDERS[custom_id][14]
+      }; // if (wins > 0)
       deliverStackTT(eventTT,tt_stats,tt_msg,tt_url,false);
       console.log("INFO [playTopTrumps]> Request: Winning trump character picked - pick again");
       console.log("INFO [playTopTrumps]> Action: playTopTrumps.deliverStackTT");
