@@ -2106,13 +2106,13 @@ function deliverCharChoiceTT(eventSend,msgTT) {
   deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   let custom_id = inPlayID(sender);
-  let charBubblesNum = SENDERS[custom_id][21].length - 1;
+  let charBubblesNum = SENDERS[custom_id][21].length;
   let charBubbles = [];
   let txtBubble = '';
   let send_index = 0;
   let idBubble = 0;
   if (charBubblesNum > 5) { charBubblesNum = 5 };
-  for (send_index = 0; send_index < charBubblesNum; send_index++) {
+  for (send_index = 0; send_index < charBubblesNum-1; send_index++) {
     idBubble = parseInt(SENDERS[custom_id][21][send_index]);
     txtBubble = HERO_ARRAY[idBubble][0] + ' ID: ' + idBubble;
     charBubbles.push(txtBubble);
