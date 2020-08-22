@@ -2107,6 +2107,8 @@ function deliverCharChoiceTT(eventSend,msgTT) {
   let sender = eventSend.sender.id;
   let custom_id = inPlayID(sender);
   let charBubblesNum = SENDERS[custom_id][21].length;
+
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + charBubblesNum);
   let charBubbles = [];
   let txtBubble = '';
   let send_index = 0;
@@ -2117,6 +2119,9 @@ function deliverCharChoiceTT(eventSend,msgTT) {
     txtBubble = HERO_ARRAY[idBubble][0] + ' ID: ' + idBubble;
     charBubbles.push(txtBubble);
   };
+
+  console.table(charBubbles);
+
   let charsTemplate = '';
   switch (charBubblesNum) {
     case 2:
