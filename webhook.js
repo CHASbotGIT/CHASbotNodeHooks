@@ -899,7 +899,7 @@ function inPlayID (id_to_find) {
 
 // String and number helper functions
 // ==================================
-/*var a = ['','one ','two ','three ','four ', 'five ','six ','seven ','eight ','nine ','ten ','eleven ','twelve ','thirteen ','fourteen ','fifteen ','sixteen ','seventeen ','eighteen ','nineteen '];
+var a = ['','one ','two ','three ','four ', 'five ','six ','seven ','eight ','nine ','ten ','eleven ','twelve ','thirteen ','fourteen ','fifteen ','sixteen ','seventeen ','eighteen ','nineteen '];
 var b = ['', '', 'twenty','thirty','forty','fifty', 'sixty','seventy','eighty','ninety'];
 function intWords (num) {
   if ((num = num.toString()).length > 9) return 'overflow';
@@ -911,7 +911,7 @@ function intWords (num) {
   str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred ' : '';
   str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + 'only ' : '';
   return str;
-}*/
+}
 function strStandardise(str) {
   let emoticon_up_count = 0;
   for (var i = 0; i < EMOTICON_UP.length; i++) {
@@ -3866,7 +3866,7 @@ function playTopTrumps(eventTT,playTT){
     if (chicken_dinner){
       let wins = SENDERS[custom_id][14];
       if (wins > 0) {
-        /*if (wins == 1) {
+        if (wins == 1) {
           tt_msg = "🏆 First win under your belt.\n";
         } else if (wins < 5) {
           tt_msg = wins + " wins so far.\n";
@@ -3874,7 +3874,7 @@ function playTopTrumps(eventTT,playTT){
           tt_msg = "A solid " + intWords(wins) + " wins to your name.\n";
         } else {
           tt_msg = "An impressive " + intWords(wins) + " wins to your name.\n";
-        };*/
+        };
         if (newScore == 101) { tt_msg = "🍀 Lucky, you won the toss of a coin with the mystery value! " + tt_msg }
       }; // if (wins > 0)
       deliverStackTT(eventTT,tt_stats,tt_msg,tt_url,false);
