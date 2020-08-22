@@ -3791,7 +3791,7 @@ console.log("^^^^^^^^^^^^^^^^^^^^^^^ " + indexFind[playTT_loop])
 
 console.log(">>>>>>>>>>>>>>>>>>>>>>>>> " + splceID);
 
-    SENDERS[custom_id][20].splice(1,1);
+    SENDERS[custom_id][15].splice(1,1);
 
 console.table(SENDERS[custom_id][15]);
 
