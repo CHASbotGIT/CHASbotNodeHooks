@@ -2106,18 +2106,27 @@ function deliverCharChoiceTT(eventSend,msgTT) {
   deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   let custom_id = inPlayID(sender);
-  let charBubbles = SENDERS[custom_id][21].length;
+  let charBubblesNum = SENDERS[custom_id][21].length;
+  let charBubbles = [];
+  let txtBubble = '';
+  let send_index = 0;
+  let idBubble = 0;
+  for (send_index = 0; send_index < charBubblesNum; send_index++) {
+    idBubble = parseInt(SENDERS[custom_id][21][send_index]);
+    txtBubble = HERO_ARRAY[idBubble][0] + ' ID: ' + idBubble;
+    charBubbles.push(txtBubble);
+  };
   let charsTemplate = '';
-  switch (charBubbles) {
+  switch (charBubblesNum) {
     case 2:
       charsTemplate = {
         text: msgTT,
         quick_replies:[
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[custom_id][21][0]][0] + ' ID: ' + SENDERS[custom_id][21][0],
+                title: charBubbles[0],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[custom_id][21][1]][0] + ' ID: ' + SENDERS[custom_id][21][1],
+                title: charBubbles[1],
                 payload:"<POSTBACK_PAYLOAD>" }]};
       break;
     case 3:
@@ -2125,13 +2134,13 @@ function deliverCharChoiceTT(eventSend,msgTT) {
         text: msgTT,
         quick_replies:[
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[custom_id][21][0]][0] + ' ID: ' + SENDERS[custom_id][21][0],
+                title: charBubbles[0],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[custom_id][21][1]][0] + ' ID: ' + SENDERS[custom_id][21][1],
+                title: charBubbles[1],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[custom_id][21][2]][0] + ' ID: ' + SENDERS[custom_id][21][2],
+                title: charBubbles[2],
                 payload:"<POSTBACK_PAYLOAD>" }]};
       break;
     case 4:
@@ -2139,16 +2148,16 @@ function deliverCharChoiceTT(eventSend,msgTT) {
         text: msgTT,
         quick_replies:[
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[custom_id][21][0]][0] + ' ID: ' + SENDERS[custom_id][21][0],
+                title: charBubbles[0],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[custom_id][21][1]][0] + ' ID: ' + SENDERS[custom_id][21][1],
+                title: charBubbles[1],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[custom_id][21][2]][0] + ' ID: ' + SENDERS[custom_id][21][2],
+                title: charBubbles[2],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[custom_id][21][3]][0] + ' ID: ' + SENDERS[custom_id][21][3],
+                title: charBubbles[3],
                 payload:"<POSTBACK_PAYLOAD>" }]};
       break;
     case 5:
@@ -2156,19 +2165,19 @@ function deliverCharChoiceTT(eventSend,msgTT) {
         text: msgTT,
         quick_replies:[
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[custom_id][21][0]][0] + ' ID: ' + SENDERS[custom_id][21][0],
+                title: charBubbles[0],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[custom_id][21][1]][0] + ' ID: ' + SENDERS[custom_id][21][1],
+                title: charBubbles[1],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[custom_id][21][2]][0] + ' ID: ' + SENDERS[custom_id][21][2],
+                title: charBubbles[2],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[custom_id][21][3]][0] + ' ID: ' + SENDERS[custom_id][21][3],
+                title: charBubbles[3],
                 payload:"<POSTBACK_PAYLOAD>" },
               { content_type:"text",
-                title: HERO_ARRAY[SENDERS[custom_id][21][4]][0] + ' ID: ' + SENDERS[custom_id][21][4],
+                title: charBubbles[4],
                 payload:"<POSTBACK_PAYLOAD>" }]};
   }; // Switch
   request({
