@@ -1463,13 +1463,16 @@ console.table(SENDERS[sender_index][21])
                 let tt_char_pick = -1;
                 for (tt_loop = 0; tt_loop < SENDERS[sender_index][21].length; tt_loop++) {
                   tt_category = SENDERS[sender_index][21][tt_loop];
+
+console.log("££££££££££££££££££££££££££££££££££££££ " + tt_category)
+
                   if (analyse_text.includes(tt_category)) {
                     tt_char_pick = tt_loop;
                     break;
                   };
                 };
 
-console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^6 " + tt_char_pick)
+console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ " + tt_char_pick)
 
                 if (tt_char_pick == -1) { // not picked from bubble
                   //console.log("DEBUG [postWebhook]> In play, trumps, hero bubble not picked when offered; hero to find: " + hero_who);
