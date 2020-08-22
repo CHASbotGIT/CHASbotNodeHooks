@@ -3748,7 +3748,7 @@ function playRPSLS(eventRPSLS,pickPlayer) {
   };
 }
 
-/*function playTopTrumps(eventTT,playTT){
+function playTopTrumps(eventTT,playTT){
   // 14:trumps_score,15:trumps_played,16:trump_tobeat,17:trump_picked
   // 18:trump_category,19:trumps_start,20:cat_or_char,21:trumps_xs
   // Preceded by lookupHero
@@ -3905,7 +3905,7 @@ function playRPSLS(eventRPSLS,pickPlayer) {
     console.log("INFO [playTopTrumps]> Action: playTopTrumps.deliverCharChoiceTT");
     console.log("INFO [playTopTrumps]> Response: " + tt_msg);
   };
-}*/
+}
 // TO DO
 // reatart after stop - on character/on category
 // category - seems OK - improve prompting / re-send las card?
