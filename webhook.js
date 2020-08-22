@@ -1457,7 +1457,6 @@ CHASbot.post('/webhook', (req, res) => {
               };
             } else if (SENDERS[sender_index][20] == 'character') {
               if (SENDERS[sender_index][21].length > 0) { // picking from list
-                console.table(SENDERS[sender_index][21]);
                 let tt_char_pick = -1;
                 for (tt_loop = 0; tt_loop < SENDERS[sender_index][21].length; tt_loop++) {
                   tt_category = SENDERS[sender_index][21][tt_loop];
@@ -3271,6 +3270,11 @@ function lookupHero (eventHero,heroWho){ //
   let heroWhoMatch = heroWho.toLowerCase();
   let heroWhoStored = '';
   let heroMatches = []; // May be more than one
+
+  console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+  console.table(SENDERS[custom_id][21]);
+
+
   if (SENDERS[custom_id][20]=='character' && SENDERS[custom_id][21].length==0){
     // lookup characters
     if (SENDERS[custom_id][19]) { // trumps_start
