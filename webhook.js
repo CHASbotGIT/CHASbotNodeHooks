@@ -3866,15 +3866,15 @@ function playTopTrumps(eventTT,playTT){
     if (chicken_dinner){
       let wins = SENDERS[custom_id][14];
       if (wins > 0) {
-        if (wins == 1) {
+        /*if (wins == 1) {
           tt_msg = "🏆 First win under your belt.\n";
         } else if (wins < 5) {
-          tt_msg =  wins + " wins so far.\n";
+          tt_msg = wins + " wins so far.\n";
         } else if (wins < 10) {
-          tt_msg =  "A solid " + intWords(wins) + " wins to your name.\n";
+          tt_msg = "A solid " + intWords(wins) + " wins to your name.\n";
         } else {
-          tt_msg =  "An impressive " + intWords(wins) + " wins to your name.\n";
-        };
+          tt_msg = "An impressive " + intWords(wins) + " wins to your name.\n";
+        };*/
         if (newScore == 101) { tt_msg = "🍀 Lucky, you won the toss of a coin with the mystery value! " + tt_msg }
       }; // if (wins > 0)
       deliverStackTT(eventTT,tt_stats,tt_msg,tt_url,false);
