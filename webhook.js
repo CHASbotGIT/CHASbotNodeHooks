@@ -3768,6 +3768,7 @@ function playTopTrumps(eventTT,playTT){
     playTT.push(SENDERS[custom_id][17]);
     SENDERS[custom_id][21] = [];
   };
+  let trumps_restart = false;
   let playTT_loop = 0;
   let possibleRepeat = 0;
   if (SENDERS[custom_id][19] && SENDERS[custom_id][16] != '') {
@@ -3794,6 +3795,8 @@ console.log(">>>>>>>>>>>>>>>>>>>>>>>>> " + splceID);
     SENDERS[custom_id][15].splice(0,1);
 
 console.table(SENDERS[custom_id][15]);
+
+    trumps_restart = true;
 
   }; // if (SENDERS[custom_id][19]
   //console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
@@ -3871,6 +3874,7 @@ console.table(SENDERS[custom_id][15]);
     tt_stats = strReplaceAll(tt_stats, 'null', ' ❓ ');
     let oldScore = 0;
     let newScore = 0;
+
     if (!trumps_start) {
       oldScore = parseInt(HERO_ARRAY[trump_tobeat][trump_category+1]);
       newScore = parseInt(HERO_ARRAY[tt_id][trump_category+1]);
@@ -3896,6 +3900,9 @@ console.table(SENDERS[custom_id][15]);
     SENDERS[custom_id][20] = 'category'; // set cat_ot_char
     SENDERS[custom_id][16] = SENDERS[custom_id][17]; // new card becomes old trump_tobeat
     if (trumps_start) { tt_msg = MSG_TOPTRUMPS_INTRO1 + HERO_ARRAY[SENDERS[custom_id][16]][0] + MSG_TOPTRUMPS_INTRO2 };
+
+if (trumps_restart) { tt_msg = "Let's return to " + HERO_ARRAY[SENDERS[custom_id][16]][0] + ", where we left off with the last card played" }
+
     if (chicken_dinner){
       let wins = SENDERS[custom_id][14];
       if (wins > 0) {
