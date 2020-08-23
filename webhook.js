@@ -901,6 +901,10 @@ function inPlayID (id_to_find) {
 
 // String and number helper functions
 // ==================================
+function intPad(n, length) {
+  var len = length - (''+n).length;
+  return (len > 0 ? new Array(++len).join('0') : '') + n
+}
 function intWords (num) {
   var a = ['','one ','two ','three ','four ', 'five ','six ','seven ','eight ','nine ','ten ','eleven ','twelve ','thirteen ','fourteen ','fifteen ','sixteen ','seventeen ','eighteen ','nineteen '];
   var b = ['', '', 'twenty','thirty','forty','fifty', 'sixty','seventy','eighty','ninety'];
@@ -1088,10 +1092,6 @@ function strGreeting(senderID,greet) {
 }
 function numRandomBetween(min,max) {
   return Math.floor(Math.random()*(max-min+1)+min);
-}
-function pad(n, length) {
-  var len = length - (''+n).length;
-  return (len > 0 ? new Array(++len).join('0') : '') + n
 }
 function mnsConvert(minsIn) {
   return minsIn*60*1000;
@@ -3849,12 +3849,12 @@ function playTopTrumps(eventTT,playTT){
     let tt_url = HERO_ARRAY[tt_id][7];
     //console.log("DEBUG [playTopTrumps]> Image: " + tt_url);
     let tt_stats = HERO_ARRAY[tt_id][0] + " ID: " + tt_id + "\n" +
-      pad(HERO_ARRAY[tt_id][1],3) + " = 🧠 Intelligence\n" +
-      pad(HERO_ARRAY[tt_id][2],3) + " = 💪 Strength\n" +
-      pad(HERO_ARRAY[tt_id][3],3) + " = 💨 Speed\n" +
-      pad(HERO_ARRAY[tt_id][4],3) + " = 🔋 Durability\n" +
-      pad(HERO_ARRAY[tt_id][5],3) + " = 🌡️ Power\n" +
-      pad(HERO_ARRAY[tt_id][6],3) + " = ⚔️ Combat"
+      intPad(HERO_ARRAY[tt_id][1],3) + " = 🧠 Intelligence\n" +
+      intPad(HERO_ARRAY[tt_id][2],3) + " = 💪 Strength\n" +
+      intPad(HERO_ARRAY[tt_id][3],3) + " = 💨 Speed\n" +
+      intPad(HERO_ARRAY[tt_id][4],3) + " = 🔋 Durability\n" +
+      intPad(HERO_ARRAY[tt_id][5],3) + " = 🌡️ Power\n" +
+      intPad(HERO_ARRAY[tt_id][6],3) + " = ⚔️ Combat"
     //console.log("DEBUG [playTopTrumps]> Stats: " + tt_stats);
     tt_stats = strReplaceAll(tt_stats, 'null', ' ❓ ');
     let oldScore = 0;
