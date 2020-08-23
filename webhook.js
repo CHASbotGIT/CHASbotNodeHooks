@@ -3787,12 +3787,14 @@ console.table(SENDERS[custom_id][15]);
 
 console.log("^^^^^^^^^^^^^^^^^^^^^^^ " + indexFind[playTT_loop])
 
+      if (possibleRepeat == indexFind[playTT_loop]) { splceID = playTT_loop }
+
       //if (indexFind[playTT_loop].includes(possibleRepeat)) { splceID = playTT_loop }
     }; // for (playTT_loop = 0
 
 console.log(">>>>>>>>>>>>>>>>>>>>>>>>> " + splceID);
 
-    SENDERS[custom_id][15].splice(0,1);
+    SENDERS[custom_id][15].splice(spliceID,1);
 
 console.table(SENDERS[custom_id][15]);
 
@@ -3901,7 +3903,7 @@ console.table(SENDERS[custom_id][15]);
     SENDERS[custom_id][16] = SENDERS[custom_id][17]; // new card becomes old trump_tobeat
     if (trumps_start) { tt_msg = MSG_TOPTRUMPS_INTRO1 + HERO_ARRAY[SENDERS[custom_id][16]][0] + MSG_TOPTRUMPS_INTRO2 };
 
-if (trumps_restart) { tt_msg = "Let's return to " + HERO_ARRAY[SENDERS[custom_id][16]][0] + ", where we left off with the last card played" }
+if (trumps_restart) { tt_msg = "Let's return to " + HERO_ARRAY[SENDERS[custom_id][16]][0] + ", where we left off with the last card played. " }
 
     if (chicken_dinner){
       let wins = SENDERS[custom_id][14];
