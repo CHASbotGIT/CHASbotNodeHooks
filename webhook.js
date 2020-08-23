@@ -3775,31 +3775,14 @@ function playTopTrumps(eventTT,playTT){
     console.log("DEBUG [playTopTrumps]> Restart from last played character")
     playTT = [];
     playTT.push(SENDERS[custom_id][16]);
-    //SENDERS[custom_id][19] = false;
     let spliceID = -1;
-
-console.log(">>>>>>>>>>>>>>>>>>>>>>>>> " + SENDERS[custom_id][16]);
-console.table(SENDERS[custom_id][15]);
-
     let indexFind = SENDERS[custom_id][15];
     for (playTT_loop = 0; playTT_loop < SENDERS[custom_id][15].length; playTT_loop++) {
       possibleRepeat = SENDERS[custom_id][16];
-
-console.log("^^^^^^^^^^^^^^^^^^^^^^^ " + indexFind[playTT_loop])
-
       if (possibleRepeat == indexFind[playTT_loop]) { spliceID = playTT_loop }
-
-      //if (indexFind[playTT_loop].includes(possibleRepeat)) { spliceID = playTT_loop }
     }; // for (playTT_loop = 0
-
-console.log(">>>>>>>>>>>>>>>>>>>>>>>>> " + spliceID);
-
     SENDERS[custom_id][15].splice(spliceID,1);
-
-console.table(SENDERS[custom_id][15]);
-
     trumps_restart = true;
-
   }; // if (SENDERS[custom_id][19]
   //console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
   let trumps_played = SENDERS[custom_id][15];
@@ -3948,5 +3931,3 @@ if (trumps_restart) { tt_msg = "Let's return to " + HERO_ARRAY[SENDERS[custom_id
     console.log("INFO [playTopTrumps]> Response: " + tt_msg);
   };
 }
-// TO DO
-// reatart after stop - on character/on category
