@@ -3776,7 +3776,7 @@ function playTopTrumps(eventTT,playTT){
     playTT = [];
     playTT.push(SENDERS[custom_id][16]);
     //SENDERS[custom_id][19] = false;
-    let splceID = -1;
+    let spliceID = -1;
 
 console.log(">>>>>>>>>>>>>>>>>>>>>>>>> " + SENDERS[custom_id][16]);
 console.table(SENDERS[custom_id][15]);
@@ -3787,12 +3787,12 @@ console.table(SENDERS[custom_id][15]);
 
 console.log("^^^^^^^^^^^^^^^^^^^^^^^ " + indexFind[playTT_loop])
 
-      if (possibleRepeat == indexFind[playTT_loop]) { splceID = playTT_loop }
+      if (possibleRepeat == indexFind[playTT_loop]) { spliceID = playTT_loop }
 
-      //if (indexFind[playTT_loop].includes(possibleRepeat)) { splceID = playTT_loop }
+      //if (indexFind[playTT_loop].includes(possibleRepeat)) { spliceID = playTT_loop }
     }; // for (playTT_loop = 0
 
-console.log(">>>>>>>>>>>>>>>>>>>>>>>>> " + splceID);
+console.log(">>>>>>>>>>>>>>>>>>>>>>>>> " + spliceID);
 
     SENDERS[custom_id][15].splice(spliceID,1);
 
