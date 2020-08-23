@@ -3763,7 +3763,7 @@ function playTopTrumps(eventTT,playTT){
   let tt_msg = MSG_TOPTRUMPS_PROMPT;
   let custom_id = inPlayID(sender);
   if (SENDERS[custom_id][21].length > 0) { // Character selection - down to single result
-    console.log("DEBUG [playTopTrumps]> Single character picked from bubbles")
+    //console.log("DEBUG [playTopTrumps]> Single character picked from bubbles")
     playTT = [];
     playTT.push(SENDERS[custom_id][17]);
     SENDERS[custom_id][21] = [];
@@ -3772,7 +3772,7 @@ function playTopTrumps(eventTT,playTT){
   let playTT_loop = 0;
   let possibleRepeat = 0;
   if (SENDERS[custom_id][19] && SENDERS[custom_id][16] != '') {
-    console.log("DEBUG [playTopTrumps]> Restart from last played character")
+    //console.log("DEBUG [playTopTrumps]> Restart from last played character")
     playTT = [];
     playTT.push(SENDERS[custom_id][16]);
     let spliceID = -1;
@@ -3881,7 +3881,7 @@ function playTopTrumps(eventTT,playTT){
         chicken_dinner = false;
       }; // if (newScore >= oldScore)
     }; // if (!trumps_start)
-    //if (!trumps_start) { console.log("DEBUG [playTopTrumps]> Comparison character " + HERO_ARRAY[trump_tobeat][0] + ", with value: " + oldScore) };
+    //if (!trumps_start) { //console.log("DEBUG [playTopTrumps]> Comparison character " + HERO_ARRAY[trump_tobeat][0] + ", with value: " + oldScore) };
     SENDERS[custom_id][20] = 'category'; // set cat_ot_char
     SENDERS[custom_id][16] = SENDERS[custom_id][17]; // new card becomes old trump_tobeat
     if (trumps_start) { tt_msg = MSG_TOPTRUMPS_INTRO1 + HERO_ARRAY[SENDERS[custom_id][16]][0] + MSG_TOPTRUMPS_INTRO2 };
