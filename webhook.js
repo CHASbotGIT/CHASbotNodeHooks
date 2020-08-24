@@ -3932,8 +3932,8 @@ if (trumps_restart) { tt_msg = "Let's return to " + HERO_ARRAY[SENDERS[custom_id
   };
 }
 
-var pokemonInfo = [];
-var pokePics = [];
+//var pokemonInfo = [];
+//var pokePics = [];
 //var pokemon;
 
 async function fetchPokemon(pokemonId) {
@@ -3944,8 +3944,13 @@ async function fetchPokemon(pokemonId) {
     res.on('end', function() {
       let poke = JSON.parse(body);
       //console.log(poke);
-      console.log(poke.sprites.front_default);
-      pokemonInfo.push(poke);
+      console.log("ID: ",poke.id);
+      console.log("Name: ",poke.name);
+      console.log("Height: ",poke.height);
+      console.log("Weight: ",poke.weight);
+      console.log("Sprite: ",poke.sprites.front_default);
+
+      //pokemonInfo.push(poke);
     }); // res.on('end'
   }); // http.get(url
   req.on('error', function(e) { // Catches failures to connect to the API
@@ -3954,36 +3959,4 @@ async function fetchPokemon(pokemonId) {
   }); // req.on('error'
 }
 
-async function fetchManyPokemon(pokemonCount) {
-  for(var i = 1; i <= pokemonCount; i++){
-    await fetchPokemon(i);
-  };
-}
-
-async function fetchPokemonImage(pokemonInfo) {
-  var imageUrl = pokemonInfo.sprites.front_default;
-  /*var imageResponse = await fetch(imageUrl);
-  var image = await imageResponse.blob();
-  var base64 = await getBase64(image);*/
-  pokePics.push(imageUrl);
-}
-
-async function fetchPokemonImages() {
-  for(var i = 0; i < pokemonInfo.length; i++){
-    await fetchPokemonImage(pokemonInfo[i]);
-  };
-}
-
-async function getPokemon(pokemonCount){
-   //pokemon = [];
-  await fetchManyPokemon(pokemonCount);
-  await fetchPokemonImages();
-}
-
-async function buildDex(pokemonCount){
-  await getPokemon(pokemonCount);
-  console.table(pokemonInfo);
-  console.table(pokePics);
-}
-
-buildDex(10)
+fetchPokemon(1);
