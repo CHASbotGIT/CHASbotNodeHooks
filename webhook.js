@@ -3945,7 +3945,7 @@ async function fetchPokemon(pokemonId) {
       let poke = JSON.parse(body);
       //console.log(poke);
       console.log("ID: ",poke.id);
-      console.log("Name: ",strTitleCase(poke.species.name);
+      console.log("Name: ",strTitleCase(poke.species.name));
       console.log("Height: ",poke.height);
       console.log("Weight: ",poke.weight);
       console.log("Sprite: ",poke.sprites.front_default);
@@ -3953,7 +3953,8 @@ async function fetchPokemon(pokemonId) {
       console.log("Attack: ",poke.stats[4].base_stat);
       console.log("Defence: ",poke.stats[3].base_stat);
       console.log("Speed: ",poke.stats[0].base_stat);
-
+      console.table(poke.types.map);
+      console.table(poke.abilities.map);
       //pokemonInfo.push(poke);
     }); // res.on('end'
   }); // http.get(url
