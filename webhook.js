@@ -3945,7 +3945,7 @@ async function fetchPokemon(pokemonId) {
       let poke = JSON.parse(body);
       //console.log(poke);
       console.log("ID: ",poke.id);
-      console.log("Name: ",poke.name);
+      console.log("Name: ",strTitleCase(poke.species.name);
       console.log("Height: ",poke.height);
       console.log("Weight: ",poke.weight);
       console.log("Sprite: ",poke.sprites.front_default);
