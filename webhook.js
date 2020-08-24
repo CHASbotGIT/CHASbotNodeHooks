@@ -3938,14 +3938,14 @@ var pokePics = [];
 
 async function fetchPokemon(pokemonId) {
   let poke_url = "https://pokeapi.co/api/v2/pokemon/" + pokemonId.toString() + "/";
-  var req = http.get(hero_url, function(res) {
+  var req = http.get(poke_url, function(res) {
     let body = "";
     res.on('data', function (chunk) { body += chunk });
     res.on('end', function() {
       let poke = JSON.parse(body);
       pokemonInfo.push(poke);
     }); // res.on('end'
-  }); // http.get(url  
+  }); // http.get(url
   req.on('error', function(e) { // Catches failures to connect to the API
     console.log("ERROR [fetchPokemon]> Error getting to API: " + e);
     callback();
