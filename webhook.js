@@ -3953,8 +3953,8 @@ async function fetchPokemon(pokemonId) {
       console.log("Attack: ",poke.stats[4].base_stat);
       console.log("Defence: ",poke.stats[3].base_stat);
       console.log("Speed: ",poke.stats[0].base_stat);
-      console.table(poke.types.map);
-      console.table(poke.abilities.map);
+      console.table(poke.types);
+      console.table(poke.abilities);
       //pokemonInfo.push(poke);
     }); // res.on('end'
   }); // http.get(url
