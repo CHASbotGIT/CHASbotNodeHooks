@@ -3937,41 +3937,51 @@ var pokePics = [];
 //var pokemon;
 
 async function fetchPokemon(pokemonId) {
- var response = await fetch('https://pokeapi.co/api/v2/pokemon/'+pokemonId.toString()+'/');
- var poke = await response.json();
- pokemonInfo.push(poke);
+  let poke_url = "https://pokeapi.co/api/v2/pokemon/" + pokemonId.toString() + "/";
+  var req = http.get(hero_url, function(res) {
+    let body = "";
+    res.on('data', function (chunk) { body += chunk });
+    res.on('end', function() {
+      let poke = JSON.parse(body);
+      pokemonInfo.push(poke);
+    }); // res.on('end'
+  }); // http.get(url  
+  req.on('error', function(e) { // Catches failures to connect to the API
+    console.log("ERROR [fetchPokemon]> Error getting to API: " + e);
+    callback();
+  }); // req.on('error'
 }
 
 async function fetchManyPokemon(pokemonCount) {
- for(var i = 1; i <= pokemonCount; i++){
-   await fetchPokemon(i);
- };
+  for(var i = 1; i <= pokemonCount; i++){
+    await fetchPokemon(i);
+  };
 }
 
 async function fetchPokemonImage(pokemonInfo) {
- var imageUrl = pokemonInfo.sprites.front_default;
- /*var imageResponse = await fetch(imageUrl);
- var image = await imageResponse.blob();
- var base64 = await getBase64(image);*/
- pokePics.push(imageUrl);
+  var imageUrl = pokemonInfo.sprites.front_default;
+  /*var imageResponse = await fetch(imageUrl);
+  var image = await imageResponse.blob();
+  var base64 = await getBase64(image);*/
+  pokePics.push(imageUrl);
 }
 
 async function fetchPokemonImages() {
- for(var i = 0; i < pokemonInfo.length; i++){
-   await fetchPokemonImage(pokemonInfo[i]);
- };
+  for(var i = 0; i < pokemonInfo.length; i++){
+    await fetchPokemonImage(pokemonInfo[i]);
+  };
 }
 
 async function getPokemon(pokemonCount){
    //pokemon = [];
-   await fetchManyPokemon(pokemonCount);
-   await fetchPokemonImages();
+  await fetchManyPokemon(pokemonCount);
+  await fetchPokemonImages();
 }
 
 async function buildDex(pokemonCount){
- await getPokemon(pokemonCount);
- console.table(pokemonInfo);
- console.table(pokePics);
+  await getPokemon(pokemonCount);
+  console.table(pokemonInfo);
+  console.table(pokePics);
 }
 
 buildDex(10)
