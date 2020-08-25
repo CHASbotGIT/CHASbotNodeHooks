@@ -3948,8 +3948,8 @@ async function fetchPokemon(pokemonId) {
       console.log(poke);
 
       let evoChain = [];
-      let evoData = poke.chain;
-      console.log(evoData);
+      let evoData = poke.chain; // species.name = bulbasaur
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", evoData.species.name);
 
       let evoDataTo = evoData.evolves_to
       console.log(evoDataTo);
