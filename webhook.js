@@ -3958,6 +3958,8 @@ async function fetchPokemon(pokemonId) {
       console.log("Type(s): ",types);
       let abilities = poke.abilities.map((ability) => ability.ability.name).join(', ').toUpperCase();
       console.log("Abilities: ",abilities);
+      let moves = poke.moves.map((move) => move.move.name).join(', ').toUpperCase();
+      console.log("Moves: ",moves);
       //pokemonInfo.push(poke);
     }); // res.on('end'
   }); // http.get(url
