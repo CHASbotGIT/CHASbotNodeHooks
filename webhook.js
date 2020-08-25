@@ -3955,8 +3955,10 @@ async function fetchPokemon(pokemonId) {
       console.log("Defence: ",poke.stats[3].base_stat);
       console.log("Speed: ",poke.stats[0].base_stat);
       let types = poke.types.map((type) => type.type.name).join(', ').toUpperCase();
+      types = types.replace(/,([^,]*)$/, ' &$1');
       console.log("Type(s): ",types);
       let abilities = poke.abilities.map((ability) => ability.ability.name).join(', ').toUpperCase();
+      abilities = abilities.replace(/,([^,]*)$/, ' &$1');
       console.log("Abilities: ",abilities);
       let moves = poke.moves.map((move) => move.move.name).join(', ').toUpperCase();
       moves = moves.replace(/,([^,]*)$/, ' &$1');
