@@ -3938,6 +3938,7 @@ if (trumps_restart) { tt_msg = "Let's return to " + HERO_ARRAY[SENDERS[custom_id
 
 async function fetchPokemon(pokemonId) {
   let poke_url = "https://pokeapi.co/api/v2/pokemon/" + pokemonId.toString() + "/";
+  console.log("API Request [POKE]: " + poke_url);
   var req = http.get(poke_url, function(res) {
     let body = "";
     res.on('data', function (chunk) { body += chunk });
@@ -3954,7 +3955,7 @@ async function fetchPokemon(pokemonId) {
       console.log("Defence: ",poke.stats[3].base_stat);
       console.log("Speed: ",poke.stats[0].base_stat);
       let types = poke.types.map((type) => type.type.name).join(', ').toUpperCase();
-      console.log("Types: ",types);
+      console.log("Type(s): ",types);
       let abilities = poke.abilities.map((ability) => ability.ability.name).join(', ').toUpperCase();
       console.log("Abilities: ",abilities);
       //pokemonInfo.push(poke);
