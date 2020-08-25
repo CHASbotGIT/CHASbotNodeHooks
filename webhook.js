@@ -3937,14 +3937,49 @@ if (trumps_restart) { tt_msg = "Let's return to " + HERO_ARRAY[SENDERS[custom_id
 //var pokemon;
 
 async function fetchPokemon(pokemonId) {
-  let poke_url = "https://pokeapi.co/api/v2/pokemon/" + pokemonId.toString() + "/";
+  //let poke_url = "https://pokeapi.co/api/v2/pokemon/" + pokemonId.toString() + "/";
+  let poke_url = "https://pokeapi.co/api/v2/evolution-chain/" + pokemonId.toString() + "/";
   console.log("API Request [POKE]: " + poke_url);
   var req = http.get(poke_url, function(res) {
     let body = "";
     res.on('data', function (chunk) { body += chunk });
     res.on('end', function() {
       let poke = JSON.parse(body);
-      //console.log(poke);
+      console.log(poke);
+
+      let evoChain = [];
+      let evoData = poke.chain;
+
+      do {
+        let numberOfEvolutions = evoData.evolves_to.length;
+
+        evoChain.push({
+          "species_name": evoData .species.name,
+          "min_level": !evoData ? 1 : evoData .min_level,
+          "trigger_name": !evoData ? null : evoData .trigger.name,
+          "item": !evoData ? null : evoData .item
+        });
+
+        if(numberOfEvolutions > 1) {
+          for (let i = 1;i < numberOfEvolutions; i++) {
+            evoChain.push({
+              "species_name": evoData.evolves_to[i].species.name,
+              "min_level": !evoData.evolves_to[i]? 1 : evoData.evolves_to[i].min_level,
+              "trigger_name": !evoData.evolves_to[i]? null : evoData.evolves_to[i].trigger.name,
+              "item": !evoData.evolves_to[i]? null : evoData.evolves_to[i].item
+           });
+          }
+        }
+
+        evoData = evoData.evolves_to[0];
+
+      } while (evoData != undefined && evoData.hasOwnProperty('evolves_to'));
+
+      //return evoChain;
+
+      console.table(evoChain);
+
+      /*
       console.log("ID: ",poke.id);
       console.log("Name: ",strTitleCase(poke.species.name));
       console.log("Species URL: ",strTitleCase(poke.species.url));
@@ -3965,7 +4000,7 @@ async function fetchPokemon(pokemonId) {
       console.log("Abilities: ",abilities);
       let moves = poke.moves.map((move) => move.move.name).join(', ').toUpperCase();
       moves = moves.replace(/,([^,]*)$/, ' &$1');
-      console.log("Moves: ",moves);
+      console.log("Moves: ",moves);*/
       //pokemonInfo.push(poke);
     }); // res.on('end'
   }); // http.get(url
@@ -3978,6 +4013,11 @@ async function fetchPokemon(pokemonId) {
 // ███████▒▒▒
 
 fetchPokemon(1);
+
+// spcies
+// https://pokeapi.co/api/v2/pokemon-species/1/
+// evolution chain
+// https://pokeapi.co/api/v2/evolution-chain/1/
 
 /*let evoChain = [];
 let evoData = chain.chain;
