@@ -3951,8 +3951,10 @@ async function fetchPokemon(pokemonId) {
       console.log("Weight: ",poke.weight);
       console.log("Sprite: ",poke.sprites.front_default);
       console.log("HP: ",poke.stats[5].base_stat);
-      console.log("Attack: ",poke.stats[4].base_stat);
-      console.log("Defence: ",poke.stats[3].base_stat);
+      console.log("Special Attack: ",poke.stats[4].base_stat);
+      console.log("Special Defence: ",poke.stats[3].base_stat);
+      console.log("Attack: ",poke.stats[2].base_stat);
+      console.log("Defence: ",poke.stats[1].base_stat);
       console.log("Speed: ",poke.stats[0].base_stat);
       let types = poke.types.map((type) => type.type.name).join(', ').toUpperCase();
       types = types.replace(/,([^,]*)$/, ' &$1');
