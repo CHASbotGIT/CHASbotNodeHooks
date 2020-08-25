@@ -3951,10 +3951,8 @@ async function fetchPokemon(pokemonId) {
       let evoData = poke.chain;
       console.log(evoData);
 
-      let evoDataDetails = poke.chain.evolves_to.evolution_details
-      console.log(evoDataDetails);
-      let evoDataEvolves = poke.chain.evolves_to.evolve_to
-      console.log(evoDataEvolves);
+      let evoDataTo = poke.chain.evolves_to
+      console.log(evoDataTo);
 
       do {
         let numberOfEvolutions = evoData.evolves_to.length;
