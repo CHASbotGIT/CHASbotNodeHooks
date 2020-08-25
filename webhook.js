@@ -3949,13 +3949,16 @@ async function fetchPokemon(pokemonId) {
 
       let evoChain = [];
       let evoData = poke.chain;
-      console.log(evoData);
+      //console.log(evoData);
 
       let evoDataTo = evoData.evolves_to
       console.log(evoDataTo);
 
       let evoDataTo2 = evoDataTo.evolves_to
       console.log(evoDataTo2);
+
+      let evoDataTo3 = evoDataTo2.evolves_to
+      console.log(evoDataTo3);
 
       //return evoChain;
 
