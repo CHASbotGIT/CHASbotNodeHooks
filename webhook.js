@@ -3960,6 +3960,8 @@ async function fetchPokemon(pokemonId) {
           "item": !evoData ? null : evoData .item
         });
 
+        console.table(evoChain);
+
         if(numberOfEvolutions > 1) {
           for (let i = 1;i < numberOfEvolutions; i++) {
             evoChain.push({
