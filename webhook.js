@@ -3957,9 +3957,6 @@ async function fetchPokemon(pokemonId) {
       let evoDataTo2 = evoDataTo.evolves_to
       console.log(evoDataTo2);
 
-
-      } while (evoData != undefined && evoData.hasOwnProperty('evolves_to'));
-
       //return evoChain;
 
       console.table(evoChain);
