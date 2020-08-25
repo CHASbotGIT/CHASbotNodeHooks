@@ -3955,7 +3955,7 @@ async function fetchPokemon(pokemonId) {
       console.log("Speed: ",poke.stats[0].base_stat);
       let types = poke.types.map((type) => type.type.name).join(', ').toUpperCase();
       console.log("Types: ",types);
-      let abilities = poke.types.map((ability) => ability.ability.name).join(', ').toUpperCase();
+      let abilities = poke.abilities.map((ability) => ability.ability.name).join(', ').toUpperCase();
       console.log("Abilities: ",abilities);
       //pokemonInfo.push(poke);
     }); // res.on('end'
