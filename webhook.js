@@ -3952,7 +3952,7 @@ async function fetchPokemon(pokemonId) {
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", evoData.species.name);
 
       let evoDataTo = evoData.evolves_to;
-      console.log(evoDataTo.evolution_details);
+      console.log(evoDataTo);
 
       //let evoDataTo2 = evoDataTo.evolves_to.evolution_details;
       //console.log(evoDataTo2);
