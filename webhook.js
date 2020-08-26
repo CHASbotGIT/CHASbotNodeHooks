@@ -3945,7 +3945,7 @@ async function fetchPokemon(pokemonId) {
     res.on('data', function (chunk) { body += chunk });
     res.on('end', function() {
       let poke = JSON.parse(body);
-      console.log(poke);
+      //console.log(poke);
 
       let evoChain = [];
       let evoData = poke.chain; // species.name = bulbasaur
