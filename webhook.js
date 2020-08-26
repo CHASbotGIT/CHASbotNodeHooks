@@ -3947,12 +3947,30 @@ async function fetchPokemon(pokemonId) {
       let poke = JSON.parse(body);
       //console.log(poke);
 
-      let evoChain = [];
-      let evoData = poke.chain; // species.name = bulbasaur
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", evoData.species.name);
 
-      let evoDataTo = evoData.evolves_to;
-      console.log(evoDataTo..species.name);
+      var evoChain = [];
+      var evoData = poke.chain;
+
+      do {
+        var evoDetails = evoData['evolution_details'][0];
+
+        evoChain.push({
+          "species_name": evoData.species.name,
+          "min_level": !evoDetails ? 1 : evoDetails.min_level,
+          "trigger_name": !evoDetails ? null : evoDetails.trigger.name,
+          "item": !evoDetails ? null : evoDetails.item
+        });
+
+        evoData = evoData['evolves_to'][0];
+      } while (!!evoData && evoData.hasOwnProperty('evolves_to'));
+
+      console.table(evoChain);
+      //let evoChain = [];
+      //let evoData = poke.chain; // species.name = bulbasaur
+      //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", evoData.species.name);
+
+      //let evoDataTo = evoData.evolves_to;
+      //console.log(evoDataTo..species.name);
       //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", evoDataTo.species.name);
 
       //let evoDataTo2 = evoDataTo.evolves_to;
