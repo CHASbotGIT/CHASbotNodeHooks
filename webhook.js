@@ -3952,10 +3952,11 @@ async function fetchPokemon(pokemonId) {
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", evoData.species.name);
 
       let evoDataTo = evoData.evolves_to;
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", evoDataTo.species.name);
+      console.log(evoDataTo);
+      //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", evoDataTo.species.name);
 
-      let evoDataTo2 = evoDataTo.evolves_to;
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", evoDataTo2.species.name);
+      //let evoDataTo2 = evoDataTo.evolves_to;
+      //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", evoDataTo2.species.name);
 
       //let evoDataTo3 = evoDataTo2.evolves_to
       //console.log(evoDataTo3);
