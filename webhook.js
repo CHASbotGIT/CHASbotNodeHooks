@@ -3954,8 +3954,8 @@ async function fetchPokemon(pokemonId) {
       let evoDataTo = evoData.evolves_to.evolution_details;
       console.log(evoDataTo);
 
-      let evoDataTo2 = evoDataTo.evolves_to.evolution_details;
-      console.log(evoDataTo2);
+      //let evoDataTo2 = evoDataTo.evolves_to.evolution_details;
+      //console.log(evoDataTo2);
 
       //let evoDataTo3 = evoDataTo2.evolves_to
       //console.log(evoDataTo3);
