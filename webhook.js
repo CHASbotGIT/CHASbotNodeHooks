@@ -3951,8 +3951,8 @@ async function fetchPokemon(pokemonId) {
       let evoData = poke.chain; // species.name = bulbasaur
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", evoData.species.name);
 
-      let evoDataTo = evoData.evolves_to.evolution_details;
-      console.log(evoDataTo);
+      let evoDataTo = evoData.evolves_to;
+      console.log(evoDataTo.evolution_details);
 
       //let evoDataTo2 = evoDataTo.evolves_to.evolution_details;
       //console.log(evoDataTo2);
