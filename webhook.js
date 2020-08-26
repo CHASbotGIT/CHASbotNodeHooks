@@ -3952,7 +3952,7 @@ async function fetchPokemon(pokemonId) {
       var evoData = poke.chain;
 
       do {
-        var evoDetails = evoData['evolution_details'][2];
+        var evoDetails = evoData['evolution_details'][5];
 
         evoChain.push({
           "species_name": evoData.species.name,
