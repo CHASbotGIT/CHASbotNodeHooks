@@ -3956,6 +3956,8 @@ async function fetchPokemon(pokemonId) {
 
       do {
 
+let numberOfEvolutions = evoData['evolves_to'].length;
+
 var evoDetails = evoData['evolution_details'][0];
 
 evoChain.push({
@@ -3967,7 +3969,7 @@ evoChain.push({
 
 console.table(evoChain);
 
-if(numberOfEvolutions > 1) {
+if (numberOfEvolutions > 1) {
   for (let i = 1;i < numberOfEvolutions; i++) {
 
     var evoDataNest = evoData.evolves_to[i];
@@ -3979,6 +3981,8 @@ if(numberOfEvolutions > 1) {
       "trigger_name": !evoDetailsNest? null : evoDetailsNest .trigger.name,
       "item": !evoDetailsNest? null : evoDetailsNest .item
    });
+
+   console.table(evoChain);
   }
 }
 
