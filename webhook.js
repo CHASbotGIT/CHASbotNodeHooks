@@ -4021,7 +4021,7 @@ evoData = evoData['evolves_to'][0];
 
       } while (!!evoData && evoData.hasOwnProperty('evolves_to'));
 
-      console.table(evoChain);
+      //console.table(evoChain);
       //let evoChain = [];
       //let evoData = poke.chain; // species.name = bulbasaur
       //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", evoData.species.name);
@@ -4074,7 +4074,7 @@ evoData = evoData['evolves_to'][0];
 
 // ███████▒▒▒
 
-fetchPokemon(1); //67
+fetchPokemon(67); //67
 
 // spcies
 // https://pokeapi.co/api/v2/pokemon-species/1/
