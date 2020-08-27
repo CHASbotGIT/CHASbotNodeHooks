@@ -3972,6 +3972,8 @@ evoChain.push({
   "item": !evoDetails ? null : evoDetails .item
 });
 
+console.table(trigger);
+
 console.table(evoChain);
 
 if (numberOfEvolutions > 1) {
@@ -3987,6 +3989,8 @@ if (numberOfEvolutions > 1) {
       "trigger_name": !evoDetailsNest? null : evoDetailsNest .trigger.name,
       "item": !evoDetailsNest? null : evoDetailsNest .item
    });
+
+   console.table(trigger);
 
    console.table(evoChain);
   }
