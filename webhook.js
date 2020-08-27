@@ -3954,13 +3954,18 @@ async function fetchPokemon(pokemonId) {
 
       //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ",evoData['evolves_to'].length);
 
+      let nest = -1;
+
       do {
+
+nest = nest + 1;
 
 let numberOfEvolutions = evoData['evolves_to'].length;
 
 var evoDetails = evoData['evolution_details'][0];
 
 evoChain.push({
+  "nest": nest,
   "species_name": evoData .species.name,
   "min_level": !evoDetails ? 1 : evoDetails .min_level,
   "trigger_name": !evoDetails ? null : evoDetails .trigger.name,
@@ -3976,6 +3981,7 @@ if (numberOfEvolutions > 1) {
     var evoDetailsNest = evoDataNest['evolution_details'][0];
 
     evoChain.push({
+      "nest": nest,
       "species_name": evoDataNest.species.name,
       "min_level": !evoDetailsNest? 1 : evoDetailsNest .min_level,
       "trigger_name": !evoDetailsNest? null : evoDetailsNest .trigger.name,
