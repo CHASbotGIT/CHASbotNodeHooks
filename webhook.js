@@ -3959,10 +3959,10 @@ async function fetchPokemon(pokemonId) {
         console.log(">>>>>>>>>>>>>>>>>>>>>>> ",numberOfEvolutions)
 
         evoChain.push({
-          "species_name": evoData .species.name,
-          "min_level": !evoData ? 1 : evoData .min_level,
-          "trigger_name": !evoData ? null : evoData .trigger.name,
-          "item": !evoData ? null : evoData .item
+          "species_name": evoData.species.name,
+          "min_level": !evoData ? 1 : evoData.min_level,
+          "trigger_name": !evoData ? null : evoData.trigger.name,
+          "item": !evoData ? null : evoData.item
         });
 
         console.table(evoChain);
