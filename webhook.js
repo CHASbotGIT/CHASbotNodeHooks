@@ -3972,7 +3972,7 @@ evoChain.push({
   "item": !evoDetails ? null : evoDetails .item
 });
 
-console.table(evoDetails.trigger);
+if (typeof evoDetails != 'undefined') {console.table(evoDetails.trigger)};
 
 console.table(evoChain);
 
@@ -3990,7 +3990,7 @@ if (numberOfEvolutions > 1) {
       "item": !evoDetailsNest? null : evoDetailsNest .item
    });
 
-   console.table(evoDetailsNest.trigger);
+   if (typeof evoDetailsNest != 'undefined') {console.table(evoDetailsNest.trigger)};
 
    console.table(evoChain);
   }
