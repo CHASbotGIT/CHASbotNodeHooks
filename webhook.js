@@ -3960,6 +3960,17 @@ async function fetchPokemon(pokemonId) {
       do {
         var evoDetails = evoData['evolution_details'][0];
 
+        let numberOfEvolutions = evoData['evolves_to'].length;
+
+        if (numberOfEvolutions > 1) {
+          for (let i = 1; i < numberOfEvolutions; i++) {
+
+              console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+              console.log(evoData['evolves_to'][i]);
+
+          };
+        };
+
         evoChain.push({
           "species_name": evoData. species.name,
           "min_level": !evoDetails ? 1 : evoDetails. min_level,
@@ -3968,6 +3979,7 @@ async function fetchPokemon(pokemonId) {
         });
 
         evoData = evoData['evolves_to'][0];
+
       } while (!!evoData && evoData.hasOwnProperty('evolves_to'));
 
       console.table(evoChain);
