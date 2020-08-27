@@ -3956,22 +3956,28 @@ async function fetchPokemon(pokemonId) {
 
       do {
 
-//var evoDetails = evoData['evolution_details'][0];
+var evoDetails = evoData['evolution_details'][0];
 
 evoChain.push({
   "species_name": evoData .species.name,
-  "min_level": !evoData ? 1 : evoData.evolution_details[0] .min_level,
-  "trigger_name": !evoData ? null : evoData.evolution_details[0] .trigger.name,
-  "item": !evoData ? null : evoData.evolution_details[0] .item
+  "min_level": !evoDetails ? 1 : evoDetails .min_level,
+  "trigger_name": !evoDetails ? null : evoDetails .trigger.name,
+  "item": !evoDetails ? null : evoDetails .item
 });
+
+console.table(evoChain);
 
 if(numberOfEvolutions > 1) {
   for (let i = 1;i < numberOfEvolutions; i++) {
+
+    var evoDataNest = evoData.evolves_to[i];
+    var evoDetailsNest = evoDataNest['evolution_details'][0];
+
     evoChain.push({
-      "species_name": evoData.evolves_to[i].species.name,
-      "min_level": !evoData.evolves_to[i]? 1 : evoData.evolves_to[i].evolution_details[0] .min_level,
-      "trigger_name": !evoData.evolves_to[i]? null : evoData.evolves_to[i].evolution_details[0] .trigger.name,
-      "item": !evoData.evolves_to[i]? null : evoData.evolves_to[i].evolution_details[0] .item
+      "species_name": evoDataNest.species.name,
+      "min_level": !evoDetailsNest? 1 : evoDetailsNest .min_level,
+      "trigger_name": !evoDetailsNest? null : evoDetailsNest .trigger.name,
+      "item": !evoDetailsNest? null : evoDetailsNest .item
    });
   }
 }
