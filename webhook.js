@@ -3958,7 +3958,7 @@ async function fetchPokemon(pokemonId) {
       do {
         var evoDetails = evoData['evolution_details'][0];
 
-        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ",evoDetails['evolves_to'].count);
+        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ",evoData['evolves_to'].count);
 
         evoChain.push({
           "species_name": evoData. species.name,
