@@ -3949,7 +3949,7 @@ async function fetchPokemon(pokemonId) {
 
 
       var evoChain = [];
-      var evoData = poke.chain;
+      var evoData = poke.chain.chain;
 
       do {
         let numberOfEvolutions = evoData.evolves_to.length;
@@ -4029,7 +4029,7 @@ async function fetchPokemon(pokemonId) {
 
 // ███████▒▒▒
 
-fetchPokemon(67);
+fetchPokemon(1); //67
 
 // spcies
 // https://pokeapi.co/api/v2/pokemon-species/1/
