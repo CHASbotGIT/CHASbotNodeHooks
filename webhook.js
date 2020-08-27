@@ -3949,10 +3949,12 @@ async function fetchPokemon(pokemonId) {
 
 
       var evoChain = [];
-      var evoData = poke.chain.chain;
+      var evoData = poke.chain;
 
       do {
         let numberOfEvolutions = evoData.evolves_to.length;
+
+        console.log(">>>>>>>>>>>>>>>>>>>>>>> ",numberOfEvolutions)
 
         evoChain.push({
           "species_name": evoData .species.name,
@@ -3961,14 +3963,22 @@ async function fetchPokemon(pokemonId) {
           "item": !evoData ? null : evoData .item
         });
 
+        console.table(evoChain);
+
         if(numberOfEvolutions > 1) {
           for (let i = 1;i < numberOfEvolutions; i++) {
+
+            console.log(">>>>>>>>>>>>>>>>>>>>>>> ",i);
+
             evoChain.push({
               "species_name": evoData.evolves_to[i].species.name,
               "min_level": !evoData.evolves_to[i]? 1 : evoData.evolves_to[i].min_level,
               "trigger_name": !evoData.evolves_to[i]? null : evoData.evolves_to[i].trigger.name,
               "item": !evoData.evolves_to[i]? null : evoData.evolves_to[i].item
            });
+
+          console.table(evoChain);
+
           }
         }
 
