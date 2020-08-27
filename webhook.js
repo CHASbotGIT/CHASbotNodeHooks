@@ -3960,18 +3960,18 @@ async function fetchPokemon(pokemonId) {
 
 evoChain.push({
   "species_name": evoData .species.name,
-  "min_level": !evoData ? 1 : evoData.['evolution_details'][0] .min_level,
-  "trigger_name": !evoData ? null : evoData.['evolution_details'][0] .trigger.name,
-  "item": !evoData ? null : evoData.['evolution_details'][0] .item
+  "min_level": !evoData ? 1 : evoData.evolution_details[0] .min_level,
+  "trigger_name": !evoData ? null : evoData.evolution_details[0] .trigger.name,
+  "item": !evoData ? null : evoData.evolution_details[0] .item
 });
 
 if(numberOfEvolutions > 1) {
   for (let i = 1;i < numberOfEvolutions; i++) {
     evoChain.push({
       "species_name": evoData.evolves_to[i].species.name,
-      "min_level": !evoData.evolves_to[i]? 1 : evoData.evolves_to[i].['evolution_details'][0] .min_level,
-      "trigger_name": !evoData.evolves_to[i]? null : evoData.evolves_to[i].['evolution_details'][0] .trigger.name,
-      "item": !evoData.evolves_to[i]? null : evoData.evolves_to[i].['evolution_details'][0] .item
+      "min_level": !evoData.evolves_to[i]? 1 : evoData.evolves_to[i].evolution_details[0] .min_level,
+      "trigger_name": !evoData.evolves_to[i]? null : evoData.evolves_to[i].evolution_details[0] .trigger.name,
+      "item": !evoData.evolves_to[i]? null : evoData.evolves_to[i].evolution_details[0] .item
    });
   }
 }
