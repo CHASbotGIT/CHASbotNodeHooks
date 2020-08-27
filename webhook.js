@@ -4035,7 +4035,7 @@ async function fetchPokemon(pokemonId) {
 
 // ███████▒▒▒
 
-fetchPokemon(1); //67
+fetchPokemon(2); //67
 
 // spcies
 // https://pokeapi.co/api/v2/pokemon-species/1/
