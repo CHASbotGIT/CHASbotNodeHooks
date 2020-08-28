@@ -3982,6 +3982,8 @@ if (numberOfEvolutions > 1) {
     var evoDataNest = evoData.evolves_to[i];
     var evoDetailsNest = evoDataNest['evolution_details'][0];
 
+    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ",i," ",evoDataNest['evolution_details'].length);
+
     evoChain.push({
       "nest": nest,
       "species_name": evoDataNest.species.name,
