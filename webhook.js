@@ -3989,7 +3989,10 @@ if (numberOfEvolutions > 1) {
 
     let nestLoop = 0;
     for (nestLoop = 0; nestLoop < evoDataNest['evolution_details'].length; nestLoop++) {
-      if (typeof evoDataNest['evolution_details'][i] != 'undefined') { console.table(evoDataNest['evolution_details'][i]) };
+      if (typeof evoDataNest['evolution_details'][nestLoop] != 'undefined') {
+        console.log("************************************************* ",nestLoop);
+        console.table(evoDataNest['evolution_details'][nestLoop]);
+      };
     };
 
     evoChain.push({
