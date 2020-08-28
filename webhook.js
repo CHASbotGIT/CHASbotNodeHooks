@@ -3965,6 +3965,7 @@ let numberOfEvolutions = evoData['evolves_to'].length;
 var evoDetails = evoData['evolution_details'][0];
 
 console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 0 ",evoData['evolution_details'].length);
+if (typeof evoData['evolution_details'][0] != 'undefined') { console.table(evoData['evolution_details'][0]) };
 
 evoChain.push({
   "nest": nest,
@@ -3985,6 +3986,7 @@ if (numberOfEvolutions > 1) {
     var evoDetailsNest = evoDataNest['evolution_details'][0];
 
     console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ",i," ",evoDataNest['evolution_details'].length);
+    if (typeof evoDataNest['evolution_details'][i] != 'undefined') { console.table(evoDataNest['evolution_details'][i]) };
 
     evoChain.push({
       "nest": nest,
