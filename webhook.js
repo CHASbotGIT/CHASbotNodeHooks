@@ -3964,6 +3964,8 @@ let numberOfEvolutions = evoData['evolves_to'].length;
 
 var evoDetails = evoData['evolution_details'][0];
 
+console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 0 ",evoData['evolution_details'].length);
+
 evoChain.push({
   "nest": nest,
   "species_name": evoData .species.name,
