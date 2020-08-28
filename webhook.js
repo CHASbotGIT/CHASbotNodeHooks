@@ -3956,114 +3956,74 @@ async function fetchPokemon(pokemonId) {
 
       let nest = -1;
 
+      let indexArray = ['held_item','item','known_move','known_move_type','location','min_affection',
+        'min_beauty','min_happiness','min_level','needs_overworld_rain','party_species','party_type',
+        'relative_physical_stats','time_of_day','trade_species','trigger','turn_upside_down'];
+
       do {
 
-nest = nest + 1;
-
-let numberOfEvolutions = evoData['evolves_to'].length;
-
-var evoDetails = evoData['evolution_details'][0];
-
-console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 0 ",evoData['evolution_details'].length);
-if (typeof evoData['evolution_details'][0] != 'undefined') { console.table(evoData['evolution_details'][0]) };
-
-evoChain.push({
-  "nest": nest,
-  "species_name": evoData .species.name,
-  "min_level": !evoDetails ? 1 : evoDetails .min_level,
-  "trigger_name": !evoDetails ? null : evoDetails .trigger.name,
-  "item": !evoDetails ? null : evoDetails .item
-});
-
-if (typeof evoDetails != 'undefined') {console.table(evoDetails.trigger)};
-
-console.table(evoChain);
-
-if (numberOfEvolutions > 1) {
-  for (let i = 1;i < numberOfEvolutions; i++) {
-
-    var evoDataNest = evoData.evolves_to[i];
-    var evoDetailsNest = evoDataNest['evolution_details'][0];
-
-    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ",i," ",evoDataNest['evolution_details'].length);
-
-    let nestLoop = 0;
-    for (nestLoop = 0; nestLoop < evoDataNest['evolution_details'].length; nestLoop++) {
-      if (typeof evoDataNest['evolution_details'][nestLoop] != 'undefined') {
-        console.log("************************************************* ",nestLoop);
-        console.table(evoDataNest['evolution_details'][nestLoop]);
-        console.table("££££££££££££££££££££££££££££££££££££££££££££££ ",evoDataNest['evolution_details'][nestLoop].length);
-      };
-    };
-
-    evoChain.push({
-      "nest": nest,
-      "species_name": evoDataNest.species.name,
-      "min_level": !evoDetailsNest? 1 : evoDetailsNest .min_level,
-      "trigger_name": !evoDetailsNest? null : evoDetailsNest .trigger.name,
-      "item": !evoDetailsNest? null : evoDetailsNest .item
-   });
-
-   if (typeof evoDetailsNest != 'undefined') {console.table(evoDetailsNest.trigger)};
-
-   console.table(evoChain);
-  }
-}
-
-evoData = evoData['evolves_to'][0];
-
-
-        /*let numberOfEvolutions = evoData['evolves_to'].length;
-
-        var evoDetails = evoData['evolution_details'][0];
+        nest = nest + 1;
 
         let numberOfEvolutions = evoData['evolves_to'].length;
 
-          evoChain.push({
-          "species_name": evoData. species.name,
-          "min_level": !evoDetails ? 1 : evoDetails. min_level,
-          "trigger_name": !evoDetails ? null : evoDetails. trigger.name,
-          "item": !evoDetails ? null : evoDetails. item
+        var evoDetails = evoData['evolution_details'][0];
+
+        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 0 ",evoData['evolution_details'].length);
+        if (typeof evoData['evolution_details'][0] != 'undefined') { console.table(evoData['evolution_details'][0]) };
+
+        evoChain.push({
+          "nest": nest,
+          "species_name": evoData .species.name,
+          "min_level": !evoDetails ? 1 : evoDetails .min_level,
+          "trigger_name": !evoDetails ? null : evoDetails .trigger.name,
+          "item": !evoDetails ? null : evoDetails .item
         });
 
+        if (typeof evoDetails != 'undefined') {console.table(evoDetails.trigger)};
+
+        console.table(evoChain);
+
         if (numberOfEvolutions > 1) {
-          for (let i = 1; i < numberOfEvolutions; i++) {
+          for (let i = 1;i < numberOfEvolutions; i++) {
 
-              console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-              console.log(evoData['evolves_to'][i]);
-              evoChain.push({
-                "species_name": evoData. species.name,
-                "min_level": !evoDetails ? 1 : evoDetails. min_level,
-                "trigger_name": !evoDetails ? null : evoDetails. trigger.name,
-                "item": !evoDetails ? null : evoDetails. item
-              });
+            var evoDataNest = evoData.evolves_to[i];
+            var evoDetailsNest = evoDataNest['evolution_details'][0];
 
-          };
-        };
+            console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ",i," ",evoDataNest['evolution_details'].length);
 
-        evoData = evoData['evolves_to'][0];*/
+            let nestLoop = 0;
+            for (nestLoop = 0; nestLoop < evoDataNest['evolution_details'].length; nestLoop++) {
+              if (typeof evoDataNest['evolution_details'][nestLoop] != 'undefined') {
+                console.log("************************************************* ",nestLoop);
+                console.table(evoDataNest['evolution_details'][nestLoop]);
+
+                let indexArrayLoop = 0;
+                for (indexArrayLoop = 0; indexArrayLoop < indexArray.length; indexArrayLoop++) {
+
+                  console.log(evoDataNest['evolution_details'][nestLoop][indexArray[indexArrayLoop]]['values']);
+
+                };
+
+              };
+            };
+
+            evoChain.push({
+              "nest": nest,
+              "species_name": evoDataNest.species.name,
+              "min_level": !evoDetailsNest? 1 : evoDetailsNest .min_level,
+              "trigger_name": !evoDetailsNest? null : evoDetailsNest .trigger.name,
+              "item": !evoDetailsNest? null : evoDetailsNest .item
+           });
+
+           if (typeof evoDetailsNest != 'undefined') {console.table(evoDetailsNest.trigger)};
+
+           console.table(evoChain);
+          }
+        }
+
+        evoData = evoData['evolves_to'][0];
 
       } while (!!evoData && evoData.hasOwnProperty('evolves_to'));
-
-      //console.table(evoChain);
-      //let evoChain = [];
-      //let evoData = poke.chain; // species.name = bulbasaur
-      //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", evoData.species.name);
-
-      //let evoDataTo = evoData.evolves_to;
-      //console.log(evoDataTo..species.name);
-      //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", evoDataTo.species.name);
-
-      //let evoDataTo2 = evoDataTo.evolves_to;
-      //console.log(evoDataTo2);
-      //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", evoDataTo2.species.name);
-
-      //let evoDataTo3 = evoDataTo2.evolves_to
-      //console.log(evoDataTo3);
-
-      //return evoChain;
-
-      //console.table(evoChain);
 
       /*
       console.log("ID: ",poke.id);
@@ -4099,38 +4059,3 @@ evoData = evoData['evolves_to'][0];
 // ███████▒▒▒
 
 fetchPokemon(67); //67
-
-// spcies
-// https://pokeapi.co/api/v2/pokemon-species/1/
-// evolution chain
-// https://pokeapi.co/api/v2/evolution-chain/1/
-
-/*let evoChain = [];
-let evoData = chain.chain;
-
-do {
-  let numberOfEvolutions = evoData.evolves_to.length;
-
-  evoChain.push({
-    "species_name": evoData .species.name,
-    "min_level": !evoData ? 1 : evoData .min_level,
-    "trigger_name": !evoData ? null : evoData .trigger.name,
-    "item": !evoData ? null : evoData .item
-  });
-
-  if(numberOfEvolutions > 1) {
-    for (let i = 1;i < numberOfEvolutions; i++) {
-      evoChain.push({
-        "species_name": evoData.evolves_to[i].species.name,
-        "min_level": !evoData.evolves_to[i]? 1 : evoData.evolves_to[i].min_level,
-        "trigger_name": !evoData.evolves_to[i]? null : evoData.evolves_to[i].trigger.name,
-        "item": !evoData.evolves_to[i]? null : evoData.evolves_to[i].item
-     });
-    }
-  }
-
-  evoData = evoData.evolves_to[0];
-
-} while (evoData != undefined && evoData.hasOwnProperty('evolves_to'));
-
-return evoChain;*/
