@@ -4084,7 +4084,7 @@ evoData = evoData['evolves_to'][0];
 
 // ███████▒▒▒
 
-fetchPokemon(1); //67
+fetchPokemon(67); //67
 
 // spcies
 // https://pokeapi.co/api/v2/pokemon-species/1/
