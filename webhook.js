@@ -3986,7 +3986,11 @@ if (numberOfEvolutions > 1) {
     var evoDetailsNest = evoDataNest['evolution_details'][0];
 
     console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ",i," ",evoDataNest['evolution_details'].length);
-    if (typeof evoDataNest['evolution_details'][i] != 'undefined') { console.table(evoDataNest['evolution_details'][i]) };
+
+    let nestLoop = 0;
+    for (nestLoop = 0; nestLoop < evoDataNest['evolution_details'].length; nestLoop++) {
+      if (typeof evoDataNest['evolution_details'][i] != 'undefined') { console.table(evoDataNest['evolution_details'][i]) };
+    };
 
     evoChain.push({
       "nest": nest,
