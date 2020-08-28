@@ -4000,7 +4000,7 @@ async function fetchPokemon(pokemonId) {
                 let indexArrayLoop = 0;
                 for (indexArrayLoop = 0; indexArrayLoop < indexArray.length; indexArrayLoop++) {
 
-                  console.log(evoDataNest['evolution_details'][nestLoop][indexArray[indexArrayLoop]]['values']);
+                  console.log(evoDataNest['evolution_details'][nestLoop][indexArray[indexArrayLoop]]);
 
                 };
 
