@@ -3992,11 +3992,7 @@ if (numberOfEvolutions > 1) {
       if (typeof evoDataNest['evolution_details'][nestLoop] != 'undefined') {
         console.log("************************************************* ",nestLoop);
         console.table(evoDataNest['evolution_details'][nestLoop]);
-        let innerLoop = 0;
-        for (innerLoop = 0; innerLoop < evoDataNest['evolution_details'][nestLoop].length; innerLoop++) {
-          console.log(evoDataNest['evolution_details'][nestLoop][innerLoop]['values'];
-
-        };
+        console.table("££££££££££££££££££££££££££££££££££££££££££££££ ",evoDataNest['evolution_details'][nestLoop].length);
       };
     };
 
