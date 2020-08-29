@@ -1236,13 +1236,13 @@ CHASbot.post('/webhook', (req, res) => {
             '█\t\t' + ': HP [45]\n' +
             '██\t' + ': Attack [49]\n' +
             '███\t' + ': Defence [49]\n' +
-            '████\t' + ': Sp. Attack [65]\n'; +
-            '█████\t' + ': Sp. Defence [65]\n'; +
-            '██████\t' + ': Speed [65]\n'; +
-            '███████\t' + ': Blah [65]\n'; +
-            '████████\t' + ': Blah Blah [65]\n'; +
-            '█████████\t' + ': Blah Blah [65]\n'; +
-            '██████████\t' + ': Blah Blah [65]\n'; +
+            '████\t' + ': Sp. Attack [65]\n' +
+            '█████\t' + ': Sp. Defence [65]\n' +
+            '██████\t' + ': Speed [65]\n' +
+            '███████\t' + ': Blah [65]\n' +
+            '████████\t' + ': Blah Blah [65]\n' +
+            '█████████\t' + ': Blah Blah [65]\n' +
+            '██████████\t' + ': Blah Blah [65]';
             postImage(event,'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',true,base_stats);
           };
 
