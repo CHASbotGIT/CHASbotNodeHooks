@@ -1233,14 +1233,14 @@ CHASbot.post('/webhook', (req, res) => {
             fetchPokemon(pokedex); //67 3 1 2 4
 
             var base_stats =
-            'BULBASAUR ID:1\n' +
+              'BULBASAUR ID:1️⃣ [318]\n' +
               '🔥 Fire ☠️ Poison ⚖️ 9.3kg 📊 0.7m\n' +
-              '🟠🟢🟢🟢🟢' + ': [010] HP\n' +
-              '🟠🟠🟢🟢🟢' + ': [018] Attack\n' +
-              '🟠🟠🟠🟢🟢' + ': [060] Defence\n' +
-              '🟠🟠🟠🟠🟢' + ': [075] Sp. Attack\n' +
-              '🟠🟠🟠🟠🟠' + ': [095] Sp. Defence [65]\n' +
-              '🟠🟠🟢🟢🟢' + ': [021] Speed\n' +
+              '🟠🟠🟠🟠🟢' + ': [045] HP\n' +
+              '🟠🟠🟠🟠🟢' + ': [049] Attack\n' +
+              '🟠🟠🟠🟠🟢' + ': [049] Defence\n' +
+              '🟠🟠🟠🟠🟠' + ': [065] Sp. Attack\n' +
+              '🟠🟠🟠🟠🟠' + ': [065] Sp. Defence\n' +
+              '🟠🟠🟠🟠🟢' + ': [045] Speed\n' +
               '(ℹ️ Info) (📶 Evolution) (◀️ Previous) (▶️ Next) (🔢 Random)';
             postImage(event,'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',true,base_stats);
           };
