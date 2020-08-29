@@ -4000,7 +4000,7 @@ async function fetchPokemon(pokemonId) {
            console.table(evoChain);
          };
        };
-        //evoData = evoData['evolves_to'][0];
+        evoData = evoData['evolves_to'][0];
       } while (!!evoData && evoData.hasOwnProperty('evolves_to'));
 
       /*
