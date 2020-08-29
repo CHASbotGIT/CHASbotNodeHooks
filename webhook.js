@@ -1233,16 +1233,14 @@ CHASbot.post('/webhook', (req, res) => {
             fetchPokemon(pokedex); //67 3 1 2 4
 
             var base_stats =
-            '+----------------+\n' +
-            '| BULBASAUR ID:1 |\n' +
-            '+----------------+\n' +
-            '🔥 Fire ☠️ Poison ⚖️ 9.3kg 📊 0.7m\n' +
-            '🟠🟢🟢🟢🟢' + ': HP [45]\n' +
-            '🟠🟠🟢🟢🟢' + ': Attack [49]\n' +
-            '🟠🟠🟠🟢🟢' + ': Defence [49]\n' +
-            '🟠🟠🟠🟠🟢' + ': Sp. Attack [65]\n' +
-            '🟠🟠🟠🟠🟠' + ': Sp. Defence [65]\n' +
-            '🟠🟠🟢🟢🟢' + ': Speed [65]';
+            'BULBASAUR ID:1\n' +
+              '🔥 Fire ☠️ Poison ⚖️ 9.3kg 📊 0.7m\n' +
+              '🟠🟢🟢🟢🟢' + ': HP [45]\n' +
+              '🟠🟠🟢🟢🟢' + ': Attack [49]\n' +
+              '🟠🟠🟠🟢🟢' + ': Defence [49]\n' +
+              '🟠🟠🟠🟠🟢' + ': Sp. Attack [65]\n' +
+              '🟠🟠🟠🟠🟠' + ': Sp. Defence [65]\n' +
+              '🟠🟠🟢🟢🟢' + ': Speed [65]';
             postImage(event,'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',true,base_stats);
           };
 
@@ -3959,6 +3957,14 @@ if (trumps_restart) { tt_msg = "Let's return to " + HERO_ARRAY[SENDERS[custom_id
 //var pokePics = [];
 //var pokemon;
 
+let pokeEvoDetails = ['held_item','item','known_move','known_move_type','location','min_affection',
+  'min_beauty','min_happiness','min_level','needs_overworld_rain','party_species','party_type',
+  'relative_physical_stats','time_of_day','trade_species','trigger'];
+let pokeType = ["⚫","⚪","🔥 Fire","🔴","🌊 Water","🔵","🌱 Grass","🟢","⚡ Electric","🟡",
+  "💎 Rock","🟤","🌎 Ground","🟤","👊 Fighting","🟠","🔮 Psychic","🟣","🌒 Dark","⚫","🧊 Ice","⚪",
+  "🐲 Dragon","🟢","⚙️ Steel","🔵","✈️ Flying","🔵","👻 Chost","⚪","☠️ Poison","🟣","🐞 Bug","🔴",
+  "🧚 Fairy","🟢","😊 Normal","🟡"];
+
 async function fetchPokemon(pokemonId) {
   // API Reference @ https://pokeapi.co
   //let poke_url = "https://pokeapi.co/api/v2/pokemon/" + pokemonId.toString() + "/";
@@ -3976,34 +3982,36 @@ async function fetchPokemon(pokemonId) {
       //console.log(evoData);
       //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ",evoData['evolves_to'].length);
       let nest = -1;
-      let indexArray = ['held_item','item','known_move','known_move_type','location','min_affection',
-        'min_beauty','min_happiness','min_level','needs_overworld_rain','party_species','party_type',
-        'relative_physical_stats','time_of_day','trade_species','trigger'];
-      let typeArray = ["🔥 Fire","🌊 Water","🌱 Grass","⚡ Electric","💎 Rock","🌎 Ground","👊 Fighting",
-        "🔮 Psychic","🌒 Dark","🧊 Ice","🐲 Dragon","⚙️ Steel","✈️ Flying","👻 Chost","☠️ Poison","🐞 Bug",
-        "🧚 Fairy","😊 Normal"];
+
+        // Find 1st type
+        // type + 1 = 1st colour
+        // if 2md type
+        //  type + 1 = 2nd colour
+        // else
+        //  2nd colour = black [0]
+        // if 1st colour = 2nd colour
+        //  2nd colour = black [0]
+        // if 1st colour = 2nd colour
+        //  2nd colour = white [1]
+
       do {
         nest = nest + 1;
         let numberOfEvolutions = evoData['evolves_to'].length;
         var evoDetails = evoData['evolution_details'][0];
-        //console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 0 ",evoData['evolution_details'].length);
-
-        let indexArrayLoop = 0;
+        let pokeEvoDetailsLoop = 0;
         if (typeof evoData['evolution_details'][0] != 'undefined') {
-          //console.log("************************************************* ",nestLoop);
           //console.table(evoDataNest['evolution_details'][nestLoop]);
-
-          for (indexArrayLoop = 0; indexArrayLoop < indexArray.length; indexArrayLoop++) {
-            var holder = evoData['evolution_details'][0][indexArray[indexArrayLoop]];
+          for (pokeEvoDetailsLoop = 0; pokeEvoDetailsLoop < pokeEvoDetails.length; pokeEvoDetailsLoop++) {
+            var holder = evoData['evolution_details'][0][pokeEvoDetails[pokeEvoDetailsLoop]];
             if (typeof holder != 'undefined'  && holder != null && holder != '') {
               if (typeof holder == 'object') { holder = holder.name };
               holder = '' + holder;
               if (holder != '-1') {holder = holder.replace(/-/g, ' ')};
               holder = strTitleCase(holder);
-              console.log(indexArray[indexArrayLoop],': ',holder);
-            };
-          };
-        };
+              console.log(pokeEvoDetails[pokeEvoDetailsLoop],': ',holder);
+            }; // if (typeof holder
+          }; // for (pokeEvoDetailsLoop
+        }; // f (typeof evoData
 
         if (typeof evoData['evolution_details'][0] != 'undefined') { console.table(evoData['evolution_details'][0]) };
 
@@ -4014,31 +4022,27 @@ async function fetchPokemon(pokemonId) {
           "trigger_name": !evoDetails ? null : evoDetails .trigger.name,
           "item": !evoDetails ? null : evoDetails .item
         });
-        //if (typeof evoDetails != 'undefined') {console.table(evoDetails.trigger)};
+
         console.table(evoChain);
         if (numberOfEvolutions > 1) {
           for (let i = 1;i < numberOfEvolutions; i++) {
             var evoDataNest = evoData.evolves_to[i];
             var evoDetailsNest = evoDataNest['evolution_details'][0];
-            //console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ",i," ",evoDataNest['evolution_details'].length);
             let nestLoop = 0;
             for (nestLoop = 0; nestLoop < evoDataNest['evolution_details'].length; nestLoop++) {
               if (typeof evoDataNest['evolution_details'][nestLoop] != 'undefined') {
-                //console.log("************************************************* ",nestLoop);
-                //console.table(evoDataNest['evolution_details'][nestLoop]);
-                //let indexArrayLoop = 0;
-                for (indexArrayLoop = 0; indexArrayLoop < indexArray.length; indexArrayLoop++) {
-                  var holder = evoDataNest['evolution_details'][nestLoop][indexArray[indexArrayLoop]];
+                for (pokeEvoDetailsLoop = 0; pokeEvoDetailsLoop < pokeEvoDetails.length; pokeEvoDetailsLoop++) {
+                  var holder = evoDataNest['evolution_details'][nestLoop][pokeEvoDetails[pokeEvoDetailsLoop]];
                   if (typeof holder != 'undefined'  && holder != null && holder != '') {
                     if (typeof holder == 'object') { holder = holder.name };
                     holder = '' + holder;
                     if (holder != '-1') {holder = holder.replace(/-/g, ' ')};
                     holder = strTitleCase(holder);
-                    console.log(indexArray[indexArrayLoop],': ',holder);
-                  };
-                };
-              };
-            };
+                    console.log(pokeEvoDetails[pokeEvoDetailsLoop],': ',holder);
+                  }; // if (typeof holder
+                }; // for (pokeEvoDetailsLoop
+              }; // if (typeof evoDataNest
+            }; // for (nestLoop
             evoChain.push({
               "nest": nest,
               "species_name": evoDataNest.species.name,
@@ -4046,7 +4050,7 @@ async function fetchPokemon(pokemonId) {
               "trigger_name": !evoDetailsNest? null : evoDetailsNest .trigger.name,
               "item": !evoDetailsNest? null : evoDetailsNest .item
            });
-           //if (typeof evoDetailsNest != 'undefined') {console.table(evoDetailsNest.trigger)};
+
            console.table(evoChain);
          };
        };
@@ -4085,12 +4089,6 @@ async function fetchPokemon(pokemonId) {
 }
 
 // 893
-// 🔴🟢🟤
-// 🟠🔵⚫
-// 🟡🟣⚪
-
-// ███████▒▒▒
+//fetchPokemon(67); //67
 
 // Mastermind?
-
-//fetchPokemon(67); //67
