@@ -3983,7 +3983,7 @@ async function fetchPokemon(pokemonId) {
             if (typeof holder != 'undefined'  && holder != null && holder != '') {
               if (typeof holder == 'object') { holder = holder.name };
               holder = holder.replace(/-/g, "");
-              hilder = strTitleCase(holder);
+              holder = strTitleCase(holder);
               console.log(indexArray[indexArrayLoop],': ',holder);
             };
           };
@@ -4016,7 +4016,7 @@ async function fetchPokemon(pokemonId) {
                   if (typeof holder != 'undefined'  && holder != null && holder != '') {
                     if (typeof holder == 'object') { holder = holder.name };
                     holder = holder.replace(/-/g, "");
-                    hilder = strTitleCase(holder);
+                    holder = strTitleCase(holder);
                     console.log(indexArray[indexArrayLoop],': ',holder);
                   };
                 };
