@@ -1227,8 +1227,6 @@ CHASbot.post('/webhook', (req, res) => {
           };
 
           // DEV
-
-           '███████▒▒▒\n'
           position_in_analyse_text = analyse_text.search(TRIGGER_DEV) + 1;
           if (position_in_analyse_text > 0) {
             let pokedex = analyse_text.replace(/[^0-9]+/g, '');
@@ -1239,7 +1237,7 @@ CHASbot.post('/webhook', (req, res) => {
             '░░░░░░░░░▒▒▒▒▒' + ': Attack [49]\n' +
             '░░░░░░░▒▒▒▒▒▒▒' + ': Defence [49]\n' +
             '░░░░▒▒▒▒▒▒▒▒▒▒' + ': HP [65]\n';
-            deliverText(event,base_stats,true,'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png');
+            postImage(event,'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',true,base_stats);
           };
 
           // Help
