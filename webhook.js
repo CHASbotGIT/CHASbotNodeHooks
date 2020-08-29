@@ -1229,7 +1229,7 @@ CHASbot.post('/webhook', (req, res) => {
           // DEV
           position_in_analyse_text = analyse_text.search(TRIGGER_DEV) + 1;
           if (position_in_analyse_text > 0) {
-            let pokedex = analyse_text.replace([^0-9], '');
+            let pokedex = analyse_text.replace(-?[^\\d], '');
             console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ",pokedex);
             fetchPokemon(pokedex); //67
           };
