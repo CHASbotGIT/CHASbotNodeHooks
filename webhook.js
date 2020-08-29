@@ -1230,9 +1230,12 @@ CHASbot.post('/webhook', (req, res) => {
           position_in_analyse_text = analyse_text.search(TRIGGER_DEV) + 1;
           if (position_in_analyse_text > 0) {
             let pokedex = analyse_text.replace(/[^0-9]+/g, '');
-            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ",pokedex);
             fetchPokemon(pokedex); //67 3 1 2 4
-            var base_stats = 'BULBASAUR ID:1\n' +
+
+            var base_stats =
+            '+----------------+\n' +
+            '| BULBASAUR ID:1 |\n' +
+            '+----------------+\n' +
             '🔥 Fire ☠️ Poison ⚖️ 9.3kg 📊 0.7m\n' +
             '🟠🟢🟢🟢🟢' + ': HP [45]\n' +
             '🟠🟠🟢🟢🟢' + ': Attack [49]\n' +
@@ -3976,9 +3979,9 @@ async function fetchPokemon(pokemonId) {
       let indexArray = ['held_item','item','known_move','known_move_type','location','min_affection',
         'min_beauty','min_happiness','min_level','needs_overworld_rain','party_species','party_type',
         'relative_physical_stats','time_of_day','trade_species','trigger'];
-      let typeArray = ["Fire 🔥","Water 🌊","Grass 🌱","Electric ⚡","Rock 💎","Ground 🌎","Fighting 👊🏼",
-        "Psychic 🔮","Dark 🌒","Ice 🧊","Dragon 🐲","Steel ⚙️","Flying ✈️","Ghost 👻","Poison ☠️","Bug 🐞",
-        "Fairy 🧚","Normal 😊"];
+      let typeArray = ["🔥 Fire","🌊 Water","🌱 Grass","⚡ Electric","💎 Rock","🌎 Ground","👊 Fighting",
+        "🔮 Psychic","🌒 Dark","🧊 Ice","🐲 Dragon","⚙️ Steel","✈️ Flying","👻 Chost","☠️ Poison","🐞 Bug",
+        "🧚 Fairy","😊 Normal"];
       do {
         nest = nest + 1;
         let numberOfEvolutions = evoData['evolves_to'].length;
