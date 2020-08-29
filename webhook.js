@@ -1230,6 +1230,7 @@ CHASbot.post('/webhook', (req, res) => {
           position_in_analyse_text = analyse_text.search(TRIGGER_DEV) + 1;
           if (position_in_analyse_text > 0) {
             console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ",analyse_text);
+            console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ",typeof analyse_text)
             let pokedex = parseInt(analyse_text,10);
             console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ",pokedex);
             pokedex = 67;
