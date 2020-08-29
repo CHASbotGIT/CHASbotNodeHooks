@@ -1231,12 +1231,12 @@ CHASbot.post('/webhook', (req, res) => {
           if (position_in_analyse_text > 0) {
             let pokedex = analyse_text.replace(/[^0-9]+/g, '');
             console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ",pokedex);
-            fetchPokemon(pokedex); //67
+            fetchPokemon(pokedex); //67 3 1 2 4
             var base_stats = 'BULBASAUR\n' +
-            '██████\t\t\t' + ': HP [45]\n' +
-            '█████████\t' + ': Attack [49]\n' +
-            '███████\t\t' + ': Defence [49]\n' +
-            '████\t\t\t\t' + ': Speed [65]\n';
+            '█\t' + ': HP [45]\n' +
+            '██\t' + ': Attack [49]\n' +
+            '███\t' + ': Defence [49]\n' +
+            '████\t' + ': Speed [65]\n';
             postImage(event,'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',true,base_stats);
           };
 
