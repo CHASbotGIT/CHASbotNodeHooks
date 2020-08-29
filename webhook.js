@@ -3964,7 +3964,22 @@ async function fetchPokemon(pokemonId) {
         let numberOfEvolutions = evoData['evolves_to'].length;
         var evoDetails = evoData['evolution_details'][0];
         //console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 0 ",evoData['evolution_details'].length);
+
+        let indexArrayLoop = 0;
+        if (typeof evoData['evolution_details'][0] != 'undefined') {
+          //console.log("************************************************* ",nestLoop);
+          //console.table(evoDataNest['evolution_details'][nestLoop]);
+
+          for (indexArrayLoop = 0; indexArrayLoop < indexArray.length; indexArrayLoop++) {
+            var holder = evoData['evolution_details'][0][indexArray[indexArrayLoop]];
+            if (typeof holder != 'undefined'  && holder != null && holder != '') {
+              console.log(indexArray[indexArrayLoop],' ',holder);
+            };
+          };
+        };
+
         if (typeof evoData['evolution_details'][0] != 'undefined') { console.table(evoData['evolution_details'][0]) };
+
         evoChain.push({
           "nest": nest,
           "species_name": evoData .species.name,
@@ -3972,7 +3987,7 @@ async function fetchPokemon(pokemonId) {
           "trigger_name": !evoDetails ? null : evoDetails .trigger.name,
           "item": !evoDetails ? null : evoDetails .item
         });
-        if (typeof evoDetails != 'undefined') {console.table(evoDetails.trigger)};
+        //if (typeof evoDetails != 'undefined') {console.table(evoDetails.trigger)};
         console.table(evoChain);
         if (numberOfEvolutions > 1) {
           for (let i = 1;i < numberOfEvolutions; i++) {
@@ -3984,7 +3999,7 @@ async function fetchPokemon(pokemonId) {
               if (typeof evoDataNest['evolution_details'][nestLoop] != 'undefined') {
                 //console.log("************************************************* ",nestLoop);
                 //console.table(evoDataNest['evolution_details'][nestLoop]);
-                let indexArrayLoop = 0;
+                //let indexArrayLoop = 0;
                 for (indexArrayLoop = 0; indexArrayLoop < indexArray.length; indexArrayLoop++) {
                   var holder = evoDataNest['evolution_details'][nestLoop][indexArray[indexArrayLoop]];
                   if (typeof holder != 'undefined'  && holder != null && holder != '') {
