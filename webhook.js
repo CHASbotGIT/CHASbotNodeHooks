@@ -3976,7 +3976,7 @@ async function fetchPokemon(pokemonId) {
           "species_name": evoData .species.name,
           "min_level": !evoDetails ? 1 : evoDetails .min_level,
           "trigger_name": !evoDetails ? null : evoDetails .trigger.name,
-          "item": !evoDetails ? null : evoDetails .item
+          "item": !evoDetails ? null : evoDetails .item.name
         });
 
         if (typeof evoDetails != 'undefined') {console.table(evoDetails.trigger)};
@@ -4016,7 +4016,7 @@ async function fetchPokemon(pokemonId) {
               "species_name": evoDataNest.species.name,
               "min_level": !evoDetailsNest? 1 : evoDetailsNest .min_level,
               "trigger_name": !evoDetailsNest? null : evoDetailsNest .trigger.name,
-              "item": !evoDetailsNest? null : evoDetailsNest .item
+              "item": !evoDetailsNest? null : evoDetailsNest .item.name
            });
 
            if (typeof evoDetailsNest != 'undefined') {console.table(evoDetailsNest.trigger)};
