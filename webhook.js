@@ -1227,11 +1227,19 @@ CHASbot.post('/webhook', (req, res) => {
           };
 
           // DEV
+
+           '███████▒▒▒\n'
           position_in_analyse_text = analyse_text.search(TRIGGER_DEV) + 1;
           if (position_in_analyse_text > 0) {
             let pokedex = analyse_text.replace(/[^0-9]+/g, '');
             console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ",pokedex);
             fetchPokemon(pokedex); //67
+            var base_stats 'BULBASAUR' +
+            '████▒▒▒▒▒▒' + ': HP [45]\n' +
+            '█████▒▒▒▒▒' + ': Attack [49]\n' +
+            '█████▒▒▒▒▒' + ': Defence [49]\n' +
+            '███████▒▒▒' + ': HP [65]\n'
+            deliverText(event,base_stats,true,'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png');
           };
 
           // Help
@@ -4069,6 +4077,8 @@ async function fetchPokemon(pokemonId) {
   }); // req.on('error'
 }
 
+// Fire 🔥 Water 🌊 Grass 🌱 Electric ⚡ Rock 💎 Ground 🌎 Fighting 👊🏼 Psychic 🔮 Dark 🌒
+// Ice 🧊 Dragon 🐲 Steel ⚙️ Flying ✈️ Ghost 👻 Poison ☠️  Bug 🐞 Fairy 🧚 Normal 😊
 // ███████▒▒▒
 
 //fetchPokemon(67); //67
