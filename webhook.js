@@ -1233,7 +1233,7 @@ CHASbot.post('/webhook', (req, res) => {
             console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ",pokedex);
             fetchPokemon(pokedex); //67 3 1 2 4
             var base_stats = 'BULBASAUR ID:1\n' +
-            '🔥Fire ☠️Poison ⚖️9.3kg 📊0.7m\n'
+            '🔥 Fire ☠️ Poison ⚖️ 9.3kg 📊 0.7m\n' +
             '🟠🟢🟢🟢🟢' + ': HP [45]\n' +
             '🟠🟠🟢🟢🟢' + ': Attack [49]\n' +
             '🟠🟠🟠🟢🟢' + ': Defence [49]\n' +
