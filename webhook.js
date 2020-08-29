@@ -3981,6 +3981,7 @@ async function fetchPokemon(pokemonId) {
             var holder = evoData['evolution_details'][0][indexArray[indexArrayLoop]];
             if (typeof holder != 'undefined'  && holder != null && holder != '') {
               console.log(indexArray[indexArrayLoop],' ',holder);
+              console.log("=================================== ",typeof holder);
             };
           };
         };
@@ -4011,6 +4012,7 @@ async function fetchPokemon(pokemonId) {
                   var holder = evoDataNest['evolution_details'][nestLoop][indexArray[indexArrayLoop]];
                   if (typeof holder != 'undefined'  && holder != null && holder != '') {
                     console.log(indexArray[indexArrayLoop],' ',holder);
+                    console.log("=================================== ",typeof holder);
                   };
                 };
               };
