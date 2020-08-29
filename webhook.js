@@ -1233,6 +1233,7 @@ CHASbot.post('/webhook', (req, res) => {
             console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ",pokedex);
             fetchPokemon(pokedex); //67 3 1 2 4
             var base_stats = 'BULBASAUR ID:1\n' +
+            '🔥Fire ☠️Poison ⚖️9.3kg 📊0.7m\n'
             '🟠🟢🟢🟢🟢' + ': HP [45]\n' +
             '🟠🟠🟢🟢🟢' + ': Attack [49]\n' +
             '🟠🟠🟠🟢🟢' + ': Defence [49]\n' +
@@ -3975,6 +3976,9 @@ async function fetchPokemon(pokemonId) {
       let indexArray = ['held_item','item','known_move','known_move_type','location','min_affection',
         'min_beauty','min_happiness','min_level','needs_overworld_rain','party_species','party_type',
         'relative_physical_stats','time_of_day','trade_species','trigger'];
+      let typeArray = ["Fire 🔥","Water 🌊","Grass 🌱","Electric ⚡","Rock 💎","Ground 🌎","Fighting 👊🏼",
+        "Psychic 🔮","Dark 🌒","Ice 🧊","Dragon 🐲","Steel ⚙️","Flying ✈️","Ghost 👻","Poison ☠️","Bug 🐞",
+        "Fairy 🧚","Normal 😊"];
       do {
         nest = nest + 1;
         let numberOfEvolutions = evoData['evolves_to'].length;
@@ -4078,8 +4082,12 @@ async function fetchPokemon(pokemonId) {
 }
 
 // 893
-// Fire 🔥 Water 🌊 Grass 🌱 Electric ⚡ Rock 💎 Ground 🌎 Fighting 👊🏼 Psychic 🔮 Dark 🌒
-// Ice 🧊 Dragon 🐲 Steel ⚙️ Flying ✈️ Ghost 👻 Poison ☠️  Bug 🐞 Fairy 🧚 Normal 😊
+// 🔴🟢🟤
+// 🟠🔵⚫
+// 🟡🟣⚪
+
 // ███████▒▒▒
+
+// Mastermind?
 
 //fetchPokemon(67); //67
