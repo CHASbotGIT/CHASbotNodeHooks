@@ -1226,12 +1226,12 @@ CHASbot.post('/webhook', (req, res) => {
             // FLOW: Sudo request replace 'feeling lucky'
           };
 
-
           // DEV
           position_in_analyse_text = analyse_text.search(TRIGGER_DEV) + 1;
           if (position_in_analyse_text > 0) {
-            let pokemon = parseInt(analyse_text);
-            fetchPokemon(pokemon); //67
+            let pokedex = parseInt(analyse_text);
+            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ",pokedex)
+            fetchPokemon(pokedex); //67
           };
 
           // Help
