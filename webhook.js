@@ -1228,6 +1228,10 @@ CHASbot.post('/webhook', (req, res) => {
           //console.log("DEBUG [postWebhook]> " + TRIGGER_HELP + " search result: " + position_in_analyse_text);
           let help_url = '';
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
+
+            // DEV
+            fetchPokemon(67); //67
+
             trigger_path = TRIGGER_HELP;
             help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
             //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
@@ -4036,4 +4040,4 @@ async function fetchPokemon(pokemonId) {
 
 // ███████▒▒▒
 
-fetchPokemon(67); //67
+//fetchPokemon(67); //67
