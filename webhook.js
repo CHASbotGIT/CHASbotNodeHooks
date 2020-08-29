@@ -3980,8 +3980,8 @@ async function fetchPokemon(pokemonId) {
           for (indexArrayLoop = 0; indexArrayLoop < indexArray.length; indexArrayLoop++) {
             var holder = evoData['evolution_details'][0][indexArray[indexArrayLoop]];
             if (typeof holder != 'undefined'  && holder != null && holder != '') {
-              console.log(indexArray[indexArrayLoop],' ',holder);
-              console.log("=================================== ",typeof holder);
+              if (typeof holder = 'object') { holder = holder.name }
+              console.log(indexArray[indexArrayLoop],': ',holder);
             };
           };
         };
@@ -4011,8 +4011,8 @@ async function fetchPokemon(pokemonId) {
                 for (indexArrayLoop = 0; indexArrayLoop < indexArray.length; indexArrayLoop++) {
                   var holder = evoDataNest['evolution_details'][nestLoop][indexArray[indexArrayLoop]];
                   if (typeof holder != 'undefined'  && holder != null && holder != '') {
-                    console.log(indexArray[indexArrayLoop],' ',holder);
-                    console.log("=================================== ",typeof holder);
+                    if (typeof holder = 'object') { holder = holder.name }
+                    console.log(indexArray[indexArrayLoop],': ',holder);
                   };
                 };
               };
