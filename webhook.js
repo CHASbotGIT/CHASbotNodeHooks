@@ -3966,7 +3966,7 @@ async function fetchPokemon(pokemonId) {
       let nest = -1;
       let indexArray = ['held_item','item','known_move','known_move_type','location','min_affection',
         'min_beauty','min_happiness','min_level','needs_overworld_rain','party_species','party_type',
-        'relative_physical_stats','time_of_day','trade_species','trigger','turn_upside_down'];
+        'relative_physical_stats','time_of_day','trade_species','trigger'];
       do {
         nest = nest + 1;
         let numberOfEvolutions = evoData['evolves_to'].length;
@@ -3983,7 +3983,7 @@ async function fetchPokemon(pokemonId) {
             if (typeof holder != 'undefined'  && holder != null && holder != '') {
               if (typeof holder == 'object') { holder = holder.name };
               holder = '' + holder;
-              holder = holder.replace(/-/g, ' ');
+              if (holder != '-1') {holder = holder.replace(/-/g, ' ')};
               holder = strTitleCase(holder);
               console.log(indexArray[indexArrayLoop],': ',holder);
             };
@@ -4017,7 +4017,7 @@ async function fetchPokemon(pokemonId) {
                   if (typeof holder != 'undefined'  && holder != null && holder != '') {
                     if (typeof holder == 'object') { holder = holder.name };
                     holder = '' + holder;
-                    holder = holder.replace(/-/g, ' ');
+                    if (holder != '-1') {holder = holder.replace(/-/g, ' ')};
                     holder = strTitleCase(holder);
                     console.log(indexArray[indexArrayLoop],': ',holder);
                   };
