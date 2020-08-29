@@ -1240,9 +1240,18 @@ CHASbot.post('/webhook', (req, res) => {
               '🟠🟠🟠🟢🟢' + ': [060] Defence\n' +
               '🟠🟠🟠🟠🟢' + ': [075] Sp. Attack\n' +
               '🟠🟠🟠🟠🟠' + ': [095] Sp. Defence [65]\n' +
-              '🟠🟠🟢🟢🟢' + ': [021] Speed';
+              '🟠🟠🟢🟢🟢' + ': [021] Speed\n' +
+              '(ℹ️ Info) (📶 Evolution) (◀️ Previous) (▶️ Next) (🔢 Random)';
             postImage(event,'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',true,base_stats);
           };
+          // Find the largest - scale to 100
+          // x5 second colour
+          // Use ratio to compare to all others (for each)
+          // math.round
+          // <= 20 first colour x1 second colour x4
+          // else if <= 40 first colour x2 second colour x3
+          // else if <= 60 first colour x3 second colour x2
+          // else if <= 80 first colour x4 second colour x1
 
           // Help
           position_in_analyse_text = analyse_text.search(TRIGGER_HELP) + 1;
@@ -4088,7 +4097,13 @@ async function fetchPokemon(pokemonId) {
   }); // req.on('error'
 }
 
-// 893
+// pokedex <name>
+// find <name>
+// pokedex null or !match then random
+// 1 to 893
+// [ℹ️ Info] [📶 Evolution] [◀️ Previous] [▶️ Next] [🔢 Random]
+// Details = Description & Abilities
+// Evolution = Evolution sequences
 //fetchPokemon(67); //67
 
 // Mastermind?
