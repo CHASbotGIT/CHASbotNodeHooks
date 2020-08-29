@@ -3996,7 +3996,7 @@ async function fetchPokemon(pokemonId) {
               "trigger_name": !evoDetailsNest? null : evoDetailsNest .trigger.name,
               "item": !evoDetailsNest? null : evoDetailsNest .item
            });
-           if (typeof evoDetailsNest != 'undefined') {console.table(evoDetailsNest.trigger)};
+           //if (typeof evoDetailsNest != 'undefined') {console.table(evoDetailsNest.trigger)};
            console.table(evoChain);
          };
        };
