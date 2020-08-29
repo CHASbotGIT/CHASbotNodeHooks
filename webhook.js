@@ -183,6 +183,8 @@ var TRIGGER_SEARCH = ['search','google','wiki','beeb'];
 var TRIGGER_LOTTERY = ['lotto','lottery','euromillions','euro-millions'];
 var TRIGGER_MOVIEDB = ['synopsis','watched','watch','catch','seen','see'];
 
+var TRIGGER_DEV = 'poke';
+
 //  _  _  ___   ___  _   _____
 // | || |/ _ \ / _ \| |/ / __|
 // | __ | (_) | (_) | ' <\__ \
@@ -1223,15 +1225,20 @@ CHASbot.post('/webhook', (req, res) => {
             inPlayPause(sender_index); // Pause all in-play
             // FLOW: Sudo request replace 'feeling lucky'
           };
+
+
+          // DEV
+          position_in_analyse_text = analyse_text.search(TRIGGER_DEV) + 1;
+          if (position_in_analyse_text > 0) {
+            let pokemon = parseInt(analyse_text);
+            fetchPokemon(pokemon); //67
+          };
+
           // Help
           position_in_analyse_text = analyse_text.search(TRIGGER_HELP) + 1;
           //console.log("DEBUG [postWebhook]> " + TRIGGER_HELP + " search result: " + position_in_analyse_text);
           let help_url = '';
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
-
-            // DEV
-            fetchPokemon(67); //67
-
             trigger_path = TRIGGER_HELP;
             help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
             //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
