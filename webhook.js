@@ -3979,7 +3979,7 @@ async function fetchPokemon(pokemonId) {
             for (nestLoop = 0; nestLoop < evoDataNest['evolution_details'].length; nestLoop++) {
               if (typeof evoDataNest['evolution_details'][nestLoop] != 'undefined') {
                 //console.log("************************************************* ",nestLoop);
-                console.table(evoDataNest['evolution_details'][nestLoop]);
+                //console.table(evoDataNest['evolution_details'][nestLoop]);
                 let indexArrayLoop = 0;
                 for (indexArrayLoop = 0; indexArrayLoop < indexArray.length; indexArrayLoop++) {
                   var holder = evoDataNest['evolution_details'][nestLoop][indexArray[indexArrayLoop]];
