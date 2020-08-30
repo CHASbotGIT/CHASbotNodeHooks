@@ -4063,6 +4063,7 @@ async function fetchPokemon(pokemonId) {
           }; // for (narLoop = 0;
         }; // if (evoPhraseCnt
         evoChain.push({
+          "Root": '*',
           "Nest": nest,
           "Species": evoData .species.name,
           "Evolution": evoNarrative
