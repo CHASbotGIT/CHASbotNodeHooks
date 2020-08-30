@@ -4210,7 +4210,7 @@ async function fetchPokemon(pokemonId) {
         "Attack": poke.stats[2].base_stat,
         "Special Defence": poke.stats[3].base_stat,
         "Special Attack": poke.stats[4].base_stat,
-        "HP": poke.stats[5].base_stat),
+        "HP": poke.stats[5].base_stat,
         "Total": (poke.stats[5].base_stat + poke.stats[4].base_stat + poke.stats[3].base_stat +
           poke.stats[2].base_stat + poke.stats[1].base_stat + poke.stats[0].base_stat),
         "Type(s)": types,
