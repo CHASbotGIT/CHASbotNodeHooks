@@ -4014,13 +4014,16 @@ async function fetchPokemon(pokemonId) {
       do {
         nest = nest + 1;
 
-        evoChainNarrative = [];
+        //evoChainNarrative = [];
 
         let numberOfEvolutions = evoData['evolves_to'].length;
         var evoDetails = evoData['evolution_details'][0];
         let pokeEvoDetailsLoop = 0;
         if (typeof evoData['evolution_details'][0] != 'undefined') {
           //console.table(evoDataNest['evolution_details'][nestLoop]);
+
+evoChainNarrative = [];
+
           for (pokeEvoDetailsLoop = 0; pokeEvoDetailsLoop < pokeEvoDetails.length; pokeEvoDetailsLoop++) {
             var holder = evoData['evolution_details'][0][pokeEvoDetails[pokeEvoDetailsLoop]];
             if (typeof holder != 'undefined'  && holder != null && holder != '') {
@@ -4085,6 +4088,9 @@ async function fetchPokemon(pokemonId) {
             let nestLoop = 0;
             for (nestLoop = 0; nestLoop < evoDataNest['evolution_details'].length; nestLoop++) {
               if (typeof evoDataNest['evolution_details'][nestLoop] != 'undefined') {
+
+evoChainNarrative = [];
+
                 for (pokeEvoDetailsLoop = 0; pokeEvoDetailsLoop < pokeEvoDetails.length; pokeEvoDetailsLoop++) {
                   var holder = evoDataNest['evolution_details'][nestLoop][pokeEvoDetails[pokeEvoDetailsLoop]];
                   if (typeof holder != 'undefined'  && holder != null && holder != '') {
