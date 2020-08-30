@@ -4146,17 +4146,20 @@ async function fetchPokemon(pokemonId) {
 
             var evoPhraseCnt = evoChainNarrative.length;
 
-            console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ',evoPhraseCnt);
+
 
             var super_prefix = ' and '; // switch to or?
             if (evoPhraseCnt == 0) {
               console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> no specifics')
             } else if (evoPhraseCnt == 1) {
               evoNarrative = evoNarrative + ' ' + evoChainNarrative[0];
+              console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ',evoPhraseCnt);
             } else if (evoPhraseCnt == 2) {
               evoNarrative = evoNarrative + ' ' + evoChainNarrative[0] + super_prefix + evoChainNarrative[1];
+              console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ',evoPhraseCnt);
             } else { // >2 e.g. 3.... 0,1,2 (length -1)
-              let narLoop = 1;
+              console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ',evoPhraseCnt);
+              let narLoop = 0;
               for (narLoop = 0; narLoop < evoPhraseCnt.length; narLoop++) {
                 if (narLoop == (evoPhraseCnt-1)) {
                   super_prefix = ' and ';
