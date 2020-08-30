@@ -4084,7 +4084,7 @@ evoChainNarrative = [];
         if (numberOfEvolutions > 1) {
           for (let i = 1;i < numberOfEvolutions; i++) {
 
-evoChainNarrative = [];
+            evoChainNarrative = [];
 
             var evoDataNest = evoData.evolves_to[i];
             var evoDetailsNest = evoDataNest['evolution_details'][0];
@@ -4117,7 +4117,7 @@ evoChainNarrative = [];
                 }; // for (pokeEvoDetailsLoop
               }; // if (typeof evoDataNest
 
-              var evoPhraseCnt = evoChainNarrative.length;
+              /*var evoPhraseCnt = evoChainNarrative.length;
               var super_prefix = ' and '; // switch to or?
               if (evoPhraseCnt == 0) {
                 console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> no specifics')
@@ -4137,9 +4137,31 @@ evoChainNarrative = [];
                   };
                   evoNarrative = evoNarrative + super_prefix + evoChainNarrative[narLoop];
                 };
-              };
+              };*/
 
             }; // for (nestLoop
+
+            var evoPhraseCnt = evoChainNarrative.length;
+            var super_prefix = ' and '; // switch to or?
+            if (evoPhraseCnt == 0) {
+              console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> no specifics')
+            } else if (evoPhraseCnt == 1) {
+              evoNarrative = evoNarrative + ' ' + evoChainNarrative[0];
+            } else if (evoPhraseCnt == 2) {
+              evoNarrative = evoNarrative + ' ' + evoChainNarrative[0] + super_prefix + evoChainNarrative[1];
+            } else { // >2 e.g. 3.... 0,1,2 (length -1)
+              let narLoop = 1;
+              for (narLoop = 0; narLoop < evoPhraseCnt.length; narLoop++) {
+                if (narLoop == (evoPhraseCnt-1)) {
+                  super_prefix = ' and ';
+                } else if (narLoop == 0) {
+                  super_prefix = ' ';
+                } else {
+                  super_prefix = ', ';
+                };
+                evoNarrative = evoNarrative + super_prefix + evoChainNarrative[narLoop];
+              };
+            };
 
             evoChain.push({
               "nest": nest,
