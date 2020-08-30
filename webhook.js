@@ -4075,10 +4075,8 @@ async function fetchPokemon(pokemonId) {
             var evoDataNest = evoData.evolves_to[i];
             var evoDetailsNest = evoDataNest['evolution_details'][0];
             let nestLoop = 0;
+            let reached = -1;
             for (nestLoop = 0; nestLoop < evoDataNest['evolution_details'].length; nestLoop++) {
-
-              console.log(nestLoop, ' >>>>>>>>>>><<<<<<<<<<< ', nestLoop, ' >>>>>>>>>>><<<<<<<<<<< ', nestLoop, ' >>>>>>>>>>><<<<<<<<<<< ', nestLoop);
-
               if (typeof evoDataNest['evolution_details'][nestLoop] != 'undefined') {
                 for (pokeEvoDetailsLoop = 0; pokeEvoDetailsLoop < pokeEvoDetails.length; pokeEvoDetailsLoop++) {
                   var holder = evoDataNest['evolution_details'][nestLoop][pokeEvoDetails[pokeEvoDetailsLoop]];
@@ -4104,7 +4102,9 @@ async function fetchPokemon(pokemonId) {
                   }; // if (typeof holder
                 }; // for (pokeEvoDetailsLoop
               }; // if (typeof evoDataNest
+              reached = nestLoop;
             }; // for (nestLoop
+            console.log(nestLoop, ' >>>>>>>>>>><<<<<<<<<<< ', reached, ' >>>>>>>>>>><<<<<<<<<<< ', reached, ' >>>>>>>>>>><<<<<<<<<<< ', reached);
             console.table(evoChainNarrative);
             var evoPhraseCnt = evoChainNarrative.length;
             var super_prefix = ' and '; // switch to or?
