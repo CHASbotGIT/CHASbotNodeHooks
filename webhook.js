@@ -4065,7 +4065,7 @@ async function fetchPokemon(pokemonId) {
         evoChain.push({
           "Root": '*',
           "Sequence": nest,
-          "Species": evoData .species.name,
+          "Species": strTitleCase(evoData.species.name),
           "Evolution": evoNarrative
         }); // evoChain.push({
         console.log("DEBUG [fetchPokemon]> Pokemon: " + evoData .species.name + '; Evolution: ' + evoNarrative);
@@ -4127,7 +4127,7 @@ async function fetchPokemon(pokemonId) {
             }; // if (evoPhraseCnt
             evoChain.push({
               "Sequence": nest,
-              "Species": evoDataNest .species.name,
+              "Species": strTitleCase(evoDataNest.species.name),
               "Evolution": evoNarrative
             }); // evoChain.push({
             console.log("DEBUG [fetchPokemon]> Pokemon: " + evoDataNest .species.name + '; Evolution: ' + evoNarrative);
