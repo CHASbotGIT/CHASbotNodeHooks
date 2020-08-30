@@ -4036,8 +4036,7 @@ async function fetchPokemon(pokemonId) {
                 holder = pokeEvoPrefix[pokeEvoDetailsLoop] + holder + pokeEvoSuffix[pokeEvoDetailsLoop];
                 evoChainNarrative.push(holder);
               }; // if (pokeEvoDetails[pokeEvoDetailsLoop]
-              console.log(pokeEvoDetails[pokeEvoDetailsLoop],':: ',holder);
-              console.table(evoChainNarrative);
+              console.log("DEBUG [fetchPokemon]> Evolution parameters: " + pokeEvoDetails[pokeEvoDetailsLoop] + ' = ' + holder);
             }; // if (typeof holder
           }; // for (pokeEvoDetailsLoop
         }; // if (typeof evoData
@@ -4045,7 +4044,7 @@ async function fetchPokemon(pokemonId) {
         var evoPhraseCnt = evoChainNarrative.length;
         var super_prefix = ' and '; // switch to or?
         if (evoPhraseCnt == 0) {
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> no specifics')
+          // Only trigger
         } else if (evoPhraseCnt == 1) {
           evoNarrative = evoNarrative + ' ' + evoChainNarrative[0];
         } else if (evoPhraseCnt == 2) {
@@ -4068,7 +4067,7 @@ async function fetchPokemon(pokemonId) {
           "species_name": evoData .species.name,
           "evolution": evoNarrative
         }); // evoChain.push({
-        console.table(evoChain);
+        console.log("DEBUG [fetchPokemon]> Pokemon: " + evoData .species.name + '; Evolution: ' + evoNarrative);
         if (numberOfEvolutions > 1) {
           for (let i = 1;i < numberOfEvolutions; i++) {
             evoChainNarrative = [];
@@ -4085,7 +4084,6 @@ async function fetchPokemon(pokemonId) {
                     holder = '' + holder;
                     if (holder != '-1') {holder = holder.replace(/-/g, ' ')};
                     holder = strTitleCase(holder);
-
                     if (pokeEvoDetails[pokeEvoDetailsLoop] == 'trigger') {
                       evoNarrative = holder;
                     } else {
@@ -4097,15 +4095,12 @@ async function fetchPokemon(pokemonId) {
                       holder = pokeEvoPrefix[pokeEvoDetailsLoop] + holder + pokeEvoSuffix[pokeEvoDetailsLoop];
                       evoChainNarrative.push(holder);
                     };
-                    console.log(pokeEvoDetails[pokeEvoDetailsLoop],': ',holder);
-                    console.table(evoChainNarrative);
+                    console.log("DEBUG [fetchPokemon]> Evolution parameters (nested): " + pokeEvoDetails[pokeEvoDetailsLoop] + ' = ' + holder);
                   }; // if (typeof holder
                 }; // for (pokeEvoDetailsLoop
               }; // if (typeof evoDataNest
               reached = nestLoop;
             }; // for (nestLoop
-            console.log(reached, ' >>>>>>>>>>><<<<<<<<<<< ', reached, ' >>>>>>>>>>><<<<<<<<<<< ', reached, ' >>>>>>>>>>><<<<<<<<<<< ', reached);
-            console.table(evoChainNarrative);
             var evoPhraseCnt = evoChainNarrative.length;
             var super_prefix = ' and '; // switch to or?
             if (reached > 0) { var super_prefix = ' or ' }
@@ -4130,15 +4125,17 @@ async function fetchPokemon(pokemonId) {
               }; // for (narLoop
             }; // if (evoPhraseCnt
             evoChain.push({
-              "nest": nest,
-              "species_name": evoDataNest .species.name,
-              "evolution": evoNarrative
+              "Nest": nest,
+              "Spcies": evoDataNest .species.name,
+              "Evolution": evoNarrative
             }); // evoChain.push({
-            console.table(evoChain);
-         }; // for (let i = 1;i < numberOfEvolutions; i++) {
-       }; // if (numberOfEvolutions > 1)
+            console.log("DEBUG [fetchPokemon]> Pokemon: " + evoDataNest .species.name + '; Evolution: ' + evoNarrative);
+          }; // for (let i = 1;i < numberOfEvolutions; i++) {
+        }; // if (numberOfEvolutions > 1)
        evoData = evoData['evolves_to'][0];
       } while (!!evoData && evoData.hasOwnProperty('evolves_to'));
+      console.log("DEBUG [fetchPokemon]> Results:");
+      console.table(evoChain);
 
       /*
       console.log("ID: ",poke.id);
