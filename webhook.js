@@ -4062,7 +4062,7 @@ async function fetchPokemon(pokemonId) {
             if (narLoop == (evoPhraseCnt-1)) {
               super_prefix = ' and ';
             } else if (narLoop == 0) {
-              super_prefix = '';
+              super_prefix = ' ';
             } else {
               super_prefix = ', ';
             };
@@ -4124,7 +4124,7 @@ async function fetchPokemon(pokemonId) {
                 if (narLoop == (evoPhraseCnt-1)) {
                   super_prefix = ' and ';
                 } else if (narLoop == 0) {
-                  super_prefix = '';
+                  super_prefix = ' ';
                 } else {
                   super_prefix = ', ';
                 };
