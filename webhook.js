@@ -4199,7 +4199,7 @@ async function fetchPokemon(pokemonId) {
       moves = moves.replace(/,([^,]*)$/, ' &$1');
       //console.log("Moves: ",moves);
 
-      pokeDex.push(poke.id)({
+      pokeDex.splice(poke.id,0,{
         "Name": strTitleCase(poke.species.name),
         "Species URL": strTitleCase(poke.species.url),
         "Height": poke.height/10 + 'm',
