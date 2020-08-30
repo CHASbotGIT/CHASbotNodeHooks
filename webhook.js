@@ -3977,6 +3977,17 @@ let pokeType = ["⚫","⚪","🔥 Fire","🔴","🌊 Water","🔵","🌱 Grass",
   "🐲 Dragon","🟢","⚙️ Steel","🔵","✈️ Flying","🔵","👻 Chost","⚪","☠️ Poison","🟣","🐞 Bug","🔴",
   "🧚 Fairy","🟢","😊 Normal","🟡"];
 
+  // Find 1st type
+  // type + 1 = 1st colour
+  // if 2md type
+  //  type + 1 = 2nd colour
+  // else
+  //  2nd colour = black [0]
+  // if 1st colour = 2nd colour
+  //  2nd colour = black [0]
+  // if 1st colour = 2nd colour
+  //  2nd colour = white [1]
+
 // evo test cases 312, 67, 362, 116, 41, 268, 47
 
 async function fetchPokemon(pokemonId) {
@@ -3993,21 +4004,7 @@ async function fetchPokemon(pokemonId) {
 
       var evoChain = [];
       var evoData = poke.chain;
-      //console.log(evoData);
-      //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ",evoData['evolves_to'].length);
       let nest = -1;
-
-        // Find 1st type
-        // type + 1 = 1st colour
-        // if 2md type
-        //  type + 1 = 2nd colour
-        // else
-        //  2nd colour = black [0]
-        // if 1st colour = 2nd colour
-        //  2nd colour = black [0]
-        // if 1st colour = 2nd colour
-        //  2nd colour = white [1]
-
       let evoChainNarrative = [];
       let evoNarrative = '';
       do {
