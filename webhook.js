@@ -4134,6 +4134,14 @@ async function fetchPokemon(pokemonId) {
       } while (!!evoData && evoData.hasOwnProperty('evolves_to'));
       console.log("DEBUG [fetchPokemon]> Results:");
       console.table(evoChain);
+      console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ',evoChain[0]['Species']);
+      let evoChainCnt = evoChain;
+      let evoSequence = '';
+      if (evoChainCnt == 0) {
+        evoSequence = 'Sorry, unable to find evolution chain';
+      } else if (evoChainCnt == 1) {
+        evoSequence = evoChain[0]['Species'] + " does not evolve";
+      };
 
       /*
       console.log("ID: ",poke.id);
