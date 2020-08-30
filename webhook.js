@@ -4022,7 +4022,7 @@ async function fetchPokemon(pokemonId) {
         if (typeof evoData['evolution_details'][0] != 'undefined') {
           //console.table(evoDataNest['evolution_details'][nestLoop]);
 
-evoChainNarrative = [];
+          evoChainNarrative = [];
 
           for (pokeEvoDetailsLoop = 0; pokeEvoDetailsLoop < pokeEvoDetails.length; pokeEvoDetailsLoop++) {
             var holder = evoData['evolution_details'][0][pokeEvoDetails[pokeEvoDetailsLoop]];
@@ -4141,6 +4141,9 @@ evoChainNarrative = [];
 
             }; // for (nestLoop
 
+            console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+            console.table(evoChainNarrative);
+
             var evoPhraseCnt = evoChainNarrative.length;
             var super_prefix = ' and '; // switch to or?
             if (evoPhraseCnt == 0) {
@@ -4169,7 +4172,7 @@ evoChainNarrative = [];
               "evolution": evoNarrative
             });
 
-           console.table(evoChain);
+            console.table(evoChain);
          };
        };
         evoData = evoData['evolves_to'][0];
