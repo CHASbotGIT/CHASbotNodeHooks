@@ -4155,7 +4155,11 @@ async function fetchPokemon(pokemonId) {
             evoSequence = evoSequence + pokePrevious + ' 📶 ' + evoChain[evoLoop]['Evolution'] + '\n';
             // Poliwag > Poliwhirl [Level Up with Level 25+]
             //
-          } else if (evoChain[evoLoop]['Root'] == '*') { // Final evolution
+          } else if (evoChain[evoLoop]['Root'] == '*') { // 2
+            evoSequence = evoSequence + pokePrevious + ' ➡️ ';
+            evoSequence = evoSequence + evoChain[evoLoop]['Species'] + ' 📶 ' + evoChain[evoLoop]['Evolution'] + '\n';
+
+          } else if (evoChain[evoLoop]['Root'] == '*') { // Final evolution 3
             evoSequence = evoSequence + pokePrevious + ' ➡️ ';
             // Poliwag > Poliwhirl [Level Up with Level 25+]
             // Poliwhirl >
@@ -4165,7 +4169,6 @@ async function fetchPokemon(pokemonId) {
           };
         }; // for (evoLoop = 0
       }; // if (evoChainCnt == 0)
-      console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
       console.log(evoSequence);
 
       /*
