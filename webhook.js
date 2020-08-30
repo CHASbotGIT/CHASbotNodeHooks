@@ -4076,6 +4076,9 @@ async function fetchPokemon(pokemonId) {
             var evoDetailsNest = evoDataNest['evolution_details'][0];
             let nestLoop = 0;
             for (nestLoop = 0; nestLoop < evoDataNest['evolution_details'].length; nestLoop++) {
+
+              console.log(nestLoop, ' >>>>>>>>>>><<<<<<<<<<< ', nestLoop, ' >>>>>>>>>>><<<<<<<<<<< ', nestLoop, ' >>>>>>>>>>><<<<<<<<<<< ', nestLoop);
+
               if (typeof evoDataNest['evolution_details'][nestLoop] != 'undefined') {
                 for (pokeEvoDetailsLoop = 0; pokeEvoDetailsLoop < pokeEvoDetails.length; pokeEvoDetailsLoop++) {
                   var holder = evoDataNest['evolution_details'][nestLoop][pokeEvoDetails[pokeEvoDetailsLoop]];
