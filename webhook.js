@@ -4194,9 +4194,8 @@ async function fetchPokemon(pokemonId) {
       console.log("Abilities: ",abilities);
       let moves = poke.moves.map((move) => move.move.name).join(', ').toUpperCase();
       moves = moves.replace(/,([^,]*)$/, ' &$1');
-      console.log("Moves: ",moves);*/
+      console.log("Moves: ",moves);
 
-      //pokemonInfo.push(poke);
     }); // res.on('end'
   }); // http.get(url
   req.on('error', function(e) { // Catches failures to connect to the API
