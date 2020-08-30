@@ -4141,10 +4141,13 @@ async function fetchPokemon(pokemonId) {
 
             }; // for (nestLoop
 
-            console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+            console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
             console.table(evoChainNarrative);
 
             var evoPhraseCnt = evoChainNarrative.length;
+
+            console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ',evoPhraseCnt);
+
             var super_prefix = ' and '; // switch to or?
             if (evoPhraseCnt == 0) {
               console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> no specifics')
