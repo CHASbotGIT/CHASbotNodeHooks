@@ -4160,7 +4160,7 @@ async function fetchPokemon(pokemonId) {
             } else { // >2 e.g. 3.... 0,1,2 (length -1)
               console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ',evoPhraseCnt);
               let narLoop = 0;
-              for (narLoop = 0; narLoop < evoPhraseCnt.length; narLoop++) {
+              for (narLoop = 0; narLoop < evoPhraseCnt; narLoop++) {
                 if (narLoop == (evoPhraseCnt-1)) {
                   super_prefix = ' and ';
                 } else if (narLoop == 0) {
