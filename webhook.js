@@ -4064,7 +4064,7 @@ async function fetchPokemon(pokemonId) {
         }; // if (evoPhraseCnt
         evoChain.push({
           "Root": '*',
-          "Nest": nest,
+          "Sequence": nest,
           "Species": evoData .species.name,
           "Evolution": evoNarrative
         }); // evoChain.push({
@@ -4126,8 +4126,8 @@ async function fetchPokemon(pokemonId) {
               }; // for (narLoop
             }; // if (evoPhraseCnt
             evoChain.push({
-              "Nest": nest,
-              "Spcies": evoDataNest .species.name,
+              "Sequence": nest,
+              "Species": evoDataNest .species.name,
               "Evolution": evoNarrative
             }); // evoChain.push({
             console.log("DEBUG [fetchPokemon]> Pokemon: " + evoDataNest .species.name + '; Evolution: ' + evoNarrative);
