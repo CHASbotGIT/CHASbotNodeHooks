@@ -4040,7 +4040,7 @@ async function fetchPokemon(pokemonId) {
             }; // if (typeof holder
           }; // for (pokeEvoDetailsLoop
         }; // if (typeof evoData
-        if (typeof evoData['evolution_details'][0] != 'undefined') { console.table(evoData['evolution_details'][0]) };
+        //if (typeof evoData['evolution_details'][0] != 'undefined') { console.table(evoData['evolution_details'][0]) };
         var evoPhraseCnt = evoChainNarrative.length;
         var super_prefix = ' and '; // switch to or?
         if (evoPhraseCnt == 0) {
@@ -4063,9 +4063,9 @@ async function fetchPokemon(pokemonId) {
           }; // for (narLoop = 0;
         }; // if (evoPhraseCnt
         evoChain.push({
-          "nest": nest,
-          "species_name": evoData .species.name,
-          "evolution": evoNarrative
+          "Nest": nest,
+          "Species": evoData .species.name,
+          "Evolution": evoNarrative
         }); // evoChain.push({
         console.log("DEBUG [fetchPokemon]> Pokemon: " + evoData .species.name + '; Evolution: ' + evoNarrative);
         if (numberOfEvolutions > 1) {
