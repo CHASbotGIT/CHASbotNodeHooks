@@ -4033,7 +4033,7 @@ async function fetchPokemon(pokemonId) {
                 holder = pokeEvoPrefix[pokeEvoDetailsLoop] + holder + pokeEvoSuffix[pokeEvoDetailsLoop];
                 evoChainNarrative.push(holder);
               }; // if (pokeEvoDetails[pokeEvoDetailsLoop]
-              console.log("DEBUG [fetchPokemon]> Evolution parameters: " + pokeEvoDetails[pokeEvoDetailsLoop] + ' = ' + holder);
+              //console.log("DEBUG [fetchPokemon]> Evolution parameters: " + pokeEvoDetails[pokeEvoDetailsLoop] + ' = ' + holder);
             }; // if (typeof holder
           }; // for (pokeEvoDetailsLoop
         }; // if (typeof evoData
@@ -4065,7 +4065,7 @@ async function fetchPokemon(pokemonId) {
           "Species": strTitleCase(evoData.species.name),
           "Evolution": evoNarrative
         }); // evoChain.push({
-        console.log("DEBUG [fetchPokemon]> Pokemon: " + evoData .species.name + '; Evolution: ' + evoNarrative);
+        //console.log("DEBUG [fetchPokemon]> Pokemon: " + evoData .species.name + '; Evolution: ' + evoNarrative);
         if (numberOfEvolutions > 1) {
           for (let i = 1;i < numberOfEvolutions; i++) {
             evoChainNarrative = [];
@@ -4093,7 +4093,7 @@ async function fetchPokemon(pokemonId) {
                       holder = pokeEvoPrefix[pokeEvoDetailsLoop] + holder + pokeEvoSuffix[pokeEvoDetailsLoop];
                       evoChainNarrative.push(holder);
                     };
-                    console.log("DEBUG [fetchPokemon]> Evolution parameters (nested): " + pokeEvoDetails[pokeEvoDetailsLoop] + ' = ' + holder);
+                    //console.log("DEBUG [fetchPokemon]> Evolution parameters (nested): " + pokeEvoDetails[pokeEvoDetailsLoop] + ' = ' + holder);
                   }; // if (typeof holder
                 }; // for (pokeEvoDetailsLoop
               }; // if (typeof evoDataNest
@@ -4127,14 +4127,12 @@ async function fetchPokemon(pokemonId) {
               "Species": strTitleCase(evoDataNest.species.name),
               "Evolution": evoNarrative
             }); // evoChain.push({
-            console.log("DEBUG [fetchPokemon]> Pokemon: " + evoDataNest .species.name + '; Evolution: ' + evoNarrative);
+            //console.log("DEBUG [fetchPokemon]> Pokemon: " + evoDataNest .species.name + '; Evolution: ' + evoNarrative);
           }; // for (let i = 1;i < numberOfEvolutions; i++) {
         }; // if (numberOfEvolutions > 1)
        evoData = evoData['evolves_to'][0];
       } while (!!evoData && evoData.hasOwnProperty('evolves_to'));
-      console.log("DEBUG [fetchPokemon]> Results:");
-      console.table(evoChain);
-
+      //console.log("DEBUG [fetchPokemon]> Results:"); console.table(evoChain);
       let evoChainCnt = evoChain.length;
       let evoSequence = '';
       if (evoChainCnt == 0) {
@@ -4169,7 +4167,7 @@ async function fetchPokemon(pokemonId) {
           };
         }; // for (evoLoop = 0
       }; // if (evoChainCnt == 0)
-      console.log(evoSequence);
+      console.log("DEBUG [fetchPokemon]> Evolution sequence: \n" + evoSequence);
 
       /*
       console.log("ID: ",poke.id);
