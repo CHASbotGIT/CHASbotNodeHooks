@@ -3976,6 +3976,9 @@ let pokeType = ["⚫","⚪","🔥 Fire","🔴","🌊 Water","🔵","🌱 Grass",
   "💎 Rock","🟤","🌎 Ground","🟤","👊 Fighting","🟠","🔮 Psychic","🟣","🌒 Dark","⚫","🧊 Ice","⚪",
   "🐲 Dragon","🟢","⚙️ Steel","🔵","✈️ Flying","🔵","👻 Chost","⚪","☠️ Poison","🟣","🐞 Bug","🔴",
   "🧚 Fairy","🟢","😊 Normal","🟡"];
+let pokeDex = [];
+let pokeSpecies = [];
+let pokeEvolution = [];
 
   // Find 1st type
   // type + 1 = 1st colour
@@ -3992,8 +3995,8 @@ let pokeType = ["⚫","⚪","🔥 Fire","🔴","🌊 Water","🔵","🌱 Grass",
 
 async function fetchPokemon(pokemonId) {
   // API Reference @ https://pokeapi.co
-  //let poke_url = "https://pokeapi.co/api/v2/pokemon/" + pokemonId.toString() + "/";
-  let poke_url = "https://pokeapi.co/api/v2/evolution-chain/" + pokemonId.toString() + "/";
+  let poke_url = "https://pokeapi.co/api/v2/pokemon/" + pokemonId.toString() + "/";
+  //let poke_url = "https://pokeapi.co/api/v2/evolution-chain/" + pokemonId.toString() + "/";
   console.log("API Request [POKE]: " + poke_url);
   var req = http.get(poke_url, function(res) {
     let body = "";
@@ -4002,6 +4005,7 @@ async function fetchPokemon(pokemonId) {
       let poke = JSON.parse(body);
       //console.log(poke);
 
+      /*
       var evoChain = [];
       var evoData = poke.chain;
       let nest = -1;
@@ -4168,8 +4172,8 @@ async function fetchPokemon(pokemonId) {
         }; // for (evoLoop = 0
       }; // if (evoChainCnt == 0)
       console.log("DEBUG [fetchPokemon]> Evolution sequence: \n" + evoSequence);
+      */
 
-      /*
       console.log("ID: ",poke.id);
       console.log("Name: ",strTitleCase(poke.species.name));
       console.log("Species URL: ",strTitleCase(poke.species.url));
