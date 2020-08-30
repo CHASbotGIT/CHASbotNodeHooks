@@ -4010,20 +4010,14 @@ async function fetchPokemon(pokemonId) {
 
       let evoChainNarrative = [];
       let evoNarrative = '';
-
       do {
         nest = nest + 1;
-
-        //evoChainNarrative = [];
-
         let numberOfEvolutions = evoData['evolves_to'].length;
         var evoDetails = evoData['evolution_details'][0];
         let pokeEvoDetailsLoop = 0;
         if (typeof evoData['evolution_details'][0] != 'undefined') {
           //console.table(evoDataNest['evolution_details'][nestLoop]);
-
           evoChainNarrative = [];
-
           for (pokeEvoDetailsLoop = 0; pokeEvoDetailsLoop < pokeEvoDetails.length; pokeEvoDetailsLoop++) {
             var holder = evoData['evolution_details'][0][pokeEvoDetails[pokeEvoDetailsLoop]];
             if (typeof holder != 'undefined'  && holder != null && holder != '') {
@@ -4031,7 +4025,6 @@ async function fetchPokemon(pokemonId) {
               holder = '' + holder;
               if (holder != '-1') {holder = holder.replace(/-/g, ' ')};
               holder = strTitleCase(holder);
-
               if (pokeEvoDetails[pokeEvoDetailsLoop] == 'trigger') {
                 evoNarrative = holder;
               } else {
@@ -4042,16 +4035,13 @@ async function fetchPokemon(pokemonId) {
                 if (holder == 'True') { holder = 'while raining'};
                 holder = pokeEvoPrefix[pokeEvoDetailsLoop] + holder + pokeEvoSuffix[pokeEvoDetailsLoop];
                 evoChainNarrative.push(holder);
-              };
-
+              }; // if (pokeEvoDetails[pokeEvoDetailsLoop]
               console.log(pokeEvoDetails[pokeEvoDetailsLoop],':: ',holder);
               console.table(evoChainNarrative);
             }; // if (typeof holder
           }; // for (pokeEvoDetailsLoop
         }; // if (typeof evoData
-
         if (typeof evoData['evolution_details'][0] != 'undefined') { console.table(evoData['evolution_details'][0]) };
-
         var evoPhraseCnt = evoChainNarrative.length;
         var super_prefix = ' and '; // switch to or?
         if (evoPhraseCnt == 0) {
@@ -4069,23 +4059,19 @@ async function fetchPokemon(pokemonId) {
               super_prefix = ' ';
             } else {
               super_prefix = ', ';
-            };
+            }; // if (narLoop
             evoNarrative = evoNarrative + super_prefix + evoChainNarrative[narLoop];
-          };
-        };
-
+          }; // for (narLoop = 0;
+        }; // if (evoPhraseCnt
         evoChain.push({
           "nest": nest,
           "species_name": evoData .species.name,
           "evolution": evoNarrative
         });
-
         console.table(evoChain);
         if (numberOfEvolutions > 1) {
           for (let i = 1;i < numberOfEvolutions; i++) {
-
             evoChainNarrative = [];
-
             var evoDataNest = evoData.evolves_to[i];
             var evoDetailsNest = evoDataNest['evolution_details'][0];
             let nestLoop = 0;
@@ -4110,55 +4096,22 @@ async function fetchPokemon(pokemonId) {
                       holder = pokeEvoPrefix[pokeEvoDetailsLoop] + holder + pokeEvoSuffix[pokeEvoDetailsLoop];
                       evoChainNarrative.push(holder);
                     };
-
                     console.log(pokeEvoDetails[pokeEvoDetailsLoop],': ',holder);
                     console.table(evoChainNarrative);
                   }; // if (typeof holder
                 }; // for (pokeEvoDetailsLoop
               }; // if (typeof evoDataNest
 
-              /*var evoPhraseCnt = evoChainNarrative.length;
-              var super_prefix = ' and '; // switch to or?
-              if (evoPhraseCnt == 0) {
-                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> no specifics')
-              } else if (evoPhraseCnt == 1) {
-                evoNarrative = evoNarrative + ' ' + evoChainNarrative[0];
-              } else if (evoPhraseCnt == 2) {
-                evoNarrative = evoNarrative + ' ' + evoChainNarrative[0] + super_prefix + evoChainNarrative[1];
-              } else { // >2 e.g. 3.... 0,1,2 (length -1)
-                let narLoop = 1;
-                for (narLoop = 0; narLoop < evoPhraseCnt.length; narLoop++) {
-                  if (narLoop == (evoPhraseCnt-1)) {
-                    super_prefix = ' and ';
-                  } else if (narLoop == 0) {
-                    super_prefix = ' ';
-                  } else {
-                    super_prefix = ', ';
-                  };
-                  evoNarrative = evoNarrative + super_prefix + evoChainNarrative[narLoop];
-                };
-              };*/
-
-            }; // for (nestLoop
-
-            console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
             console.table(evoChainNarrative);
-
             var evoPhraseCnt = evoChainNarrative.length;
-
-
-
             var super_prefix = ' and '; // switch to or?
             if (evoPhraseCnt == 0) {
-              console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> no specifics')
+              // Only trigger
             } else if (evoPhraseCnt == 1) {
               evoNarrative = evoNarrative + ' ' + evoChainNarrative[0];
-              console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ',evoPhraseCnt);
             } else if (evoPhraseCnt == 2) {
               evoNarrative = evoNarrative + ' ' + evoChainNarrative[0] + super_prefix + evoChainNarrative[1];
-              console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ',evoPhraseCnt);
             } else { // >2 e.g. 3.... 0,1,2 (length -1)
-              console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ ',evoPhraseCnt);
               let narLoop = 0;
               for (narLoop = 0; narLoop < evoPhraseCnt; narLoop++) {
                 if (narLoop == (evoPhraseCnt-1)) {
@@ -4171,17 +4124,15 @@ async function fetchPokemon(pokemonId) {
                 evoNarrative = evoNarrative + super_prefix + evoChainNarrative[narLoop];
               };
             };
-
             evoChain.push({
               "nest": nest,
               "species_name": evoDataNest .species.name,
               "evolution": evoNarrative
             });
-
             console.table(evoChain);
          };
        };
-        evoData = evoData['evolves_to'][0];
+       evoData = evoData['evolves_to'][0];
       } while (!!evoData && evoData.hasOwnProperty('evolves_to'));
 
       /*
