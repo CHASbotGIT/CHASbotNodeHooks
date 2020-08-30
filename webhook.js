@@ -4067,7 +4067,7 @@ async function fetchPokemon(pokemonId) {
           "nest": nest,
           "species_name": evoData .species.name,
           "evolution": evoNarrative
-        });
+        }); // evoChain.push({
         console.table(evoChain);
         if (numberOfEvolutions > 1) {
           for (let i = 1;i < numberOfEvolutions; i++) {
@@ -4101,7 +4101,7 @@ async function fetchPokemon(pokemonId) {
                   }; // if (typeof holder
                 }; // for (pokeEvoDetailsLoop
               }; // if (typeof evoDataNest
-
+            }; // for (nestLoop
             console.table(evoChainNarrative);
             var evoPhraseCnt = evoChainNarrative.length;
             var super_prefix = ' and '; // switch to or?
@@ -4120,18 +4120,18 @@ async function fetchPokemon(pokemonId) {
                   super_prefix = ' ';
                 } else {
                   super_prefix = ', ';
-                };
+                }; // if (narLoop
                 evoNarrative = evoNarrative + super_prefix + evoChainNarrative[narLoop];
-              };
-            };
+              }; // for (narLoop
+            }; // if (evoPhraseCnt
             evoChain.push({
               "nest": nest,
               "species_name": evoDataNest .species.name,
               "evolution": evoNarrative
-            });
+            }); // evoChain.push({
             console.table(evoChain);
-         };
-       };
+         }; // for (let i = 1;i < numberOfEvolutions; i++) {
+       }; // if (numberOfEvolutions > 1)
        evoData = evoData['evolves_to'][0];
       } while (!!evoData && evoData.hasOwnProperty('evolves_to'));
 
@@ -4157,6 +4157,7 @@ async function fetchPokemon(pokemonId) {
       let moves = poke.moves.map((move) => move.move.name).join(', ').toUpperCase();
       moves = moves.replace(/,([^,]*)$/, ' &$1');
       console.log("Moves: ",moves);*/
+
       //pokemonInfo.push(poke);
     }); // res.on('end'
   }); // http.get(url
