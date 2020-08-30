@@ -4199,7 +4199,8 @@ async function fetchPokemon(pokemonId) {
       moves = moves.replace(/,([^,]*)$/, ' &$1');
       //console.log("Moves: ",moves);
 
-      pokeDex.splice(poke.id,0,{
+      pokeDex.push({
+        "ID": poke.id,
         "Name": strTitleCase(poke.species.name),
         "Species URL": strTitleCase(poke.species.url),
         "Height": poke.height/10 + 'm',
@@ -4218,7 +4219,7 @@ async function fetchPokemon(pokemonId) {
         "Moves": moves
       });
 
-      console.table(pokeDex[poke.id]);
+      console.table(pokeDex);
 
     }); // res.on('end'
   }); // http.get(url
