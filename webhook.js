@@ -3962,13 +3962,16 @@ if (trumps_restart) { tt_msg = "Let's return to " + HERO_ARRAY[SENDERS[custom_id
   };
 }
 
-//var pokemonInfo = [];
-//var pokePics = [];
-//var pokemon;
+
+
 
 let pokeEvoDetails = ['held_item','item','known_move','known_move_type','location','min_affection',
   'min_beauty','min_happiness','min_level','needs_overworld_rain','party_species','party_type',
   'relative_physical_stats','time_of_day','trade_species','trigger'];
+let pokeEvoPrefix = ['holding ','','with ','with ',' at','with Affection ','with Beauty ','with Happiness ',
+  'with Level ','','with ','with ','with ','in ','for ',''];
+let pokeEvoSuffix = ['','',' Move',' Type-Move','','+','+','+','+','',' Species in party','-type in party',
+  '','-time','',''];
 let pokeType = ["⚫","⚪","🔥 Fire","🔴","🌊 Water","🔵","🌱 Grass","🟢","⚡ Electric","🟡",
   "💎 Rock","🟤","🌎 Ground","🟤","👊 Fighting","🟠","🔮 Psychic","🟣","🌒 Dark","⚫","🧊 Ice","⚪",
   "🐲 Dragon","🟢","⚙️ Steel","🔵","✈️ Flying","🔵","👻 Chost","⚪","☠️ Poison","🟣","🐞 Bug","🔴",
@@ -4003,8 +4006,14 @@ async function fetchPokemon(pokemonId) {
         // if 1st colour = 2nd colour
         //  2nd colour = white [1]
 
+      let evoChainNarrative = [];
+      let evoNarrative = '';
+
       do {
         nest = nest + 1;
+
+        evoChainNarrative = [];
+
         let numberOfEvolutions = evoData['evolves_to'].length;
         var evoDetails = evoData['evolution_details'][0];
         let pokeEvoDetailsLoop = 0;
@@ -4017,6 +4026,19 @@ async function fetchPokemon(pokemonId) {
               holder = '' + holder;
               if (holder != '-1') {holder = holder.replace(/-/g, ' ')};
               holder = strTitleCase(holder);
+
+              if (pokeEvoDetails[pokeEvoDetailsLoop] == 'trigger') {
+                evoNarrative = holder;
+              } else {
+                if (pokeEvoDetails[pokeEvoDetailsLoop] == 'relative_physical_stats') {
+                  if (holder == '1') { holder = 'Attack > Defence' };
+                  if (holder == '-1') { holder = 'Defence > Attack' };
+                };
+                if (holder == 'True') { holder = 'while raining'};
+                holder = pokeEvoPrefix[pokeEvoDetailsLoop] + holder + pokeEvoSuffix[pokeEvoDetailsLoop];
+                evoChainNarrative.push(holder);
+              };
+
               console.log(pokeEvoDetails[pokeEvoDetailsLoop],': ',holder);
             }; // if (typeof holder
           }; // for (pokeEvoDetailsLoop
@@ -4047,6 +4069,19 @@ async function fetchPokemon(pokemonId) {
                     holder = '' + holder;
                     if (holder != '-1') {holder = holder.replace(/-/g, ' ')};
                     holder = strTitleCase(holder);
+
+                    if (pokeEvoDetails[pokeEvoDetailsLoop] == 'trigger') {
+                      evoNarrative = holder;
+                    } else {
+                      if (pokeEvoDetails[pokeEvoDetailsLoop] == 'relative_physical_stats') {
+                        if (holder == '1') { holder = 'Attack > Defence' };
+                        if (holder == '-1') { holder = 'Defence > Attack' };
+                      };
+                      if (holder == 'True') { holder = 'while raining'};
+                      holder = pokeEvoPrefix[pokeEvoDetailsLoop] + holder + pokeEvoSuffix[pokeEvoDetailsLoop];
+                      evoChainNarrative.push(holder);
+                    };
+
                     console.log(pokeEvoDetails[pokeEvoDetailsLoop],': ',holder);
                   }; // if (typeof holder
                 }; // for (pokeEvoDetailsLoop
@@ -4105,5 +4140,136 @@ async function fetchPokemon(pokemonId) {
 // Details = Description & Abilities
 // Evolution = Evolution sequences
 //fetchPokemon(67); //67
+
+// lookup and store
+// name/id - character THEN species THEN evolution
+// look forward and back 3
+
+/*
+item :  Thunder Stone
+trigger :  Use Item
+Use Item Thunder Stone
+
+each round fill array with pairs of index and values - but not trigger
+
+if 'true' then store as 'while raining'
+relative_physical_stats
+if '1' then store as 'Attack > Defence'
+if '-1' then store as 'Defence > Attack'
+
+evoFactors [ iten, Thunder Stone ]
+start phrase with 1st instance of trigger
+evoPhrase 'Use Item '
+count array length, divided by 2 e.g. evoPhraseCnt = 1
+
+loop through... N: 1,2,3... N-1, N
+if evoPhraseCnt == 1... string straight on
+if evoFactors[0 i.e. N-1]
+
+check for stack i.e. trigger multiple Level Up x 3
+if stack then swap 'and' for 'or'
+
+=item... then raw value i.e. prefix = '' and suffix = ''
+=min_happiness then prexix = 'with Happiness ' and suffix = '+'
+=time_of_day then prexix = 'in ' and suffix = '-time'
+=location then prexix = 'at ' and suffix = ''
+=known_move then prexix = 'with ' and suffix = ' Move'
+=known_move_type then prexix = 'with ' and suffix = ' Type-Move'
+=min_affection then prexix = 'with Affection ' and suffix = '+'
+=min_level then prexix = 'with Level ' and suffix = '+'
+=relative_physical_stats then prexix = 'with ' and suffix = ''
+=held_item then prexix = 'holding ' and suffix = ''
+=party_species then prexix = 'with ' and suffix = ' species in party'
+=party_type then prexix = 'with ' and suffix = '-type in party'
+=min_beauty then prexix = 'with Beauty ' and suffix = '+'
+=needs_overworld_rain then prefix = '' and suffix = ''
+=trade_species then prefix = 'for ' and suffix = ''
+
+super_prefix = ' '
+evoPhrase = evoPhrase + super_prefix + prefix + evoFactors[1 i.e. N] + suffix... 'Use Item Thunder Stone'
+
+if evoPhraseCnt > 1 && evoPhraseCnt = last
+then super_prefix ' and '
+if stack super_prefix ' or '
+else super_prefix ', '
+
+
+
+item :  Fire Stone
+trigger :  Use Item
+Use Item Fire Stone
+
+min_happiness :  220
+time_of_day :  Day
+trigger :  Level Up
+Level Up with Happiness 220+ and in Day-time
+
+min_happiness :  220
+time_of_day :  Night
+trigger :  Level Up
+Level Up with Happiness 220+ and in Night-time
+N triggers (i.e. 2) N>2 than add final and and comma seperate previous
+
+location :  Eterna Forest
+trigger :  Level Up
+location :  Pinwheel Forest
+trigger :  Level Up
+location :  Kalos Route 20
+trigger :  Level Up
+trigger :  Level Up
+Level Up at Eterna Forest, at Pinwheel Forest or at Kalos Route 20
+if 1 value then <>
+if 2 then <> or <>
+if 3 ot more then <>, <> or <>
+3 = N, number of commas is N-2
+
+location :  Sinnoh Route 217
+trigger :  Level Up
+location :  Twist Mountain
+trigger :  Level Up
+location :  Frost Cavern
+trigger :  Level Up
+trigger :  Level Up
+Level Up at Sinnoh Route 217, at Twist Mountain or at Frost Cavern
+
+known_move_type :  Fairy
+min_affection :  2
+trigger :  Level Up
+Level Up with Fairy Move and with Affection 2+
+
+item :  Water Stone
+trigger :  Use Item
+Use Item Water Stone
+
+min_level :  20
+relative_physical_stats :  -1
+trigger :  Level Up
+Level Up with Level 20+ and with Defence > Attack
+
+min_level :  20
+trigger :  Level Up
+Level Up with Level 20+
+
+min_level :  20
+relative_physical_stats :  1
+trigger :  Level Up
+Level Up with Level 20+ with Attack > Defence
+
+trigger :  Trade
+Trade
+
+held_item :  Metal Coat
+trigger :  Trade
+Trade holding Metal Coat
+
+party_species :  Remoraid
+trigger :  Level Up
+Level Up with Reoraid species in party
+
+min_level :  32
+party_type :  Dark
+trigger :  Level Up
+Level Up with Level 32 and with Dark-type in party
+*/
 
 // Mastermind?
