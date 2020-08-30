@@ -3968,7 +3968,7 @@ if (trumps_restart) { tt_msg = "Let's return to " + HERO_ARRAY[SENDERS[custom_id
 let pokeEvoDetails = ['held_item','item','known_move','known_move_type','location','min_affection',
   'min_beauty','min_happiness','min_level','needs_overworld_rain','party_species','party_type',
   'relative_physical_stats','time_of_day','trade_species','trigger'];
-let pokeEvoPrefix = ['holding ','','with ','with ',' at','with Affection ','with Beauty ','with Happiness ',
+let pokeEvoPrefix = ['holding ','','with ','with ','at ','with Affection ','with Beauty ','with Happiness ',
   'with Level ','','with ','with ','with ','in ','for ',''];
 let pokeEvoSuffix = ['','',' Move',' Type-Move','','+','+','+','+','',' Species in party','-type in party',
   '','-time','',''];
@@ -3976,6 +3976,8 @@ let pokeType = ["⚫","⚪","🔥 Fire","🔴","🌊 Water","🔵","🌱 Grass",
   "💎 Rock","🟤","🌎 Ground","🟤","👊 Fighting","🟠","🔮 Psychic","🟣","🌒 Dark","⚫","🧊 Ice","⚪",
   "🐲 Dragon","🟢","⚙️ Steel","🔵","✈️ Flying","🔵","👻 Chost","⚪","☠️ Poison","🟣","🐞 Bug","🔴",
   "🧚 Fairy","🟢","😊 Normal","🟡"];
+
+// evo test cases 312, 67, 362, 116, 41, 268, 47
 
 async function fetchPokemon(pokemonId) {
   // API Reference @ https://pokeapi.co
@@ -4039,19 +4041,39 @@ async function fetchPokemon(pokemonId) {
                 evoChainNarrative.push(holder);
               };
 
-              console.log(pokeEvoDetails[pokeEvoDetailsLoop],': ',holder);
+              //console.log(pokeEvoDetails[pokeEvoDetailsLoop],': ',holder);
             }; // if (typeof holder
           }; // for (pokeEvoDetailsLoop
         }; // f (typeof evoData
 
         if (typeof evoData['evolution_details'][0] != 'undefined') { console.table(evoData['evolution_details'][0]) };
 
+        var evoPhraseCnt = evoChainNarrative.length;
+        var super_prefix = ' and '; // switch to or?
+        if (evoPhraseCnt == 0) {
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> no specifics')
+        } else if (evoPhraseCnt == 1) {
+          evoNarrative = evoNarrative + evoChainNarrative[0];
+        } else if (evoPhraseCnt == 2) {
+          evoNarrative = evoNarrative + evoChainNarrative[0] + super_prefix + evoChainNarrative[1];
+        } else { // >2 e.g. 3.... 0,1,2 (length -1)
+          let narLoop = 1;
+          for (narLoop = 0; narLoop < evoPhraseCnt.length; narLoop++) {
+            if (narLoop == (evoPhraseCnt-1)) {
+              super_prefix = ' and ';
+            } else if (narLoop == 0) {
+              super_prefix = '';
+            } else {
+              super_prefix = ', ';
+            };
+            evoNarrative = evoNarrative + super_prefix + evoChainNarrative[narLoop];
+          };
+        };
+
         evoChain.push({
           "nest": nest,
           "species_name": evoData .species.name,
-          "min_level": !evoDetails ? 1 : evoDetails .min_level,
-          "trigger_name": !evoDetails ? null : evoDetails .trigger.name,
-          "item": !evoDetails ? null : evoDetails .item
+          "evolution": evoNarrative
         });
 
         console.table(evoChain);
@@ -4082,18 +4104,39 @@ async function fetchPokemon(pokemonId) {
                       evoChainNarrative.push(holder);
                     };
 
-                    console.log(pokeEvoDetails[pokeEvoDetailsLoop],': ',holder);
+                    //console.log(pokeEvoDetails[pokeEvoDetailsLoop],': ',holder);
                   }; // if (typeof holder
                 }; // for (pokeEvoDetailsLoop
               }; // if (typeof evoDataNest
             }; // for (nestLoop
+
+            var evoPhraseCnt = evoChainNarrative.length;
+            var super_prefix = ' and '; // switch to or?
+            if (evoPhraseCnt == 0) {
+              console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> no specifics')
+            } else if (evoPhraseCnt == 1) {
+              evoNarrative = evoNarrative + evoChainNarrative[0];
+            } else if (evoPhraseCnt == 2) {
+              evoNarrative = evoNarrative + evoChainNarrative[0] + super_prefix + evoChainNarrative[1];
+            } else { // >2 e.g. 3.... 0,1,2 (length -1)
+              let narLoop = 1;
+              for (narLoop = 0; narLoop < evoPhraseCnt.length; narLoop++) {
+                if (narLoop == (evoPhraseCnt-1)) {
+                  super_prefix = ' and ';
+                } else if (narLoop == 0) {
+                  super_prefix = '';
+                } else {
+                  super_prefix = ', ';
+                };
+                evoNarrative = evoNarrative + super_prefix + evoChainNarrative[narLoop];
+              };
+            };
+
             evoChain.push({
               "nest": nest,
-              "species_name": evoDataNest.species.name,
-              "min_level": !evoDetailsNest? 1 : evoDetailsNest .min_level,
-              "trigger_name": !evoDetailsNest? null : evoDetailsNest .trigger.name,
-              "item": !evoDetailsNest? null : evoDetailsNest .item
-           });
+              "species_name": evoDataNest .species.name,
+              "evolution": evoNarrative
+            });
 
            console.table(evoChain);
          };
