@@ -4134,8 +4134,8 @@ async function fetchPokemon(pokemonId) {
       } while (!!evoData && evoData.hasOwnProperty('evolves_to'));
       console.log("DEBUG [fetchPokemon]> Results:");
       console.table(evoChain);
-      console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ',evoChain[0]['Species']);
-      let evoChainCnt = evoChain;
+
+      let evoChainCnt = evoChain.length;
       let evoSequence = '';
       if (evoChainCnt == 0) {
         evoSequence = 'Sorry, unable to find evolution chain';
