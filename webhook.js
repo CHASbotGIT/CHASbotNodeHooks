@@ -4104,10 +4104,11 @@ async function fetchPokemon(pokemonId) {
               }; // if (typeof evoDataNest
               reached = nestLoop;
             }; // for (nestLoop
-            console.log(nestLoop, ' >>>>>>>>>>><<<<<<<<<<< ', reached, ' >>>>>>>>>>><<<<<<<<<<< ', reached, ' >>>>>>>>>>><<<<<<<<<<< ', reached);
+            console.log(reached, ' >>>>>>>>>>><<<<<<<<<<< ', reached, ' >>>>>>>>>>><<<<<<<<<<< ', reached, ' >>>>>>>>>>><<<<<<<<<<< ', reached);
             console.table(evoChainNarrative);
             var evoPhraseCnt = evoChainNarrative.length;
             var super_prefix = ' and '; // switch to or?
+            if (reached > 0) { var super_prefix = ' or ' }
             if (evoPhraseCnt == 0) {
               // Only trigger
             } else if (evoPhraseCnt == 1) {
@@ -4119,6 +4120,7 @@ async function fetchPokemon(pokemonId) {
               for (narLoop = 0; narLoop < evoPhraseCnt; narLoop++) {
                 if (narLoop == (evoPhraseCnt-1)) {
                   super_prefix = ' and ';
+                  if (reached > 0) { var super_prefix = ' or ' }
                 } else if (narLoop == 0) {
                   super_prefix = ' ';
                 } else {
