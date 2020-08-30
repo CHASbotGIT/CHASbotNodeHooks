@@ -4053,9 +4053,9 @@ async function fetchPokemon(pokemonId) {
         if (evoPhraseCnt == 0) {
           console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> no specifics')
         } else if (evoPhraseCnt == 1) {
-          evoNarrative = evoNarrative + evoChainNarrative[0];
+          evoNarrative = evoNarrative + ' ' + evoChainNarrative[0];
         } else if (evoPhraseCnt == 2) {
-          evoNarrative = evoNarrative + evoChainNarrative[0] + super_prefix + evoChainNarrative[1];
+          evoNarrative = evoNarrative + ' ' + evoChainNarrative[0] + super_prefix + evoChainNarrative[1];
         } else { // >2 e.g. 3.... 0,1,2 (length -1)
           let narLoop = 1;
           for (narLoop = 0; narLoop < evoPhraseCnt.length; narLoop++) {
@@ -4115,9 +4115,9 @@ async function fetchPokemon(pokemonId) {
             if (evoPhraseCnt == 0) {
               console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> no specifics')
             } else if (evoPhraseCnt == 1) {
-              evoNarrative = evoNarrative + evoChainNarrative[0];
+              evoNarrative = evoNarrative + ' ' + evoChainNarrative[0];
             } else if (evoPhraseCnt == 2) {
-              evoNarrative = evoNarrative + evoChainNarrative[0] + super_prefix + evoChainNarrative[1];
+              evoNarrative = evoNarrative + ' ' + evoChainNarrative[0] + super_prefix + evoChainNarrative[1];
             } else { // >2 e.g. 3.... 0,1,2 (length -1)
               let narLoop = 1;
               for (narLoop = 0; narLoop < evoPhraseCnt.length; narLoop++) {
