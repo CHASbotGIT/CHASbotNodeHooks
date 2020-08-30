@@ -4104,7 +4104,7 @@ async function fetchPokemon(pokemonId) {
                       evoChainNarrative.push(holder);
                     };
 
-                    //console.log(pokeEvoDetails[pokeEvoDetailsLoop],': ',holder);
+                    console.log(pokeEvoDetails[pokeEvoDetailsLoop],': ',holder);
                   }; // if (typeof holder
                 }; // for (pokeEvoDetailsLoop
               }; // if (typeof evoDataNest
