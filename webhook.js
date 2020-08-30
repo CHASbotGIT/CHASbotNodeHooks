@@ -4155,7 +4155,7 @@ async function fetchPokemon(pokemonId) {
             evoSequence = evoSequence + pokePrevious + ' 📶 ' + evoChain[evoLoop]['Evolution'] + '\n';
             // Poliwag > Poliwhirl [Level Up with Level 25+]
             //
-          } else if (evoChain[evoLoop]['Root'] == '*') { // 2
+          } else if (evoChain[evoLoop]['Root'] != '*') { // 2
             evoSequence = evoSequence + pokePrevious + ' ➡️ ';
             evoSequence = evoSequence + evoChain[evoLoop]['Species'] + ' 📶 ' + evoChain[evoLoop]['Evolution'] + '\n';
 
