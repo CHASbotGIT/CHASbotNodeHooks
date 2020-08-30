@@ -4219,7 +4219,7 @@ async function fetchPokemon(pokemonId) {
         "Moves": moves
       });
 
-      console.table(pokeDex);
+      console.log(pokeDex);
 
     }); // res.on('end'
   }); // http.get(url
