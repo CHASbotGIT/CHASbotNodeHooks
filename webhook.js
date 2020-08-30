@@ -4141,7 +4141,32 @@ async function fetchPokemon(pokemonId) {
         evoSequence = 'Sorry, unable to find evolution chain';
       } else if (evoChainCnt == 1) {
         evoSequence = evoChain[0]['Species'] + " does not evolve";
-      };
+      } else {
+        let evoLoop = 0;
+        let pokePrevious = '';
+        let pokeFirst = false;
+        for (evoLoop = 0; evoLoop < evoChainCnt; evoLoop++) {
+          if (evoChain[evoLoop]['Root'] == '*' && evoLoop == 0 ) { // 0
+            pokePrevious = evoChain[evoLoop]['Species'];
+          } else if (evoChain[evoLoop]['Root'] == '*'  && evoLoop != (evoChainCnt - 1)) { // 1
+            evoSequence = evoSequence + pokePrevious + ' ➡️ ';
+            // Poliwag >
+            pokePrevious = evoChain[evoLoop]['Species'];
+            evoSequence = evoSequence + pokePrevious + ' 📶 ' + evoChain[evoLoop]['Evolution'] + '\n';
+            // Poliwag > Poliwhirl [Level Up with Level 25+]
+            //
+          } else if (evoChain[evoLoop]['Root'] == '*') { // Final evolution
+            evoSequence = evoSequence + pokePrevious + ' ➡️ ';
+            // Poliwag > Poliwhirl [Level Up with Level 25+]
+            // Poliwhirl >
+            evoSequence = evoSequence + evoChain[evoLoop]['Species'] + ' 📶 ' + evoChain[evoLoop]['Evolution'];
+            // Poliwag > Poliwhirl [Level Up with Level 25+]
+            // Poliwhirl > Poliwrath [Use Item Water Stone]
+          };
+        }; // for (evoLoop = 0
+      }; // if (evoChainCnt == 0)
+      console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
+      console.log(evoSequence);
 
       /*
       console.log("ID: ",poke.id);
