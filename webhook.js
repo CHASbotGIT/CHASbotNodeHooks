@@ -4207,7 +4207,7 @@ async function fetchPokemon(eventPoke,pokemonId) {
       console.log(pokeDex);
       var pokeNew = pokeDex.length - 1;
       var base_stats =
-        pokeDex[0]['Name'] + ' ID:' + intEmoji(pokeDex[pokeNew]['ID']) + ' [' + pokeDex[pokeNew]['Total'] + ']\n\n' +
+        pokeDex[pokeNew]['Name'] + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + ' [' + pokeDex[pokeNew]['Total'] + ']\n\n' +
         'BULBASAUR ID:1️⃣ [318]\n\n' +
         '🔥 Fire ☠️ Poison ⚖️ 9.3kg 📊 0.7m\n\n' +
         '🟠🟠🟠🟠🟢' + ': [045] ❤️ HP\n' +
