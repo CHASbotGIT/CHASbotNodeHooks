@@ -1235,7 +1235,7 @@ CHASbot.post('/webhook', (req, res) => {
           position_in_analyse_text = analyse_text.search(TRIGGER_DEV) + 1;
           if (position_in_analyse_text > 0) {
             let pokedex = analyse_text.replace(/[^0-9]+/g, '');
-            fetchPokemon(pokedex);
+            fetchPokemon(event,pokedex);
           };
           // Find the largest - scale to 100
           // x5 second colour
@@ -3997,10 +3997,7 @@ function intEmoji(num) {
   return strEmoji;
 }
 
-console.log(intEmoji(524163783));
-console.log(intEmoji('524163783'));
-
-async function fetchPokemon(pokemonId) {
+async function fetchPokemon(eventPoke,pokemonId) {
   // API Reference @ https://pokeapi.co
   let poke_url = "https://pokeapi.co/api/v2/pokemon/" + pokemonId.toString() + "/";
   //let poke_url = "https://pokeapi.co/api/v2/evolution-chain/" + pokemonId.toString() + "/";
@@ -4219,7 +4216,7 @@ async function fetchPokemon(pokemonId) {
         '🟠🟠🟠🟠🟠' + ': [065] 🛡️ Sp. Defence\n' +
         '🟠🟠🟠🟠🟢' + ': [045] 💨 Speed\n' +
         '(ℹ️ Info) (📶 Evolution) (◀️ Previous) (▶️ Next) (🔢 Random)';
-      postImage(event,'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',true,base_stats);
+      postImage(eventPoke,'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',true,base_stats);
 
     }); // res.on('end'
   }); // http.get(url
