@@ -3987,17 +3987,16 @@ let pokeEvolution = [];
 // evo test cases 312, 67, 362, 116, 41, 268, 47
 function intEmoji(num) {
   let numEmoji = ['0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣'];
-  strEmoji = '';
-  sNumber = num.toString();
+  let strEmoji = '';
+  let sNumber = num + '';
   for (var i = 0, len = sNumber.length; i < len; i += 1) {
     strEmoji = strEmoji + numEmoji[ParseInt(sNumber.charAt(i))];
   };
   return strEmoji;
 }
 
-
-
 console.log(intEmoji(524163783));
+console.log(intEmoji('524163783'));
 
 async function fetchPokemon(pokemonId) {
   // API Reference @ https://pokeapi.co
