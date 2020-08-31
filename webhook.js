@@ -703,9 +703,9 @@ function loadSurvey() {
 
 function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
   // Block loads quotes in character array
-  console.log("DEBUG [loadLOTR]> Method: " + chars_or_quotes);
+  //console.log("DEBUG [loadLOTR]> Method: " + chars_or_quotes);
   if (chars_or_quotes == 'quotes') {
-    console.log("DEBUG [loadLOTR]> ID: " + quote_id);
+    //console.log("DEBUG [loadLOTR]> ID: " + quote_id);
     let id_position = -1;
     for (var loopArray = 0; loopArray < LOTR_ARRAY.length; loopArray++) {
       if (LOTR_ARRAY[loopArray][0]==quote_id) {
@@ -720,10 +720,10 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
         pushArray.push([lotrArray[loopArray].movie,lotrArray[loopArray].dialog]);
       }; // for
       LOTR_ARRAY[id_position][10] = pushArray;
-      console.log("DEBUG [loadLOTR]> Quotes populated for: " + id_position);
-      console.log("DEBUG [loadLOTR]> First film/quote: " + id_position);
+      //console.log("DEBUG [loadLOTR]> Quotes populated for: " + id_position);
+      //console.log("DEBUG [loadLOTR]> First film/quote: " + id_position);
     }; // if (LOTR_ARRAY[id_position]
-    console.log("DEBUG [loadLOTR]> Quotes: " + LOTR_ARRAY[id_position][10].length);
+    //console.log("DEBUG [loadLOTR]> Quotes: " + LOTR_ARRAY[id_position][10].length);
     callback();
   } else { // if (chars_or_quotes
     // Block loads in characters
@@ -742,8 +742,7 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
           lotrArray[loopArray].death]); // [9]
       }; // for
     }; // if
-    console.log("DEBUG [loadLOTR]> Characters: " + LOTR_ARRAY.length);
-    //console.table(LOTR_ARRAY);
+    //console.log("DEBUG [loadLOTR]> Characters: " + LOTR_ARRAY.length);
     callback();
   }; // else
 }
@@ -3137,12 +3136,12 @@ function apiMarvelChar(eventMarvel,marvelWho) {
 }
 
 function apiLOTR (chars_or_quotes,char_id,callback){
-  console.log("DEBUG [apiLOTR]> Length of stored LOTR: " + LOTR_ARRAY.length)
+  //console.log("DEBUG [apiLOTR]> Length of stored LOTR: " + LOTR_ARRAY.length)
   let url_path = '';
   if (chars_or_quotes == 'chars') {
     url_path = '/v2/character';
     // Set URL with authorisation header i.e. API key not sent in URL
-    console.log("DEBUG [apiLOTR]> Character URL: " + URL_API_LOTR + url_path);
+    //console.log("DEBUG [apiLOTR]> Character URL: " + URL_API_LOTR + url_path);
     const requestOptions = {
       hostname: URL_API_LOTR,
       path: url_path,
@@ -3163,7 +3162,7 @@ function apiLOTR (chars_or_quotes,char_id,callback){
         // Correct responses start with "docs" i.e. no status code 200 to help verify
         if (characterData_legible.includes('docs')) {
           let characterDataList = characterData.docs;
-          console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
+          //console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
           loadLOTR(characterDataList,'chars','', function(){
             callback();
           });
@@ -3180,7 +3179,7 @@ function apiLOTR (chars_or_quotes,char_id,callback){
     }); // req.on('error'
   } else { // quotes API
     url_path = '/v2/character/' + char_id + "/quote"
-    console.log("DEBUG [apiLOTR]> Quotes URL: " + URL_API_LOTR + url_path);
+    //console.log("DEBUG [apiLOTR]> Quotes URL: " + URL_API_LOTR + url_path);
     const requestOptions = {
       hostname: URL_API_LOTR,
       path: url_path,
@@ -3203,7 +3202,7 @@ function apiLOTR (chars_or_quotes,char_id,callback){
           let quoteList = quoteData.docs;
           let quoteListCount = quoteList.length;
           if (quoteListCount > 0) {
-            console.log("DEBUG [apiLOTR]> Quotes Retrieved No.: " + quoteListCount);
+            //console.log("DEBUG [apiLOTR]> Quotes Retrieved No.: " + quoteListCount);
             loadLOTR(quoteList,'quotes',char_id, function(){
               callback();
             });
@@ -3370,7 +3369,7 @@ function lookupHero (eventHero,heroWho){ //
 }
 
 function lookupLOTR(lotrWho){
-  console.log("DEBUG [lookupLOTR]> Looking for:" + lotrWho)
+  //console.log("DEBUG [lookupLOTR]> Looking for:" + lotrWho)
   let match_id = -1;
   let lotrWhoMatch = '';
   let lotrWhoLower = '';
@@ -3381,22 +3380,22 @@ function lookupLOTR(lotrWho){
     lotrWhoMatch = LOTR_ARRAY[character_loop][1];
     lotrWhoMatch = lotrWhoMatch.toLowerCase(); // Retain lotrWho as title case but compare lower
     levenshtein_newest = levenshtein(lotrWhoLower,lotrWhoMatch); // Calculate proximity of names
-    console.log("DEBUG [lookupLOTR]> Difference: " + lotrWhoLower + " [" + levenshtein_newest + "] " + lotrWhoMatch);
+    //console.log("DEBUG [lookupLOTR]> Difference: " + lotrWhoLower + " [" + levenshtein_newest + "] " + lotrWhoMatch);
     // Better match but must also have a wiki
     let validWikiURL = LOTR_ARRAY[character_loop][3];
     let validWikiURLstring = JSON.stringify(validWikiURL);
-    console.log("DEBUG [lookupLOTR]> wikiUrl STRING " + validWikiURLstring);
+    //console.log("DEBUG [lookupLOTR]> wikiUrl STRING " + validWikiURLstring);
     if (levenshtein_newest < levenshtein_lowest && typeof validWikiURLstring != 'undefined'
         && validWikiURLstring != 'wikiUrlundefined' && validWikiURLstring != '') {
       // Better proximity between terms
       match_id = character_loop; // Best for now
       levenshtein_lowest = levenshtein_newest; // Lower difference
-      console.log("DEBUG [lookupLOTR]> Best for now [" + levenshtein_lowest + "] is: " + lotrWhoMatch);
-      console.log("DEBUG [lookupLOTR]> wikiUrl" + LOTR_ARRAY[match_id][3])
+      //console.log("DEBUG [lookupLOTR]> Best for now [" + levenshtein_lowest + "] is: " + lotrWhoMatch);
+      //console.log("DEBUG [lookupLOTR]> wikiUrl" + LOTR_ARRAY[match_id][3])
     }; // if (levenshtein_newest
   }; // for (var character_loop
   // Found best match
-  console.log("DEBUG [lookupLOTR]> Matched " + LOTR_ARRAY[match_id][0] + " to index " + match_id);
+  //console.log("DEBUG [lookupLOTR]> Matched " + LOTR_ARRAY[match_id][0] + " to index " + match_id);
   return match_id;
 }
 
