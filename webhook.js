@@ -701,7 +701,7 @@ function loadSurvey() {
   };
 }
 
-function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
+function loadLOTRcb(lotrArray,chars_or_quotes,quote_id,callback) {
   // Block loads quotes in character array
   //console.log("DEBUG [loadLOTR]> Method: " + chars_or_quotes);
   if (chars_or_quotes == 'quotes') {
@@ -1964,7 +1964,7 @@ function deliverText(eventSend,outbound_text,plusTemplate,messageData) {
   }; // if (plusTemplate)
   let sender = eventSend.sender.id;
   outbound_text = strGreeting(sender,true) + outbound_text;
-  if (plusTemplate) { deliverTemplate(eventSend,messageData, function(){
+  if (plusTemplate) { deliverTMPLTcb(eventSend,messageData, function(){
       //await deliverPause(Q_DELIVERY * 1000); // function needs to be async
       request({
         uri: URL_CHAT_ENDPOINT,
@@ -1979,12 +1979,12 @@ function deliverText(eventSend,outbound_text,plusTemplate,messageData) {
         }
       }, function (error, response) {
         if (error) {
-          console.log("ERROR [deliverText]> Post deliverTemplate error sending simple message: ", error);
+          console.log("ERROR [deliverText]> Post deliverTMPLTcb error sending simple message: ", error);
         } else if (response.body.error) {
-          console.log("ERROR [deliverText]> Post deliverTemplate undefined: ", response.body.error);
+          console.log("ERROR [deliverText]> Post deliverTMPLTcb undefined: ", response.body.error);
         }; // if (error)
       }); // request
-    }); // deliverTemplate
+    }); // deliverTMPLTcb
   } else { // if (plusTemplate)
     deliverThinking(eventSend,'off');
     request({
@@ -2008,9 +2008,8 @@ function deliverText(eventSend,outbound_text,plusTemplate,messageData) {
   };
 }
 
-function deliverTemplate(eventSend,messageData,callback){
+function deliverTMPLTcb(eventSend,messageData,callback){
   // messageData set outside of function call
-  console.log("DEBUG [deliverTemplate]> Input: " + messageData);
   deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   request({
@@ -2024,15 +2023,15 @@ function deliverTemplate(eventSend,messageData,callback){
     }
   }, function (error, response) {
     if (error) {
-        console.log("ERROR [deliverTemplate]> Error sending template message: ", error);
+        console.log("ERROR [deliverTMPLTcb]> Error sending template message: ", error);
     } else if (response.body.error) {
-        console.log("ERROR [deliverTemplate]> Undefined: ", response.body.error);
+        console.log("ERROR [deliverTMPLTcb]> Undefined: ", response.body.error);
     }; // if (error)
     if (callback) callback();
   }); // request({
 }
 
-function deliverPictureTT(eventSend,pictureTT,callback){ // call 3rd
+function deliverPicTTcb(eventSend,pictureTT,callback){ // call 3rd
   // Sent 1st
   let sender = eventSend.sender.id;
   let imgTemplate = {
@@ -2055,15 +2054,15 @@ function deliverPictureTT(eventSend,pictureTT,callback){ // call 3rd
     }
   }, function (error, response) {
     if (error) {
-        console.log("ERROR [deliverTemplate]> Error sending template message: ", error);
+        console.log("ERROR [deliverTMPLTcb]> Error sending template message: ", error);
     } else if (response.body.error) {
-        console.log("ERROR [deliverTemplate]> Undefined: ", response.body.error);
+        console.log("ERROR [deliverTMPLTcb]> Undefined: ", response.body.error);
     }; // if (error)
-    callback(); // To deliverMetricsTT
+    callback(); // To deliverMetricsTTcb
   }); // request({
 }
-function deliverMetricsTT(eventSend,metricsTT,pictureTT,callback){ // call 2nd
-  deliverPictureTT(eventSend,pictureTT, function(){
+function deliverMetricsTTcb(eventSend,metricsTT,pictureTT,callback){ // call 2nd
+  deliverPicTTcb(eventSend,pictureTT, function(){
     // Sent 2nd
     let sender = eventSend.sender.id;
     request({
@@ -2079,9 +2078,9 @@ function deliverMetricsTT(eventSend,metricsTT,pictureTT,callback){ // call 2nd
       }
     }, function (error, response) {
       if (error) {
-        console.log("ERROR [deliverText]> Error sending simple message: ", error);
+        console.log("ERROR [deliverMetricsTTcb]> Error sending TT stack: ", error);
       } else if (response.body.error) {
-        console.log("ERROR [deliverText]> Undefined: ", response.body.error);
+        console.log("ERROR [deliverMetricsTTcb]> Undefined: ", response.body.error);
       }; // if (error)
     }); // request
     callback(); // To deliverStackTT
@@ -2091,7 +2090,7 @@ function deliverStackTT(eventSend,metricsTT,msgTT,pictureTT,game_over){ // Call 
   deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   let custom_id = inPlayID(sender);
-  deliverMetricsTT(eventSend,metricsTT,pictureTT, async function(){
+  deliverMetricsTTcb(eventSend,metricsTT,pictureTT, async function(){
     // Sent 3rd
     if (!game_over) {
       await deliverPause(Q_DELIVERY*1000);
@@ -2391,12 +2390,11 @@ function postImage(postEvent,image_url,plusText,passText) {
   if (plusText) {
     deliverText(postEvent,passText,true,imgTemplate);
   } else {
-    deliverTemplate(postEvent,imgTemplate,'');
+    deliverTMPLTcb(postEvent,imgTemplate,'');
   }; // if (plusText)
 }
 
 function postLinkButton(postEvent,link_url,reponse_msg,btn_msg) {
-  console.log("DEBUG [postLinkButton]> Input: " + link_url + " : " + reponse_msg + " : "+ btn_msg);
   let linkTemplate = {
     attachment: {
       type: "template",
@@ -2411,7 +2409,7 @@ function postLinkButton(postEvent,link_url,reponse_msg,btn_msg) {
       } // payload
     } // attachment
   }; // template
-  deliverTemplate(postEvent,linkTemplate,'');
+  deliverTMPLTcb(postEvent,linkTemplate,'');
 }
 
 function postMarvel(postEvent,success_result,hero_array) {
@@ -2519,7 +2517,7 @@ function postLottery(postEvent,lotto_uk,lotto_euro,lotto_scot) {
   let sender = postEvent.sender.id;
   console.log("INFO [postLottery]> Sender: " + sender);
   console.log("INFO [postLottery]> Request: UK " + lotto_uk + ", Euro "+ lotto_euro + ", Scot " + lotto_scot);
-  console.log("INFO [postLottery]> Action: postSearch.deliverTemplate");
+  console.log("INFO [postLottery]> Action: postSearch.deliverTMPLTcb");
   let carouselTemplate = {
     attachment: {
       type: "template",
@@ -2557,7 +2555,7 @@ function postLottery(postEvent,lotto_uk,lotto_euro,lotto_scot) {
     }
   };
   console.log("INFO [postLottery]> Reponse: Lottery Carousel");
-  deliverTemplate(postEvent,carouselTemplate,'');
+  deliverTMPLTcb(postEvent,carouselTemplate,'');
 }
 
 function postSearch(postEvent,search_method,search_term) {
@@ -2565,7 +2563,7 @@ function postSearch(postEvent,search_method,search_term) {
   let sender = postEvent.sender.id;
   console.log("INFO [postSearch]> Sender: " + sender);
   console.log("INFO [postSearch]> Request: " + search_method + ' ' + search_term);
-  console.log("INFO [postSearch]> Action: postSearch.deliverTemplate");
+  console.log("INFO [postSearch]> Action: postSearch.deliverTMPLTcb");
   let search_title = '';
   let search_image_url = '';
   let search_url = '';
@@ -2639,10 +2637,10 @@ function postSearch(postEvent,search_method,search_term) {
   };
   if (search_method == "search") {
     console.log("INFO [postSearch]> Reponse: Search Carousel");
-    deliverTemplate(postEvent,carouselTemplate,'');
+    deliverTMPLTcb(postEvent,carouselTemplate,'');
   } else {
     console.log("INFO [postSearch]> Reponse: Simple Search");
-    deliverTemplate(postEvent,searchTemplate,'');
+    deliverTMPLTcb(postEvent,searchTemplate,'');
   };
 }
 
@@ -2710,19 +2708,19 @@ function postLOTR(eventLOTR,lotrWho) {
   if (LOTR_ARRAY.length == 0) {
     // The array is empty, need to call API function
     //console.log("DEBUG [postLOTR]> LOTR array is empty");
-    apiLOTR('chars','', function() {
+    apiLOTRcb('chars','', function() {
       //console.log("DEBUG [postLOTR]> apiLOTR returned with array length: " + LOTR_ARRAY.length);
       if (LOTR_ARRAY.length != 0) {
         let match_id = lookupLOTR(lotrWho);
         //console.log("DEBUG [postLOTR]> Via API fork looking for: " + lotrWho + " = " + match_id);
         // Need to get the quotes
-        apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
+        apiLOTRcb('quotes',LOTR_ARRAY[match_id][0], function() {
           lotrBlurb = wrapLOTR(match_id,lotrWho);
           //console.log("DEBUG [postLOTR]> Final blurb via API is: " + lotrBlurb);
           console.log("INFO [postLOTR]> Action: API.postLOTR.postLinkButton");
           console.log("INFO [postLOTR]> Reponse: Successful");
           postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
-        }); // apiLOTR('quotes'
+        }); // apiLOTRcb('quotes'
       } else {
         // Array not populated after API call
         console.log("INFO [postLOTR]> Action: apiLOTR.deliverText");
@@ -2731,7 +2729,7 @@ function postLOTR(eventLOTR,lotrWho) {
         lotrBlurb = MSG_LOTR_OOPS[numRandomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + strTitleCase(lotrWho) + '?'; // Required within deliverText
         deliverText(eventLOTR,lotrBlurb,false,'');
       };
-    }); // apiLOTR('chars'
+    }); // apiLOTRcb('chars'
   } else { // Operating from memeory - not API
     let match_id = lookupLOTR(lotrWho);
     //console.log("DEBUG [postLOTR]> Via memory fork looking for: " + lotrWho + " = " + match_id);
@@ -2742,13 +2740,13 @@ function postLOTR(eventLOTR,lotrWho) {
       console.log("INFO [postLOTR]> Reponse: Successful");
       postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
     } else { // if (typeof LOTR_ARRAY
-      apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
+      apiLOTRcb('quotes',LOTR_ARRAY[match_id][0], function() {
         lotrBlurb = wrapLOTR(match_id,lotrWho);
         //console.log("DEBUG [postLOTR]> Final blurb via memory & API is: " + lotrBlurb);
         console.log("INFO [postLOTR]> Action: stored.API.postLOTR.postLinkButton");
         console.log("INFO [postLOTR]> Reponse: Successful");
         postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
-      }); // apiLOTR('quotes'
+      }); // apiLOTRcb('quotes'
     }; // if (typeof LOTR_ARRAY
   }; // if (LOTR_ARRAY.length
 }
@@ -3136,7 +3134,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
   });
 }
 
-function apiLOTR (chars_or_quotes,char_id,callback){
+function apiLOTRcb(chars_or_quotes,char_id,callback){
   //console.log("DEBUG [apiLOTR]> Length of stored LOTR: " + LOTR_ARRAY.length)
   let url_path = '';
   if (chars_or_quotes == 'chars') {
@@ -3164,7 +3162,7 @@ function apiLOTR (chars_or_quotes,char_id,callback){
         if (characterData_legible.includes('docs')) {
           let characterDataList = characterData.docs;
           //console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
-          loadLOTR(characterDataList,'chars','', function(){
+          loadLOTRcb(characterDataList,'chars','', function(){
             callback();
           });
         } else {
@@ -3204,7 +3202,7 @@ function apiLOTR (chars_or_quotes,char_id,callback){
           let quoteListCount = quoteList.length;
           if (quoteListCount > 0) {
             //console.log("DEBUG [apiLOTR]> Quotes Retrieved No.: " + quoteListCount);
-            loadLOTR(quoteList,'quotes',char_id, function(){
+            loadLOTRcb(quoteList,'quotes',char_id, function(){
               callback();
             });
           } else { // if (quoteListCount
@@ -3222,7 +3220,7 @@ function apiLOTR (chars_or_quotes,char_id,callback){
   }; // if (chars_or_quotes
 }
 
-function apiHero (heroWho,randomPick,callback){
+function apiHEROcb(heroWho,randomPick,callback){
   //https://superheroapi.com/api/3449097715109340/search/batman
   //console.log("DEBUG [apiHero]> Getting started");
   let hero_url = URL_API_HERO + KEY_API_HERO;
@@ -3319,7 +3317,7 @@ function lookupHero (eventHero,heroWho){ //
     if (SENDERS[custom_id][19]) { // trumps_start
       let randomID = numRandomBetween(1,HERO_MAX);
       heroWho = randomID.toString();
-      apiHero(heroWho,true, function(){
+      apiHEROcb(heroWho,true, function(){
         if (typeof HERO_ARRAY[randomID] != 'undefined') {
           heroMatches.push(randomID);
           //console.log("DEBUG [lookupHero]> Hero was populated for ID: " + randomID);
@@ -3327,7 +3325,7 @@ function lookupHero (eventHero,heroWho){ //
           console.log("ERROR [lookupHero]> Hero was NOT populated for ID: " + randomID);
         }; // if (HERO_ARRAY
         playTopTrumps(eventHero,heroMatches); // After API i.e. may be results
-      }); // apiHero(heroWho
+      }); // apiHEROcb(heroWho
     } else { // not trumps start
       if (HERO_ARRAY.length != 0) { // Array not empty
         //console.log("DEBUG [lookupHero]> There are values stored");
@@ -3343,7 +3341,7 @@ function lookupHero (eventHero,heroWho){ //
       }; // if (HERO_ARRAY
       if (heroMatches.length == 0) {
         //console.log("DEBUG [lookupHero]> No matches stored, trying API");
-        apiHero(heroWho,false, function(){
+        apiHEROcb(heroWho,false, function(){
           if (HERO_ARRAY.length != 0) { // Array not empty
             for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
               if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
@@ -3358,7 +3356,7 @@ function lookupHero (eventHero,heroWho){ //
             //console.log("DEBUG [lookupHero]> Hero array is empty");
           }; // if (HERO_ARRAY
           playTopTrumps(eventHero,heroMatches); // After API i.e. may be results
-        }); // apiHero(heroWho
+        }); // apiHEROcb(heroWho
       } else {
         playTopTrumps(eventHero,heroMatches); // After stored successful i.e. will be results
       } // if (heroMatches
