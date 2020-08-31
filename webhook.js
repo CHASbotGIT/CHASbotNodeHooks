@@ -971,9 +971,14 @@ function strProper(str) {
   };
   return str;
 }
-function strTitleCase(str) {
-  return str.replace(/\w\S*/g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+function toTitleCase(str) {
+    return str.toLowerCase().replace(/(?:^|[\s-/])\w/g, function (match) {
+        return match.toUpperCase();
+    });
 }
+//function strTitleCase(str) {
+//  return str.replace(/\w\S*/g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+//}
 function strFirstAlpha(str) {
   for (var i = 0; i < str.length; i += 1) {
     if ((str.charAt(i) >= 'A' && str.charAt(i) <= 'Z') ||
@@ -4179,7 +4184,7 @@ async function fetchPokemon(pokemonId) {
       types = types.replace(/,([^,]*)$/, ' &$1');
       let abilities = poke.abilities.map((ability) => ability.ability.name).join(', ').toUpperCase();
       abilities = abilities.replace(/,([^,]*)$/, ' &$1');
-      let moves = poke.moves.map((move) => move.move.name).join(', ').toUpperCase();
+      let moves = poke.moves.map((move) => strTitleCase(move.move.name)).join(', ') //.toUpperCase();
       moves = moves.replace(/,([^,]*)$/, ' &$1');
       pokeDex.push({
         "ID": poke.id,
