@@ -3990,8 +3990,8 @@ function intEmoji(num) {
   let strEmoji = '';
   let sNumber = num + '';
   let emoIndex = 0;
-  for (var i = 0, len = sNumber.length; i < len; i += 1) {
-    emoIndex = ParseInt(sNumber.charAt(i));
+  for (var i = 0; i < sNumber.length; i++) {
+    emoIndex = parseInt(sNumber.charAt(i));
     strEmoji = strEmoji + numEmoji[emoIndex];
   };
   return strEmoji;
