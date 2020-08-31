@@ -972,14 +972,14 @@ function strProper(str) {
   };
   return str;
 }
-//function strTitleCase(str) {
-//    return str.toLowerCase().replace(/(?:^|[\s-/])\w/g, function (match) {
-//        return match.toUpperCase();
-//    });
-//}
 function strTitleCase(str) {
-  return str.replace(/\w\S*/g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+  return str.toLowerCase().replace(/(?:^|[\s-/])\w/g, function (match) {
+    return match.toUpperCase();
+  });
 }
+//function strTitleCase(str) {
+//  return str.replace(/\w\S*/g, function(txt) {return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+//}
 function strFirstAlpha(str) {
   for (var i = 0; i < str.length; i += 1) {
     if ((str.charAt(i) >= 'A' && str.charAt(i) <= 'Z') ||
@@ -2028,7 +2028,7 @@ function deliverTemplate(eventSend,messageData,callback){
     } else if (response.body.error) {
         console.log("ERROR [deliverTemplate]> Undefined: ", response.body.error);
     }; // if (error)
-    callback();
+    if (callback) callback();
   }); // request({
 }
 
