@@ -2008,8 +2008,9 @@ function deliverText(eventSend,outbound_text,plusTemplate,messageData) {
   };
 }
 
-function deliverTemplate(eventSend,messageData,callback) {
+function deliverTemplate(eventSend,messageData,callback){
   // messageData set outside of function call
+  console.log("DEBUG [deliverTemplate]> Input: " + messageData);
   deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   request({
@@ -2395,7 +2396,7 @@ function postImage(postEvent,image_url,plusText,passText) {
 }
 
 function postLinkButton(postEvent,link_url,reponse_msg,btn_msg) {
-  //console.log("DEBUG [postLinkButton]> Input: " + reponse_msg);
+  console.log("DEBUG [postLinkButton]> Input: " + link_url + " : " + reponse_msg + " : "+ btn_msg);
   let linkTemplate = {
     attachment: {
       type: "template",
