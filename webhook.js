@@ -4187,7 +4187,7 @@ async function fetchPokemon(eventPoke,pokemonId) {
       pokeDex.push({
         "ID": poke.id,
         "Name": strTitleCase(poke.species.name),
-        "Species URL": strTitleCase(poke.species.url),
+        "Species URL": poke.species.url,
         "Height": poke.height/10 + 'm',
         "Weight": poke.weight/10 + 'kg',
         "Sprite": poke.sprites.front_default,
@@ -4207,6 +4207,7 @@ async function fetchPokemon(eventPoke,pokemonId) {
       console.log(pokeDex);
 
       var base_stats =
+        pokeDex[0]['Name'] + ' ID:' + intEmoji(pokeDex[0]['ID']) + ' [' + pokeDex[0]['Total'] + ']\n\n' +
         'BULBASAUR ID:1️⃣ [318]\n\n' +
         '🔥 Fire ☠️ Poison ⚖️ 9.3kg 📊 0.7m\n\n' +
         '🟠🟠🟠🟠🟢' + ': [045] ❤️ HP\n' +
