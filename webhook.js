@@ -216,7 +216,6 @@ const URL_API_GIPHY = "https://api.giphy.com/v1/gifs/random";
 const URL_API_MOVIEDB = "https://api.themoviedb.org/3/";
 const URL_API_WEATHER = "https://api.openweathermap.org/data/2.5/weather?APPID=";
 const URL_API_MARVEL = "https://gateway.marvel.com:443/v1/public/characters?nameStartsWith=";
-//const URL_API_LOTR = "the-one-api.herokuapp.com";
 const URL_API_LOTR = "the-one-api.dev";
 const URL_API_HERO = "https://superheroapi.com/api.php/";
 // URLs
@@ -1236,19 +1235,7 @@ CHASbot.post('/webhook', (req, res) => {
           position_in_analyse_text = analyse_text.search(TRIGGER_DEV) + 1;
           if (position_in_analyse_text > 0) {
             let pokedex = analyse_text.replace(/[^0-9]+/g, '');
-            fetchPokemon(pokedex); //67 3 1 2 4
-
-            var base_stats =
-              'BULBASAUR ID:1️⃣ [318]\n\n' +
-              '🔥 Fire ☠️ Poison ⚖️ 9.3kg 📊 0.7m\n\n' +
-              '🟠🟠🟠🟠🟢' + ': [045] ❤️ HP\n' +
-              '🟠🟠🟠🟠🟢' + ': [049] ⚔️ Attack\n' +
-              '🟠🟠🟠🟠🟢' + ': [049] 🛡️ Defence\n' +
-              '🟠🟠🟠🟠🟠' + ': [065] ⚔️ Sp. Attack\n' +
-              '🟠🟠🟠🟠🟠' + ': [065] 🛡️ Sp. Defence\n' +
-              '🟠🟠🟠🟠🟢' + ': [045] 💨 Speed\n' +
-              '(ℹ️ Info) (📶 Evolution) (◀️ Previous) (▶️ Next) (🔢 Random)';
-            postImage(event,'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',true,base_stats);
+            fetchPokemon(pokedex);
           };
           // Find the largest - scale to 100
           // x5 second colour
@@ -3969,7 +3956,7 @@ if (trumps_restart) { tt_msg = "Let's return to " + HERO_ARRAY[SENDERS[custom_id
 }
 
 
-
+// DEV
 
 let pokeEvoDetails = ['held_item','item','known_move','known_move_type','location','min_affection',
   'min_beauty','min_happiness','min_level','needs_overworld_rain','party_species','party_type',
@@ -3998,6 +3985,19 @@ let pokeEvolution = [];
   //  2nd colour = white [1]
 
 // evo test cases 312, 67, 362, 116, 41, 268, 47
+function intEmoji(num) {
+  let numEmoji = ['0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣'];
+  strEmoji = '';
+  sNumber = num.toString();
+  for (var i = 0, len = sNumber.length; i < len; i += 1) {
+    strEmoji = strEmoji + numEmoji[ParseInt(sNumber.charAt(i))];
+  };
+  return strEmoji;
+}
+
+
+
+console.log(intEmoji(524163783));
 
 async function fetchPokemon(pokemonId) {
   // API Reference @ https://pokeapi.co
@@ -4207,6 +4207,18 @@ async function fetchPokemon(pokemonId) {
       });
 
       console.log(pokeDex);
+
+      var base_stats =
+        'BULBASAUR ID:1️⃣ [318]\n\n' +
+        '🔥 Fire ☠️ Poison ⚖️ 9.3kg 📊 0.7m\n\n' +
+        '🟠🟠🟠🟠🟢' + ': [045] ❤️ HP\n' +
+        '🟠🟠🟠🟠🟢' + ': [049] ⚔️ Attack\n' +
+        '🟠🟠🟠🟠🟢' + ': [049] 🛡️ Defence\n' +
+        '🟠🟠🟠🟠🟠' + ': [065] ⚔️ Sp. Attack\n' +
+        '🟠🟠🟠🟠🟠' + ': [065] 🛡️ Sp. Defence\n' +
+        '🟠🟠🟠🟠🟢' + ': [045] 💨 Speed\n' +
+        '(ℹ️ Info) (📶 Evolution) (◀️ Previous) (▶️ Next) (🔢 Random)';
+      postImage(event,'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',true,base_stats);
 
     }); // res.on('end'
   }); // http.get(url
