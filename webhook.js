@@ -971,7 +971,7 @@ function strProper(str) {
   };
   return str;
 }
-function toTitleCase(str) {
+function strTitleCase(str) {
     return str.toLowerCase().replace(/(?:^|[\s-/])\w/g, function (match) {
         return match.toUpperCase();
     });
