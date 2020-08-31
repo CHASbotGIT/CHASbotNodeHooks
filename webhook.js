@@ -3989,8 +3989,10 @@ function intEmoji(num) {
   let numEmoji = ['0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣'];
   let strEmoji = '';
   let sNumber = num + '';
+  let emoIndex = 0;
   for (var i = 0, len = sNumber.length; i < len; i += 1) {
-    strEmoji = strEmoji + numEmoji[ParseInt(sNumber.charAt(i))];
+    emoIndex = ParseInt(sNumber.charAt(i));
+    strEmoji = strEmoji + numEmoji[emoIndex];
   };
   return strEmoji;
 }
