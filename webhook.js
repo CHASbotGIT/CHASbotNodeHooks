@@ -435,22 +435,22 @@ function urlExists(url, cb) {
 
 // Encryption and decryption of files
 var enCrypt = function(text_plain) {
-  //console.log("DEBUG [enCrypt]> plain: " + text_plain);
+  console.log("DEBUG [enCrypt]> plain: " + text_plain);
   let cipher = crypto.createCipheriv(ALGO,Buffer.from(KEY_CRYPTO),Buffer.from(KEY_IV,'hex'));
   let crypted = cipher.update(text_plain);
   crypted = Buffer.concat([crypted, cipher.final()]);
-  //console.log("DEBUG [enCrypt]> obscured (raw): " + crypted);
-  //console.log("DEBUG [enCrypt]> obscured (hex): " + crypted.toString('hex'));
+  console.log("DEBUG [enCrypt]> obscured (raw): " + crypted);
+  console.log("DEBUG [enCrypt]> obscured (hex): " + crypted.toString('hex'));
   return crypted.toString('hex');
 }
 var deCrypt = function(text_obscure) {
-  //console.log("DEBUG [deCrypt]> obscured: " + text_obscure);
+  console.log("DEBUG [deCrypt]> obscured: " + text_obscure);
   let decipher = crypto.createDecipheriv(ALGO,Buffer.from(KEY_CRYPTO),Buffer.from(KEY_IV,'hex'));
   let text_obscure_buffer = Buffer.from(text_obscure,'hex');
-  //console.log("DEBUG [deCrypt]> buffered: " + text_obscure_buffer);
+  console.log("DEBUG [deCrypt]> buffered: " + text_obscure_buffer);
   let dec = decipher.update(text_obscure_buffer);
   dec = Buffer.concat([dec, decipher.final()]);
-  //console.log("DEBUG [deCrypt]> deciphered: " + dec);
+  console.log("DEBUG [deCrypt]> deciphered: " + dec);
   return dec.toString();
 }
 function enCryptContents () {
@@ -460,7 +460,7 @@ function enCryptContents () {
   stream.once('open', function(fd) {
     let stream_loop = 0;
     for (stream_loop = 0; stream_loop < text_block_split.length; stream_loop++) {
-      //console.log("DEBUG [enCryptContents]> " + text_block_split[stream_loop]);
+      console.log("DEBUG [enCryptContents]> " + text_block_split[stream_loop]);
       if (stream_loop == text_block_split.length - 1 ) {
         stream.write(enCrypt(text_block_split[stream_loop])); // Last line
       } else {
@@ -479,11 +479,11 @@ function deCryptContents () {
     CHAS_BIOGS[decrypt_loop] = deCrypt(text_block_split_garbled[decrypt_loop]);
   };
   let number_bios_entries = CHAS_BIOGS.length;
-  //console.log("DEBUG [deCryptContents]> Bios entries: " + number_bios_entries);
+  console.log("DEBUG [deCryptContents]> Bios entries: " + number_bios_entries);
   let remainder = number_bios_entries % CHAS_BIOGS_BLOCK_SIZE;
-  //console.log("DEBUG [deCryptContents]> Bios remainder (looking for 0): " + remainder);
+  console.log("DEBUG [deCryptContents]> Bios remainder (looking for 0): " + remainder);
   CHAS_BIOGS_TOTAL = number_bios_entries / CHAS_BIOGS_BLOCK_SIZE;
-  //console.log("DEBUG [deCryptContents]> Events: " + CHAS_BIOGS_TOTAL);
+  console.log("DEBUG [deCryptContents]> Events: " + CHAS_BIOGS_TOTAL);
   if ((remainder != 0)||(CHAS_BIOGS_TOTAL == 0)) {
     console.log("ERROR [deCryptContents]> Something funky going on with bios");
     CHAS_BIOGS_VIABLE = false;
@@ -499,18 +499,18 @@ function deCryptContents () {
     IDS_TIMESTAMP[decrypt_loop] = null;
   };
   let number_ids_entries = IDS_LIST.length;
-  //console.log("DEBUG [deCryptContents]> ID entries: " + number_ids_entries);
+  console.log("DEBUG [deCryptContents]> ID entries: " + number_ids_entries);
   remainder = number_ids_entries % IDS_BLOCK_SIZE;
-  //console.log("DEBUG [deCryptContents]> ID remainder (looking for 0): " + remainder);
+  console.log("DEBUG [deCryptContents]> ID remainder (looking for 0): " + remainder);
   IDS_TOTAL = number_ids_entries / IDS_BLOCK_SIZE;
-  //console.log("DEBUG [deCryptContents]> IDs: " + IDS_TOTAL);
+  console.log("DEBUG [deCryptContents]> IDs: " + IDS_TOTAL);
   if ((remainder != 0)||(IDS_TOTAL == 0)) {
     console.log("ERROR [deCryptContents]> Something funky going on with IDs");
     IDS_VIABLE = false;
   } else {
     IDS_VIABLE = true;
   };
-  //console.log("DEBUG [deCryptContents]> IDs Viable? " + IDS_VIABLE);
+  console.log("DEBUG [deCryptContents]> IDs Viable? " + IDS_VIABLE);
   text_block = fs.readFileSync(FILE_ENCRYPTED_FR_CARD, "utf-8");
   text_block_split_garbled = text_block.split("\n");
   decrypt_loop = 0;
@@ -518,7 +518,7 @@ function deCryptContents () {
     CHAS_FR_LIST = CHAS_FR_LIST + deCrypt(text_block_split_garbled[decrypt_loop]);
     if (decrypt_loop != text_block_split_garbled.length) {CHAS_FR_LIST = CHAS_FR_LIST + "\n"};
   };
-  //console.log("DEBUG [deCryptContents]> Contact Card: " + CHAS_FR_LIST);
+  console.log("DEBUG [deCryptContents]> Contact Card: " + CHAS_FR_LIST);
 }
 
 //  _    ___   _   ___ ___ _  _  ___
@@ -534,11 +534,11 @@ function loadHooks() {
   if (hook_lines.length > 0) {
     for (var i = 0; i < hook_lines.length; i++) {
       if (hook_lines[i].slice(0,2)=='//') { continue }; // Skip comments
-      //console.log("DEBUG [loadHooks]> Possible hook: " + hook_lines[i]);
+      console.log("DEBUG [loadHooks]> Possible hook: " + hook_lines[i]);
       let poss_hook = hook_lines[i].split("$");
       if (poss_hook.length < 2 || poss_hook.length > 4) { continue }; // Skip where not 2,3 or 4 items
       let poss_hook_name = poss_hook[0];
-      //console.log("DEBUG [loadHooks]> Valid items in hook: " + poss_hook.length);
+      console.log("DEBUG [loadHooks]> Valid items in hook: " + poss_hook.length);
       if (!poss_hook_name.match(/^[a-z_]+$/)) { continue }; // Skip hook name not lowercase + underscore
       let skip_hook = false;
       for (var j = 0; j < HOOKS.length; j++) {
@@ -548,13 +548,13 @@ function loadHooks() {
         }; // if
       }; // for
       if (skip_hook) { continue };
-      //console.log("DEBUG [loadHooks]> Poss hook name: " + skip_hook);
+      console.log("DEBUG [loadHooks]> Poss hook name: " + skip_hook);
       let poss_hook_url = poss_hook[1];
       if (poss_hook_url.slice(0,8) != "https://") { continue }; // Simple check for SSL URL
       if (poss_hook_url.slice(8,14) == "groups") {
         poss_hook_url = "https://work-" + KEY_ROOT + ".facebook.com/" + poss_hook_url.slice(8,poss_hook_url.length);
       };
-      //console.log("DEBUG [loadHooks]> Poss URL: " + poss_hook_url);
+      console.log("DEBUG [loadHooks]> Poss URL: " + poss_hook_url);
       let poss_hook_blurb = '';
       let poss_hook_btn = '';
       let hook_type = 'image';
@@ -569,15 +569,15 @@ function loadHooks() {
         hook_type = 'button';
       };
       HOOKS_CUSTOM[HOOKS_CUSTOM.length] = [true,hook_type,poss_hook_name,poss_hook_url,poss_hook_blurb,poss_hook_btn];
-      //console.log("DEBUG [loadHooks]> Valid Hook[" + (HOOKS_CUSTOM.length - 1) + "]: " + HOOKS_CUSTOM[HOOKS_CUSTOM.length - 1]);
+      console.log("DEBUG [loadHooks]> Valid Hook[" + (HOOKS_CUSTOM.length - 1) + "]: " + HOOKS_CUSTOM[HOOKS_CUSTOM.length - 1]);
       // More comprehensive URL check
       urlExists(poss_hook_url, function(err, exists) {
-        //console.log("DEBUG [loadHooks]> URL check: " + poss_hook_url + ' = ' + exists);
+        console.log("DEBUG [loadHooks]> URL check: " + poss_hook_url + ' = ' + exists);
         if (!exists) {
           for (var j = 0; j < HOOKS_CUSTOM.length; j++) {
             if (HOOKS_CUSTOM[j][3] == poss_hook_url) { // Callback delay requires fresh search
               HOOKS_CUSTOM[j][0] = false; // Disables the hook
-              //console.log("DEBUG [loadHooks]> Disabled Hook[" + j + "]: " + HOOKS_CUSTOM[j]);
+              console.log("DEBUG [loadHooks]> Disabled Hook[" + j + "]: " + HOOKS_CUSTOM[j]);
               break;
             }; // if
           }; // for
@@ -593,11 +593,11 @@ function loadCalendar() {
   CHAS_EVENTS_CALENDAR = text_block.split("\n");
   // Catch if the calendar list is funky i.e. isn't in blocks of four or missing at least one set
   let number_calendar_entries = CHAS_EVENTS_CALENDAR.length;
-  //console.log("DEBUG [loadCalendar]> Calendar entries: " + number_calendar_entries);
+  console.log("DEBUG [loadCalendar]> Calendar entries: " + number_calendar_entries);
   let remainder = number_calendar_entries % CHAS_EVENTS_BLOCK_SIZE;
-  //console.log("DEBUG [loadCalendar]> Calendar remainder (looking for 0): " + remainder);
+  console.log("DEBUG [loadCalendar]> Calendar remainder (looking for 0): " + remainder);
   CHAS_EVENTS_TOTAL = number_calendar_entries / CHAS_EVENTS_BLOCK_SIZE;
-  //console.log("DEBUG [loadCalendar]> Events: " + CHAS_EVENTS_TOTAL);
+  console.log("DEBUG [loadCalendar]> Events: " + CHAS_EVENTS_TOTAL);
   if ((remainder != 0)||(CHAS_EVENTS_TOTAL == 0)) {
     console.log("ERROR [loadCalendar]> Something funky going on with calendar");
     return false;
@@ -607,7 +607,7 @@ function loadCalendar() {
 }
 
 function loadSurvey() {
- //console.log("DEBUG [loadSurvey]> Reading: " + FILE_SURVEY);
+ console.log("DEBUG [loadSurvey]> Reading: " + FILE_SURVEY);
   let gone_funky = false;
   // Load in survey as a block
   let text_block = fs.readFileSync(FILE_SURVEY, "utf-8");
@@ -619,57 +619,57 @@ function loadSurvey() {
       SURVEY_QUESTIONS[i] = load_array[i].split(","); // Split each row into arrays split by comma
       if (i>0 && SURVEY_QUESTIONS[i].length > 6) {
         gone_funky = true; // Can't have more than 6 elements i.e. Question + 5 Answers
-       //console.log("DEBUG [loadSurvey]> " + (SURVEY_QUESTIONS[i].length - 1) + " is too many response elements for Q." + i);
+       console.log("DEBUG [loadSurvey]> " + (SURVEY_QUESTIONS[i].length - 1) + " is too many response elements for Q." + i);
         break;
       }; // if
     }; // for (break)
     if (SURVEY_QUESTIONS[0].length != 1) { // Has to be a quiz
       QUIZ = SURVEY_QUESTIONS[0]; // Load name and responses into array
-     //console.log("DEBUG [loadSurvey]> Answers: " + QUIZ);
-     //console.log("DEBUG [loadSurvey]> Number of questions is " + (SURVEY_QUESTIONS.length-1));
-     //console.log("DEBUG [loadSurvey]> Number of answers is " + (QUIZ.length-1));
+     console.log("DEBUG [loadSurvey]> Answers: " + QUIZ);
+     console.log("DEBUG [loadSurvey]> Number of questions is " + (SURVEY_QUESTIONS.length-1));
+     console.log("DEBUG [loadSurvey]> Number of answers is " + (QUIZ.length-1));
       if (QUIZ.length != SURVEY_QUESTIONS.length) { // Both dimensions are not the same
         gone_funky = true;
-       //console.log("DEBUG [loadSurvey]> Number of questions doesn't match answers" + i);
+       console.log("DEBUG [loadSurvey]> Number of questions doesn't match answers" + i);
       } else { // Both dimensions are the same
         for (var i = 0; i < QUIZ.length; i++) {
           if (i == 0) { // First element
             QUIZ_NAME = QUIZ[0];
-           //console.log("DEBUG [loadSurvey]> Quiz Name: " + QUIZ_NAME);
+           console.log("DEBUG [loadSurvey]> Quiz Name: " + QUIZ_NAME);
             if (QUIZ_NAME=='') {
               gone_funky = true;
-             //console.log("DEBUG [loadSurvey]> Quiz name can't be empty");
+             console.log("DEBUG [loadSurvey]> Quiz name can't be empty");
               break;
             };
           } else {
-           //console.log("DEBUG [loadSurvey]> Question: " + SURVEY_QUESTIONS[i].join(","));
+           console.log("DEBUG [loadSurvey]> Question: " + SURVEY_QUESTIONS[i].join(","));
             let potential_number = 0;
             let known_string = '';
             if (!isNaN(QUIZ[i])) {
               // Check that there is a pick question, and that the response is within the range of answers
               // OR number reponse could be a string
               potential_number = parseInt(QUIZ[i],10);
-              //console.log("DEBUG [loadSurvey]> Value = " + potential_number + " Parse (should be number) = " + typeof(potential_number));
+              console.log("DEBUG [loadSurvey]> Value = " + potential_number + " Parse (should be number) = " + typeof(potential_number));
               if (SURVEY_QUESTIONS[i].length == 1) { // Matching question has free-text response
                 known_string = QUIZ[i];
-               //console.log("DEBUG [loadSurvey]> Over-rule number value = " + known_string + " Parse (should be number string) = " + typeof(known_string));
+               console.log("DEBUG [loadSurvey]> Over-rule number value = " + known_string + " Parse (should be number string) = " + typeof(known_string));
                 if (known_string.length == 0) { // Can't be empty
                   gone_funky = true;
-                 //console.log("DEBUG [loadSurvey]> Funky answer value of <" + known_string + "> where index is " + SURVEY_QUESTIONS[i].length);
+                 console.log("DEBUG [loadSurvey]> Funky answer value of <" + known_string + "> where index is " + SURVEY_QUESTIONS[i].length);
                   break;
                 }
               } else if (potential_number == 0||potential_number > (SURVEY_QUESTIONS[i].length-1)) { // Check against range
                 gone_funky = true;
-               //console.log("DEBUG [loadSurvey]> Funky answer value of " + potential_number + " where index is " + SURVEY_QUESTIONS[i].length);
+               console.log("DEBUG [loadSurvey]> Funky answer value of " + potential_number + " where index is " + SURVEY_QUESTIONS[i].length);
                 break;
               };
             } else {
               // Check that there is a free text question and that the correct answer is not empty
               known_string = QUIZ[i];
-              //console.log("DEBUG [loadSurvey]> Value = " + known_string + " Parse (should be string) = " + typeof(known_string));
+              console.log("DEBUG [loadSurvey]> Value = " + known_string + " Parse (should be string) = " + typeof(known_string));
               if (SURVEY_QUESTIONS[i].length > 1||known_string.length == 0) {
                 gone_funky = true;
-               //console.log("DEBUG [loadSurvey]> Funky answer value of <" + known_string + "> where index is " + SURVEY_QUESTIONS[i].length);
+               console.log("DEBUG [loadSurvey]> Funky answer value of <" + known_string + "> where index is " + SURVEY_QUESTIONS[i].length);
                 break;
               }; // if: funky text response
             }; // if/else: index answer OR free text answer
@@ -680,7 +680,7 @@ function loadSurvey() {
       SURVEY_NAME = SURVEY_QUESTIONS[0];
       if (SURVEY_NAME=='') {
         gone_funky = true;
-       //console.log("DEBUG [loadSurvey]> Survey name can't be empty");
+       console.log("DEBUG [loadSurvey]> Survey name can't be empty");
       };
     };
     if (!gone_funky) {
@@ -690,7 +690,7 @@ function loadSurvey() {
   } else {
     // Has to be at least 2 rows i.e. header row plus 1 question minimum
     gone_funky = true;
-   //console.log("DEBUG [loadSurvey]> There are not enough rows (must header + question at least): " + load_array.length);
+   console.log("DEBUG [loadSurvey]> There are not enough rows (must header + question at least): " + load_array.length);
   };
   if (gone_funky) {
     console.log("ERROR [loadSurvey]> Something funky going on with survey");
@@ -702,14 +702,14 @@ function loadSurvey() {
 
 function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
   // Block loads quotes in character array
-  //console.log("DEBUG [loadLOTR]> Method: " + chars_or_quotes);
+  console.log("DEBUG [loadLOTR]> Method: " + chars_or_quotes);
   if (chars_or_quotes == 'quotes') {
-    //console.log("DEBUG [loadLOTR]> ID: " + quote_id);
+    console.log("DEBUG [loadLOTR]> ID: " + quote_id);
     let id_position = -1;
     for (var loopArray = 0; loopArray < LOTR_ARRAY.length; loopArray++) {
       if (LOTR_ARRAY[loopArray][0]==quote_id) {
         id_position = loopArray;
-        //console.log("DEBUG [loadLOTR]> ID found at: " + id_position);
+        console.log("DEBUG [loadLOTR]> ID found at: " + id_position);
         break;
       }; // if
     }; // for
@@ -719,10 +719,10 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
         pushArray.push([lotrArray[loopArray].movie,lotrArray[loopArray].dialog]);
       }; // for
       LOTR_ARRAY[id_position][10] = pushArray;
-      //console.log("DEBUG [loadLOTR]> Quotes populated for: " + id_position);
-      //console.log("DEBUG [loadLOTR]> First film/quote: " + id_position);
+      console.log("DEBUG [loadLOTR]> Quotes populated for: " + id_position);
+      console.log("DEBUG [loadLOTR]> First film/quote: " + id_position);
     }; // if (LOTR_ARRAY[id_position]
-    //console.log("DEBUG [loadLOTR]> Quotes: " + LOTR_ARRAY[id_position][10].length);
+    console.log("DEBUG [loadLOTR]> Quotes: " + LOTR_ARRAY[id_position][10].length);
     callback();
   } else { // if (chars_or_quotes
     // Block loads in characters
@@ -741,7 +741,7 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
           lotrArray[loopArray].death]); // [9]
       }; // for
     }; // if
-    //console.log("DEBUG [loadLOTR]> Characters: " + LOTR_ARRAY.length);
+    console.log("DEBUG [loadLOTR]> Characters: " + LOTR_ARRAY.length);
     callback();
   }; // else
 }
@@ -755,7 +755,7 @@ function highScore(read_write) {
         if (err) { return console.error("ERROR [highScore]> Error running read query: ", err) };
         HIGH_SCORE[0]=result.rows[0].high_scorer;
         HIGH_SCORE[1]=result.rows[0].high_score;
-        //console.log("DEBUG [highScore]> Who: " + HIGH_SCORE[0] + " Score: " + HIGH_SCORE[1]);
+        console.log("DEBUG [highScore]> Who: " + HIGH_SCORE[0] + " Score: " + HIGH_SCORE[1]);
         client.end();
       });
     });
@@ -778,9 +778,9 @@ loadHooks();
 //enCryptContents(); // Run once to encrypt files
 deCryptContents(); // Normal runtime configuration
 var CHAS_EVENTS_VIABLE = loadCalendar();
-//console.log("DEBUG [postloadCalendar]> Viable? " + CHAS_EVENTS_VIABLE);
+console.log("DEBUG [postloadCalendar]> Viable? " + CHAS_EVENTS_VIABLE);
 var SURVEY_VIABLE = loadSurvey();
-//console.log("DEBUG [postloadSurvey]> Viable? " + SURVEY_VIABLE);
+console.log("DEBUG [postloadSurvey]> Viable? " + SURVEY_VIABLE);
 highScore('read');
 
 // Facebook/workplace validation
@@ -1006,7 +1006,7 @@ function strEmojiLength(str) {
   return count / split.length;
 }
 function strLottery(size, lowest, highest, ball_or_star) {
-  //console.log("DEBUG [strLottery]> Lottery Generator");
+  console.log("DEBUG [strLottery]> Lottery Generator");
   // Euro-millions - 5 unique numbers 1-50 + 2 unique numbers 1-12
   // UK Lottery - 6 unique numbers 1-59
   // Scottish Lottery - 5 unique numbers 1-49
@@ -1022,7 +1022,7 @@ function strLottery(size, lowest, highest, ball_or_star) {
 		};
 		if (add) {
 			numbers.push(randomNumber);
-      //console.log("DEBUG [strLottery]> Number picked: " + randomNumber);
+      console.log("DEBUG [strLottery]> Number picked: " + randomNumber);
 		} else {
 			i--;
 		};
@@ -1040,25 +1040,25 @@ function strLottery(size, lowest, highest, ball_or_star) {
 	}; // for
   strLotteryString = '';
   if (ball_or_star == 'ball') {
-    //console.log("DEBUG [strLottery]> Ball");
+    console.log("DEBUG [strLottery]> Ball");
     strLotteryString = strLotteryString + '🔮 ';
     for (var q = 0; q < numbers.length; q++) {
       strLotteryString = strLotteryString + numbers[q].toString();
       if (q != (numbers.length-1)) { strLotteryString = strLotteryString + ', ' };
     }; // for
   } else {
-    //console.log("DEBUG [strLottery]> Star");
+    console.log("DEBUG [strLottery]> Star");
     strLotteryString = strLotteryString + '⭐ ';
     for (var q = 0; q < numbers.length; q++) {
       strLotteryString = strLotteryString + numbers[q].toString();
       if (q != (numbers.length-1)) { strLotteryString = strLotteryString + ', ' };
     }; // for
   }; // if
-  //console.log("DEBUG [strLottery]> Numbers string: " + strLotteryString);
+  console.log("DEBUG [strLottery]> Numbers string: " + strLotteryString);
   return strLotteryString;
 }
 function strGreeting(senderID,greet) {
-  //console.log("DEBUG [strGreeting]> " + senderID);
+  console.log("DEBUG [strGreeting]> " + senderID);
   let build_greeting = '';
   let fb_who = FB_UNKNOWN[numRandomBetween(0,FB_UNKNOWN.length-1)];
   let fb_who_known = false;
@@ -1068,11 +1068,11 @@ function strGreeting(senderID,greet) {
     for (var find_index = 0; find_index < IDS_TOTAL; find_index++) {
       // 1,3,5 etc.
       match_id = IDS_LIST[find_index * IDS_BLOCK_SIZE + 1];
-      //console.log("DEBUG [strGreeting]> Find match for ID (" + senderID + "): " + match_id);
+      console.log("DEBUG [strGreeting]> Find match for ID (" + senderID + "): " + match_id);
       if (match_id == senderID) {
         id_index = find_index; // Got our match
         fb_who = IDS_LIST[find_index * IDS_BLOCK_SIZE];
-        //console.log("DEBUG [strGreeting]> Matched to: " + fb_who);
+        console.log("DEBUG [strGreeting]> Matched to: " + fb_who);
         break;
       }; // if
     }; // for
@@ -1081,7 +1081,7 @@ function strGreeting(senderID,greet) {
   // Prime personalised response
   // if ( we know who the person is AND ( either they've not had a name check OR been a while since name check))
   if (IDS_VIABLE && (IDS_TIMESTAMP[id_index] == null||new Date().getTime() - IDS_TIMESTAMP[id_index] > mnsConvert(TIME_TO_WAIT))) {
-    //console.log("DEBUG [strGreeting]> Interval in mins since last message has been: " + mnsConvert(TIME_TO_WAIT));
+    console.log("DEBUG [strGreeting]> Interval in mins since last message has been: " + mnsConvert(TIME_TO_WAIT));
     let hr = hrsGetUK();
     for (var loop_hour = 0; loop_hour < TIME_OF_DAY.length; loop_hour++) {
       if (hr >= TIME_OF_DAY[loop_hour][0]) {
@@ -1094,7 +1094,7 @@ function strGreeting(senderID,greet) {
     IDS_TIMESTAMP[id_index] = new Date().getTime();
     console.log("NAME CHECK: [strGreeting]> " + fb_who + ", ID: " + senderID + " @ " + IDS_TIMESTAMP[id_index]);
   };
-  //console.log("DEBUG [strGreeting]> Greeting: " + build_greeting);
+  console.log("DEBUG [strGreeting]> Greeting: " + build_greeting);
   return build_greeting;
 }
 function numRandomBetween(min,max) {
@@ -1119,10 +1119,10 @@ function hrsGetUK() {
 CHASbot.post('/webhook', (req, res) => {
   if (req.body.object === 'page') {
     req.body.entry.forEach((entry) => {
-      //console.log("DEBUG [postWebhook]> Raw entry: " + JSON.stringify(entry));
+      console.log("DEBUG [postWebhook]> Raw entry: " + JSON.stringify(entry));
       entry.messaging.forEach((event) => {
-        //if (event.read && event.read.watermark) { //console.log("DEBUG [postWebhook]> Receipt: " + event.read.watermark) };
-        //console.log("DEBUG [postWebhook]> Raw event: " + JSON.stringify(event));
+        //if (event.read && event.read.watermark) { console.log("DEBUG [postWebhook]> Receipt: " + event.read.watermark) };
+        console.log("DEBUG [postWebhook]> Raw event: " + JSON.stringify(event));
         let sticker_path = '';
         let sender = event.sender.id;
         let alt_message_type = '';
@@ -1182,7 +1182,7 @@ CHASbot.post('/webhook', (req, res) => {
             };
           };
           if (!inPlay('survey',sender_index)) { event.message.text = analyse_text };
-          //console.log("DEBUG [postWebhook]> Cleaned input: " + cleanResults[0] + ' (Emoji +ve ' + cleanResults[1] + ',-ve ' + cleanResults[2] + ')');
+          console.log("DEBUG [postWebhook]> Cleaned input: " + cleanResults[0] + ' (Emoji +ve ' + cleanResults[1] + ',-ve ' + cleanResults[2] + ')');
           // Feel the vibe
           deliverThinking(event,'on');
           let vibeText = '';
@@ -1217,7 +1217,7 @@ CHASbot.post('/webhook', (req, res) => {
           // ***** HELP & SEARCH *****
           // Feeling lucky - First in list - allows subsequent triggers
           position_in_analyse_text = analyse_text.search(TRIGGER_FEELING_LUCKY) + 1;
-          //console.log("DEBUG [postWebhook]> " + TRIGGER_FEELING_LUCKY + " search result: " + position_in_analyse_text);
+          console.log("DEBUG [postWebhook]> " + TRIGGER_FEELING_LUCKY + " search result: " + position_in_analyse_text);
           let chasbotText = '';
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
             let cat = numRandomBetween(0,4); // 0 to 4
@@ -1260,18 +1260,18 @@ CHASbot.post('/webhook', (req, res) => {
 
           // Help
           position_in_analyse_text = analyse_text.search(TRIGGER_HELP) + 1;
-          //console.log("DEBUG [postWebhook]> " + TRIGGER_HELP + " search result: " + position_in_analyse_text);
+          console.log("DEBUG [postWebhook]> " + TRIGGER_HELP + " search result: " + position_in_analyse_text);
           let help_url = '';
           if (position_in_analyse_text > 0 && !inPlay('survey',sender_index)) {
             trigger_path = TRIGGER_HELP;
             help_url = URL_IMG_PREFIX2 + HELP_PROMPTS[HELP_INDEX][0] + URL_IMG_SUFFIX;
-            //console.log("DEBUG [postWebhook]> Help URL: " + help_url);
+            console.log("DEBUG [postWebhook]> Help URL: " + help_url);
             chasbotText = "Try typing any of these:";
             for (var i = 1; i < 7; i++) {
               chasbotText = chasbotText + '\n' + HELP_PROMPTS[HELP_INDEX][i];
             };
             chasbotText = chasbotText + '\n' + "Type *help* for more or try *feeling lucky*";
-            //console.log("DEBUG [postWebhook]> Help text: " + chasbotText);
+            console.log("DEBUG [postWebhook]> Help text: " + chasbotText);
             HELP_INDEX++;
             if (HELP_INDEX > 4) { HELP_INDEX = 0 };
             // FLOW: 'help' trumps all
@@ -1295,12 +1295,12 @@ CHASbot.post('/webhook', (req, res) => {
                 ending_point = analyse_text.length;
                 string_length = ending_point - starting_point;
                 search_method = TRIGGER_SEARCH[trigger_loop];
-                //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
-                //console.log("DEBUG [postWebhook]> Search method found: " + search_method);
+                console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
+                console.log("DEBUG [postWebhook]> Search method found: " + search_method);
                 if (string_length > 0) {
                   trigger_path = TRIGGER_SEARCH[0];
                   search_term = analyse_text.slice(starting_point,ending_point);
-                  //console.log("DEBUG [postWebhook]> Search term: " + search_term);
+                  console.log("DEBUG [postWebhook]> Search term: " + search_term);
                   // FLOW: Seperate out search terms - pause all in-play
                   analyse_text = search_method; // clean extra i.e. to prevent other triggers
                   inPlayPause(sender_index); // Pause all in-play
@@ -1311,10 +1311,10 @@ CHASbot.post('/webhook', (req, res) => {
           // ******** IN PLAY/INTERACTIVE ********
           // Survey/Quiz
           // 0:id_of_sender,1:survey_in_play,4:survey_question,
-          //console.log("DEBUG [postWebhook]> In play, survey: " + inPlay('survey',sender_index));
-          //console.log("DEBUG [postWebhook]> In play, rpsls: " + inPlay('rpsls',sender_index));
-          //console.log("DEBUG [postWebhook]> In play, hangman: " + inPlay('hangman',sender_index));
-          //console.log("DEBUG [postWebhook]> In play, trumps: " + inPlay('trumps',sender_index));
+          console.log("DEBUG [postWebhook]> In play, survey: " + inPlay('survey',sender_index));
+          console.log("DEBUG [postWebhook]> In play, rpsls: " + inPlay('rpsls',sender_index));
+          console.log("DEBUG [postWebhook]> In play, hangman: " + inPlay('hangman',sender_index));
+          console.log("DEBUG [postWebhook]> In play, trumps: " + inPlay('trumps',sender_index));
           let valid_choice = false;
           let survey_question_number = SENDERS[sender_index][5];
           if (inPlay('survey',sender_index)) { // Review un-parsed text
@@ -1354,9 +1354,9 @@ CHASbot.post('/webhook', (req, res) => {
               let check_winner = event.message.text;
               check_winner = strStandardise(check_winner)[0];
               let winner = strStandardise(QUIZ[survey_question_number-1])[0];
-              //console.log("DEBUG [postWebhook]> Check input: " + check_winner + " Against answer: " + winner);
+              console.log("DEBUG [postWebhook]> Check input: " + check_winner + " Against answer: " + winner);
               if (check_winner == winner) {
-		            //console.log("DEBUG [postWebhook]> Won a point");
+		            console.log("DEBUG [postWebhook]> Won a point");
                 SENDERS[sender_index][6] = SENDERS[sender_index][6] + 1; // Add a point
               };
             } else {
@@ -1367,7 +1367,7 @@ CHASbot.post('/webhook', (req, res) => {
           };
           // Trigger the survey or quiz
           position_in_analyse_text = analyse_text.search(TRIGGER_SURVEY) + 1;
-          //console.log("DEBUG [postWebhook]> " + TRIGGER_SURVEY + " search result: " + position_in_analyse_text);
+          console.log("DEBUG [postWebhook]> " + TRIGGER_SURVEY + " search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0 && SURVEY_VIABLE && SURVEY_NAME!='') {
             // FLOW: Typing trigger mid-survey, starts it again
             if (inPlay('survey',sender_index)) { inPlayClean('survey',sender_index) };
@@ -1376,7 +1376,7 @@ CHASbot.post('/webhook', (req, res) => {
             analyse_text = TRIGGER_SURVEY; // clean extra i.e. to prevent other triggers
           };
           position_in_analyse_text = analyse_text.search(TRIGGER_QUIZ) + 1;
-          //console.log("DEBUG [postWebhook]> " + TRIGGER_QUIZ + " search result: " + position_in_analyse_text);
+          console.log("DEBUG [postWebhook]> " + TRIGGER_QUIZ + " search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0 && SURVEY_VIABLE && QUIZ_NAME!='') {
             // FLOW: Typing trigger mid-survey, starts it again
             if (inPlay('survey',sender_index)) { inPlayClean('survey',sender_index) };
@@ -1397,7 +1397,7 @@ CHASbot.post('/webhook', (req, res) => {
               if (position_in_analyse_text > 0) {
                 pick_player = RPSLS_VALID[trigger_loop];
                 analyse_text = pick_player; // clean extra i.e. to prevent other triggers
-                //console.log("DEBUG [postWebhook]> " + pick_player + " search result: " + position_in_analyse_text);
+                console.log("DEBUG [postWebhook]> " + pick_player + " search result: " + position_in_analyse_text);
                 inPlayPause(sender_index); // Pause all in-play...
                 inPlaySet('rpsls',sender_index); // ...then un-pause 'rpsls'
                 SENDERS[sender_index][10] = 3; // Evaluate the choice
@@ -1407,7 +1407,7 @@ CHASbot.post('/webhook', (req, res) => {
           };
           // Trigger RPSLS
           position_in_analyse_text = analyse_text.search(TRIGGER_RPSLS) + 1;
-          //console.log("DEBUG [postWebhook]> " + TRIGGER_RPSLS + " search result: " + position_in_analyse_text);
+          console.log("DEBUG [postWebhook]> " + TRIGGER_RPSLS + " search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
             // FLOW: Typing trigger mid-game, starts it again
             if (inPlay('rpsls',sender_index)) { inPlayClean('rpsls',sender_index) }; // Reset if already playing
@@ -1426,7 +1426,7 @@ CHASbot.post('/webhook', (req, res) => {
           // FLOW: Typing hangman mid-survey, starts it again
           // 0:id_of_sendery,2:hangman_in_play,7:hangman_strikes,8:hangman_word,9:hangman_array
           position_in_analyse_text = analyse_text.search(TRIGGER_HANGMAN) + 1;
-          //console.log("DEBUG [postWebhook]> " + TRIGGER_HANGMAN + " search result: " + position_in_analyse_text);
+          console.log("DEBUG [postWebhook]> " + TRIGGER_HANGMAN + " search result: " + position_in_analyse_text);
           let hangman_word = '';
           let hangman_answer_array = [];
           let hangman_answer = '';
@@ -1435,7 +1435,7 @@ CHASbot.post('/webhook', (req, res) => {
             if (SENDERS[sender_index][8] == ''||inPlay('hangman',sender_index)) { // New game
               hangman_word = CHAS_BIOGS[numRandomBetween(1,CHAS_BIOGS_TOTAL) * CHAS_BIOGS_BLOCK_SIZE - 2];
               hangman_word = hangman_word.toLowerCase();
-              //console.log("DEBUG [postWebhook]> Mystery name: " + hangman_word);
+              console.log("DEBUG [postWebhook]> Mystery name: " + hangman_word);
               // swap out spaces for under_scores
               hangman_word = hangman_word.replace(/\s/g, '_');
               // Set up the answer array
@@ -1452,7 +1452,7 @@ CHASbot.post('/webhook', (req, res) => {
               chasbotText = chasbotText + "\n" + MSG_THUMBS[0] + " (0 strikes)";
               SENDERS[sender_index][8] = hangman_word;
               SENDERS[sender_index][9] = hangman_answer_array;
-              //console.log("DEBUG [postWebhook]> Hangman Initialise: " + chasbotText);
+              console.log("DEBUG [postWebhook]> Hangman Initialise: " + chasbotText);
             } else { // Resume existing game
               hangman_word = SENDERS[sender_index][8];
               hangman_answer_array = SENDERS[sender_index][9];
@@ -1477,7 +1477,7 @@ CHASbot.post('/webhook', (req, res) => {
             let tt_loop = 0;
             let tt_category = '';
             if (SENDERS[sender_index][20] == 'category') {
-              //console.log("DEBUG [postWebhook]> In play, trumps, looking for category");
+              console.log("DEBUG [postWebhook]> In play, trumps, looking for category");
               let tt_category_pick = -1;
               for (tt_loop = 0; tt_loop < HERO_STATS.length; tt_loop++) {
                 tt_category = strStandardise(HERO_STATS[tt_loop])[0];
@@ -1488,9 +1488,9 @@ CHASbot.post('/webhook', (req, res) => {
               };
               SENDERS[sender_index][18] = tt_category_pick;
               if (tt_category_pick == -1) {
-                //console.log("DEBUG [postWebhook]> In play, trumps, no category picked");
+                console.log("DEBUG [postWebhook]> In play, trumps, no category picked");
               } else {
-                //console.log("DEBUG [postWebhook]> In play, trumps, category: " + HERO_STATS[tt_category_pick]);
+                console.log("DEBUG [postWebhook]> In play, trumps, category: " + HERO_STATS[tt_category_pick]);
               };
             } else if (SENDERS[sender_index][20] == 'character') {
               if (SENDERS[sender_index][21].length > 0) { // picking from list
@@ -1503,20 +1503,20 @@ CHASbot.post('/webhook', (req, res) => {
                   };
                 };
                 if (tt_char_pick == -1) { // not picked from bubble
-                  //console.log("DEBUG [postWebhook]> In play, trumps, hero bubble not picked when offered; hero to find: " + hero_who);
+                  console.log("DEBUG [postWebhook]> In play, trumps, hero bubble not picked when offered; hero to find: " + hero_who);
                   hero_who = analyse_text;
                   hero_who = hero_who.trim();
                   hero_who = strTitleCase(hero_who);
                   SENDERS[sender_index][21] = []; // reset bubbles
                 } else { // valid single pick
                   SENDERS[sender_index][17] = SENDERS[sender_index][21][tt_char_pick];
-                  //console.log("DEBUG [postWebhook]> In play, trumps, caharacter ID picked: " + SENDERS[sender_index][17]);
+                  console.log("DEBUG [postWebhook]> In play, trumps, caharacter ID picked: " + SENDERS[sender_index][17]);
                 };
               } else { // going to search for term
                 hero_who = analyse_text;
                 hero_who = hero_who.trim();
                 hero_who = strTitleCase(hero_who);
-                //console.log("DEBUG [postWebhook]> In play, trumps, hero to find: " + hero_who);
+                console.log("DEBUG [postWebhook]> In play, trumps, hero to find: " + hero_who);
               }; // if (SENDERS[sender_index][21] = array of possibles
             }; // if (SENDERS[sender_index][20] = character
           }; // if (inPlay('trumps'
@@ -1528,12 +1528,12 @@ CHASbot.post('/webhook', (req, res) => {
             inPlayPause(sender_index); // Pause all in-play...
             inPlaySet('trumps',sender_index); // ...then un-pause 'trumps'
             analyse_text = TRIGGER_TOPTRUMPS; // Clean extra i.e. to prevent other triggers
-            //console.log("DEBUG [postWebhook]> In play, trumps, triggered");
+            console.log("DEBUG [postWebhook]> In play, trumps, triggered");
           };
-          //console.log("DEBUG [postWebhook]> In play, survey: " + inPlay('survey',sender_index));
-          //console.log("DEBUG [postWebhook]> In play, rpsls: " + inPlay('rpsls',sender_index));
-          //console.log("DEBUG [postWebhook]> In play, hangman: " + inPlay('hangman',sender_index));
-          //console.log("DEBUG [postWebhook]> In play, trumps: " + inPlay('trumps',sender_index));
+          console.log("DEBUG [postWebhook]> In play, survey: " + inPlay('survey',sender_index));
+          console.log("DEBUG [postWebhook]> In play, rpsls: " + inPlay('rpsls',sender_index));
+          console.log("DEBUG [postWebhook]> In play, hangman: " + inPlay('hangman',sender_index));
+          console.log("DEBUG [postWebhook]> In play, trumps: " + inPlay('trumps',sender_index));
           // FLOW: Remaining triggers each clean out analyse_text, so no other triggers fire
           // ****** API LOOKUP *******
           // TV and film
@@ -1546,12 +1546,12 @@ CHASbot.post('/webhook', (req, res) => {
                 rightmost_starting_point = starting_point;
                 ending_point = analyse_text.length;
                 string_length = ending_point - starting_point;
-                //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
-                //console.log("DEBUG [postWebhook]> MovieDb key found: " + TRIGGER_MOVIEDB[trigger_loop]);
+                console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
+                console.log("DEBUG [postWebhook]> MovieDb key found: " + TRIGGER_MOVIEDB[trigger_loop]);
                 if (string_length > 0) {
                   trigger_path = TRIGGER_MOVIEDB[0];
                   moviedb_term = analyse_text.slice(starting_point,ending_point);
-                  //console.log("DEBUG [postWebhook]> Movie or TV title: " + moviedb_term);
+                  console.log("DEBUG [postWebhook]> Movie or TV title: " + moviedb_term);
                   analyse_text = trigger_path; // clean extra i.e. to prevent other triggers
                 };
               };
@@ -1560,12 +1560,12 @@ CHASbot.post('/webhook', (req, res) => {
           // Marvel
           //let hero_who = ''
           position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_MARVEL) + 1;
-          //console.log("DEBUG [postWebhook]> " + TRIGGER_MARVEL + " phrase search result: " + position_in_analyse_text);
+          console.log("DEBUG [postWebhook]> " + TRIGGER_MARVEL + " phrase search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
             starting_point = position_in_analyse_text + TRIGGER_MARVEL.length;
             ending_point = analyse_text.length;
             string_length = ending_point - starting_point;
-            //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
+            console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
             if (string_length > 0) {
               trigger_path = TRIGGER_MARVEL;
               hero_who = analyse_text.slice(starting_point,ending_point);
@@ -1576,12 +1576,12 @@ CHASbot.post('/webhook', (req, res) => {
           // Lord of the Rings
           // If double-triggered - then seond trigger wins
           position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_LOTR) + 1;
-          //console.log("DEBUG [postWebhook]> " + TRIGGER_LOTR + " phrase search result: " + position_in_analyse_text);
+          console.log("DEBUG [postWebhook]> " + TRIGGER_LOTR + " phrase search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
             starting_point = position_in_analyse_text + TRIGGER_LOTR.length;
             ending_point = analyse_text.length;
             string_length = ending_point - starting_point;
-            //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
+            console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
             if (string_length > 0) {
               trigger_path = TRIGGER_LOTR;
               hero_who = analyse_text.slice(starting_point,ending_point);
@@ -1601,11 +1601,11 @@ CHASbot.post('/webhook', (req, res) => {
               // Found a lottery trigger
               one_is_enough = true; // Single
               uk_lotto = strLottery(6,1,59,"ball"); // UK
-              //console.log("DEBUG [postWebhook]> Lottery UK: " + uk_lotto);
+              console.log("DEBUG [postWebhook]> Lottery UK: " + uk_lotto);
               scot_lotto = strLottery(5,1,49,"ball"); // Scot
-              //console.log("DEBUG [postWebhook]> Lottery Scottish: " + scot_lotto);
+              console.log("DEBUG [postWebhook]> Lottery Scottish: " + scot_lotto);
               euro_lotto = strLottery(5,1,50,"ball") + ' ' + strLottery(2,1,12,"star"); // Euro
-              //console.log("DEBUG [postWebhook]> Lottery Scottish: " + euro_lotto);
+              console.log("DEBUG [postWebhook]> Lottery Scottish: " + euro_lotto);
               trigger_path = TRIGGER_LOTTERY[0];
               search_term = analyse_text.slice(starting_point,ending_point);
               // FLOW: Lotto triggered and drawn - pause all in-play
@@ -1616,7 +1616,7 @@ CHASbot.post('/webhook', (req, res) => {
           // ****** CHAS THINGS *******
           // CHAS logo
           position_in_analyse_text = analyse_text.search(TRIGGER_CHAS_LOGO) + 1;
-          //console.log("DEBUG [postWebhook]> " + TRIGGER_CHAS_LOGO + " search result: " + position_in_analyse_text);
+          console.log("DEBUG [postWebhook]> " + TRIGGER_CHAS_LOGO + " search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) { trigger_path = TRIGGER_CHAS_LOGO };
           // CHAS alphabet
           let alpha = '';
@@ -1626,7 +1626,7 @@ CHASbot.post('/webhook', (req, res) => {
             position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_CHASABET_2) + 1;
             alpha_1st = false;
           }
-          //console.log("DEBUG [postWebhook]> " + TRIGGER_CHASABET_1 + " or " + TRIGGER_CHASABET_2 + " phrase search result: " + position_in_analyse_text);
+          console.log("DEBUG [postWebhook]> " + TRIGGER_CHASABET_1 + " or " + TRIGGER_CHASABET_2 + " phrase search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
             if (alpha_1st) {
               starting_point = position_in_analyse_text + TRIGGER_CHASABET_1.length;
@@ -1635,7 +1635,7 @@ CHASbot.post('/webhook', (req, res) => {
             }
             ending_point = analyse_text.length;
             string_length = ending_point - starting_point;
-            //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
+            console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
             if (string_length > 0) {
               // Strip string to first viable letter
               alpha = analyse_text.slice(starting_point,ending_point);
@@ -1649,12 +1649,12 @@ CHASbot.post('/webhook', (req, res) => {
           // CHAS Events
           let event_name = '';
           position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_CHAS_EVENTS) + 1;
-          //console.log("DEBUG [postWebhook]> " + TRIGGER_CHAS_EVENTS + " phrase search result: " + position_in_analyse_text);
+          console.log("DEBUG [postWebhook]> " + TRIGGER_CHAS_EVENTS + " phrase search result: " + position_in_analyse_text);
           if (position_in_analyse_text > 0) {
             starting_point = position_in_analyse_text + TRIGGER_CHAS_EVENTS.length;
             ending_point = analyse_text.length;
             string_length = ending_point - starting_point;
-            //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
+            console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
             if (string_length > 0) {
               trigger_path = TRIGGER_CHAS_EVENTS;
               event_name = analyse_text.slice(starting_point,ending_point);
@@ -1663,13 +1663,13 @@ CHASbot.post('/webhook', (req, res) => {
           };
           // CHAS Biogs
           position_in_analyse_text = analyse_text.lastIndexOf(TRIGGER_CHAS_BIOGS) + 1;
-          //console.log("DEBUG [postWebhook]> " + TRIGGER_CHAS_BIOGS + " phrase search result: " + position_in_analyse_text);
+          console.log("DEBUG [postWebhook]> " + TRIGGER_CHAS_BIOGS + " phrase search result: " + position_in_analyse_text);
           let biogs_name = '';
           if (position_in_analyse_text > 0) {
             starting_point = position_in_analyse_text + TRIGGER_CHAS_BIOGS.length;
             ending_point = analyse_text.length;
             string_length = ending_point - starting_point;
-            //console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
+            console.log("DEBUG [postWebhook]> Length is " + string_length + ", starting @ " + starting_point + " and go to " + ending_point);
             if (string_length > 0) {
               let catch_fundraising = analyse_text.lastIndexOf('fundraising');
               if (catch_fundraising > 0) {
@@ -1692,13 +1692,13 @@ CHASbot.post('/webhook', (req, res) => {
           };
           // Pick a response route
           if (trigger_path == KEY_ADMIN_TRIGGER) {
-            //console.log("DEBUG [postWebhook_route]> Admin: " + KEY_ADMIN_TRIGGER);
+            console.log("DEBUG [postWebhook_route]> Admin: " + KEY_ADMIN_TRIGGER);
             deliverText(routeEvent,adminMessage,false,'');
           } else if (inPlay('survey',sender_index)) { // Survey first
-            //console.log("DEBUG [postWebhook_route]> Survey");
+            console.log("DEBUG [postWebhook_route]> Survey");
             deliverQuestion_playSurvey(event);
           } else if (trigger_path == TRIGGER_HELP) {
-            //console.log("DEBUG [postWebhook_route]> Help: " + HELP_INDEX);
+            console.log("DEBUG [postWebhook_route]> Help: " + HELP_INDEX);
             strLottery(6,1,49,'ball');
             console.log("INFO [postWebhook]> Sender: " + sender);
             console.log("INFO [postWebhook]> Request: " + TRIGGER_HELP);
@@ -1706,54 +1706,54 @@ CHASbot.post('/webhook', (req, res) => {
             console.log("INFO [postWebhook]> Response: Help v." + HELP_INDEX);
             postImage(event,help_url,true,chasbotText);
           } else if (trigger_path == TRIGGER_MARVEL) {
-            //console.log("DEBUG [postWebhook_route]> Marvel Character: " + hero_who);
+            console.log("DEBUG [postWebhook_route]> Marvel Character: " + hero_who);
             apiMarvelChar(event,hero_who);
           } else if (trigger_path == TRIGGER_LOTR) {
-            //console.log("DEBUG [postWebhook_route]> LOTR Character: " + hero_who);
+            console.log("DEBUG [postWebhook_route]> LOTR Character: " + hero_who);
             postLOTR(event,hero_who);
           } else if (trigger_path == TRIGGER_CHASABET_1) {
-            //console.log("DEBUG [postWebhook_route]> CHAS alpahbet: " + alpha);
+            console.log("DEBUG [postWebhook_route]> CHAS alpahbet: " + alpha);
             lookupAlpha(event,alpha);
           } else if (trigger_path == TRIGGER_CHAS_EVENTS && CHAS_EVENTS_VIABLE) {
-            //console.log("DEBUG [postWebhook_route]> CHAS event: " + event_name);
+            console.log("DEBUG [postWebhook_route]> CHAS event: " + event_name);
             lookupEvent(event,event_name);
           } else if (trigger_path == TRIGGER_CHAS_BIOGS && CHAS_BIOGS_VIABLE) {
-            //console.log("DEBUG [postWebhook_route]> CHAS bios: " + biogs_name);
+            console.log("DEBUG [postWebhook_route]> CHAS bios: " + biogs_name);
             lookupBiogs(event,biogs_name);
           } else if (SENDERS[sender_index][10] > 0) {
-            //console.log("DEBUG [postWebhook_route]> RPSLSpock: " + pick_player);
+            console.log("DEBUG [postWebhook_route]> RPSLSpock: " + pick_player);
             playRPSLS(event,pick_player);
           } else if (trigger_path == TRIGGER_SEARCH[0]) {
-            //console.log("DEBUG [postWebhook_route]> Search: " + search_term);
+            console.log("DEBUG [postWebhook_route]> Search: " + search_term);
             postSearch(event,search_method,search_term);
           } else if (trigger_path == TRIGGER_LOTTERY[0]) {
-            //console.log("DEBUG [postWebhook_route]> Lottery UK: " + uk_lotto + ', Euro: ' + euro_lotto + ', Scot: ' + scot_lotto);
+            console.log("DEBUG [postWebhook_route]> Lottery UK: " + uk_lotto + ', Euro: ' + euro_lotto + ', Scot: ' + scot_lotto);
             postLottery(event,uk_lotto,euro_lotto,scot_lotto);
           } else if (trigger_path == TRIGGER_MOVIEDB[0]) {
-            //console.log("DEBUG [postWebhook_route]> Movie/TV: " + moviedb_term);
+            console.log("DEBUG [postWebhook_route]> Movie/TV: " + moviedb_term);
             apiPrimeFilmTV(event,moviedb_term);
           } else if (trigger_path == TRIGGER_CHAS_LOGO) {
-            //console.log("DEBUG [postWebhook_route]> Logo");
+            console.log("DEBUG [postWebhook_route]> Logo");
             console.log("INFO [postWebhook]> Sender: " + sender);
             console.log("INFO [postWebhook]> Request: " + TRIGGER_CHAS_LOGO);
             console.log("INFO [postWebhook]> Action: postWebhook.postImage");
             console.log("INFO [postWebhook]> Response: IMG URL " + URL_CHAS_THUMB);
             postImage(event,URL_CHAS_THUMB,false,'');
           } else if (trigger_path == TRIGGER_HANGMAN) {
-            //console.log("DEBUG [postWebhook_route]> Hangman Initiated");
+            console.log("DEBUG [postWebhook_route]> Hangman Initiated");
             console.log("INFO [postWebhook]> Sender: " + sender);
             console.log("INFO [postWebhook]> Request: " + TRIGGER_HANGMAN);
             console.log("INFO [postWebhook]> Action: postWebhook.deliverText");
             console.log("INFO [postWebhook]> Response: Hangman Mystery Name is " + hangman_word);
             deliverText(event,chasbotText,false,'');
           } else if (inPlay('hangman',sender_index)) {
-            //console.log("DEBUG [postWebhook_route]> Hangman Guess: " + hangman_guess);
+            console.log("DEBUG [postWebhook_route]> Hangman Guess: " + hangman_guess);
             playHangman(event,hangman_guess);
           } else if (inPlay('trumps',sender_index)) {
             lookupHero(event,hero_who);
-            //console.log("DEBUG [postWebhook_route]> Top Trumps: " + hero_who);
+            console.log("DEBUG [postWebhook_route]> Top Trumps: " + hero_who);
           } else {
-            //console.log("DEBUG [postWebhook_route]> No special cases, send via APIAI");
+            console.log("DEBUG [postWebhook_route]> No special cases, send via APIAI");
             bounceViaDialogV2(event);
           }
         }
@@ -1791,12 +1791,12 @@ async function bounceViaDialogV2(eventSend) {
     }; // const
     // Send dialogflow_request and log result
     const responses = await sessionClient.detectIntent(dialogflow_request);
-    //console.log("DEBUG [bounceViaDialogV2]: DialogFlow Intent Detected");
+    console.log("DEBUG [bounceViaDialogV2]: DialogFlow Intent Detected");
     const result = responses[0].queryResult;
     console.log("INFO [bounceViaDialogV2]> Request Processed for " + sender + ": " + result.queryText);
     //let dialogFlowText = result.fulfillmentText; // [LEGACY]
     let dialogFlowHook = result.action;
-    //console.log("DEBUG [bounceViaDialogV2]> dialogFlowHook: " + dialogFlowHook);
+    console.log("DEBUG [bounceViaDialogV2]> dialogFlowHook: " + dialogFlowHook);
     let dialogFlowText = ''
     if (dialogFlowHook != '') { // If there is an 'action' then there likely to be a hook
       if (dialogFlowHook.includes('smalltalk') || dialogFlowHook.includes('unknown') || dialogFlowHook.includes('Default')){
@@ -1815,30 +1815,30 @@ async function bounceViaDialogV2(eventSend) {
     let hookText = '';
     if (dialogFlowHook === HOOK_WEATHER) {
       // Set a default weather location
-      //console.log("DEBUG [bounceViaDialogV2]> HOOK_WEATHER");
+      console.log("DEBUG [bounceViaDialogV2]> HOOK_WEATHER");
       let city = 'Edinburgh';
       if (typeof responses[0].queryResult.parameters != 'undefined') {
-        //console.log("DEBUG [bounceViaDialogV2]> Weather params are defined");
+        console.log("DEBUG [bounceViaDialogV2]> Weather params are defined");
         const params = responses[0].queryResult.parameters;
         var paramsObject = Object.values(params);
         let paramsJSON = JSON.stringify(paramsObject[0]);
         let paramsParsed = JSON.parse(paramsJSON);
-        //console.log("DEBUG [bounceViaDialogV2]> Weather Parameters: " + paramsJSON);
+        console.log("DEBUG [bounceViaDialogV2]> Weather Parameters: " + paramsJSON);
         if (paramsJSON.includes("geo-city-gb")) {
           city = paramsParsed["geo-city-gb"]["stringValue"];
-          //console.log("DEBUG [bounceViaDialogV2]> Weather geo-city-gb found: " + city);
+          console.log("DEBUG [bounceViaDialogV2]> Weather geo-city-gb found: " + city);
         } else if (paramsJSON.includes("hospice_places")) {
           city = paramsParsed["hospice_places"]["stringValue"];
-          //console.log("DEBUG [bounceViaDialogV2]> Weather hospice_places found: " + city);
+          console.log("DEBUG [bounceViaDialogV2]> Weather hospice_places found: " + city);
         }; // else if
       }; //if (typeof
       let restUrl = URL_API_WEATHER + KEY_API_WEATHER + '&q=' + city;
-      //console.log("DEBUG [bounceViaDialogV2]> Weather Hook URL: " + restUrl);
+      console.log("DEBUG [bounceViaDialogV2]> Weather Hook URL: " + restUrl);
       request(restUrl, function (err, response, body) {
         console.log("API Request [OW]: " + URL_API_WEATHER + '<SECRET>&q=' + city);
         if (!err && response.statusCode == 200) { // Successful response
           let json = JSON.parse(body);
-          //console.log("DEBUG [bounceViaDialogV2]> Weather Hook JSON: " + body);
+          console.log("DEBUG [bounceViaDialogV2]> Weather Hook JSON: " + body);
           let tempF = ~~(json.main.temp * 9/5 - 459.67);
           let tempC = ~~(json.main.temp - 273.15);
           hookText = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
@@ -1850,11 +1850,11 @@ async function bounceViaDialogV2(eventSend) {
           let day_or_night = '';
           let weathericonId = URL_IMG_PREFIX2;
           if (hr >= UTC_DAWN && hr <= UTC_DUSK) { day_or_night = 'day' } else { day_or_night = 'night' };
-          //console.log("DEBUG [bounceViaDialogV2]> Weather Id" + findId + " [" + day_or_night + "]");
+          console.log("DEBUG [bounceViaDialogV2]> Weather Id" + findId + " [" + day_or_night + "]");
           for (var loop_icons = 0; loop_icons < WEATHER_GIFS.length; loop_icons++) {
             if (WEATHER_GIFS[loop_icons].includes(findId) && WEATHER_GIFS[loop_icons].includes(day_or_night)) {
               weathericonId = weathericonId + WEATHER_GIFS[loop_icons].slice(0, 14) + URL_GIF_SUFFIX;
-              //console.log("DEBUG [bounceViaDialogV2]> Weather GIF: " + weathericonId);
+              console.log("DEBUG [bounceViaDialogV2]> Weather GIF: " + weathericonId);
               break;
             }; // if
           }; // for
@@ -1870,14 +1870,14 @@ async function bounceViaDialogV2(eventSend) {
         } //else
       }); // } function ) request
     } else if (dialogFlowHook === HOOK_PICKCARD) {
-      //console.log("DEBUG [bounceViaDialogV2]> HOOK_PICKCARD");
+      console.log("DEBUG [bounceViaDialogV2]> HOOK_PICKCARD");
       CARD_PICK = CARD_DECK[numRandomBetween(0,CARD_DECK.length-1)];
       hookText = CARD_PROMPTS[numRandomBetween(0,CARD_PROMPTS.length-1)] + CARD_PICK;
       console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Pick a Card Hook: " + hookText);
       deliverText(eventSend,hookText,false,'');
       return;
     } else if (dialogFlowHook === HOOK_FUNDRAISING) {
-      //console.log("DEBUG [bounceViaDialogV2]> HOOK_FUNDRAISING");
+      console.log("DEBUG [bounceViaDialogV2]> HOOK_FUNDRAISING");
       hookText = CHAS_FR_LIST;
       console.log("INFO [bounceViaDialogV2]> Response to " + sender + " via Fundraising Hook: " + hookText);
       deliverText(eventSend,hookText,false,'');
@@ -1957,9 +1957,9 @@ function deliverThinking(eventThink,on_off) {
 
 function deliverText(eventSend,outbound_text,plusTemplate,messageData) {
   if (plusTemplate) {
-    //console.log("DEBUG [deliverText]> Deliver text preceeded by template: ", outbound_text);
+    console.log("DEBUG [deliverText]> Deliver text preceeded by template: ", outbound_text);
   } else {
-    //console.log("DEBUG [deliverText]> Deliver text: ", outbound_text);
+    console.log("DEBUG [deliverText]> Deliver text: ", outbound_text);
   }; // if (plusTemplate)
   let sender = eventSend.sender.id;
   outbound_text = strGreeting(sender,true) + outbound_text;
@@ -2101,7 +2101,7 @@ function deliverStackTT(eventSend,metricsTT,msgTT,pictureTT,game_over){ // Call 
   });
 }
 function deliverCategoryTT(eventSend,msgTT) {
-  //console.log("DEBUG [deliverCategoryTT]> In Progress");
+  console.log("DEBUG [deliverCategoryTT]> In Progress");
   deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   let custom_id = inPlayID(sender);
@@ -2144,7 +2144,7 @@ function deliverCategoryTT(eventSend,msgTT) {
   }); // request
 }
 function deliverCharChoiceTT(eventSend,msgTT) {
-  //console.log("DEBUG [deliverCharChoiceTT]> In Progress");
+  console.log("DEBUG [deliverCharChoiceTT]> In Progress");
   deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
   let custom_id = inPlayID(sender);
@@ -2242,7 +2242,7 @@ function deliverCharChoiceTT(eventSend,msgTT) {
 }
 
 function deliverQuestion_playSurvey(eventSend) {
-  //console.log("DEBUG [deliverQuestion_playSurvey]> " + SURVEY_NAME + "In Progress");
+  console.log("DEBUG [deliverQuestion_playSurvey]> " + SURVEY_NAME + "In Progress");
   // 0:id_of_sender,1:survey_in_play,4:survey_question
   deliverThinking(eventSend,'off');
   let sender = eventSend.sender.id;
@@ -2376,7 +2376,7 @@ function deliverQuestion_playSurvey(eventSend) {
 // Post Functions - Prep Responses For Delivery
 // ============================================
 function postImage(postEvent,image_url,plusText,passText) {
-  //console.log("DEBUG [postImage]> Input: " + image_url);
+  console.log("DEBUG [postImage]> Input: " + image_url);
   let imgTemplate = {
     attachment: {
       type: "image",
@@ -2394,7 +2394,7 @@ function postImage(postEvent,image_url,plusText,passText) {
 }
 
 function postLinkButton(postEvent,link_url,reponse_msg,btn_msg) {
-  //console.log("DEBUG [postLinkButton]> Input: " + reponse_msg);
+  console.log("DEBUG [postLinkButton]> Input: " + reponse_msg);
   let linkTemplate = {
     attachment: {
       type: "template",
@@ -2413,7 +2413,7 @@ function postLinkButton(postEvent,link_url,reponse_msg,btn_msg) {
 }
 
 function postMarvel(postEvent,success_result,hero_array) {
-  //console.log("DEBUG [postMarvel]> True or False: " + success_result);
+  console.log("DEBUG [postMarvel]> True or False: " + success_result);
   let sender = postEvent.sender.id;
   let marvelTemplate = '';
   let marvelText = '';
@@ -2445,14 +2445,14 @@ function postMarvel(postEvent,success_result,hero_array) {
     marvelText = hero_array[1];
     deliverText(postEvent,marvelText,true,marvelTemplate);
   } else {
-    console.log("INFO [postMarvel]> Reponse: Unuccessful");
+    console.log("INFO [postMarvel]> Reponse: Unsuccessful");
     marvelText = MSG_HERO_OOPS[numRandomBetween(0,MSG_HERO_OOPS.length-1)] + ' try something instead of ' + strTitleCase(hero_array[0]) + '?'; // Required within deliverText
     deliverText(postEvent,marvelText,false,'');
   };
 }
 
 function postEvents(postEvent,success_result,event_index,event_in) {
-  //console.log("DEBUG [postEvents]> Pass or Fail: " + success_result);
+  console.log("DEBUG [postEvents]> Pass or Fail: " + success_result);
   let sender = postEvent.sender.id;
   let eventsText = '';
   let eventsTemplate = '';
@@ -2495,16 +2495,16 @@ function postEvents(postEvent,success_result,event_index,event_in) {
 }
 
 function postBiogs(postEvent,success_result,biogs_index,biogs_name) {
-  //console.log("DEBUG [postBiogs]> Input: " + postEvent);
+  console.log("DEBUG [postBiogs]> Input: " + postEvent);
   let sender = postEvent.sender.id;
   console.log("INFO [postBiogs]> Sender: " + sender);
   console.log("INFO [postBiogs]> Request: " + TRIGGER_CHAS_BIOGS + " " + biogs_name);
   console.log("INFO [postBiogs]> Action: lookupBiogs.postBiogs");
   if (success_result) {
-    //console.log("DEBUG [postBiogs]> Index: " + biogs_index);
+    console.log("DEBUG [postBiogs]> Index: " + biogs_index);
     console.log("INFO [postBiogs]> Reponse: Successful");
     let biogsText = CHAS_BIOGS[biogs_index + 1];
-    //console.log("DEBUG [postBiogs]> Result: " + CHAS_BIOGS[biogs_index + 1]);
+    console.log("DEBUG [postBiogs]> Result: " + CHAS_BIOGS[biogs_index + 1]);
     deliverText(postEvent,biogsText,false,'');
   } else {
     console.log("INFO [postBiogs]> Reponse: Unsuccessful");
@@ -2513,7 +2513,7 @@ function postBiogs(postEvent,success_result,biogs_index,biogs_name) {
 }
 
 function postLottery(postEvent,lotto_uk,lotto_euro,lotto_scot) {
-  //console.log("DEBUG [postLottery]> Input: " + postEvent);
+  console.log("DEBUG [postLottery]> Input: " + postEvent);
   let sender = postEvent.sender.id;
   console.log("INFO [postLottery]> Sender: " + sender);
   console.log("INFO [postLottery]> Request: UK " + lotto_uk + ", Euro "+ lotto_euro + ", Scot " + lotto_scot);
@@ -2559,7 +2559,7 @@ function postLottery(postEvent,lotto_uk,lotto_euro,lotto_scot) {
 }
 
 function postSearch(postEvent,search_method,search_term) {
-  //console.log("DEBUG [postSearch]> Input: " + postEvent);
+  console.log("DEBUG [postSearch]> Input: " + postEvent);
   let sender = postEvent.sender.id;
   console.log("INFO [postSearch]> Sender: " + sender);
   console.log("INFO [postSearch]> Request: " + search_method + ' ' + search_term);
@@ -2645,7 +2645,7 @@ function postSearch(postEvent,search_method,search_term) {
 }
 
 function postFilmTV(postEvent,record_index) {
-  //console.log("DEBUG [postFilmTV]> Index: " + record_index + ", " + MOVIEDB_RECORDS[record_index][0] + ", " + MOVIEDB_RECORDS[record_index][3]+ ", " + MOVIEDB_RECORDS[record_index][7]);
+  console.log("DEBUG [postFilmTV]> Index: " + record_index + ", " + MOVIEDB_RECORDS[record_index][0] + ", " + MOVIEDB_RECORDS[record_index][3]+ ", " + MOVIEDB_RECORDS[record_index][7]);
   let sender = postEvent.sender.id;
   let filmText = '';
   if (MOVIEDB_RECORDS[record_index][0] && MOVIEDB_RECORDS[record_index][3] && !MOVIEDB_RECORDS[record_index][7]) {
@@ -2707,16 +2707,16 @@ function postLOTR(eventLOTR,lotrWho) {
   // [10][0] movie [10][1] dialogue
   if (LOTR_ARRAY.length == 0) {
     // The array is empty, need to call API function
-    //console.log("DEBUG [postLOTR]> LOTR array is empty");
+    console.log("DEBUG [postLOTR]> LOTR array is empty");
     apiLOTR('chars','', function() {
-      //console.log("DEBUG [postLOTR]> apiLOTR returned with array length: " + LOTR_ARRAY.length);
+      console.log("DEBUG [postLOTR]> apiLOTR returned with array length: " + LOTR_ARRAY.length);
       if (LOTR_ARRAY.length != 0) {
         let match_id = lookupLOTR(lotrWho);
-        //console.log("DEBUG [postLOTR]> Via API fork looking for: " + lotrWho + " = " + match_id);
+        console.log("DEBUG [postLOTR]> Via API fork looking for: " + lotrWho + " = " + match_id);
         // Need to get the quotes
         apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
           lotrBlurb = wrapLOTR(match_id,lotrWho);
-          //console.log("DEBUG [postLOTR]> Final blurb via API is: " + lotrBlurb);
+          console.log("DEBUG [postLOTR]> Final blurb via API is: " + lotrBlurb);
           console.log("INFO [postLOTR]> Action: API.postLOTR.postLinkButton");
           console.log("INFO [postLOTR]> Reponse: Successful");
           postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
@@ -2724,7 +2724,7 @@ function postLOTR(eventLOTR,lotrWho) {
       } else {
         // Array not populated after API call
         console.log("INFO [postLOTR]> Action: apiLOTR.deliverText");
-        console.log("INFO [postLOTR]> Reponse: Unuccessful");
+        console.log("INFO [postLOTR]> Reponse: Unsuccessful");
         console.log("ERROR [postLOTR]> apiLOTR did not populate array");
         lotrBlurb = MSG_LOTR_OOPS[numRandomBetween(0,MSG_LOTR_OOPS.length-1)] + ' try something instead of ' + strTitleCase(lotrWho) + '?'; // Required within deliverText
         deliverText(eventLOTR,lotrBlurb,false,'');
@@ -2732,17 +2732,17 @@ function postLOTR(eventLOTR,lotrWho) {
     }); // apiLOTR('chars'
   } else { // Operating from memeory - not API
     let match_id = lookupLOTR(lotrWho);
-    //console.log("DEBUG [postLOTR]> Via memory fork looking for: " + lotrWho + " = " + match_id);
+    console.log("DEBUG [postLOTR]> Via memory fork looking for: " + lotrWho + " = " + match_id);
     if (typeof LOTR_ARRAY[match_id][10] != 'undefined') {
       lotrBlurb = wrapLOTR(match_id,lotrWho);
-      //console.log("DEBUG [postLOTR]> Final blurb via memory is: " + lotrBlurb);
+      console.log("DEBUG [postLOTR]> Final blurb via memory is: " + lotrBlurb);
       console.log("INFO [postLOTR]> Action: stored.postLOTR.postLinkButton");
       console.log("INFO [postLOTR]> Reponse: Successful");
       postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
     } else { // if (typeof LOTR_ARRAY
       apiLOTR('quotes',LOTR_ARRAY[match_id][0], function() {
         lotrBlurb = wrapLOTR(match_id,lotrWho);
-        //console.log("DEBUG [postLOTR]> Final blurb via memory & API is: " + lotrBlurb);
+        console.log("DEBUG [postLOTR]> Final blurb via memory & API is: " + lotrBlurb);
         console.log("INFO [postLOTR]> Action: stored.API.postLOTR.postLinkButton");
         console.log("INFO [postLOTR]> Reponse: Successful");
         postLinkButton(eventLOTR,LOTR_ARRAY[match_id][3],lotrBlurb,'Wiki ' + LOTR_ARRAY[match_id][1]);
@@ -2764,7 +2764,7 @@ function wrapLOTR(match_id,lotrWho) {
   let clean_up_text2 = '';
   let various_trap = false;
   lotrBlurb = "This is the best match I can find for " + strTitleCase(lotrWho) + ". ";
-  //console.log("DEBUG [wrapLOTR]> [0] Gender: " + LOTR_ARRAY[match_id][2]);
+  console.log("DEBUG [wrapLOTR]> [0] Gender: " + LOTR_ARRAY[match_id][2]);
   if (LOTR_ARRAY[match_id][2] == 'Male') {
     lotrBlurb = lotrBlurb + "He is ";
   } else if (LOTR_ARRAY[match_id][2] == 'Female') {
@@ -2772,16 +2772,16 @@ function wrapLOTR(match_id,lotrWho) {
   } else {
     lotrBlurb = lotrBlurb + "They are ";
   };
-  //console.log("DEBUG [wrapLOTR]> [0] Blurb so far is: " + lotrBlurb);
+  console.log("DEBUG [wrapLOTR]> [0] Blurb so far is: " + lotrBlurb);
   let extent_unknown = 0;
-  //console.log("DEBUG [wrapLOTR]> Race: " + LOTR_ARRAY[match_id][4]);
-  //console.log("DEBUG [wrapLOTR]> Realm: " + LOTR_ARRAY[match_id][5]);
+  console.log("DEBUG [wrapLOTR]> Race: " + LOTR_ARRAY[match_id][4]);
+  console.log("DEBUG [wrapLOTR]> Realm: " + LOTR_ARRAY[match_id][5]);
   if ((LOTR_ARRAY[match_id][4] == '') && (LOTR_ARRAY[match_id][5] == '')) {
     extent_unknown = extent_unknown + 1; // 0 or 1
-    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either race or realm is unknown");
+    console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either race or realm is unknown");
   } else if ((LOTR_ARRAY[match_id][4] != '') && (LOTR_ARRAY[match_id][5] != '')) {
     lotrBlurb = lotrBlurb + "of the " + LOTR_ARRAY[match_id][4] + " race, from the " + LOTR_ARRAY[match_id][5] + " realm";
-    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Blurb so far is: " + lotrBlurb);
+    console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Blurb so far is: " + lotrBlurb);
   } else if (LOTR_ARRAY[match_id][4] != '') {
     lotrBlurb = lotrBlurb + "of the " + LOTR_ARRAY[match_id][4] + " race";
   } else {
@@ -2792,8 +2792,8 @@ function wrapLOTR(match_id,lotrWho) {
   // 0 = 'He is/ She is/ They are of the A race'
   // 0 = 'He is/ She is/ They are from the B realm'
   // 1 = 'He is/ She is/ They are '
-  //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Height: " + LOTR_ARRAY[match_id][6]);
-  //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Hair: " + LOTR_ARRAY[match_id][7]);
+  console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Height: " + LOTR_ARRAY[match_id][6]);
+  console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Hair: " + LOTR_ARRAY[match_id][7]);
   if ((LOTR_ARRAY[match_id][6] != '') && (LOTR_ARRAY[match_id][7] != '')) {
     clean_up_text1 = LOTR_ARRAY[match_id][7];
     clean_up_text1 = clean_up_text1.toLowerCase();
@@ -2803,16 +2803,16 @@ function wrapLOTR(match_id,lotrWho) {
   };
   if ((LOTR_ARRAY[match_id][6] == '') || (LOTR_ARRAY[match_id][7] == '' || various_trap)) {
     extent_unknown = extent_unknown + 2; // 0, 1, 2 or 3
-    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either height or hair colour is unknown, or various");
+    console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either height or hair colour is unknown, or various");
   } else if (extent_unknown == 1) {
     lotrBlurb = lotrBlurb + clean_up_text2 + " in height with " + clean_up_text1 + " hair.";
-    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Blurb so far is: " + lotrBlurb);
+    console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Blurb so far is: " + lotrBlurb);
   } else {
     lotrBlurb = lotrBlurb + "; with " + clean_up_text1 + " hair, and a height of " + clean_up_text2 + ".";
-    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Blurb so far is: " + lotrBlurb);
+    console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Blurb so far is: " + lotrBlurb);
   };
-  //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Birth: " + LOTR_ARRAY[match_id][8]);
-  //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Death: " + LOTR_ARRAY[match_id][9]);
+  console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Birth: " + LOTR_ARRAY[match_id][8]);
+  console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Death: " + LOTR_ARRAY[match_id][9]);
   if ((LOTR_ARRAY[match_id][8] != '') && (LOTR_ARRAY[match_id][9] != '')) {
     clean_up_text1 = LOTR_ARRAY[match_id][8]; // birth
     clean_up_text1 = clean_up_text1.replace(/,/g, ""); // birth without commas
@@ -2841,16 +2841,16 @@ function wrapLOTR(match_id,lotrWho) {
   // 2 = 'He is/ She is/ They are from the B realm' <txt>
   // 3 = 'He is/ She is/ They are ' <space>
   if ((LOTR_ARRAY[match_id][8] == '') && (LOTR_ARRAY[match_id][9] == '') && (extent_unknown == 3)) {
-    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
+    console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
     lotrBlurb = lotrBlurb + "a complete mystery to me! 😞 You might have better luck with the Wiki.";
   } else if ((LOTR_ARRAY[match_id][8] == '') && (LOTR_ARRAY[match_id][9] == '') && (extent_unknown == 2)) {
-    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
+    console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
     lotrBlurb = lotrBlurb + ". More than that, I don't know! 🤔 Find our more at the Wiki.";
   } else if ((LOTR_ARRAY[match_id][8] == '') && (LOTR_ARRAY[match_id][9] == '') && (extent_unknown == 1)) {
-    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
+    console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
     lotrBlurb = lotrBlurb + " 😊 The Wiki can tell you more.";
   } else if ((LOTR_ARRAY[match_id][8] == '') && (LOTR_ARRAY[match_id][9] == '') && (extent_unknown == 0)) {
-    //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
+    console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Either birth or death is unknown");
     lotrBlurb = lotrBlurb + " 😃 Check out the Wiki.";
   } else if (extent_unknown == 3) {
     lotrBlurb = lotrBlurb + "a stranger to me but I can tell you they were born " + clean_up_text1 + " and concluded their story " + clean_up_text2 + ". 🤔 Find our more at the Wiki.";
@@ -2859,7 +2859,7 @@ function wrapLOTR(match_id,lotrWho) {
   } else { // 1 or 0
     lotrBlurb = lotrBlurb + " I can also tell you they were born " + clean_up_text1 + " and finished their adventure " + clean_up_text2 + ". 😃 Check out the Wiki.";
   };
-  //console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Before clean-up: " + lotrBlurb);
+  console.log("DEBUG [wrapLOTR]> [" + extent_unknown + "] Before clean-up: " + lotrBlurb);
   lotrBlurb = strFixStutter(lotrBlurb); // i.e. doubled words
   // FA First Age, SA Second Age, TA Third Age, FO Fourth Age
   lotrBlurb = strReplaceAll(lotrBlurb,' FA ', ' First Age ');
@@ -2876,34 +2876,34 @@ function wrapLOTR(match_id,lotrWho) {
   if (typeof LOTR_ARRAY[match_id][10] != 'undefined') {
     let quoteListCount = LOTR_ARRAY[match_id][10].length;
     let quoteArray = LOTR_ARRAY[match_id][10];
-    //console.log("DEBUG [wrapLOTR]> Quotes to pick from: " + quoteListCount);
+    console.log("DEBUG [wrapLOTR]> Quotes to pick from: " + quoteListCount);
     let quotePick = numRandomBetween(0,quoteListCount-1);
-    //console.log("DEBUG [wrapLOTR]> Quote Picked: " + quotePick);
+    console.log("DEBUG [wrapLOTR]> Quote Picked: " + quotePick);
     for (var loop_films = 0; loop_films < LOTR_MOVIES.length; loop_films++) {
       if (LOTR_MOVIES[loop_films].includes(quoteArray[quotePick][0])) {
         movie_quote = " Quoted in " + LOTR_MOVIES[loop_films].replace(quoteArray[quotePick][0],'') + ' 💬 ';
-        //console.log("DEBUG [wrapLOTR]> Film: " + movie_quote);
+        console.log("DEBUG [wrapLOTR]> Film: " + movie_quote);
         break;
       }; // if (LOTR_MOVIES[loop_films]
     }; // (var loop_films
     // if there wasn't a movie named then skip the quote
     if (movie_quote!= '') {
       let quote_placeholder = quoteArray[quotePick][1];
-      //console.log("DEBUG [wrapLOTR]> Quote raw: " + quote_placeholder);
+      console.log("DEBUG [wrapLOTR]> Quote raw: " + quote_placeholder);
       var regex_punctuation = new RegExp("[?!;:.,]", 'g');
       quote_placeholder = quote_placeholder.replace(regex_punctuation,"$& "); // add minimal space after punctuation
-      //console.log("DEBUG [wrapLOTR]> Quote add minimal spaces after punctuation: " + quote_placeholder);
+      console.log("DEBUG [wrapLOTR]> Quote add minimal spaces after punctuation: " + quote_placeholder);
       quote_placeholder = strReplaceAll(quote_placeholder,' , ','');
-      //console.log("DEBUG [wrapLOTR]> Quote extra commas removed: " + quote_placeholder);
+      console.log("DEBUG [wrapLOTR]> Quote extra commas removed: " + quote_placeholder);
       quote_placeholder = quote_placeholder.replace(/\s+(\W)/g, "$1"); // pre-punctuation spaces
-      //console.log("DEBUG [wrapLOTR]> Quote spaces pre-punctuation removed: " + quote_placeholder);
+      console.log("DEBUG [wrapLOTR]> Quote spaces pre-punctuation removed: " + quote_placeholder);
       quote_placeholder = quote_placeholder.replace(/\s\s+/g, ' '); // internal whitespace
-      //console.log("DEBUG [wrapLOTR]> Quote padded spaces removed: " + quote_placeholder);
+      console.log("DEBUG [wrapLOTR]> Quote padded spaces removed: " + quote_placeholder);
       quote_placeholder = quote_placeholder.trim(); // leading/trailing whitespace
-      //console.log("DEBUG [wrapLOTR]> Quote leading/trailing whitespace removed: " + quote_placeholder);
+      console.log("DEBUG [wrapLOTR]> Quote leading/trailing whitespace removed: " + quote_placeholder);
       movie_quote = movie_quote + quote_placeholder;
     }; // if (movie_quote
-    //console.log("DEBUG [wrapLOTR]> Full Quote: " + movie_quote);
+    console.log("DEBUG [wrapLOTR]> Full Quote: " + movie_quote);
   }; // if (typeof LOTR_ARRAY
   lotrBlurb = lotrBlurb + movie_quote;
   return lotrBlurb;
@@ -2917,25 +2917,25 @@ function wrapLOTR(match_id,lotrWho) {
 // =============================
 function apiGIPHY(eventGiphy,giphy_tag,giphy_rating,passText) {
   // Ratings are Y; G; PG; PG-13; R
-  //console.log("DEBUG [apiGIPHY]> Input: " + giphy_tag + ", " + giphy_rating + ", " + passText);
+  console.log("DEBUG [apiGIPHY]> Input: " + giphy_tag + ", " + giphy_rating + ", " + passText);
   const base_url = URL_API_GIPHY;
   const params_url = "?api_key=" + KEY_API_GIPHY + "&tag=" + giphy_tag + "&rating=" + giphy_rating;
   let url = base_url + params_url;
   // e.g. https://api.giphy.com/v1/gifs/random?api_key=5LqK0fRD8cNeyelbovZKnuBVGcEGHytv&tag=robot&rating=G
-  //console.log("DEBUG [apiGIPHY]> URL: " + url);
+  console.log("DEBUG [apiGIPHY]> URL: " + url);
   http.get(url, function(res) {
-    //console.log("DEBUG [apiGIPHY]> GIPHY Response Code: " + res.statusCode);
+    console.log("DEBUG [apiGIPHY]> GIPHY Response Code: " + res.statusCode);
     let api_url = strReplaceAll(url,KEY_API_GIPHY,'<SECRET>');
     console.log("API Request [GIPHY]: " + api_url);
     let body = "";
     res.on('data', function (chunk) { body += chunk });
     res.on('end', function() {
       let giphyData = JSON.parse(body);
-      //console.log("DEBUG [apiGIPHY]> GIPHY Response: " + giphyData);
+      console.log("DEBUG [apiGIPHY]> GIPHY Response: " + giphyData);
       if (res.statusCode === 200) {
         if (typeof giphyData.data != 'undefined') {
           let giphy_url = giphyData.data.fixed_height_downsampled_url;
-          //console.log("DEBUG [apiGIPHY]> URL: " + giphy_url);
+          console.log("DEBUG [apiGIPHY]> URL: " + giphy_url);
           postImage(eventGiphy,giphy_url,false,'');
           return;
         } else {
@@ -2953,7 +2953,7 @@ function apiGIPHY(eventGiphy,giphy_tag,giphy_rating,passText) {
 }
 
 function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
-  //console.log("DEBUG [apiFilmTV]> Input: " + nameFilmTV + ", " + episode_find + ", " + tv_film + ", " + record_index);
+  console.log("DEBUG [apiFilmTV]> Input: " + nameFilmTV + ", " + episode_find + ", " + tv_film + ", " + record_index);
   let epBlurb = ''; // return value
   const base_url = URL_API_MOVIEDB + "search/";
   const params_url = "api_key=" + KEY_API_MOVIEDB;
@@ -2966,11 +2966,11 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
   // e.g. https://api.themoviedb.org/3/search/movie?api_key={api_key}&query=Jack+Reacher
   // id 1871 is Eastenders; Season 33 is 2017
   if (episode_find) { url = URL_API_MOVIEDB + "tv/1871/season/33?api_key=" + KEY_API_MOVIEDB + "&language=en-US" };
-  //console.log("DEBUG [apiFilmTV]> URL: " + url);
+  console.log("DEBUG [apiFilmTV]> URL: " + url);
   http.get(url, function(res) {
     let api_url = strReplaceAll(url,KEY_API_MOVIEDB,'<SECRET>');
     console.log("API Request [MDB]: " + api_url);
-    //console.log("DEBUG [apiFilmTV]> MovieDb Response Code: " + res.statusCode);
+    console.log("DEBUG [apiFilmTV]> MovieDb Response Code: " + res.statusCode);
     // In the event of API reporting down i.e. 503, then return null results on one pass and exit on other
     if (res.statusCode === 503) {
       console.log("ERROR [apiFilmTV]> 503 Response Error for " + tv_film);
@@ -2987,7 +2987,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
     res.on('data', function (chunk) { body += chunk });
     res.on('end', function() {
       let movieDbData = JSON.parse(body);
-      //console.log("DEBUG [apiFilmTV]> MovieDb Response: " + movieDbData);
+      console.log("DEBUG [apiFilmTV]> MovieDb Response: " + movieDbData);
       if (res.statusCode === 200) {
         if (episode_find) {
           let tdyDate = new Date();
@@ -2999,7 +2999,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
               epBlurb = movieDbData.episodes[i].overview;
               let weekday_value = epDate.getDay();
               //epBlurb = "The last episode I saw was on " + PROPER_NOUNS_DAYS[weekday_value] + ", it was the one where: " + epBlurb;
-              //console.log("DEBUG [apiFilmTV]> Easties result: " + epBlurb);
+              console.log("DEBUG [apiFilmTV]> Easties result: " + epBlurb);
               MOVIEDB_RECORDS[record_index][0] = true;
               MOVIEDB_RECORDS[record_index][1] = epBlurb;
               MOVIEDB_RECORDS[record_index][3] = true;
@@ -3013,7 +3013,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
           let blurb = movieDbData.results[0].overview;
           let rating = Math.round(movieDbData.results[0].vote_average / 2);
           epBlurb = MSG_STAR_RATING[rating] + " That's the one where: " + blurb + " (theMovieDb)";
-          //console.log("DEBUG [apiFilmTV]> TV result: " + epBlurb);
+          console.log("DEBUG [apiFilmTV]> TV result: " + epBlurb);
           if (tv_film == 'tv') {
             MOVIEDB_RECORDS[record_index][0] = true;
             MOVIEDB_RECORDS[record_index][1] = epBlurb;
@@ -3026,7 +3026,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
           postFilmTV(eventFilmTV,record_index);
           return;
         } else {
-          //console.log("DEBUG [apiFilmTV]> No " + tv_film + " result");
+          console.log("DEBUG [apiFilmTV]> No " + tv_film + " result");
           if (tv_film == 'tv') {
             MOVIEDB_RECORDS[record_index][0] = true;
             MOVIEDB_RECORDS[record_index][1] = 'No TV result';
@@ -3051,7 +3051,7 @@ function apiFilmTV(eventFilmTV,nameFilmTV,episode_find,tv_film,record_index) {
 }
 
 function apiPrimeFilmTV(eventFilmTV,targetName) {
-  //console.log("DEBUG [apiPrimeFilmTV]> Input: " + targetName);
+  console.log("DEBUG [apiPrimeFilmTV]> Input: " + targetName);
   MOVIEDB_RECORDS_INDEX++;
   let hold_index = MOVIEDB_RECORDS_INDEX;
   //if (MOVIEDB_RECORDS_INDEX == 10) {MOVIEDB_RECORDS_INDEX = 0;};
@@ -3068,7 +3068,7 @@ function apiPrimeFilmTV(eventFilmTV,targetName) {
 }
 
 function apiMarvelChar(eventMarvel,marvelWho) {
-  //console.log("DEBUG [apiMarvelChar]> Input: " + marvelWho);
+  console.log("DEBUG [apiMarvelChar]> Input: " + marvelWho);
   // String together a URL using the provided keys and search parameters
   let marvelNote = '';
   let marvelThumb = '';
@@ -3080,7 +3080,7 @@ function apiMarvelChar(eventMarvel,marvelWho) {
   let ts = new Date().getTime();
   let hash = crypto.createHash('md5').update(ts + KEY_MARVEL_PRIVATE + KEY_MARVEL_PUBLIC).digest('hex');
   url += "&ts=" + ts + "&hash=" + hash;
-  //console.log("DEBUG [apiMarvelChar]> Lookup: " + url);
+  console.log("DEBUG [apiMarvelChar]> Lookup: " + url);
   // Call on the URL to get a response
   http.get(url, function(res) {
     console.log("API Request [MARVEL]: " + URL_API_MARVEL + marvelWhoShort + "&limit=" + marvelLimit + "&apikey=<SECRET>&ts=" + ts + "&hash=<SECRET>");
@@ -3090,31 +3090,31 @@ function apiMarvelChar(eventMarvel,marvelWho) {
     // When all the data is back, go on to query the full response
     res.on('end', function() {
       let characterData = JSON.parse(body);
-      //console.log("DEBUG [apiMarvelChar]> Character JSON: " + JSON.stringify(characterData));
+      console.log("DEBUG [apiMarvelChar]> Character JSON: " + JSON.stringify(characterData));
       if (characterData.code === 200) { // Successful response from Marvel
         if (characterData['data'].count == 0) { // A successful response doesn't mean there was a match
-          //console.log("DEBUG [apiMarvelChar]> Valid URL but no results for " + strTitleCase(marvelWho));
+          console.log("DEBUG [apiMarvelChar]> Valid URL but no results for " + strTitleCase(marvelWho));
           marvelPost = [marvelWho,marvelNote,marvelThumb,marvelURL];
           postMarvel(eventMarvel,false,marvelPost);
           return;
         } else if (characterData['data'].results[0].description !== '') { // Assess the first result back
-          //console.log("DEBUG [apiMarvelChar]> Number of possible: " + characterData['data'].results.length);
+          console.log("DEBUG [apiMarvelChar]> Number of possible: " + characterData['data'].results.length);
           marvelNote = characterData.data.results[0].description;
-          //console.log("DEBUG [apiMarvelChar]> Description: " + marvelNote);
+          console.log("DEBUG [apiMarvelChar]> Description: " + marvelNote);
           marvelThumb = characterData.data.results[0].thumbnail.path + '/standard_xlarge.jpg';
-          //console.log("DEBUG [apiMarvelChar]> Thumbnail: " + marvelThumb);
+          console.log("DEBUG [apiMarvelChar]> Thumbnail: " + marvelThumb);
           marvelURL = characterData.data.results[0].urls[0].url;
-          //console.log("DEBUG [apiMarvelChar]> Hero URL: " + marvelURL);
+          console.log("DEBUG [apiMarvelChar]> Hero URL: " + marvelURL);
           marvelPost = [marvelWho,marvelNote,marvelThumb,marvelURL];
           postMarvel(eventMarvel,true,marvelPost);
           return;
         } else { // Assess the first result back when there isn't a description provided by Marvel
           marvelNote = "Find out more at Marvel.";
-          //console.log("DEBUG [apiMarvelChar]> Description: " + marvelNote);
+          console.log("DEBUG [apiMarvelChar]> Description: " + marvelNote);
           marvelThumb = characterData.data.results[0].thumbnail.path + '/standard_xlarge.jpg';
-          //console.log("DEBUG [apiMarvelChar]> Thumbnail: " + marvelThumb);
+          console.log("DEBUG [apiMarvelChar]> Thumbnail: " + marvelThumb);
           marvelURL = characterData.data.results[0].urls[0].url;
-          //console.log("DEBUG [apiMarvelChar]> Hero URL: " + marvelURL);
+          console.log("DEBUG [apiMarvelChar]> Hero URL: " + marvelURL);
           marvelPost = [marvelWho,marvelNote,marvelThumb,marvelURL];
           postMarvel(eventMarvel,true,marvelPost);
           return;
@@ -3135,12 +3135,12 @@ function apiMarvelChar(eventMarvel,marvelWho) {
 }
 
 function apiLOTR (chars_or_quotes,char_id,callback){
-  //console.log("DEBUG [apiLOTR]> Length of stored LOTR: " + LOTR_ARRAY.length)
+  console.log("DEBUG [apiLOTR]> Length of stored LOTR: " + LOTR_ARRAY.length)
   let url_path = '';
   if (chars_or_quotes == 'chars') {
     url_path = '/v1/character';
     // Set URL with authorisation header i.e. API key not sent in URL
-    //console.log("DEBUG [apiLOTR]> Character URL: " + URL_API_LOTR + url_path);
+    console.log("DEBUG [apiLOTR]> Character URL: " + URL_API_LOTR + url_path);
     const requestOptions = {
       hostname: URL_API_LOTR,
       path: url_path,
@@ -3157,11 +3157,11 @@ function apiLOTR (chars_or_quotes,char_id,callback){
       res.on('end', function() {
         let characterData = JSON.parse(body);
         let characterData_legible = JSON.stringify(characterData);
-        //console.log("DEBUG [apiLOTR]> Character JSON: " + characterData_legible);
+        console.log("DEBUG [apiLOTR]> Character JSON: " + characterData_legible);
         // Correct responses start with "docs" i.e. no status code 200 to help verify
         if (characterData_legible.includes('docs')) {
           let characterDataList = characterData.docs;
-          //console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
+          console.log("DEBUG [apiLOTR]> Characters Retrieved No.: " + characterDataList.length);
           loadLOTR(characterDataList,'chars','', function(){
             callback();
           });
@@ -3178,7 +3178,7 @@ function apiLOTR (chars_or_quotes,char_id,callback){
     }); // req.on('error'
   } else { // quotes API
     url_path = '/v1/character/' + char_id + "/quote"
-    //console.log("DEBUG [apiLOTR]> Quotes URL: " + URL_API_LOTR + url_path);
+    console.log("DEBUG [apiLOTR]> Quotes URL: " + URL_API_LOTR + url_path);
     const requestOptions = {
       hostname: URL_API_LOTR,
       path: url_path,
@@ -3195,13 +3195,13 @@ function apiLOTR (chars_or_quotes,char_id,callback){
       res.on('end', function() {
         let quoteData = JSON.parse(body);
         let quoteData_legible = JSON.stringify(quoteData);
-        //console.log("DEBUG [apiLOTR]> Quote JSON: " + quoteData_legible);
+        console.log("DEBUG [apiLOTR]> Quote JSON: " + quoteData_legible);
         // Correct responses start with "docs" i.e. no status code 200 to help verify
         if (quoteData_legible.includes('docs')) {
           let quoteList = quoteData.docs;
           let quoteListCount = quoteList.length;
           if (quoteListCount > 0) {
-            //console.log("DEBUG [apiLOTR]> Quotes Retrieved No.: " + quoteListCount);
+            console.log("DEBUG [apiLOTR]> Quotes Retrieved No.: " + quoteListCount);
             loadLOTR(quoteList,'quotes',char_id, function(){
               callback();
             });
@@ -3222,7 +3222,7 @@ function apiLOTR (chars_or_quotes,char_id,callback){
 
 function apiHero (heroWho,randomPick,callback){
   //https://superheroapi.com/api/3449097715109340/search/batman
-  //console.log("DEBUG [apiHero]> Getting started");
+  console.log("DEBUG [apiHero]> Getting started");
   let hero_url = URL_API_HERO + KEY_API_HERO;
   if (randomPick) {
     hero_url = hero_url + "/" + heroWho;
@@ -3237,13 +3237,13 @@ function apiHero (heroWho,randomPick,callback){
     // When all the data is back, go on to query the full response
     res.on('end', function() {
       let heroData = JSON.parse(body);
-      //console.log("DEBUG [apiHero]> Got this back raw: " + body);
-      //console.log("DEBUG [apiHero]> Response Code: " + heroData.response);
+      console.log("DEBUG [apiHero]> Got this back raw: " + body);
+      console.log("DEBUG [apiHero]> Response Code: " + heroData.response);
       if (typeof heroData.response != 'undefined' && heroData.response == 'success') {
         let targetID = 0;
         if (randomPick) { // bringing backa single prescribed result
           targetID = parseInt(heroWho);
-          //console.log("DEBUG [apiHero]> Target ID requested: " + targetID + ', ID returned: ' + heroData.id);
+          console.log("DEBUG [apiHero]> Target ID requested: " + targetID + ', ID returned: ' + heroData.id);
           if (targetID == heroData.id) {
             HERO_ARRAY[targetID]=[
               heroData.name, // [0]
@@ -3264,7 +3264,7 @@ function apiHero (heroWho,randomPick,callback){
           for (var character_loop = 0; character_loop < heroData.results.length; character_loop++) {
             let heroStats = heroData.results[character_loop];
             targetID = heroStats.id;
-            //console.log("DEBUG [apiHero]> Target: " + targetID);
+            console.log("DEBUG [apiHero]> Target: " + targetID);
             if (typeof HERO_ARRAY[targetID] == 'undefined') {
               HERO_ARRAY[targetID]=[
                 heroStats.name, // [0]
@@ -3301,7 +3301,7 @@ function apiHero (heroWho,randomPick,callback){
 function lookupHero (eventHero,heroWho){ //
   // 14:trumps_score,15:trumps_played,16:trump_tobeat,17:trump_picked,
   // 8:trump_category,19:trumps_start,20:cat_or_char,21:trumps_xs
-  //console.log("DEBUG [lookupHero]> Hero to find: " + heroWho);
+  console.log("DEBUG [lookupHero]> Hero to find: " + heroWho);
   let sender = eventHero.sender.id;
   let custom_id = inPlayID(sender);
   let heroWhoMatch = heroWho.toLowerCase();
@@ -3320,7 +3320,7 @@ function lookupHero (eventHero,heroWho){ //
       apiHero(heroWho,true, function(){
         if (typeof HERO_ARRAY[randomID] != 'undefined') {
           heroMatches.push(randomID);
-          //console.log("DEBUG [lookupHero]> Hero was populated for ID: " + randomID);
+          console.log("DEBUG [lookupHero]> Hero was populated for ID: " + randomID);
         } else {
           console.log("ERROR [lookupHero]> Hero was NOT populated for ID: " + randomID);
         }; // if (HERO_ARRAY
@@ -3328,19 +3328,19 @@ function lookupHero (eventHero,heroWho){ //
       }); // apiHero(heroWho
     } else { // not trumps start
       if (HERO_ARRAY.length != 0) { // Array not empty
-        //console.log("DEBUG [lookupHero]> There are values stored");
+        console.log("DEBUG [lookupHero]> There are values stored");
         for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
           if (typeof HERO_ARRAY[hero_loop] != 'undefined') {
             heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase();
             if (heroWhoStored.includes(heroWhoMatch)) {
                 heroMatches.push(hero_loop);
-                //console.log("DEBUG [lookupHero]> Stored match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
+                console.log("DEBUG [lookupHero]> Stored match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
             }; // if (heroWhoStored
           }; // if (typeof
         }; // for (var hero_loop
       }; // if (HERO_ARRAY
       if (heroMatches.length == 0) {
-        //console.log("DEBUG [lookupHero]> No matches stored, trying API");
+        console.log("DEBUG [lookupHero]> No matches stored, trying API");
         apiHero(heroWho,false, function(){
           if (HERO_ARRAY.length != 0) { // Array not empty
             for (var hero_loop = 0; hero_loop < HERO_ARRAY.length; hero_loop++) {
@@ -3348,12 +3348,12 @@ function lookupHero (eventHero,heroWho){ //
                 heroWhoStored = HERO_ARRAY[hero_loop][0].toLowerCase();
                 if (heroWhoStored.includes(heroWhoMatch)) {
                     heroMatches.push(hero_loop);
-                    //console.log("DEBUG [lookupHero]> API match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
+                    console.log("DEBUG [lookupHero]> API match No. " + heroMatches.length + " for " + HERO_ARRAY[hero_loop][0] + ": " + hero_loop);
                 }; // if (heroWhoStored
               }; // if (typeof
             }; // for (var hero_loop
           } else {
-            //console.log("DEBUG [lookupHero]> Hero array is empty");
+            console.log("DEBUG [lookupHero]> Hero array is empty");
           }; // if (HERO_ARRAY
           playTopTrumps(eventHero,heroMatches); // After API i.e. may be results
         }); // apiHero(heroWho
@@ -3363,7 +3363,7 @@ function lookupHero (eventHero,heroWho){ //
     }; // if (HERO_ARRAY.length != 0
   } else { // category
     playTopTrumps(eventHero,heroMatches); // Complete bypass of lookup
-    //console.log("DEBUG [lookupHero]> Hero bypass to [playTopTrumps] for category evaluation");
+    console.log("DEBUG [lookupHero]> Hero bypass to [playTopTrumps] for category evaluation");
   }; // if (SENDERS[custom_id][20]=='character'
 }
 
@@ -3378,27 +3378,27 @@ function lookupLOTR(lotrWho){
     lotrWhoMatch = LOTR_ARRAY[character_loop][1];
     lotrWhoMatch = lotrWhoMatch.toLowerCase(); // Retain lotrWho as title case but compare lower
     levenshtein_newest = levenshtein(lotrWhoLower,lotrWhoMatch); // Calculate proximity of names
-    //console.log("DEBUG [lookupLOTR]> Difference :" + lotrWhoLower + " [" + levenshtein_newest + "] " + lotrWhoMatch);
+    console.log("DEBUG [lookupLOTR]> Difference :" + lotrWhoLower + " [" + levenshtein_newest + "] " + lotrWhoMatch);
     // Better match but must also have a wiki
     let validWikiURL = LOTR_ARRAY[character_loop][3];
     let validWikiURLstring = JSON.stringify(validWikiURL);
-    //console.log("DEBUG [lookupLOTR]> wikiUrl STRING " + validWikiURLstring);
+    console.log("DEBUG [lookupLOTR]> wikiUrl STRING " + validWikiURLstring);
     if (levenshtein_newest < levenshtein_lowest && typeof validWikiURLstring != 'undefined'
         && validWikiURLstring != 'wikiUrlundefined' && validWikiURLstring != '') {
       // Better proximity between terms
       match_id = character_loop; // Best for now
       levenshtein_lowest = levenshtein_newest; // Lower difference
-      //console.log("DEBUG [lookupLOTR]> Best for now [" + levenshtein_lowest + "] is: " + lotrWhoMatch);
-      //console.log("DEBUG [lookupLOTR]> wikiUrl" + LOTR_ARRAY[match_id][3])
+      console.log("DEBUG [lookupLOTR]> Best for now [" + levenshtein_lowest + "] is: " + lotrWhoMatch);
+      console.log("DEBUG [lookupLOTR]> wikiUrl" + LOTR_ARRAY[match_id][3])
     }; // if (levenshtein_newest
   }; // for (var character_loop
   // Found best match
-  //console.log("DEBUG [lookupLOTR]> Matched " + LOTR_ARRAY[match_id][0] + " to index " + match_id);
+  console.log("DEBUG [lookupLOTR]> Matched " + LOTR_ARRAY[match_id][0] + " to index " + match_id);
   return match_id;
 }
 
 function lookupAlpha(eventAlpha,letterTile) {
-  //console.log("DEBUG [lookupAlpha]> Input: " + letterTile);
+  console.log("DEBUG [lookupAlpha]> Input: " + letterTile);
   let sender = eventAlpha.sender.id;
   console.log("INFO [lookupAlpha]> Sender: " + sender);
   console.log("INFO [lookupAlpha]> Request: " + TRIGGER_CHASABET_1 + " or " + TRIGGER_CHASABET_2 + " " + letterTile);
@@ -3407,7 +3407,7 @@ function lookupAlpha(eventAlpha,letterTile) {
   let target_version = CHASABET_INDEX[target_letter_code];
   let chasabet_url = URL_IMG_PREFIX + CHASABET[target_letter_code][target_version] + URL_IMG_SUFFIX;
   console.log("INFO [lookupAlpha]> Reponse: IMG URL " + chasabet_url);
-  //console.log("DEBUG [lookupAlpha]> IMAGE URL: " + chasabet_url);
+  console.log("DEBUG [lookupAlpha]> IMAGE URL: " + chasabet_url);
   CHASABET_INDEX[target_letter_code] = target_version + 1;
   if (CHASABET_INDEX[target_letter_code] == CHASABET[target_letter_code].length) {
     CHASABET_INDEX[target_letter_code] = 0;
@@ -3416,7 +3416,7 @@ function lookupAlpha(eventAlpha,letterTile) {
 }
 
 function lookupEvent(eventEntry,eventName) {
-  //console.log("DEBUG [lookupEvent]> Input: " + eventName);
+  console.log("DEBUG [lookupEvent]> Input: " + eventName);
   let event_index = -1;
   let eventIn = eventName;
   // Take the input provded by the user...
@@ -3437,11 +3437,11 @@ function lookupEvent(eventEntry,eventName) {
   // Remove spaces just to check the final length of the alpha content
   eventName = eventName.replace(/\s/g, '');
   let stripped_sentence_length = eventName.length;
-  //console.log("DEBUG [lookupEvent]> Cleaned message is: " + compare_to_string);
-  //console.log("DEBUG [lookupEvent]> Length: " + stripped_sentence_length);
+  console.log("DEBUG [lookupEvent]> Cleaned message is: " + compare_to_string);
+  console.log("DEBUG [lookupEvent]> Length: " + stripped_sentence_length);
   let error_caught = false; // Gets changed to true, if things go iffy before the end
   if (stripped_sentence_length == 0) {
-    //console.log("DEBUG [lookupEvent]> There is nothing left to compare");
+    console.log("DEBUG [lookupEvent]> There is nothing left to compare");
     error_caught = true;
   };
   // Variables
@@ -3453,12 +3453,12 @@ function lookupEvent(eventEntry,eventName) {
   let event_loop = 0;
   let keyword_loop = 0;
   // Here we go looping through each set of keywords
-  //console.log("DEBUG [lookupEvent]> Total events: " + CHAS_EVENTS_TOTAL);
+  console.log("DEBUG [lookupEvent]> Total events: " + CHAS_EVENTS_TOTAL);
   for (event_loop = 0; event_loop < CHAS_EVENTS_TOTAL; event_loop++) {
     // Break up the keywords into an array of individual words
     let sentence_split = CHAS_EVENTS_CALENDAR[event_loop * CHAS_EVENTS_BLOCK_SIZE].split(' ');
     let sentence_length = sentence_split.length;
-    //console.log("DEBUG [lookupEvent]> Number of words: " + sentence_length);
+    console.log("DEBUG [lookupEvent]> Number of words: " + sentence_length);
     // If there are no keywords at all, the skip the rest of this iteration
     if (sentence_length == 0) {continue};
     // Reset variables for the inner loop
@@ -3476,7 +3476,7 @@ function lookupEvent(eventEntry,eventName) {
       if (!((next_stripped_word == 'the') || (next_stripped_word == 'in') ||
             (next_stripped_word == 'at') || (next_stripped_word == 'on'))) {
         regex_builder = regex_builder + REGEX_START + next_stripped_word + REGEX_MIDDLE;
-        //console.log("DEBUG [lookupEvent]> Next word: " + next_stripped_word);
+        console.log("DEBUG [lookupEvent]> Next word: " + next_stripped_word);
         stripped_message_count++;
       };
     };
@@ -3484,13 +3484,13 @@ function lookupEvent(eventEntry,eventName) {
     if (stripped_message_count == 0) {continue};
     // Complete the search terms regular expression
     regex_builder = regex_builder + REGEX_END;
-    //console.log("DEBUG [lookupEvent]> Stripped number of words: " + stripped_message_count);
-    //console.log("DEBUG [lookupEvent]> Regex search: " + regex_builder);
+    console.log("DEBUG [lookupEvent]> Stripped number of words: " + stripped_message_count);
+    console.log("DEBUG [lookupEvent]> Regex search: " + regex_builder);
     zero_is_a_match = compare_to_string.search(regex_builder);
-    //console.log("DEBUG [lookupEvent]> Match Check: " + zero_is_a_match);
+    console.log("DEBUG [lookupEvent]> Match Check: " + zero_is_a_match);
     // If there is a match then a value of 0 is returned
     if (zero_is_a_match == 0) {
-      //console.log("DEBUG [lookupEvent]> Matched: " + (event_loop * CHAS_EVENTS_BLOCK_SIZE));
+      console.log("DEBUG [lookupEvent]> Matched: " + (event_loop * CHAS_EVENTS_BLOCK_SIZE));
       // Sets the index value for the name/keywords for the event
       event_index = event_loop * CHAS_EVENTS_BLOCK_SIZE;
       found_event = true;
@@ -3499,7 +3499,7 @@ function lookupEvent(eventEntry,eventName) {
   };
   // If there is not an event found then things have gone funky
   if (!found_event) {
-    //console.log("DEBUG [lookupEvent]> No matching event found");
+    console.log("DEBUG [lookupEvent]> No matching event found");
     error_caught = true;
   };
   if (error_caught) {
@@ -3510,7 +3510,7 @@ function lookupEvent(eventEntry,eventName) {
 };
 
 function lookupBiogs(eventBiogs,personName) {
-  //console.log("DEBUG [lookupBiogs]> Input: " + personName);
+  console.log("DEBUG [lookupBiogs]> Input: " + personName);
   let biogs_index = -1;
   let nameIn = personName;
   // Take the input provded by the user...
@@ -3520,11 +3520,11 @@ function lookupBiogs(eventBiogs,personName) {
   // Remove spaces just to check the final length of the alpha content
   personName = personName.replace(/\s/g, '');
   let stripped_sentence_length = personName.length;
-  //console.log("DEBUG [lookupBiogs]> Cleaned message is: " + compare_to_string);
-  //console.log("DEBUG [lookupBiogs]> Length: " + stripped_sentence_length);
+  console.log("DEBUG [lookupBiogs]> Cleaned message is: " + compare_to_string);
+  console.log("DEBUG [lookupBiogs]> Length: " + stripped_sentence_length);
   let error_caught = false; // Gets changed to true, if things go iffy before the end
   if (stripped_sentence_length == 0) {
-    //console.log("DEBUG [lookupBiogs]> There is nothing left to compare");
+    console.log("DEBUG [lookupBiogs]> There is nothing left to compare");
     error_caught = true;
   }
   // Variables
@@ -3536,12 +3536,12 @@ function lookupBiogs(eventBiogs,personName) {
   let event_loop = 0;
   let keyword_loop = 0;
   // Here we go looping through each set of keywords
-  //console.log("DEBUG [lookupBiogs]> Total: " + CHAS_BIOGS_TOTAL);
+  console.log("DEBUG [lookupBiogs]> Total: " + CHAS_BIOGS_TOTAL);
   for (event_loop = 0; event_loop < CHAS_BIOGS_TOTAL; event_loop++) {
     // Break up the keywords into an array of individual words
     let sentence_split = CHAS_BIOGS[event_loop * CHAS_BIOGS_BLOCK_SIZE].split(' ');
     let sentence_length = sentence_split.length;
-    //console.log("DEBUG [lookupBiogs]> Number of words: " + sentence_length);
+    console.log("DEBUG [lookupBiogs]> Number of words: " + sentence_length);
     // If there are no keywords at all, the skip the rest of this iteration
     if (sentence_length == 0) {continue};
     // Reset variables for the inner loop
@@ -3553,20 +3553,20 @@ function lookupBiogs(eventBiogs,personName) {
       // Strip out all but letters from each keyword and skip small words
       next_stripped_word = next_stripped_word.replace(/[^A-Za-z]/g, '');
       regex_builder = regex_builder + REGEX_START + next_stripped_word + REGEX_MIDDLE;
-      //console.log("DEBUG [lookupBiogs]> Next word: " + next_stripped_word);
+      console.log("DEBUG [lookupBiogs]> Next word: " + next_stripped_word);
       stripped_message_count++;
     }
     // Nothing left to compare because search terms have all been stripped out
     if (stripped_message_count == 0) {continue};
     // Complete the search terms regular expression
     regex_builder = regex_builder + REGEX_END;
-    //console.log("DEBUG [lookupBiogs]> Stripped number of words: " + stripped_message_count);
-    //console.log("DEBUG [lookupBiogs]> Regex search: " + regex_builder);
+    console.log("DEBUG [lookupBiogs]> Stripped number of words: " + stripped_message_count);
+    console.log("DEBUG [lookupBiogs]> Regex search: " + regex_builder);
     zero_is_a_match = compare_to_string.search(regex_builder);
-    //console.log("DEBUG [lookupBiogs]> Match Check: " + zero_is_a_match);
+    console.log("DEBUG [lookupBiogs]> Match Check: " + zero_is_a_match);
     // If there is a match then a value of 0 is returned
     if (zero_is_a_match == 0) {
-      //console.log("DEBUG [lookupBiogs]> Matched: " + (event_loop * CHAS_BIOGS_BLOCK_SIZE));
+      console.log("DEBUG [lookupBiogs]> Matched: " + (event_loop * CHAS_BIOGS_BLOCK_SIZE));
       // Sets the index value for the name/keywords for the event
       biogs_index = event_loop * CHAS_BIOGS_BLOCK_SIZE;
       found_bio = true;
@@ -3575,7 +3575,7 @@ function lookupBiogs(eventBiogs,personName) {
   };
   // If there is not a name found then things have gone funky
   if (!found_bio) {
-    //console.log("DEBUG [lookupBiogs]> No matching name found");
+    console.log("DEBUG [lookupBiogs]> No matching name found");
     error_caught = true;
   };
   if (error_caught) {
@@ -3595,7 +3595,7 @@ function lookupBiogs(eventBiogs,personName) {
 // Note deliverQuestion_playSurvey is also an in-play function
 function playHangman(postEvent,hangman_guess) {
   // 0:id_of_sender,2:hangman_in_play,3:rpsls_in_play,7:hangman_strikes,8:hangman_word,9:hangman_array
-  //console.log("DEBUG [playHangman]> Input: " + postEvent);
+  console.log("DEBUG [playHangman]> Input: " + postEvent);
   let sender = postEvent.sender.id;
   // Take out some possible prefixes
   hangman_guess = hangman_guess.replace(/is it /g, '');
@@ -3686,7 +3686,7 @@ function playHangman(postEvent,hangman_guess) {
 
 function playRPSLS(eventRPSLS,pickPlayer) {
   // 0:id_of_sender,3:rpsls_in_play,10:rpsls_action,11:issue_instructions,12:rpsls_player,13:rpsls_bot
-  //console.log("DEBUG [playRPSLS]> Round");
+  console.log("DEBUG [playRPSLS]> Round");
   let sender = eventRPSLS.sender.id;
   let custom_id = inPlayID(sender);
   let rpslsText = '';
@@ -3715,11 +3715,11 @@ function playRPSLS(eventRPSLS,pickPlayer) {
     pick_chasbot = RPSLS_VALID[numRandomBetween(0,4)];
     let PLAYERvBOT = pickPlayer + pick_chasbot;
     rpslsText = '';
-    //console.log("DEBUG [playRPSLS]> PLAYERvBOT: " + PLAYERvBOT);
+    console.log("DEBUG [playRPSLS]> PLAYERvBOT: " + PLAYERvBOT);
     // Check WIN
     let find_index = 0;
     for (find_index = 0; find_index < RPSLS_WIN.length; find_index++) {
-      //console.log("DEBUG [playRPSLS]> Win check: " + RPSLS_WIN[find_index]);
+      console.log("DEBUG [playRPSLS]> Win check: " + RPSLS_WIN[find_index]);
       if (PLAYERvBOT == RPSLS_WIN[find_index]) {
         rpsls_url = URL_IMG_PREFIX + RPSLS_IMGS[1 + find_index] + URL_IMG_SUFFIX;
         rpslsText = "You win. Your " + strTitleCase(pickPlayer) + " ";
@@ -3733,7 +3733,7 @@ function playRPSLS(eventRPSLS,pickPlayer) {
     if (rpslsText == '') {
       find_index = 0;
       for (find_index = 0; find_index < RPSLS_LOSE.length; find_index++) {
-        //console.log("DEBUG [playRPSLS]> Lose check: " + RPSLS_LOSE[find_index]);
+        console.log("DEBUG [playRPSLS]> Lose check: " + RPSLS_LOSE[find_index]);
         if (PLAYERvBOT == RPSLS_LOSE[find_index]) {
           rpsls_url = URL_IMG_PREFIX + RPSLS_IMGS[11 + find_index] + URL_IMG_SUFFIX;
           rpslsText = "I win. My " + strTitleCase(pick_chasbot) + " ";
@@ -3748,7 +3748,7 @@ function playRPSLS(eventRPSLS,pickPlayer) {
     if (rpslsText == '') {
       find_index = 0;
       for (find_index = 0; find_index < RPSLS_DRAW.length; find_index++) {
-        //console.log("DEBUG [playRPSLS]> Draw check: " + RPSLS_DRAW[find_index]);
+        console.log("DEBUG [playRPSLS]> Draw check: " + RPSLS_DRAW[find_index]);
         if (PLAYERvBOT == RPSLS_DRAW[find_index]) {
           rpsls_url = URL_IMG_PREFIX2 + RPSLS_IMGS[21 + find_index] + URL_IMG_SUFFIX;
           rpslsText = "It's a draw. ";
@@ -3798,7 +3798,7 @@ function playTopTrumps(eventTT,playTT){
   let tt_msg = MSG_TOPTRUMPS_PROMPT;
   let custom_id = inPlayID(sender);
   if (SENDERS[custom_id][21].length > 0) { // Character selection - down to single result
-    //console.log("DEBUG [playTopTrumps]> Single character picked from bubbles")
+    console.log("DEBUG [playTopTrumps]> Single character picked from bubbles")
     playTT = [];
     playTT.push(SENDERS[custom_id][17]);
     SENDERS[custom_id][21] = [];
@@ -3807,7 +3807,7 @@ function playTopTrumps(eventTT,playTT){
   let playTT_loop = 0;
   let possibleRepeat = 0;
   if (SENDERS[custom_id][19] && SENDERS[custom_id][16] != '') {
-    //console.log("DEBUG [playTopTrumps]> Restart from last played character")
+    console.log("DEBUG [playTopTrumps]> Restart from last played character")
     playTT = [];
     playTT.push(SENDERS[custom_id][16]);
     let spliceID = -1;
@@ -3819,7 +3819,7 @@ function playTopTrumps(eventTT,playTT){
     SENDERS[custom_id][15].splice(spliceID,1);
     trumps_restart = true;
   }; // if (SENDERS[custom_id][19]
-  //console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
+  console.log("DEBUG [playTopTrumps]> Possible Top Trumps to select: " + playTT.length + " [" + sender + "]");
   let trumps_played = SENDERS[custom_id][15];
   let trump_tobeat = SENDERS[custom_id][16];
   let trump_category = SENDERS[custom_id][18];
@@ -3836,13 +3836,13 @@ function playTopTrumps(eventTT,playTT){
       if (trumps_played.includes(possibleRepeat)) { // identify if any of the possible trunps have been played before
         playTT.splice(loopDown,1); // remove any previously played trumps from the possibles
         foundRepeat = true;
-        //console.log("DEBUG [playTopTrumps]> Repeated character removed: " + possibleRepeat);
+        console.log("DEBUG [playTopTrumps]> Repeated character removed: " + possibleRepeat);
       }; // if (trumps_played
     }; // for (playTT_loop = 0
   }; // if (playTT.length
   if (playTT.length == 0) {
     if (cat_or_char == 'character') {
-      //console.log("DEBUG [playTopTrumps]> No hero is identified when character is in scope");
+      console.log("DEBUG [playTopTrumps]> No hero is identified when character is in scope");
       if (foundRepeat) {
         tt_msg = "🤖 Maybe I should have said but I won't let you play the same card twice in a game. Think of any other hero or villain?";
       } else {
@@ -3855,7 +3855,7 @@ function playTopTrumps(eventTT,playTT){
       return;
     } else { // category has been selected
       if (trump_category == -1) { // invalid category
-        //console.log("DEBUG [playTopTrumps]> No valid character picked");
+        console.log("DEBUG [playTopTrumps]> No valid character picked");
         tt_msg = "🤖 Oops, I wasn't able to recognise that category. Try again by picking a category bubble (no need to type):";
         deliverCategoryTT(eventTT,tt_msg);
         console.log("INFO [playTopTrumps]> Request: Problem with setting a category - looking for another");
@@ -3863,7 +3863,7 @@ function playTopTrumps(eventTT,playTT){
         console.log("INFO [playTopTrumps]> Response: " + tt_msg);
         return;
       } else { // valid category
-        //console.log("DEBUG [playTopTrumps]> Valid character picked");
+        console.log("DEBUG [playTopTrumps]> Valid character picked");
         SENDERS[custom_id][20] = 'character';
         tt_msg = "Now that you have picked " + HERO_STATS[trump_category] +
           " as your category, name a hero or villain you think will trump " +
@@ -3880,9 +3880,9 @@ function playTopTrumps(eventTT,playTT){
     let tt_id = playTT[0];
     SENDERS[custom_id][17] = tt_id; // Set trump_picked
     SENDERS[custom_id][15].push(tt_id); // Add picked card into trumps_played array
-    //console.log("DEBUG [playTopTrumps]> Single ID: " + tt_id);
+    console.log("DEBUG [playTopTrumps]> Single ID: " + tt_id);
     let tt_url = HERO_ARRAY[tt_id][7];
-    //console.log("DEBUG [playTopTrumps]> Image: " + tt_url);
+    console.log("DEBUG [playTopTrumps]> Image: " + tt_url);
     let tt_stats = HERO_ARRAY[tt_id][0] + " ID: " + tt_id + "\n" +
       intPad(HERO_ARRAY[tt_id][1],3) + " = 🧠 Intelligence\n" +
       intPad(HERO_ARRAY[tt_id][2],3) + " = 💪 Strength\n" +
@@ -3890,7 +3890,7 @@ function playTopTrumps(eventTT,playTT){
       intPad(HERO_ARRAY[tt_id][4],3) + " = 🔋 Durability\n" +
       intPad(HERO_ARRAY[tt_id][5],3) + " = 🌡️ Power\n" +
       intPad(HERO_ARRAY[tt_id][6],3) + " = ⚔️ Combat"
-    //console.log("DEBUG [playTopTrumps]> Stats: " + tt_stats);
+    console.log("DEBUG [playTopTrumps]> Stats: " + tt_stats);
     tt_stats = strReplaceAll(tt_stats, 'null', ' ❓ ');
     let oldScore = 0;
     let newScore = 0;
@@ -3908,7 +3908,7 @@ function playTopTrumps(eventTT,playTT){
           newScore = -1;
           oldScore = 100;
         };
-        //console.log("DEBUG [playTopTrumps]> One of the values is null, so picked either [0]=Lose [1]=Win: " + binary_pick);
+        console.log("DEBUG [playTopTrumps]> One of the values is null, so picked either [0]=Lose [1]=Win: " + binary_pick);
       }; // if ( oldScore == 'NaN'
       if (newScore >= oldScore) { // win
         SENDERS[custom_id][14] = SENDERS[custom_id][14] + 1; // Increase winning cards in a row tally
@@ -3916,7 +3916,7 @@ function playTopTrumps(eventTT,playTT){
         chicken_dinner = false;
       }; // if (newScore >= oldScore)
     }; // if (!trumps_start)
-    //if (!trumps_start) { //console.log("DEBUG [playTopTrumps]> Comparison character " + HERO_ARRAY[trump_tobeat][0] + ", with value: " + oldScore) };
+    //if (!trumps_start) { console.log("DEBUG [playTopTrumps]> Comparison character " + HERO_ARRAY[trump_tobeat][0] + ", with value: " + oldScore) };
     SENDERS[custom_id][20] = 'category'; // set cat_ot_char
     SENDERS[custom_id][16] = SENDERS[custom_id][17]; // new card becomes old trump_tobeat
     if (trumps_start) { tt_msg = MSG_TOPTRUMPS_INTRO1 + HERO_ARRAY[SENDERS[custom_id][16]][0] + MSG_TOPTRUMPS_INTRO2 };
@@ -3941,9 +3941,9 @@ if (trumps_restart) { tt_msg = "Let's return to " + HERO_ARRAY[SENDERS[custom_id
       console.log("INFO [playTopTrumps]> Request: Winning trump character picked - pick again");
       console.log("INFO [playTopTrumps]> Action: playTopTrumps.deliverStackTT");
       console.log("INFO [playTopTrumps]> Response: " + tt_msg);
-      //console.log("DEBUG [playTopTrumps]> Winning character " + HERO_ARRAY[SENDERS[custom_id][16]][0] + ", pick category, winning value: " + newScore);
+      console.log("DEBUG [playTopTrumps]> Winning character " + HERO_ARRAY[SENDERS[custom_id][16]][0] + ", pick category, winning value: " + newScore);
     } else {
-      //console.log("DEBUG [playTopTrumps]> Losing character " + HERO_ARRAY[SENDERS[custom_id][16]][0] + ", GAME OVER, losing value: " + newScore);
+      console.log("DEBUG [playTopTrumps]> Losing character " + HERO_ARRAY[SENDERS[custom_id][16]][0] + ", GAME OVER, losing value: " + newScore);
       tt_msg = "Sorry, no luck with " + HERO_STATS[trump_category] + ", game over... you won " + intWords(SENDERS[custom_id][14]) + "in a row.";
       if (newScore == -1) { tt_msg = "👎 Oops, you lost the toss of a coin with the mystery value! " + tt_msg }
       deliverStackTT(eventTT,tt_stats,tt_msg,tt_url,true);
@@ -3955,7 +3955,7 @@ if (trumps_restart) { tt_msg = "Let's return to " + HERO_ARRAY[SENDERS[custom_id
     };
     return;
   } else if (playTT.length > 1 && cat_or_char == 'character'){
-    //console.log("DEBUG [playTopTrumps]> Too many charactrers from search: " + playTT.length);
+    console.log("DEBUG [playTopTrumps]> Too many charactrers from search: " + playTT.length);
     SENDERS[custom_id][21] = playTT; // Copy the possibles array
     tt_msg = "🤖 Can't be sure who you meant, I found " + playTT.length + " possibilities.";
     if (playTT.length > 5) { tt_msg = tt_msg + " I've cut it down to five." }
@@ -4008,7 +4008,7 @@ async function fetchPokemon(pokemonId) {
     res.on('data', function (chunk) { body += chunk });
     res.on('end', function() {
       let poke = JSON.parse(body);
-      //console.log("DEBUG [fetchPokemon]> Raw Response: " + poke);
+      console.log("DEBUG [fetchPokemon]> Raw Response: " + poke);
 
       /*
       var evoChain = [];
@@ -4042,7 +4042,7 @@ async function fetchPokemon(pokemonId) {
                 holder = pokeEvoPrefix[pokeEvoDetailsLoop] + holder + pokeEvoSuffix[pokeEvoDetailsLoop];
                 evoChainNarrative.push(holder);
               }; // if (pokeEvoDetails[pokeEvoDetailsLoop]
-              //console.log("DEBUG [fetchPokemon]> Evolution parameters: " + pokeEvoDetails[pokeEvoDetailsLoop] + ' = ' + holder);
+              console.log("DEBUG [fetchPokemon]> Evolution parameters: " + pokeEvoDetails[pokeEvoDetailsLoop] + ' = ' + holder);
             }; // if (typeof holder
           }; // for (pokeEvoDetailsLoop
         }; // if (typeof evoData
@@ -4074,7 +4074,7 @@ async function fetchPokemon(pokemonId) {
           "Species": strTitleCase(evoData.species.name),
           "Evolution": evoNarrative
         }); // evoChain.push({
-        //console.log("DEBUG [fetchPokemon]> Pokemon: " + evoData .species.name + '; Evolution: ' + evoNarrative);
+        console.log("DEBUG [fetchPokemon]> Pokemon: " + evoData .species.name + '; Evolution: ' + evoNarrative);
         if (numberOfEvolutions > 1) {
           for (let i = 1;i < numberOfEvolutions; i++) {
             evoChainNarrative = [];
@@ -4102,7 +4102,7 @@ async function fetchPokemon(pokemonId) {
                       holder = pokeEvoPrefix[pokeEvoDetailsLoop] + holder + pokeEvoSuffix[pokeEvoDetailsLoop];
                       evoChainNarrative.push(holder);
                     };
-                    //console.log("DEBUG [fetchPokemon]> Evolution parameters (nested): " + pokeEvoDetails[pokeEvoDetailsLoop] + ' = ' + holder);
+                    console.log("DEBUG [fetchPokemon]> Evolution parameters (nested): " + pokeEvoDetails[pokeEvoDetailsLoop] + ' = ' + holder);
                   }; // if (typeof holder
                 }; // for (pokeEvoDetailsLoop
               }; // if (typeof evoDataNest
@@ -4136,12 +4136,12 @@ async function fetchPokemon(pokemonId) {
               "Species": strTitleCase(evoDataNest.species.name),
               "Evolution": evoNarrative
             }); // evoChain.push({
-            //console.log("DEBUG [fetchPokemon]> Pokemon: " + evoDataNest .species.name + '; Evolution: ' + evoNarrative);
+            console.log("DEBUG [fetchPokemon]> Pokemon: " + evoDataNest .species.name + '; Evolution: ' + evoNarrative);
           }; // for (let i = 1;i < numberOfEvolutions; i++) {
         }; // if (numberOfEvolutions > 1)
        evoData = evoData['evolves_to'][0];
       } while (!!evoData && evoData.hasOwnProperty('evolves_to'));
-      //console.log("DEBUG [fetchPokemon]> Results:"); console.table(evoChain);
+      console.log("DEBUG [fetchPokemon]> Results:"); console.table(evoChain);
       let evoChainCnt = evoChain.length;
       let evoSequence = '';
       if (evoChainCnt == 0) {
