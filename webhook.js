@@ -216,7 +216,8 @@ const URL_API_GIPHY = "https://api.giphy.com/v1/gifs/random";
 const URL_API_MOVIEDB = "https://api.themoviedb.org/3/";
 const URL_API_WEATHER = "https://api.openweathermap.org/data/2.5/weather?APPID=";
 const URL_API_MARVEL = "https://gateway.marvel.com:443/v1/public/characters?nameStartsWith=";
-const URL_API_LOTR = "the-one-api.herokuapp.com";
+//const URL_API_LOTR = "the-one-api.herokuapp.com";
+const URL_API_LOTR = "the-one-api.dev";
 const URL_API_HERO = "https://superheroapi.com/api.php/";
 // URLs
 const URL_SEARCH_GOOGLE = "https://www.google.com/search?q=";
@@ -3138,7 +3139,7 @@ function apiLOTR (chars_or_quotes,char_id,callback){
   console.log("DEBUG [apiLOTR]> Length of stored LOTR: " + LOTR_ARRAY.length)
   let url_path = '';
   if (chars_or_quotes == 'chars') {
-    url_path = '/v1/character';
+    url_path = '/v2/character';
     // Set URL with authorisation header i.e. API key not sent in URL
     console.log("DEBUG [apiLOTR]> Character URL: " + URL_API_LOTR + url_path);
     const requestOptions = {
@@ -3177,7 +3178,7 @@ function apiLOTR (chars_or_quotes,char_id,callback){
       callback();
     }); // req.on('error'
   } else { // quotes API
-    url_path = '/v1/character/' + char_id + "/quote"
+    url_path = '/v2/character/' + char_id + "/quote"
     console.log("DEBUG [apiLOTR]> Quotes URL: " + URL_API_LOTR + url_path);
     const requestOptions = {
       hostname: URL_API_LOTR,
