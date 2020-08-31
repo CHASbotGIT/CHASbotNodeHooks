@@ -731,9 +731,9 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
       var arrayQuote = [];
       for (var loopArray = 0; loopArray < lotrArray.length; loopArray++) {
         LOTR_ARRAY.push([lotrArray[loopArray]._id, // [0]
-          lotrArray[loopArray].name,
+          lotrArray[loopArray].Name,
           lotrArray[loopArray].gender,
-          lotrArray[loopArray].wikiUrl,
+          lotrArray[loopArray].Url,
           lotrArray[loopArray].race,
           lotrArray[loopArray].realm,
           lotrArray[loopArray].height,
@@ -743,7 +743,7 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
       }; // for
     }; // if
     console.log("DEBUG [loadLOTR]> Characters: " + LOTR_ARRAY.length);
-    console.table(LOTR_ARRAY);
+    //console.table(LOTR_ARRAY);
     callback();
   }; // else
 }
