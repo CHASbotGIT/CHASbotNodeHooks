@@ -4180,10 +4180,9 @@ async function fetchPokemon(pokemonId) {
       //console.log("DEBUG [fetchPokemon]> Evolution sequence: \n" + evoSequence);
       */
 
-
       let types = poke.types.map((type) => strTitleCase(type.type.name)).join(', ') //.toUpperCase();
       types = types.replace(/,([^,]*)$/, ' &$1');
-      let abilities = poke.abilities.map((ability) => ability.ability.name).join(', ').toUpperCase();
+      let abilities = poke.abilities.map((ability) => strTitleCase(ability.ability.name)).join(', ') //.toUpperCase();
       abilities = abilities.replace(/,([^,]*)$/, ' &$1');
       let moves = poke.moves.map((move) => strTitleCase(move.move.name)).join(', ') //.toUpperCase();
       moves = moves.replace(/,([^,]*)$/, ' &$1');
