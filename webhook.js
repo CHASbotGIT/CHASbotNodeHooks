@@ -743,6 +743,7 @@ function loadLOTR(lotrArray,chars_or_quotes,quote_id,callback) {
       }; // for
     }; // if
     console.log("DEBUG [loadLOTR]> Characters: " + LOTR_ARRAY.length);
+    console.table(LOTR_ARRAY);
     callback();
   }; // else
 }
@@ -3369,6 +3370,7 @@ function lookupHero (eventHero,heroWho){ //
 }
 
 function lookupLOTR(lotrWho){
+  console.log("DEBUG [lookupLOTR]> Looking for:" + lotrWho)
   let match_id = -1;
   let lotrWhoMatch = '';
   let lotrWhoLower = '';
@@ -3379,7 +3381,7 @@ function lookupLOTR(lotrWho){
     lotrWhoMatch = LOTR_ARRAY[character_loop][1];
     lotrWhoMatch = lotrWhoMatch.toLowerCase(); // Retain lotrWho as title case but compare lower
     levenshtein_newest = levenshtein(lotrWhoLower,lotrWhoMatch); // Calculate proximity of names
-    console.log("DEBUG [lookupLOTR]> Difference :" + lotrWhoLower + " [" + levenshtein_newest + "] " + lotrWhoMatch);
+    console.log("DEBUG [lookupLOTR]> Difference: " + lotrWhoLower + " [" + levenshtein_newest + "] " + lotrWhoMatch);
     // Better match but must also have a wiki
     let validWikiURL = LOTR_ARRAY[character_loop][3];
     let validWikiURLstring = JSON.stringify(validWikiURL);
