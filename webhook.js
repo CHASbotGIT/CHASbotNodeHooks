@@ -3158,7 +3158,7 @@ function apiLOTR (chars_or_quotes,char_id,callback){
       res.on('end', function() {
         let characterData = JSON.parse(body);
         let characterData_legible = JSON.stringify(characterData);
-        console.log("DEBUG [apiLOTR]> Character JSON: " + characterData_legible);
+        //console.log("DEBUG [apiLOTR]> Character JSON: " + characterData_legible);
         // Correct responses start with "docs" i.e. no status code 200 to help verify
         if (characterData_legible.includes('docs')) {
           let characterDataList = characterData.docs;
@@ -3196,7 +3196,7 @@ function apiLOTR (chars_or_quotes,char_id,callback){
       res.on('end', function() {
         let quoteData = JSON.parse(body);
         let quoteData_legible = JSON.stringify(quoteData);
-        console.log("DEBUG [apiLOTR]> Quote JSON: " + quoteData_legible);
+        //console.log("DEBUG [apiLOTR]> Quote JSON: " + quoteData_legible);
         // Correct responses start with "docs" i.e. no status code 200 to help verify
         if (quoteData_legible.includes('docs')) {
           let quoteList = quoteData.docs;
