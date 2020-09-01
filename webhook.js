@@ -3988,6 +3988,9 @@ function intEmoji(num) {
 function strBar(top,target,on,off) {
   let bar = '';
   let on_units = Math.trunc(top/target*100);
+
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TOP ' + top + ' TARGET ' + ' ' + on ' ' + off);
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ON_UNTIS ' + on_units);
   if (on_units < 20) {
     bar = on + off + off + off + off;
   } else if (on_units < 40) {
@@ -4220,9 +4223,6 @@ async function fetchPokemon(eventPoke,pokemonId) {
         pokeDex[pokeNew]['Sp. Attack'],
         pokeDex[pokeNew]['HP']
       );
-
-console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + ceiling);
-
       let pokeType1 = '';
       let pokeType2 = '';
       let colType1 = '';
