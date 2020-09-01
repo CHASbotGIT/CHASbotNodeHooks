@@ -4225,9 +4225,11 @@ async function fetchPokemon(eventPoke,pokemonId) {
         var spam = cleanType[0];
         var eggs = cleanTarget[0];
 
+        if (spam == '') { spam = 'pass' }
+
         console.log ('LOOP: look for cleanType: ' + spam + ' in cleanTarget: ' + eggs);
 
-        if (eggs.includes(spam) && spam != '') {
+        if (eggs.includes(spam)) {
           console.log ('TRUE: look for cleanType: ' + spam + ' in cleanTarget: ' + eggs);
           if (pokeType1 == '') {
             pokeType1 = pokeType[typeLoop];
