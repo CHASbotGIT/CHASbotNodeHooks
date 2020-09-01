@@ -3973,16 +3973,7 @@ let pokeDex = [];
 let pokeSpecies = [];
 let pokeEvolution = [];
 
-  // Find 1st type
-  // type + 1 = 1st colour
-  // if 2md type
-  //  type + 1 = 2nd colour
-  // else
-  //  2nd colour = black [0]
-  // if 1st colour = 2nd colour
-  //  2nd colour = black [0]
-  // if 1st colour = 2nd colour
-  //  2nd colour = white [1]
+
 
 // evo test cases 312, 67, 362, 116, 41, 268, 47
 function intEmoji(num) {
@@ -3996,6 +3987,29 @@ function intEmoji(num) {
   };
   return strEmoji;
 }
+
+function strBar(top,target,on,off) {
+  let bar = '';
+  let on_units = Math.trunc(top/target*100);
+  if (on_units < 20) {
+    bar = on + off + off + off + off;
+  } else if (on_units < 40) {
+    bar = on + on + off + off + off;
+  } else if (on_units < 60) {
+    bar = on + on + on + off + off;
+  } else if (on_units < 80) {
+    bar = on + on + on + on + off;
+  } else {
+    bar = on + on + on + on + on;
+  };
+  return bar;
+}
+
+console.log(strBar(65,65,"🔴","🟢"));
+console.log(strBar(25,65,"🔴","🟢"));
+console.log(strBar(5,65,"🔴","🟢"));
+console.log(strBar(35,65,"🔴","🟢"));
+console.log(strBar(65,65,"🔴","🟢"));
 
 async function fetchPokemon(eventPoke,pokemonId) {
   // API Reference @ https://pokeapi.co
@@ -4194,8 +4208,8 @@ async function fetchPokemon(eventPoke,pokemonId) {
         "Speed": poke.stats[0].base_stat,
         "Defence": poke.stats[1].base_stat,
         "Attack": poke.stats[2].base_stat,
-        "Special Defence": poke.stats[3].base_stat,
-        "Special Attack": poke.stats[4].base_stat,
+        "Sp Defence": poke.stats[3].base_stat,
+        "Sp Attack": poke.stats[4].base_stat,
         "HP": poke.stats[5].base_stat,
         "Total": (poke.stats[5].base_stat + poke.stats[4].base_stat + poke.stats[3].base_stat +
           poke.stats[2].base_stat + poke.stats[1].base_stat + poke.stats[0].base_stat),
@@ -4204,11 +4218,24 @@ async function fetchPokemon(eventPoke,pokemonId) {
         "Moves": moves
       });
 
+      // Find 1st type
+      // type + 1 = 1st colour
+      // if 2md type
+      //  type + 1 = 2nd colour
+      // else
+      //  2nd colour = black [0]
+      // if 1st colour = 2nd colour
+      //  2nd colour = black [0]
+      // if 1st colour = 2nd colour
+      //  2nd colour = white [1]
+
       console.log(pokeDex);
       var pokeNew = pokeDex.length - 1;
+      let ceiling = Math.max(pokeDex[pokeNew]['Speed'],pokeDex[pokeNew]['Defence'],pokeDex[pokeNew]['Attack'],pokeDex[pokeNew]['Sp Defence'],pokeDex[pokeNew]['Sp Attack'],pokeDex[pokeNew]['HP'])
+
+
       var base_stats =
         pokeDex[pokeNew]['Name'] + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + ' [' + pokeDex[pokeNew]['Total'] + ']\n\n' +
-        'BULBASAUR ID:1️⃣ [318]\n\n' +
         '🔥 Fire ☠️ Poison ⚖️ 9.3kg 📊 0.7m\n\n' +
         '🟠🟠🟠🟠🟢' + ': [045] ❤️ HP\n' +
         '🟠🟠🟠🟠🟢' + ': [049] ⚔️ Attack\n' +
