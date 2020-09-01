@@ -4225,7 +4225,10 @@ async function fetchPokemon(eventPoke,pokemonId) {
 
         console.log ('LOOP: look for cleanType: ' + cleanType[0] + ' in cleanTarget: ' + cleanTarget[0]);
 
-        if (cleanTarget[0].includes(cleanType[0]) && cleanType[0] != '') {
+        var position_in_cleanTarget = -1;
+        position_in_cleanTarget = cleanTarget[0].search(cleanType[0]) + 1;
+
+        if (position_in_cleanTarget > 1 && cleanType[0] != '') {
           console.log ('TRUE: look for cleanType: ' + cleanType[0] + ' in cleanTarget: ' + cleanTarget[0]);
           if (pokeType1 == '') {
             pokeType1 = pokeType[typeLoop];
