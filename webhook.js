@@ -4214,10 +4214,7 @@ async function fetchPokemon(eventPoke,pokemonId) {
 
       //console.log(pokeDex);
       var pokeNew = pokeDex.length - 1;
-      let ceiling = Math.max(
-        pokeDex[pokeNew]['Speed'],pokeDex[pokeNew]['Defence'],
-        pokeDex[pokeNew]['Attack'],pokeDex[pokeNew]['Sp Defence'],
-        pokeDex[pokeNew]['Sp Attack'],pokeDex[pokeNew]['HP']);
+      let ceiling = Math.max(pokeDex[pokeNew]['Speed'],pokeDex[pokeNew]['Defence'],pokeDex[pokeNew]['Attack'],pokeDex[pokeNew]['Sp Defence'],pokeDex[pokeNew]['Sp Attack'],pokeDex[pokeNew]['HP']);
 
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ceiling' + ceiling);
       let pokeType1 = '';
