@@ -4226,24 +4226,33 @@ async function fetchPokemon(eventPoke,pokemonId) {
           if (pokeType1 == '') {
             pokeType1 = pokeType[typeLoop];
             colType1 = pokeType[typeLoop+1];
+            console.log(colType1);
+            console.log(pokeType1);
           } else {
             pokeType2 = pokeType[typeLoop];
             colType2 = pokeType[typeLoop+1];
+            console.log(colType2);
+            console.log(pokeType2);
           }; // if (pokeType1
         }; // if (cleanTarget
       }; // for (typeLoop
-      if (colType1 == colType2) { colType2 = colType[0] };
-      if (colType1 == colType2) { colType2 = colType[1] };
+      if (colType1 == colType2) { colType2 = pokeType[0] };
+      if (colType1 == colType2) { colType2 = pokeType[1] };
+
+      console.log(colType1);
+      console.log(colType2);
+      console.log(pokeType1);
+      console.log(pokeType1);
 
       var base_stats =
-        pokeDex[pokeNew]['Name'] + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + ' [' + pokeDex[pokeNew]['Total'] + ']\n\n' +
+        pokeDex[pokeNew]['Name'] + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + ' [' + intPad(pokeDex[pokeNew]['Total'],3) + ']\n\n' +
         pokeType1 + ' ' + pokeType2 + ' ⚖️ ' + pokeDex[pokeNew]['Weight'] + ' 📊 ' + pokeDex[pokeNew]['Height'] + '\n\n' +
-        strBar(ceiling,pokeDex[pokeNew]['HP'],colType1,colType2) + ': [' + pokeDex[pokeNew]['HP'] + '] ❤️ HP\n' +
-        strBar(ceiling,pokeDex[pokeNew]['Attack'],colType1,colType2) + ': [' + pokeDex[pokeNew]['Attack'] + '] ⚔️ Attack\n' +
-        strBar(ceiling,pokeDex[pokeNew]['Defence'],colType1,colType2) + ': [' + pokeDex[pokeNew]['Defence'] + '] 🛡️ Defence\n' +
-        strBar(ceiling,pokeDex[pokeNew]['Sp. Attack'],colType1,colType2) + ': [' + pokeDex[pokeNew]['Sp. Attack'] + '] ⚔️ Sp. Attack\n' +
-        strBar(ceiling,pokeDex[pokeNew]['Sp. Defence'],colType1,colType2) + ': [' + pokeDex[pokeNew]['Sp. Defence'] + '] 🛡️ Sp. Defence\n' +
-        strBar(ceiling,pokeDex[pokeNew]['Speed'],colType1,colType2) + ': [' + pokeDex[pokeNew]['Speed'] + '] 💨 Speed\n\n' +
+        strBar(ceiling,pokeDex[pokeNew]['HP'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['HP'],3) + '] ❤️ HP\n' +
+        strBar(ceiling,pokeDex[pokeNew]['Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Attack'],3) + '] ⚔️ Attack\n' +
+        strBar(ceiling,pokeDex[pokeNew]['Defence'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Defence'],3) + '] 🛡️ Defence\n' +
+        strBar(ceiling,pokeDex[pokeNew]['Sp. Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Attack'],3) + '] ⚔️ Sp. Attack\n' +
+        strBar(ceiling,pokeDex[pokeNew]['Sp. Defence'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Defence'],3) + '] 🛡️ Sp. Defence\n' +
+        strBar(ceiling,pokeDex[pokeNew]['Speed'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Speed'],3) + '] 💨 Speed\n\n' +
         '(ℹ️ Info) (📶 Evolution) (◀️ Previous) (▶️ Next) (🔢 Random)';
       postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
 
