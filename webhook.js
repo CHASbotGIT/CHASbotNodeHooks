@@ -4208,7 +4208,7 @@ async function fetchPokemon(eventPoke,pokemonId) {
         "Moves": moves
       });
 
-      console.log(pokeDex);
+      //console.log(pokeDex);
       var pokeNew = pokeDex.length - 1;
       let ceiling = Math.max(
         pokeDex[pokeNew]['Speed'],pokeDex[pokeNew]['Defence'],
@@ -4222,6 +4222,9 @@ async function fetchPokemon(eventPoke,pokemonId) {
       for (typeLoop = 2; typeLoop < pokeType.length; typeLoop++) {
         var cleanType = strStandardise(pokeType[typeLoop]);
         var cleanTarget = strStandardise(pokeDex[pokeNew]['Type(s)']);
+
+        console.log ('look for cleanType: ' + cleanType[0] + ' in cleanTarget: ' + cleanTarget[0]);
+
         if (cleanTarget[0].includes(cleanType[0])) {
           if (pokeType1 == '') {
             pokeType1 = pokeType[typeLoop];
@@ -4242,7 +4245,7 @@ async function fetchPokemon(eventPoke,pokemonId) {
       console.log(colType1);
       console.log(colType2);
       console.log(pokeType1);
-      console.log(pokeType1);
+      console.log(pokeType2);
 
       var base_stats =
         pokeDex[pokeNew]['Name'] + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + ' [' + intPad(pokeDex[pokeNew]['Total'],3) + ']\n\n' +
