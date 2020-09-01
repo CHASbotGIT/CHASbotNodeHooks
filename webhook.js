@@ -944,6 +944,8 @@ function strStandardise(str) {
   // Strip out non-alphanumeric
   str = str.replace(/[^A-Za-z0-9-\s]/g,'');
   // Contract white space
+  str = str.trim();
+  // Leading and trailing white space
   let outboundText = str.replace(/\s\s+/g, ' ');
   return [outboundText,emoticon_up_count,emoticon_down_count];
 }
@@ -4225,12 +4227,10 @@ async function fetchPokemon(eventPoke,pokemonId) {
         var spam = cleanType[0];
         var eggs = cleanTarget[0];
 
-        if (spam == '') { spam = 'pass' }
+        console.log ('LOOP: look for cleanType: ' + cleanType[0] + ' in cleanTarget: ' + cleanTarget[0]);
 
-        console.log ('LOOP: look for cleanType: ' + spam + ' in cleanTarget: ' + eggs);
-
-        if (eggs.includes(spam)) {
-          console.log ('TRUE: look for cleanType: ' + spam + ' in cleanTarget: ' + eggs);
+        if (cleanTarget[0].includes(spam) && cleanType[0] != '') {
+          console.log ('TRUE: look for cleanType: ' + spam + ' in cleanTarget: ' + cleanTarget[0]);
           if (pokeType1 == '') {
             pokeType1 = pokeType[typeLoop];
             colType1 = pokeType[typeLoop+1];
