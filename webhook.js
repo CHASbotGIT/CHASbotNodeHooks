@@ -3987,7 +3987,7 @@ function intEmoji(num) {
 
 function strBar(top,target,on,off) {
   let bar = '';
-  let on_units = Math.trunc(top/target*100);
+  let on_units = Math.trunc((top/target)*100);
 
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TOP ' + top + ' TARGET ' + target + ' ' + on + ' ' + off);
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ON_UNTIS ' + on_units);
