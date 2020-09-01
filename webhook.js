@@ -3986,10 +3986,8 @@ function intEmoji(num) {
 }
 
 function strBar(top,target,on,off) {
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> top' + top + 'target' + target);
   let bar = '';
   let on_units = Math.trunc(top/target*100);
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> on_units' + on_units);
   if (on_units < 20) {
     bar = on + off + off + off + off;
   } else if (on_units < 40) {
@@ -4215,13 +4213,13 @@ async function fetchPokemon(eventPoke,pokemonId) {
       //console.log(pokeDex);
       var pokeNew = pokeDex.length - 1;
       let ceiling = Math.max(
-        parseInt(pokeDex[pokeNew]['Defence']),
-        parseInt(pokeDex[pokeNew]['Attack']),
-        parseInt(pokeDex[pokeNew]['Sp Defence']),
-        parseInt(pokeDex[pokeNew]['Sp Attack']),
-        parseInt(pokeDex[pokeNew]['HP'])
+        pokeDex[pokeNew]['Speed'],
+        pokeDex[pokeNew]['Defence'],
+        pokeDex[pokeNew]['Attack'],
+        pokeDex[pokeNew]['Sp. Defence'],
+        pokeDex[pokeNew]['Sp. Attack'],
+        pokeDex[pokeNew]['HP']
       );
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ceiling' + ceiling);
       let pokeType1 = '';
       let pokeType2 = '';
       let colType1 = '';
