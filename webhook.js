@@ -4220,6 +4220,9 @@ async function fetchPokemon(eventPoke,pokemonId) {
         pokeDex[pokeNew]['Sp. Attack'],
         pokeDex[pokeNew]['HP']
       );
+
+console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>' + ceiling);
+
       let pokeType1 = '';
       let pokeType2 = '';
       let colType1 = '';
@@ -4234,13 +4237,9 @@ async function fetchPokemon(eventPoke,pokemonId) {
           if (pokeType1 == '') {
             pokeType1 = pokeType[typeLoop];
             colType1 = pokeType[typeLoop+1];
-            console.log(colType1);
-            console.log(pokeType1);
           } else {
             pokeType2 = pokeType[typeLoop];
             colType2 = pokeType[typeLoop+1];
-            console.log(colType2);
-            console.log(pokeType2);
           }; // if (pokeType1
         }; // if (cleanTarget
       }; // for (typeLoop
