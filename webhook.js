@@ -4223,9 +4223,10 @@ async function fetchPokemon(eventPoke,pokemonId) {
         var cleanType = strStandardise(pokeType[typeLoop]);
         var cleanTarget = strStandardise(pokeDex[pokeNew]['Type(s)']);
 
-        console.log ('look for cleanType: ' + cleanType[0] + ' in cleanTarget: ' + cleanTarget[0]);
+        console.log ('LOOP: look for cleanType: ' + cleanType[0] + ' in cleanTarget: ' + cleanTarget[0]);
 
         if (cleanTarget[0].includes(cleanType[0]) && cleanType[0] != '') {
+          console.log ('TRUE: look for cleanType: ' + cleanType[0] + ' in cleanTarget: ' + cleanTarget[0]);
           if (pokeType1 == '') {
             pokeType1 = pokeType[typeLoop];
             colType1 = pokeType[typeLoop+1];
