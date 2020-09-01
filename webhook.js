@@ -4218,6 +4218,8 @@ async function fetchPokemon(eventPoke,pokemonId) {
         pokeDex[pokeNew]['Speed'],pokeDex[pokeNew]['Defence'],
         pokeDex[pokeNew]['Attack'],pokeDex[pokeNew]['Sp Defence'],
         pokeDex[pokeNew]['Sp Attack'],pokeDex[pokeNew]['HP']);
+
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ceiling' + ceiling);
       let pokeType1 = '';
       let pokeType2 = '';
       let colType1 = '';
