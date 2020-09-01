@@ -4210,7 +4210,8 @@ async function fetchPokemon(eventPoke,pokemonId) {
 
       console.log(pokeDex);
       var pokeNew = pokeDex.length - 1;
-      let ceiling = Math.max(pokeDex[pokeNew]['Speed'],pokeDex[pokeNew]['Defence'],
+      let ceiling = Math.max(
+        pokeDex[pokeNew]['Speed'],pokeDex[pokeNew]['Defence'],
         pokeDex[pokeNew]['Attack'],pokeDex[pokeNew]['Sp Defence'],
         pokeDex[pokeNew]['Sp Attack'],pokeDex[pokeNew]['HP']);
       let pokeType1 = '';
@@ -4224,15 +4225,15 @@ async function fetchPokemon(eventPoke,pokemonId) {
         if (cleanTarget[0].includes(cleanType[0])) {
           if (pokeType1 == '') {
             pokeType1 = pokeType[typeLoop];
-            colType1 = pokeType[typeLoop-1];
+            colType1 = pokeType[typeLoop+1];
           } else {
             pokeType2 = pokeType[typeLoop];
-            colType2 = pokeType[typeLoop-1];
+            colType2 = pokeType[typeLoop+1];
           }; // if (pokeType1
         }; // if (cleanTarget
       }; // for (typeLoop
-      if (colType1 == colType2) { colType2 = pokeType[0] };
-      if (colType1 == colType2) { colType2 = pokeType[0] };
+      if (colType1 == colType2) { colType2 = colType[0] };
+      if (colType1 == colType2) { colType2 = colType[1] };
 
       var base_stats =
         pokeDex[pokeNew]['Name'] + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + ' [' + pokeDex[pokeNew]['Total'] + ']\n\n' +
