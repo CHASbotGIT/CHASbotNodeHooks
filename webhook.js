@@ -3989,7 +3989,7 @@ function strBar(top,target,on,off) {
   let bar = '';
   let on_units = Math.trunc(top/target*100);
 
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TOP ' + top + ' TARGET ' + ' ' + on + ' ' + off);
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TOP ' + top + ' TARGET ' + target + ' ' + on + ' ' + off);
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ON_UNTIS ' + on_units);
   if (on_units < 20) {
     bar = on + off + off + off + off;
