@@ -4214,8 +4214,13 @@ async function fetchPokemon(eventPoke,pokemonId) {
 
       //console.log(pokeDex);
       var pokeNew = pokeDex.length - 1;
-      let ceiling = Math.max(pokeDex[pokeNew]['Speed'],pokeDex[pokeNew]['Defence'],pokeDex[pokeNew]['Attack'],pokeDex[pokeNew]['Sp Defence'],pokeDex[pokeNew]['Sp Attack'],pokeDex[pokeNew]['HP']);
-
+      let ceiling = Math.max(
+        parseInt(pokeDex[pokeNew]['Defence']),
+        parseInt(pokeDex[pokeNew]['Attack']),
+        parseInt(pokeDex[pokeNew]['Sp Defence']),
+        parseInt(pokeDex[pokeNew]['Sp Attack']),
+        parseInt(pokeDex[pokeNew]['HP'])
+      );
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ceiling' + ceiling);
       let pokeType1 = '';
       let pokeType2 = '';
@@ -4227,11 +4232,7 @@ async function fetchPokemon(eventPoke,pokemonId) {
         var cleanTarget = strStandardise(pokeDex[pokeNew]['Type(s)']);
         var spam = cleanType[0];
         var eggs = cleanTarget[0];
-
-        console.log ('LOOP: look for cleanType: ' + cleanType[0] + ' in cleanTarget: ' + cleanTarget[0]);
-
         if (cleanTarget[0].includes(spam) && cleanType[0] != '') {
-          console.log ('TRUE: look for cleanType: ' + spam + ' in cleanTarget: ' + cleanTarget[0]);
           if (pokeType1 == '') {
             pokeType1 = pokeType[typeLoop];
             colType1 = pokeType[typeLoop+1];
@@ -4247,12 +4248,6 @@ async function fetchPokemon(eventPoke,pokemonId) {
       }; // for (typeLoop
       if (colType1 == colType2) { colType2 = pokeType[0] };
       if (colType1 == colType2) { colType2 = pokeType[1] };
-
-      console.log(colType1);
-      console.log(colType2);
-      console.log(pokeType1);
-      console.log(pokeType2);
-
       var base_stats =
         pokeDex[pokeNew]['Name'] + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + ' [' + intPad(pokeDex[pokeNew]['Total'],3) + ']\n\n' +
         pokeType1 + ' ' + pokeType2 + ' ⚖️ ' + pokeDex[pokeNew]['Weight'] + ' 📊 ' + pokeDex[pokeNew]['Height'] + '\n\n' +
