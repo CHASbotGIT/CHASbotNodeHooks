@@ -4222,14 +4222,13 @@ async function fetchPokemon(eventPoke,pokemonId) {
       for (typeLoop = 2; typeLoop < pokeType.length; typeLoop++) {
         var cleanType = strStandardise(pokeType[typeLoop]);
         var cleanTarget = strStandardise(pokeDex[pokeNew]['Type(s)']);
+        var spam = cleanType[0];
+        var eggs = cleanTarget[0];
 
-        console.log ('LOOP: look for cleanType: ' + cleanType[0] + ' in cleanTarget: ' + cleanTarget[0]);
+        console.log ('LOOP: look for cleanType: ' + spam + ' in cleanTarget: ' + eggs);
 
-        var position_in_cleanTarget = -1;
-        position_in_cleanTarget = cleanTarget[0].search(cleanType[0]) + 1;
-
-        if (position_in_cleanTarget > 1 && cleanType[0] != '') {
-          console.log ('TRUE: look for cleanType: ' + cleanType[0] + ' in cleanTarget: ' + cleanTarget[0]);
+        if (eggs.includes(spam) && spam != '') {
+          console.log ('TRUE: look for cleanType: ' + spam + ' in cleanTarget: ' + eggs);
           if (pokeType1 == '') {
             pokeType1 = pokeType[typeLoop];
             colType1 = pokeType[typeLoop+1];
