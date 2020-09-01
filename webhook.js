@@ -3908,9 +3908,7 @@ function playTopTrumps(eventTT,playTT){
     SENDERS[custom_id][20] = 'category'; // set cat_ot_char
     SENDERS[custom_id][16] = SENDERS[custom_id][17]; // new card becomes old trump_tobeat
     if (trumps_start) { tt_msg = MSG_TOPTRUMPS_INTRO1 + HERO_ARRAY[SENDERS[custom_id][16]][0] + MSG_TOPTRUMPS_INTRO2 };
-
-if (trumps_restart) { tt_msg = "Let's return to " + HERO_ARRAY[SENDERS[custom_id][16]][0] + ", where we left off with the last card played. " }
-
+    if (trumps_restart) { tt_msg = "Let's return to " + HERO_ARRAY[SENDERS[custom_id][16]][0] + ", where we left off with the last card played. " };
     if (chicken_dinner){
       let wins = SENDERS[custom_id][14];
       if (wins > 0) {
@@ -3973,9 +3971,6 @@ let pokeDex = [];
 let pokeSpecies = [];
 let pokeEvolution = [];
 
-
-
-// evo test cases 312, 67, 362, 116, 41, 268, 47
 function intEmoji(num) {
   let numEmoji = ['0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣'];
   let strEmoji = '';
@@ -4005,12 +4000,7 @@ function strBar(top,target,on,off) {
   return bar;
 }
 
-console.log(strBar(65,65,"🔴","🟢"));
-console.log(strBar(25,65,"🔴","🟢"));
-console.log(strBar(5,65,"🔴","🟢"));
-console.log(strBar(35,65,"🔴","🟢"));
-console.log(strBar(65,65,"🔴","🟢"));
-
+// evo test cases 312, 67, 362, 116, 41, 268, 47
 async function fetchPokemon(eventPoke,pokemonId) {
   // API Reference @ https://pokeapi.co
   let poke_url = "https://pokeapi.co/api/v2/pokemon/" + pokemonId.toString() + "/";
@@ -4208,8 +4198,8 @@ async function fetchPokemon(eventPoke,pokemonId) {
         "Speed": poke.stats[0].base_stat,
         "Defence": poke.stats[1].base_stat,
         "Attack": poke.stats[2].base_stat,
-        "Sp Defence": poke.stats[3].base_stat,
-        "Sp Attack": poke.stats[4].base_stat,
+        "Sp. Defence": poke.stats[3].base_stat,
+        "Sp. Attack": poke.stats[4].base_stat,
         "HP": poke.stats[5].base_stat,
         "Total": (poke.stats[5].base_stat + poke.stats[4].base_stat + poke.stats[3].base_stat +
           poke.stats[2].base_stat + poke.stats[1].base_stat + poke.stats[0].base_stat),
@@ -4218,33 +4208,43 @@ async function fetchPokemon(eventPoke,pokemonId) {
         "Moves": moves
       });
 
-      // Find 1st type
-      // type + 1 = 1st colour
-      // if 2md type
-      //  type + 1 = 2nd colour
-      // else
-      //  2nd colour = black [0]
-      // if 1st colour = 2nd colour
-      //  2nd colour = black [0]
-      // if 1st colour = 2nd colour
-      //  2nd colour = white [1]
-
       console.log(pokeDex);
       var pokeNew = pokeDex.length - 1;
-      let ceiling = Math.max(pokeDex[pokeNew]['Speed'],pokeDex[pokeNew]['Defence'],pokeDex[pokeNew]['Attack'],pokeDex[pokeNew]['Sp Defence'],pokeDex[pokeNew]['Sp Attack'],pokeDex[pokeNew]['HP'])
-
+      let ceiling = Math.max(pokeDex[pokeNew]['Speed'],pokeDex[pokeNew]['Defence'],
+        pokeDex[pokeNew]['Attack'],pokeDex[pokeNew]['Sp Defence'],
+        pokeDex[pokeNew]['Sp Attack'],pokeDex[pokeNew]['HP']);
+      let pokeType1 = '';
+      let pokeType2 = '';
+      let colType1 = '';
+      let colType2 = pokeType[0];
+      let typeLoop = 0;
+      for (typeLoop = 2; typeLoop < pokeType.length; typeLoop++) {
+        var cleanType = strStandardise(pokeType[typeLoop]);
+        var cleanTarget = strStandardise(pokeDex[pokeNew]['Type(s)']);
+        if (cleanTarget[0].includes(cleanType[0])) {
+          if (pokeType1 == '') {
+            pokeType1 = pokeType[typeLoop];
+            colType1 = pokeType[typeLoop-1];
+          } else {
+            pokeType2 = pokeType[typeLoop];
+            colType2 = pokeType[typeLoop-1];
+          }; // if (pokeType1
+        }; // if (cleanTarget
+      }; // for (typeLoop
+      if (colType1 == colType2) { colType2 = pokeType[0] };
+      if (colType1 == colType2) { colType2 = pokeType[0] };
 
       var base_stats =
         pokeDex[pokeNew]['Name'] + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + ' [' + pokeDex[pokeNew]['Total'] + ']\n\n' +
-        '🔥 Fire ☠️ Poison ⚖️ 9.3kg 📊 0.7m\n\n' +
-        '🟠🟠🟠🟠🟢' + ': [045] ❤️ HP\n' +
-        '🟠🟠🟠🟠🟢' + ': [049] ⚔️ Attack\n' +
-        '🟠🟠🟠🟠🟢' + ': [049] 🛡️ Defence\n' +
-        '🟠🟠🟠🟠🟠' + ': [065] ⚔️ Sp. Attack\n' +
-        '🟠🟠🟠🟠🟠' + ': [065] 🛡️ Sp. Defence\n' +
-        '🟠🟠🟠🟠🟢' + ': [045] 💨 Speed\n' +
+        pokeType1 + ' ' + pokeType2 + ' ⚖️ ' + pokeDex[pokeNew]['Weight'] + ' 📊 ' + pokeDex[pokeNew]['Height'] + '\n\n' +
+        strBar(ceiling,pokeDex[pokeNew]['HP'],colType1,colType2) + ': [' + pokeDex[pokeNew]['HP'] + '] ❤️ HP\n' +
+        strBar(ceiling,pokeDex[pokeNew]['Attack'],colType1,colType2) + ': [' + pokeDex[pokeNew]['Attack'] + '] ⚔️ Attack\n' +
+        strBar(ceiling,pokeDex[pokeNew]['Defence'],colType1,colType2) + ': [' + pokeDex[pokeNew]['Defence'] + '] 🛡️ Defence\n' +
+        strBar(ceiling,pokeDex[pokeNew]['Sp. Attack'],colType1,colType2) + ': [' + pokeDex[pokeNew]['Sp. Attack'] + '] ⚔️ Sp. Attack\n' +
+        strBar(ceiling,pokeDex[pokeNew]['Sp. Defence'],colType1,colType2) + ': [' + pokeDex[pokeNew]['Sp. Defence'] + '] 🛡️ Sp. Defence\n' +
+        strBar(ceiling,pokeDex[pokeNew]['Speed'],colType1,colType2) + ': [' + pokeDex[pokeNew]['Speed'] + '] 💨 Speed\n\n' +
         '(ℹ️ Info) (📶 Evolution) (◀️ Previous) (▶️ Next) (🔢 Random)';
-      postImage(eventPoke,'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',true,base_stats);
+      postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
 
     }); // res.on('end'
   }); // http.get(url
