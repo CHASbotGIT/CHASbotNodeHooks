@@ -450,7 +450,7 @@ var deCrypt = function(text_obscure) {
   //console.log("DEBUG [deCrypt]> buffered: " + text_obscure_buffer);
   let dec = decipher.update(text_obscure_buffer);
   dec = Buffer.concat([dec, decipher.final()]);
-  console.log("DEBUG [deCrypt]> deciphered: " + dec);
+  //console.log("DEBUG [deCrypt]> deciphered: " + dec);
   return dec.toString();
 }
 function enCryptContents () {
@@ -490,6 +490,9 @@ function deCryptContents () {
   } else {
     CHAS_BIOGS_VIABLE = true;0
   };
+
+  console.log(CHAS_BIOGS);
+
   text_block = fs.readFileSync(FILE_ENCRYPTED_IDS, "utf-8");
   text_block_split_garbled = text_block.split("\n");
   //IDS_LIST = new Array();
@@ -510,6 +513,9 @@ function deCryptContents () {
   } else {
     IDS_VIABLE = true;
   };
+
+  console.log(IDS_LIST);
+
   //console.log("DEBUG [deCryptContents]> IDs Viable? " + IDS_VIABLE);
   text_block = fs.readFileSync(FILE_ENCRYPTED_FR_CARD, "utf-8");
   text_block_split_garbled = text_block.split("\n");
@@ -518,7 +524,7 @@ function deCryptContents () {
     CHAS_FR_LIST = CHAS_FR_LIST + deCrypt(text_block_split_garbled[decrypt_loop]);
     if (decrypt_loop != text_block_split_garbled.length) {CHAS_FR_LIST = CHAS_FR_LIST + "\n"};
   };
-  //console.log("DEBUG [deCryptContents]> Contact Card: " + CHAS_FR_LIST);
+  console.log("DEBUG [deCryptContents]> Contact Card: " + CHAS_FR_LIST);
 }
 
 //  _    ___   _   ___ ___ _  _  ___
