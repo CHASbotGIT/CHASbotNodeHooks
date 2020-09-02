@@ -450,7 +450,7 @@ var deCrypt = function(text_obscure) {
   //console.log("DEBUG [deCrypt]> buffered: " + text_obscure_buffer);
   let dec = decipher.update(text_obscure_buffer);
   dec = Buffer.concat([dec, decipher.final()]);
-  //console.log("DEBUG [deCrypt]> deciphered: " + dec);
+  console.log("DEBUG [deCrypt]> deciphered: " + dec);
   return dec.toString();
 }
 function enCryptContents () {
@@ -4184,11 +4184,11 @@ async function fetchPokemon(eventPoke,pokemonId) {
       //console.log("DEBUG [fetchPokemon]> Evolution sequence: \n" + evoSequence);
       */
 
-      let types = poke.types.map((type) => strTitleCase(type.type.name)).join(', ') //.toUpperCase();
+      let types = poke.types.map((type) => strTitleCase(type.type.name)).join(', ');
       types = types.replace(/,([^,]*)$/, ' &$1');
-      let abilities = poke.abilities.map((ability) => strTitleCase(ability.ability.name)).join(', ') //.toUpperCase();
+      let abilities = poke.abilities.map((ability) => strTitleCase(ability.ability.name)).join(', ');
       abilities = abilities.replace(/,([^,]*)$/, ' &$1');
-      let moves = poke.moves.map((move) => strTitleCase(move.move.name)).join(', ') //.toUpperCase();
+      let moves = poke.moves.map((move) => strTitleCase(move.move.name)).join(', ');
       moves = moves.replace(/,([^,]*)$/, ' &$1');
       pokeDex.push({
         "ID": poke.id,
