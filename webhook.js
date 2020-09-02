@@ -477,6 +477,9 @@ function deCryptContents () {
   let decrypt_loop = 0;
   for (decrypt_loop = 0; decrypt_loop < text_block_split_garbled.length; decrypt_loop++) {
     CHAS_BIOGS[decrypt_loop] = deCrypt(text_block_split_garbled[decrypt_loop]);
+
+    console.log(CHAS_BIOGS[decrypt_loop]);
+
   };
   let number_bios_entries = CHAS_BIOGS.length;
   //console.log("DEBUG [deCryptContents]> Bios entries: " + number_bios_entries);
@@ -490,15 +493,15 @@ function deCryptContents () {
   } else {
     CHAS_BIOGS_VIABLE = true;0
   };
-
-  console.log(CHAS_BIOGS);
-
   text_block = fs.readFileSync(FILE_ENCRYPTED_IDS, "utf-8");
   text_block_split_garbled = text_block.split("\n");
   //IDS_LIST = new Array();
   decrypt_loop = 0;
   for (decrypt_loop = 0; decrypt_loop < text_block_split_garbled.length; decrypt_loop++) {
     IDS_LIST[decrypt_loop] = deCrypt(text_block_split_garbled[decrypt_loop]);
+
+    console.log(IDS_LIST[decrypt_loop]);
+
     IDS_TIMESTAMP[decrypt_loop] = null;
   };
   let number_ids_entries = IDS_LIST.length;
@@ -513,9 +516,6 @@ function deCryptContents () {
   } else {
     IDS_VIABLE = true;
   };
-
-  console.log(IDS_LIST);
-
   //console.log("DEBUG [deCryptContents]> IDs Viable? " + IDS_VIABLE);
   text_block = fs.readFileSync(FILE_ENCRYPTED_FR_CARD, "utf-8");
   text_block_split_garbled = text_block.split("\n");
