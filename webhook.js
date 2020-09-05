@@ -4022,8 +4022,6 @@ console.log ('pokeLetters: ',pokeLetters);
 var pokeInt = parseInt(pokeDigits);
 console.log ('pokeInt: ',pokeInt);
 
-  pokemonId = 'spam';
-
   // API Reference @ https://pokeapi.co
   let poke_url = "https://pokeapi.co/api/v2/pokemon/" + pokemonId.toString() + "/";
   //let poke_url = "https://pokeapi.co/api/v2/evolution-chain/" + pokemonId.toString() + "/";
@@ -4035,7 +4033,7 @@ console.log ('pokeInt: ',pokeInt);
       let poke = JSON.parse(body);
       console.log("DEBUG [fetchPokemon]> Raw Response: " + poke);
 
-      if (poke == ':undefined') {console.log('^^^^^^^^^^^^^^^^^^^^ DUD')}
+      if (poke == 'undefined:1') {console.log('^^^^^^^^^^^^^^^^^^^^ DUD')}
 
       /*
       var evoChain = [];
