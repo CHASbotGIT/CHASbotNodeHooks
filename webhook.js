@@ -4022,9 +4022,9 @@ var pokeLetters = pokemonId.replace(/[^a-zA-Z]+/g, '');
 console.log ('pokeLetters: ',pokeLetters);
 var pokeInt = parseInt(pokeDigits);
 console.log ('pokeInt: ',pokeInt);
-if (isNAN(pokeInt) && pokeLetters == '') {
+if (isNaN(pokeInt) && pokeLetters == '') {
   console.log ('NEITHER NUMBER OR STRING');
-} else if (isNAN(pokeInt)){
+} else if (isNaN(pokeInt)){
   console.log ('NOT A NUMBER');
 } else if (pokeLetters == ''){
   console.log ('NOT A STRING');
