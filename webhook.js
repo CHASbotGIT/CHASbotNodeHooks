@@ -1510,8 +1510,7 @@ CHASbot.post('/webhook', (req, res) => {
       trigger_path = TRIGGER_DEV;
       //let pokedex = analyse_text.replace(/[^0-9]+/g, '');
       let pokedex = strReplaceAll(analyse_text,TRIGGER_DEV,'');
-      apiPokemon(event,pokedex);
-
+      lookupPokemon(event,pokedex);
     };
 
           //console.log("DEBUG [postWebhook]> In play, survey: " + inPlay('survey',sender_index));
@@ -4007,28 +4006,69 @@ function strBar(top,target,on,off) {
 
 function lookupPokemon(eventPoke,pokemonID){
   //postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
+  var pokeDigits = pokemonId.replace(/\D/g,'');
+  console.log ('pokeDigits: ',pokeDigits);
+  var pokeLetters = pokemonId.replace(/[^a-zA-Z]+/g, '');
+  console.log ('pokeLetters: ',pokeLetters);
+  var pokeInt = parseInt(pokeDigits);
+  console.log ('pokeInt: ',pokeInt);
+  if (isNaN(pokeInt) && pokeLetters == '') {
+    console.log ('NEITHER NUMBER OR STRING');
+  } else if (isNaN(pokeInt)){
+    console.log ('NOT A NUMBER');
+  } else if (pokeLetters == ''){
+    console.log ('NOT A STRING');
+  };
+
+  apiPOKEMONcb(pokemonID, function(){
+    var pokeNew = pokeDex.length - 1;
+    let ceiling = Math.max(
+      pokeDex[pokeNew]['Speed'],
+      pokeDex[pokeNew]['Defence'],
+      pokeDex[pokeNew]['Attack'],
+      pokeDex[pokeNew]['Sp. Defence'],
+      pokeDex[pokeNew]['Sp. Attack'],
+      pokeDex[pokeNew]['HP']
+    );
+    let pokeType1 = '';
+    let pokeType2 = '';
+    let colType1 = '';
+    let colType2 = pokeType[0];
+    let typeLoop = 0;
+    for (typeLoop = 2; typeLoop < pokeType.length; typeLoop++) {
+      var cleanType = strStandardise(pokeType[typeLoop]);
+      var cleanTarget = strStandardise(pokeDex[pokeNew]['Type(s)']);
+      var spam = cleanType[0];
+      var eggs = cleanTarget[0];
+      if (cleanTarget[0].includes(spam) && cleanType[0] != '') {
+        if (pokeType1 == '') {
+          pokeType1 = pokeType[typeLoop];
+          colType1 = pokeType[typeLoop+1];
+        } else {
+          pokeType2 = pokeType[typeLoop];
+          colType2 = pokeType[typeLoop+1];
+        }; // if (pokeType1
+      }; // if (cleanTarget
+    }; // for (typeLoop
+    if (colType1 == colType2) { colType2 = pokeType[0] };
+    if (colType1 == colType2) { colType2 = pokeType[1] };
+    var base_stats =
+      pokeDex[pokeNew]['Name'] + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + ' [' + intPad(pokeDex[pokeNew]['Total'],3) + ']\n\n' +
+      pokeType1 + ' ' + pokeType2 + ' ⚖️ ' + pokeDex[pokeNew]['Weight'] + ' 📊 ' + pokeDex[pokeNew]['Height'] + '\n\n' +
+      strBar(ceiling,pokeDex[pokeNew]['HP'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['HP'],3) + '] \t❤️ HP\n' +
+      strBar(ceiling,pokeDex[pokeNew]['Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Attack'],3) + '] \t⚔️ Attack\n' +
+      strBar(ceiling,pokeDex[pokeNew]['Defence'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Defence'],3) + '] \t🛡️ Defence\n' +
+      strBar(ceiling,pokeDex[pokeNew]['Sp. Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Attack'],3) + '] \t⚔️ Sp. Attack\n' +
+      strBar(ceiling,pokeDex[pokeNew]['Sp. Defence'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Defence'],3) + '] \t🛡️ Sp. Defence\n' +
+      strBar(ceiling,pokeDex[pokeNew]['Speed'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Speed'],3) + '] \t💨 Speed\n\n'; //+
+      //'(ℹ️ Info) (📶 Evolution) (◀️ Previous) (▶️ Next) (🔢 Random)';
+    postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
+  });
+
 }
 
 // evo test cases 312, 67, 362, 116, 41, 268, 47
-function apiPokemon(eventPoke,pokemonId) { //},callback) {
-
-// ... analyse pokemonID
-// ... parse to only integers - then convert to number
-// ... parse to only letters -
-
-var pokeDigits = pokemonId.replace(/\D/g,'');
-console.log ('pokeDigits: ',pokeDigits);
-var pokeLetters = pokemonId.replace(/[^a-zA-Z]+/g, '');
-console.log ('pokeLetters: ',pokeLetters);
-var pokeInt = parseInt(pokeDigits);
-console.log ('pokeInt: ',pokeInt);
-if (isNaN(pokeInt) && pokeLetters == '') {
-  console.log ('NEITHER NUMBER OR STRING');
-} else if (isNaN(pokeInt)){
-  console.log ('NOT A NUMBER');
-} else if (pokeLetters == ''){
-  console.log ('NOT A STRING');
-};
+function apiPOKEMONcb(pokemonId,callback) {
 
   // API Reference @ https://pokeapi.co
   let poke_url = "https://pokeapi.co/api/v2/pokemon/" + pokemonId.toString() + "/";
@@ -4241,48 +4281,7 @@ if (isNaN(pokeInt) && pokeLetters == '') {
         });
 
         //console.log(pokeDex);
-        var pokeNew = pokeDex.length - 1;
-        let ceiling = Math.max(
-          pokeDex[pokeNew]['Speed'],
-          pokeDex[pokeNew]['Defence'],
-          pokeDex[pokeNew]['Attack'],
-          pokeDex[pokeNew]['Sp. Defence'],
-          pokeDex[pokeNew]['Sp. Attack'],
-          pokeDex[pokeNew]['HP']
-        );
-        let pokeType1 = '';
-        let pokeType2 = '';
-        let colType1 = '';
-        let colType2 = pokeType[0];
-        let typeLoop = 0;
-        for (typeLoop = 2; typeLoop < pokeType.length; typeLoop++) {
-          var cleanType = strStandardise(pokeType[typeLoop]);
-          var cleanTarget = strStandardise(pokeDex[pokeNew]['Type(s)']);
-          var spam = cleanType[0];
-          var eggs = cleanTarget[0];
-          if (cleanTarget[0].includes(spam) && cleanType[0] != '') {
-            if (pokeType1 == '') {
-              pokeType1 = pokeType[typeLoop];
-              colType1 = pokeType[typeLoop+1];
-            } else {
-              pokeType2 = pokeType[typeLoop];
-              colType2 = pokeType[typeLoop+1];
-            }; // if (pokeType1
-          }; // if (cleanTarget
-        }; // for (typeLoop
-        if (colType1 == colType2) { colType2 = pokeType[0] };
-        if (colType1 == colType2) { colType2 = pokeType[1] };
-        var base_stats =
-          pokeDex[pokeNew]['Name'] + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + ' [' + intPad(pokeDex[pokeNew]['Total'],3) + ']\n\n' +
-          pokeType1 + ' ' + pokeType2 + ' ⚖️ ' + pokeDex[pokeNew]['Weight'] + ' 📊 ' + pokeDex[pokeNew]['Height'] + '\n\n' +
-          strBar(ceiling,pokeDex[pokeNew]['HP'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['HP'],3) + '] \t❤️ HP\n' +
-          strBar(ceiling,pokeDex[pokeNew]['Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Attack'],3) + '] \t⚔️ Attack\n' +
-          strBar(ceiling,pokeDex[pokeNew]['Defence'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Defence'],3) + '] \t🛡️ Defence\n' +
-          strBar(ceiling,pokeDex[pokeNew]['Sp. Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Attack'],3) + '] \t⚔️ Sp. Attack\n' +
-          strBar(ceiling,pokeDex[pokeNew]['Sp. Defence'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Defence'],3) + '] \t🛡️ Sp. Defence\n' +
-          strBar(ceiling,pokeDex[pokeNew]['Speed'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Speed'],3) + '] \t💨 Speed\n\n'; //+
-          //'(ℹ️ Info) (📶 Evolution) (◀️ Previous) (▶️ Next) (🔢 Random)';
-        postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
+
         //callback();
       }; // if (body == 'Not Found')
     }); // res.on('end'
