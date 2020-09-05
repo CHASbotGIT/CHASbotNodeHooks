@@ -3969,7 +3969,7 @@ let pokeEvoSuffix = ['','',' Move',' Type-Move','','+','+','+','+','',' Species 
   '','-time','',''];
 let pokeType = ["⚫","⚪","🔥 Fire","🔴","🌊 Water","🔵","🌱 Grass","🟢","⚡ Electric","🟡",
   "💎 Rock","🟤","🌎 Ground","🟤","👊 Fighting","🟠","🔮 Psychic","🟣","🌒 Dark","⚫","🧊 Ice","⚪",
-  "🐲 Dragon","🟢","⚙️ Steel","🔵","✈️ Flying","🔵","👻 Chost","⚪","☠️ Poison","🟣","🐞 Bug","🔴",
+  "🐲 Dragon","🟢","⚙️ Steel","🔵","✈️ Flying","🔵","👻 Ghost","⚪","☠️ Poison","🟣","🐞 Bug","🔴",
   "🧚 Fairy","🟢","😊 Normal","🟡"];
 let pokeDex = [];
 let pokeSpecies = [];
