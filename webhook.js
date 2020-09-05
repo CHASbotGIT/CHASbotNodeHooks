@@ -4042,7 +4042,7 @@ function lookupPokemon(eventPoke,pokemonID){
     console.log('%%%%%%%%%%%%%%%%%%%%% Target: ',pokemonID);
 
     var checkID = pokeDex[pokeNew]['ID'] + '';
-    if (pokemonID == checkID || pokemonID = pokeDex[pokeNew]['Name']) {
+    if (pokemonID == checkID || pokemonID == pokeDex[pokeNew]['Name']) {
       console.log('%%%%%%%%%%%%%%%%%%%%% Match: TRUE');
     } else if {
       console.log('%%%%%%%%%%%%%%%%%%%%% Match: FALSE');
