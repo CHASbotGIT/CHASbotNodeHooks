@@ -1507,8 +1507,10 @@ CHASbot.post('/webhook', (req, res) => {
     // DEV
     position_in_analyse_text = analyse_text.search(TRIGGER_DEV) + 1;
     if (position_in_analyse_text > 0) {
+      trigger_path = TRIGGER_DEV;
       let pokedex = analyse_text.replace(/[^0-9]+/g, '');
       fetchPokemon(event,pokedex);
+
     };
 
           //console.log("DEBUG [postWebhook]> In play, survey: " + inPlay('survey',sender_index));
@@ -3953,7 +3955,7 @@ function playTopTrumps(eventTT,playTT){
 
 // DEV >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-var TRIGGER_DEV = 'poke';
+var TRIGGER_DEV = 'poke'; // = pokemon number/name
 
 // DEV
 
@@ -3971,6 +3973,7 @@ let pokeType = ["⚫","⚪","🔥 Fire","🔴","🌊 Water","🔵","🌱 Grass",
 let pokeDex = [];
 let pokeSpecies = [];
 let pokeEvolution = [];
+const POKE_CEILIONG = 893;
 
 function intEmoji(num) {
   let numEmoji = ['0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣'];
@@ -4264,11 +4267,20 @@ async function fetchPokemon(eventPoke,pokemonId) {
 // pokedex <name>
 // find <name>
 // pokedex null or !match then random
-// 1 to 893
+
+// look through stored first...
+// evlaluate whether int, string or null
+// if null then random
+
+// not found in store then fire API
+// if name not a match then pick random
+
+// in_play function...
+// store last pokemon loaded per person
+
 // [ℹ️ Info] [📶 Evolution] [◀️ Previous] [▶️ Next] [🔢 Random]
 // Details = Description & Abilities
 // Evolution = Evolution sequences
 
 // lookup and store
 // name/id - character THEN species THEN evolution
-// look forward and back 3
