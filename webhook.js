@@ -4008,7 +4008,7 @@ function strBar(top,target,on,off) {
 
 //356
 function lookupPokemon(eventPoke,pokemonID){
-  //postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
+
   var pokeDigits = pokemonID.replace(/\D/g,'');
   var pokeLetters = pokemonID.replace(/[^a-zA-Z-]/g,'');
   var pokeInt = parseInt(pokeDigits);
@@ -4044,7 +4044,7 @@ function lookupPokemon(eventPoke,pokemonID){
     var checkID = pokeDex[pokeNew]['ID'] + '';
     if (pokemonID == checkID || pokemonID == pokeDex[pokeNew]['Name']) {
       console.log('%%%%%%%%%%%%%%%%%%%%% Match: TRUE');
-    } else if {
+    } else {
       console.log('%%%%%%%%%%%%%%%%%%%%% Match: FALSE');
     }
 
