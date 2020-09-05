@@ -4041,7 +4041,7 @@ if (isNaN(pokeInt) && pokeLetters == '') {
 
       console.log(body);
 
-      if (body == 'undefined:1') {console.log('^^^^^^^^^^^^^^^^^^^^ DUD')}
+      if (body == 'Not Found') {console.log('^^^^^^^^^^^^^^^^^^^^ DUD')}
 
       let poke = JSON.parse(body);
       console.log("DEBUG [fetchPokemon]> Raw Response: " + poke);
