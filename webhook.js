@@ -4010,28 +4010,21 @@ function strBar(top,target,on,off) {
 function lookupPokemon(eventPoke,pokemonID){
   //postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
   var pokeDigits = pokemonID.replace(/\D/g,'');
-  console.log ('pokeDigits: ',pokeDigits);
   var pokeLetters = pokemonID.replace(/[^a-zA-Z-]/g,'');
-  console.log ('pokeLetters: ',pokeLetters);
   var pokeInt = parseInt(pokeDigits);
-  console.log ('pokeInt: ',pokeInt);
   if (pokemonID == 'porygon2') {
-    console.log ('porygon2');
-  } else if (isNaN(pokeInt) && pokeLetters == '') {
-    console.log ('NEITHER INT NOR STRING');
+    // exception
+  } else if (isNaN(pokeInt) && pokeLetters == '') { // neither int nor str > random
     pokemonID = '' + numRandomBetween(1,POKE_CEILING);
-  } else if (!isNaN(pokeInt) && pokeLetters != ''){
-    console.log ('BOTH INT AND STRING');
+  } else if (!isNaN(pokeInt) && pokeLetters != ''){ // both int and str > query str
     pokemonID = pokeLetters;
-  } else if (pokeLetters != ''){
-    console.log ('IS A STRING');
+  } else if (pokeLetters != ''){ // str > query str
     pokemonID = pokeLetters;
   } else {
-    console.log ('IS AN INT');
-    if (pokeInt > 0 && pokeInt <= POKE_CEILING) {
+    if (pokeInt > 0 && pokeInt <= POKE_CEILING) { // int within range > query int
       pokemonID = '' + pokeInt
     } else {
-      pokemonID = '' + numRandomBetween(1,POKE_CEILING);
+      pokemonID = '' + numRandomBetween(1,POKE_CEILING); // int out of range > query random
     }; // if (pokeInt > 0
   }; // if (pokemonID
 
@@ -4043,6 +4036,17 @@ function lookupPokemon(eventPoke,pokemonID){
   apiPOKEMONcb(pokemonID, function(){
 
     // check not empty
+
+    console.log('%%%%%%%%%%%%%%%%%%%%% Name: ',pokeDex[pokeNew]['Name']);
+    console.log('%%%%%%%%%%%%%%%%%%%%% ID: ',pokeDex[pokeNew]['ID']);
+    console.log('%%%%%%%%%%%%%%%%%%%%% Target: ',pokemonID);
+
+    var checkID = pokeDex[pokeNew]['ID'] + '';
+    if (pokemonID == checkID || pokemonID = pokeDex[pokeNew]['Name']) {
+      console.log('%%%%%%%%%%%%%%%%%%%%% Match: TRUE');
+    } else if {
+      console.log('%%%%%%%%%%%%%%%%%%%%% Match: FALSE');
+    }
 
     var pokeNew = pokeDex.length - 1;
     let ceiling = Math.max(
@@ -4076,7 +4080,7 @@ function lookupPokemon(eventPoke,pokemonID){
     if (colType1 == colType2) { colType2 = pokeType[0] };
     if (colType1 == colType2) { colType2 = pokeType[1] };
     var base_stats =
-      pokeDex[pokeNew]['Name'] + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + ' [' + intPad(pokeDex[pokeNew]['Total'],3) + ']\n\n' +
+      strTitleCase(pokeDex[pokeNew]['Name']) + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + ' [' + intPad(pokeDex[pokeNew]['Total'],3) + ']\n\n' +
       pokeType1 + ' ' + pokeType2 + ' ⚖️ ' + pokeDex[pokeNew]['Weight'] + ' 📊 ' + pokeDex[pokeNew]['Height'] + '\n\n' +
       strBar(ceiling,pokeDex[pokeNew]['HP'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['HP'],3) + '] \t❤️ HP\n' +
       strBar(ceiling,pokeDex[pokeNew]['Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Attack'],3) + '] \t⚔️ Attack\n' +
@@ -4286,7 +4290,7 @@ function apiPOKEMONcb(pokemonID,callback) {
         moves = moves.replace(/,([^,]*)$/, ' &$1');
         pokeDex.push({
           "ID": poke.id,
-          "Name": strTitleCase(poke.species.name),
+          "Name": poke.species.name,
           "Species URL": poke.species.url,
           "Height": poke.height/10 + 'm',
           "Weight": poke.weight/10 + 'kg',
