@@ -4015,13 +4015,13 @@ function lookupPokemon(eventPoke,pokemonID){
   console.log ('pokeInt: ',pokeInt);
   if (pokemonID == 'porygon2') {
     console.log ('porygon2');
-  } else if (isNaN(pokeInt) && pokeLetters != '') {
+  } else if (isNaN(pokeInt) && pokeLetters == '') {
     console.log ('NEITHER INT NOR STRING');
     pokemonID = '' + randomNumber(1,POKE_CEILING);
-  } else if (!isNaN(pokeInt) && pokeLetters == ''){
+  } else if (!isNaN(pokeInt) && pokeLetters != ''){
     console.log ('BOTH INT AND STRING');
     pokemonID = pokeLetters;
-  } else if (pokeLetters == ''){
+  } else if (pokeLetters != ''){
     console.log ('IS A STRING');
     pokemonID = pokeLetters;
   } else {
@@ -4041,7 +4041,7 @@ function lookupPokemon(eventPoke,pokemonID){
   apiPOKEMONcb(pokemonID, function(){
 
     // check not empty
-    
+
     var pokeNew = pokeDex.length - 1;
     let ceiling = Math.max(
       pokeDex[pokeNew]['Speed'],
