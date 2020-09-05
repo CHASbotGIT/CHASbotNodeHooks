@@ -4039,6 +4039,8 @@ if (isNaN(pokeInt) && pokeLetters == '') {
     res.on('data', function (chunk) { body += chunk });
     res.on('end', function() {
 
+      console.log(body);
+
       if (body == 'undefined:1') {console.log('^^^^^^^^^^^^^^^^^^^^ DUD')}
 
       let poke = JSON.parse(body);
