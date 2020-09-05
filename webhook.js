@@ -4021,6 +4021,8 @@ function lookupPokemon(eventPoke,pokemonID){
   };
 
   apiPOKEMONcb(pokemonID, function(){
+
+    // check not empty
     var pokeNew = pokeDex.length - 1;
     let ceiling = Math.max(
       pokeDex[pokeNew]['Speed'],
@@ -4080,10 +4082,11 @@ function apiPOKEMONcb(pokemonID,callback) {
     res.on('end', function() {
       if (body == 'Not Found') {
         console.log('^^^^^^^^^^^^^^^^^^^^ DUD');
+        callback();
       } else {
 
         let poke = JSON.parse(body);
-        console.log("DEBUG [fetchPokemon]> Raw Response: " + poke);
+        //console.log("DEBUG [apiPOKEMONcb]> Raw Response: " + poke);
 
         /*
         var evoChain = [];
@@ -4117,7 +4120,7 @@ function apiPOKEMONcb(pokemonID,callback) {
                   holder = pokeEvoPrefix[pokeEvoDetailsLoop] + holder + pokeEvoSuffix[pokeEvoDetailsLoop];
                   evoChainNarrative.push(holder);
                 }; // if (pokeEvoDetails[pokeEvoDetailsLoop]
-                //console.log("DEBUG [fetchPokemon]> Evolution parameters: " + pokeEvoDetails[pokeEvoDetailsLoop] + ' = ' + holder);
+                //console.log("DEBUG [apiPOKEMONcb]> Evolution parameters: " + pokeEvoDetails[pokeEvoDetailsLoop] + ' = ' + holder);
               }; // if (typeof holder
             }; // for (pokeEvoDetailsLoop
           }; // if (typeof evoData
@@ -4149,7 +4152,7 @@ function apiPOKEMONcb(pokemonID,callback) {
             "Species": strTitleCase(evoData.species.name),
             "Evolution": evoNarrative
           }); // evoChain.push({
-          //console.log("DEBUG [fetchPokemon]> Pokemon: " + evoData .species.name + '; Evolution: ' + evoNarrative);
+          //console.log("DEBUG [apiPOKEMONcb]> Pokemon: " + evoData .species.name + '; Evolution: ' + evoNarrative);
           if (numberOfEvolutions > 1) {
             for (let i = 1;i < numberOfEvolutions; i++) {
               evoChainNarrative = [];
@@ -4177,7 +4180,7 @@ function apiPOKEMONcb(pokemonID,callback) {
                         holder = pokeEvoPrefix[pokeEvoDetailsLoop] + holder + pokeEvoSuffix[pokeEvoDetailsLoop];
                         evoChainNarrative.push(holder);
                       };
-                      //console.log("DEBUG [fetchPokemon]> Evolution parameters (nested): " + pokeEvoDetails[pokeEvoDetailsLoop] + ' = ' + holder);
+                      //console.log("DEBUG [apiPOKEMONcb]> Evolution parameters (nested): " + pokeEvoDetails[pokeEvoDetailsLoop] + ' = ' + holder);
                     }; // if (typeof holder
                   }; // for (pokeEvoDetailsLoop
                 }; // if (typeof evoDataNest
@@ -4211,12 +4214,12 @@ function apiPOKEMONcb(pokemonID,callback) {
                 "Species": strTitleCase(evoDataNest.species.name),
                 "Evolution": evoNarrative
               }); // evoChain.push({
-              //console.log("DEBUG [fetchPokemon]> Pokemon: " + evoDataNest .species.name + '; Evolution: ' + evoNarrative);
+              //console.log("DEBUG [apiPOKEMONcb]> Pokemon: " + evoDataNest .species.name + '; Evolution: ' + evoNarrative);
             }; // for (let i = 1;i < numberOfEvolutions; i++) {
           }; // if (numberOfEvolutions > 1)
          evoData = evoData['evolves_to'][0];
         } while (!!evoData && evoData.hasOwnProperty('evolves_to'));
-        //console.log("DEBUG [fetchPokemon]> Results:"); console.table(evoChain);
+        //console.log("DEBUG [apiPOKEMONcb]> Results:"); console.table(evoChain);
         let evoChainCnt = evoChain.length;
         let evoSequence = '';
         if (evoChainCnt == 0) {
@@ -4251,7 +4254,7 @@ function apiPOKEMONcb(pokemonID,callback) {
             };
           }; // for (evoLoop = 0
         }; // if (evoChainCnt == 0)
-        //console.log("DEBUG [fetchPokemon]> Evolution sequence: \n" + evoSequence);
+        //console.log("DEBUG [apiPOKEMONcb]> Evolution sequence: \n" + evoSequence);
         */
 
         let types = poke.types.map((type) => strTitleCase(type.type.name)).join(', ');
@@ -4287,7 +4290,7 @@ function apiPOKEMONcb(pokemonID,callback) {
     }); // res.on('end'
   }); // http.get(url
   req.on('error', function(e) { // Catches failures to connect to the API
-    console.log("ERROR [fetchPokemon]> Error getting to API: " + e);
+    console.log("ERROR [apiPOKEMONcb]> Error getting to API: " + e);
     callback();
   }); // req.on('error'
 }
