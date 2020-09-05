@@ -3974,7 +3974,7 @@ let pokeType = ["⚫","⚪","🔥 Fire","🔴","🌊 Water","🔵","🌱 Grass",
 let pokeDex = [];
 let pokeSpecies = [];
 let pokeEvolution = [];
-const POKE_CEILIONG = 893;
+const POKE_CEILING = 893;
 
 function intEmoji(num) {
   let numEmoji = ['0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣'];
@@ -4009,17 +4009,30 @@ function lookupPokemon(eventPoke,pokemonID){
   //postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
   var pokeDigits = pokemonID.replace(/\D/g,'');
   console.log ('pokeDigits: ',pokeDigits);
-  var pokeLetters = pokemonID.replace(/[^a-zA-Z-]/g, '');
+  var pokeLetters = pokemonID.replace(/[^a-zA-Z-]/g,'');
   console.log ('pokeLetters: ',pokeLetters);
   var pokeInt = parseInt(pokeDigits);
   console.log ('pokeInt: ',pokeInt);
-  if (isNaN(pokeInt) && pokeLetters == '') {
-    console.log ('NEITHER NUMBER OR STRING');
-  } else if (isNaN(pokeInt)){
-    console.log ('NOT A NUMBER');
+  if (pokemonID == 'porygon2') {
+    console.log ('porygon2');
+  } else if (isNaN(pokeInt) && pokeLetters != '') {
+    console.log ('NEITHER INT NOR STRING');
+    pokemonID = '' + randomNumber(1,POKE_CEILING);
+  } else if (!isNaN(pokeInt) && pokeLetters == ''){
+    console.log ('BOTH INT AND STRING');
+    pokemonID = pokeLetters;
   } else if (pokeLetters == ''){
-    console.log ('NOT A STRING');
-  };
+    console.log ('IS A STRING');
+    pokemonID = pokeLetters;
+  } else {
+    console.log ('IS AN INT');
+    if (pokeInt > 0 && pokeInt <= POKE_CEILING) {
+      pokemonID = '' + pokeInt
+    } else {
+      pokemonID = '' + randomNumber(1,POKE_CEILING);
+    }; // if (pokeInt > 0
+  }; // if (pokemonID
+
   // check the array first - find a match then api not necessary
   //mime-jr 439; ho-oh 250; porygon2 233; porygon-z 474; nidoran-f 29; nidoran-m 32; jangmo-o 782
   //hakamo-o 783; kommo-o 784; tapu-koko 785; tapu-lele 786; tapu-bulu 787; tapu-fini 788
@@ -4028,6 +4041,7 @@ function lookupPokemon(eventPoke,pokemonID){
   apiPOKEMONcb(pokemonID, function(){
 
     // check not empty
+    
     var pokeNew = pokeDex.length - 1;
     let ceiling = Math.max(
       pokeDex[pokeNew]['Speed'],
@@ -4078,7 +4092,7 @@ function lookupPokemon(eventPoke,pokemonID){
 function apiPOKEMONcb(pokemonID,callback) {
 
   // API Reference @ https://pokeapi.co
-  let poke_url = "https://pokeapi.co/api/v2/pokemon/" + pokemonID.toString() + "/";
+  let poke_url = "https://pokeapi.co/api/v2/pokemon/" + pokemonID + "/"; // .toString()
   //let poke_url = "https://pokeapi.co/api/v2/evolution-chain/" + pokemonID.toString() + "/";
   console.log("API Request [POKE]: " + poke_url);
   var req = http.get(poke_url, function(res) {
