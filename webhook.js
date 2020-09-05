@@ -4008,7 +4008,7 @@ function lookupPokemon(eventPoke,pokemonID){
   //postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
   var pokeDigits = pokemonID.replace(/\D/g,'');
   console.log ('pokeDigits: ',pokeDigits);
-  var pokeLetters = pokemonID.replace(/[^a-zA-Z -]/g, '');
+  var pokeLetters = pokemonID.replace(/[^a-zA-Z-]/g, '');
   console.log ('pokeLetters: ',pokeLetters);
   var pokeInt = parseInt(pokeDigits);
   console.log ('pokeInt: ',pokeInt);
