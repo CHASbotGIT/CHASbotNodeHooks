@@ -1509,7 +1509,7 @@ CHASbot.post('/webhook', (req, res) => {
     if (position_in_analyse_text > 0) {
       trigger_path = TRIGGER_DEV;
       let pokedex = analyse_text.replace(/[^0-9]+/g, '');
-      fetchPokemon(event,pokedex);
+      apiPokemon(event,pokedex);
 
     };
 
@@ -4004,8 +4004,26 @@ function strBar(top,target,on,off) {
   return bar;
 }
 
+function lookupPokemon(eventPoke,pokemonID){
+  //postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
+}
+
 // evo test cases 312, 67, 362, 116, 41, 268, 47
-async function fetchPokemon(eventPoke,pokemonId) {
+function apiPokemon(eventPoke,pokemonId) { //},callback) {
+
+// ... analyse pokemonID
+// ... parse to only integers - then convert to number
+// ... parse to only letters -
+
+var pokeDigits = pokemonId.replace(/\D/g,'');
+console.log ('pokeDigits: ',pokeDigits);
+var pokeLetters = pokemonId.replace(/[^a-zA-Z]+/g, '');
+console.log ('pokeLetters: ',pokeLetters);
+var pokeInt = parseInt(pokeDigits);
+console.log ('pokeInt: ',pokeInt);
+
+  pokemonId = 'spam';
+
   // API Reference @ https://pokeapi.co
   let poke_url = "https://pokeapi.co/api/v2/pokemon/" + pokemonId.toString() + "/";
   //let poke_url = "https://pokeapi.co/api/v2/evolution-chain/" + pokemonId.toString() + "/";
@@ -4015,7 +4033,9 @@ async function fetchPokemon(eventPoke,pokemonId) {
     res.on('data', function (chunk) { body += chunk });
     res.on('end', function() {
       let poke = JSON.parse(body);
-      //console.log("DEBUG [fetchPokemon]> Raw Response: " + poke);
+      console.log("DEBUG [fetchPokemon]> Raw Response: " + poke);
+
+      if (poke == ':undefined') {console.log('^^^^^^^^^^^^^^^^^^^^ DUD')}
 
       /*
       var evoChain = [];
@@ -4247,20 +4267,21 @@ async function fetchPokemon(eventPoke,pokemonId) {
       var base_stats =
         pokeDex[pokeNew]['Name'] + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + ' [' + intPad(pokeDex[pokeNew]['Total'],3) + ']\n\n' +
         pokeType1 + ' ' + pokeType2 + ' ⚖️ ' + pokeDex[pokeNew]['Weight'] + ' 📊 ' + pokeDex[pokeNew]['Height'] + '\n\n' +
-        strBar(ceiling,pokeDex[pokeNew]['HP'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['HP'],3) + '] ❤️ HP\n' +
-        strBar(ceiling,pokeDex[pokeNew]['Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Attack'],3) + '] ⚔️ Attack\n' +
-        strBar(ceiling,pokeDex[pokeNew]['Defence'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Defence'],3) + '] 🛡️ Defence\n' +
-        strBar(ceiling,pokeDex[pokeNew]['Sp. Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Attack'],3) + '] ⚔️ Sp. Attack\n' +
-        strBar(ceiling,pokeDex[pokeNew]['Sp. Defence'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Defence'],3) + '] 🛡️ Sp. Defence\n' +
-        strBar(ceiling,pokeDex[pokeNew]['Speed'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Speed'],3) + '] 💨 Speed\n\n'; //+
+        strBar(ceiling,pokeDex[pokeNew]['HP'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['HP'],3) + '] \t❤️ HP\n' +
+        strBar(ceiling,pokeDex[pokeNew]['Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Attack'],3) + '] \t⚔️ Attack\n' +
+        strBar(ceiling,pokeDex[pokeNew]['Defence'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Defence'],3) + '] \t🛡️ Defence\n' +
+        strBar(ceiling,pokeDex[pokeNew]['Sp. Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Attack'],3) + '] \t⚔️ Sp. Attack\n' +
+        strBar(ceiling,pokeDex[pokeNew]['Sp. Defence'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Defence'],3) + '] \t🛡️ Sp. Defence\n' +
+        strBar(ceiling,pokeDex[pokeNew]['Speed'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Speed'],3) + '] \t💨 Speed\n\n'; //+
         //'(ℹ️ Info) (📶 Evolution) (◀️ Previous) (▶️ Next) (🔢 Random)';
       postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
+      //callback();
 
     }); // res.on('end'
   }); // http.get(url
   req.on('error', function(e) { // Catches failures to connect to the API
     console.log("ERROR [fetchPokemon]> Error getting to API: " + e);
-    callback();
+    //callback();
   }); // req.on('error'
 }
 
