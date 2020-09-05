@@ -4008,7 +4008,7 @@ function lookupPokemon(eventPoke,pokemonID){
   //postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
   var pokeDigits = pokemonID.replace(/\D/g,'');
   console.log ('pokeDigits: ',pokeDigits);
-  var pokeLetters = pokemonID.replace(/[^a-zA-Z]+/g, '');
+  var pokeLetters = pokemonID.replace(/[^a-zA-Z -]/g, '');
   console.log ('pokeLetters: ',pokeLetters);
   var pokeInt = parseInt(pokeDigits);
   console.log ('pokeInt: ',pokeInt);
@@ -4019,6 +4019,21 @@ function lookupPokemon(eventPoke,pokemonID){
   } else if (pokeLetters == ''){
     console.log ('NOT A STRING');
   };
+  // check the array first - find a match then api not necessary
+  //mime-jr 439
+  //ho-oh 250
+  //porygon2 233
+  //porygon-z 474
+  //nidoran-f 29
+  //nidoran-m 32
+  //jangmo-o 782
+  //hakamo-o 783
+  //kommo-o 784
+  //tapu koko 785
+  //tapu lele 786
+  //tapu bulu 787
+  //tapu fini 788
+
 
   apiPOKEMONcb(pokemonID, function(){
 
