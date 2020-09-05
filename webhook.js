@@ -4031,10 +4031,11 @@ console.log ('pokeInt: ',pokeInt);
     let body = "";
     res.on('data', function (chunk) { body += chunk });
     res.on('end', function() {
+
+      if (body == 'undefined:1') {console.log('^^^^^^^^^^^^^^^^^^^^ DUD')}
+
       let poke = JSON.parse(body);
       console.log("DEBUG [fetchPokemon]> Raw Response: " + poke);
-
-      if (poke == 'undefined:1') {console.log('^^^^^^^^^^^^^^^^^^^^ DUD')}
 
       /*
       var evoChain = [];
