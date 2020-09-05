@@ -4022,6 +4022,13 @@ var pokeLetters = pokemonId.replace(/[^a-zA-Z]+/g, '');
 console.log ('pokeLetters: ',pokeLetters);
 var pokeInt = parseInt(pokeDigits);
 console.log ('pokeInt: ',pokeInt);
+if (isNAN(pokeInt) && pokeLetters == '') {
+  console.log ('NEITHER NUMBER OR STRING');
+} else if (isNAN(pokeInt)){
+  console.log ('NOT A NUMBER');
+} else if (pokeLetters == ''){
+  console.log ('NOT A STRING');
+};
 
   // API Reference @ https://pokeapi.co
   let poke_url = "https://pokeapi.co/api/v2/pokemon/" + pokemonId.toString() + "/";
