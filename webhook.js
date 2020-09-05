@@ -4037,6 +4037,8 @@ function lookupPokemon(eventPoke,pokemonID){
 
     // check not empty
 
+    var pokeNew = pokeDex.length - 1; // check empty?
+
     console.log('%%%%%%%%%%%%%%%%%%%%% Name: ',pokeDex[pokeNew]['Name']);
     console.log('%%%%%%%%%%%%%%%%%%%%% ID: ',pokeDex[pokeNew]['ID']);
     console.log('%%%%%%%%%%%%%%%%%%%%% Target: ',pokemonID);
@@ -4046,9 +4048,8 @@ function lookupPokemon(eventPoke,pokemonID){
       console.log('%%%%%%%%%%%%%%%%%%%%% Match: TRUE');
     } else {
       console.log('%%%%%%%%%%%%%%%%%%%%% Match: FALSE');
-    }
+    };
 
-    var pokeNew = pokeDex.length - 1;
     let ceiling = Math.max(
       pokeDex[pokeNew]['Speed'],
       pokeDex[pokeNew]['Defence'],
