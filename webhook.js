@@ -4005,6 +4005,8 @@ function strBar(top,target,on,off) {
   return bar;
 }
 
+
+//356
 function lookupPokemon(eventPoke,pokemonID){
   //postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
   var pokeDigits = pokemonID.replace(/\D/g,'');
@@ -4017,7 +4019,7 @@ function lookupPokemon(eventPoke,pokemonID){
     console.log ('porygon2');
   } else if (isNaN(pokeInt) && pokeLetters == '') {
     console.log ('NEITHER INT NOR STRING');
-    pokemonID = '' + randomNumber(1,POKE_CEILING);
+    pokemonID = '' + numRandomBetween(1,POKE_CEILING);
   } else if (!isNaN(pokeInt) && pokeLetters != ''){
     console.log ('BOTH INT AND STRING');
     pokemonID = pokeLetters;
@@ -4029,7 +4031,7 @@ function lookupPokemon(eventPoke,pokemonID){
     if (pokeInt > 0 && pokeInt <= POKE_CEILING) {
       pokemonID = '' + pokeInt
     } else {
-      pokemonID = '' + randomNumber(1,POKE_CEILING);
+      pokemonID = '' + numRandomBetween(1,POKE_CEILING);
     }; // if (pokeInt > 0
   }; // if (pokemonID
 
