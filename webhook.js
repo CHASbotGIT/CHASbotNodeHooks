@@ -4282,13 +4282,13 @@ function apiPOKEMONcb(pokemonID,callback) {
 
         //console.log(pokeDex);
 
-        //callback();
+        callback();
       }; // if (body == 'Not Found')
     }); // res.on('end'
   }); // http.get(url
   req.on('error', function(e) { // Catches failures to connect to the API
     console.log("ERROR [fetchPokemon]> Error getting to API: " + e);
-    //callback();
+    callback();
   }); // req.on('error'
 }
 
