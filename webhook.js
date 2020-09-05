@@ -4006,9 +4006,9 @@ function strBar(top,target,on,off) {
 
 function lookupPokemon(eventPoke,pokemonID){
   //postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
-  var pokeDigits = pokemonId.replace(/\D/g,'');
+  var pokeDigits = pokemonID.replace(/\D/g,'');
   console.log ('pokeDigits: ',pokeDigits);
-  var pokeLetters = pokemonId.replace(/[^a-zA-Z]+/g, '');
+  var pokeLetters = pokemonID.replace(/[^a-zA-Z]+/g, '');
   console.log ('pokeLetters: ',pokeLetters);
   var pokeInt = parseInt(pokeDigits);
   console.log ('pokeInt: ',pokeInt);
@@ -4068,11 +4068,11 @@ function lookupPokemon(eventPoke,pokemonID){
 }
 
 // evo test cases 312, 67, 362, 116, 41, 268, 47
-function apiPOKEMONcb(pokemonId,callback) {
+function apiPOKEMONcb(pokemonID,callback) {
 
   // API Reference @ https://pokeapi.co
-  let poke_url = "https://pokeapi.co/api/v2/pokemon/" + pokemonId.toString() + "/";
-  //let poke_url = "https://pokeapi.co/api/v2/evolution-chain/" + pokemonId.toString() + "/";
+  let poke_url = "https://pokeapi.co/api/v2/pokemon/" + pokemonID.toString() + "/";
+  //let poke_url = "https://pokeapi.co/api/v2/evolution-chain/" + pokemonID.toString() + "/";
   console.log("API Request [POKE]: " + poke_url);
   var req = http.get(poke_url, function(res) {
     let body = "";
