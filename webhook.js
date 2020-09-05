@@ -1509,7 +1509,7 @@ CHASbot.post('/webhook', (req, res) => {
     if (position_in_analyse_text > 0) {
       trigger_path = TRIGGER_DEV;
       //let pokedex = analyse_text.replace(/[^0-9]+/g, '');
-      let pokedex = strReplaceAll(TRIGGER_DEV,'');
+      let pokedex = strReplaceAll(analyse_text,TRIGGER_DEV,'');
       apiPokemon(event,pokedex);
 
     };
