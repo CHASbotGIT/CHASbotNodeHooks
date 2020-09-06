@@ -4084,14 +4084,15 @@ function lookupPokemon(eventPoke,pokemonID){
     if (colType1 == colType2) { colType2 = pokeType[0] };
     if (colType1 == colType2) { colType2 = pokeType[1] };
     var base_stats =
-      strTitleCase(pokeDex[pokeNew]['Name']) + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + ' [Stats Total: ' + intPad(pokeDex[pokeNew]['Total'],3) + ']\n\n' +
+      strTitleCase(pokeDex[pokeNew]['Name']) + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + '\n\n' +
       pokeType1 + ' ' + pokeType2 + ' ⚖️ ' + pokeDex[pokeNew]['Weight'] + ' 📊 ' + pokeDex[pokeNew]['Height'] + '\n\n' +
       strBar(ceiling,pokeDex[pokeNew]['HP'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['HP'],3) + '] \t❤️ HP\n' +
       strBar(ceiling,pokeDex[pokeNew]['Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Attack'],3) + '] \t⚔️ Attack\n' +
       strBar(ceiling,pokeDex[pokeNew]['Defence'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Defence'],3) + '] \t🛡️ Defence\n' +
       strBar(ceiling,pokeDex[pokeNew]['Sp. Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Attack'],3) + '] \t⚔️ Sp. Attack\n' +
       strBar(ceiling,pokeDex[pokeNew]['Sp. Defence'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Defence'],3) + '] \t🛡️ Sp. Defence\n' +
-      strBar(ceiling,pokeDex[pokeNew]['Speed'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Speed'],3) + '] \t💨 Speed\n\n'; //+
+      strBar(ceiling,pokeDex[pokeNew]['Speed'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Speed'],3) + '] \t💨 Speed\n\n' +
+      '[Stats Total: ' + intPad(pokeDex[pokeNew]['Total'],3) + ']';
       //'(ℹ️ Info) (📶 Evolution) (◀️ Previous) (▶️ Next) (🔢 Random)';
     postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
     // Moves *may* need split over multiple messages
@@ -4285,6 +4286,14 @@ function apiPOKEMONcb(apiCall,callback) {
           callback();
         } else if (apiCall.includes('species')) {
           let poke = JSON.parse(body);
+          let description = 'No description'
+          let flavCount = poke.flavour_text_entries.length;
+          for (flavLoop = 0; flavLoop < flavCount; flavLoop++) {
+            let flavEntry = poke.flavour_text_entries[flavLoop];
+            if (flavEntry.language.name == 'en' && flavEntry.version.name == 'red') {
+              description = flavEntry.flavor_text;
+            }; // if
+          }; // for (flavLoop
           let eggs = poke.egg_groups.map((element) => strTitleCase(element.name)).join(', ');
           eggs = eggs.replace(/,([^,]*)$/, ' &$1'); // last comma for and
           let hatch_after = (poke.hatch_counter+1)*255;
@@ -4302,6 +4311,7 @@ function apiPOKEMONcb(apiCall,callback) {
           }
           pokeSpecies.push({
             "Species URL": apiCall,
+            "Description": description,
             "Egg Groups": eggs,
             "Steps to Hatch": hatch_steps,
             "Gender Distribution": gender,
