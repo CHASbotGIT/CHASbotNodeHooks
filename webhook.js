@@ -4086,8 +4086,6 @@ function lookupPokemon(eventPoke,pokemonID){
 
     var speciesNew = pokeSpecies.length - 1; // check empty?
 
-
-
     var base_stats =
       strTitleCase(pokeDex[pokeNew]['Name']) + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + '\n\n' +
       pokeType1 + ' ' + pokeType2 + ' ⚖️ ' + pokeDex[pokeNew]['Weight'] + ' 📊 ' + pokeDex[pokeNew]['Height'] + '\n\n' +
