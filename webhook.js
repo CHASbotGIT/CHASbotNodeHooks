@@ -4115,7 +4115,7 @@ function lookupPokemon(eventPoke,pokemonID){
 function apiPOKEMONcb(apiCall,callback) {
   // API Reference @ https://pokeapi.co
   console.log("API Request [POKE]: " + apiCall);
-  var req = http.get(poke_url, function(res) {
+  var req = http.get(apiCall, function(res) {
     let body = "";
     res.on('data', function (chunk) { body += chunk });
     res.on('end', function() {
