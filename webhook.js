@@ -4083,6 +4083,11 @@ function lookupPokemon(eventPoke,pokemonID){
     }; // for (typeLoop
     if (colType1 == colType2) { colType2 = pokeType[0] };
     if (colType1 == colType2) { colType2 = pokeType[1] };
+
+    var speciesNew = pokeSpecies.length - 1; // check empty?
+
+
+
     var base_stats =
       strTitleCase(pokeDex[pokeNew]['Name']) + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + '\n\n' +
       pokeType1 + ' ' + pokeType2 + ' ⚖️ ' + pokeDex[pokeNew]['Weight'] + ' 📊 ' + pokeDex[pokeNew]['Height'] + '\n\n' +
@@ -4092,7 +4097,8 @@ function lookupPokemon(eventPoke,pokemonID){
       strBar(ceiling,pokeDex[pokeNew]['Sp. Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Attack'],3) + '] \t⚔️ Sp. Attack\n' +
       strBar(ceiling,pokeDex[pokeNew]['Sp. Defence'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Defence'],3) + '] \t🛡️ Sp. Defence\n' +
       strBar(ceiling,pokeDex[pokeNew]['Speed'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Speed'],3) + '] \t💨 Speed\n\n' +
-      '[Stats Total: ' + intPad(pokeDex[pokeNew]['Total'],3) + ']';
+      '[Stats Total: ' + intPad(pokeDex[pokeNew]['Total'],3) + ']\n\n' +
+      pokeSpecies[speciesNew]['Description'];
       //'(ℹ️ Info) (📶 Evolution) (◀️ Previous) (▶️ Next) (🔢 Random)';
     postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
     // Moves *may* need split over multiple messages
