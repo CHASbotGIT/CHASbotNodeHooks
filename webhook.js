@@ -4056,7 +4056,7 @@ function lookupPokemon(eventPoke,pokemonID){
 
         apiPOKEMONcb(pokeSpecies[speciesNew]['Evolution URL'], function(){
           // CHECK VALID?
-          var evosNew = pokeEvolution.length - 1; // check empty?
+          var evoNew = pokeEvolution.length - 1; // check empty?
           // NEWEST ONE
             console.log(pokeEvolution[evoNew]["Evolution Narrative"]);
 
