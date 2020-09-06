@@ -4048,59 +4048,63 @@ function lookupPokemon(eventPoke,pokemonID){
           var evoNew = pokeEvolution.length - 1; // check empty?
           // NEWEST ONE
             console.log(pokeEvolution[evoNew]["Evolution Narrative"]);
+
+            let ceiling = Math.max(
+              pokeDex[pokeNew]['Speed'],
+              pokeDex[pokeNew]['Defence'],
+              pokeDex[pokeNew]['Attack'],
+              pokeDex[pokeNew]['Sp. Defence'],
+              pokeDex[pokeNew]['Sp. Attack'],
+              pokeDex[pokeNew]['HP']
+            );
+            let pokeType1 = '';
+            let pokeType2 = '';
+            let colType1 = '';
+            let colType2 = pokeType[0];
+            let typeLoop = 0;
+            for (typeLoop = 2; typeLoop < pokeType.length; typeLoop++) {
+              var cleanType = strStandardise(pokeType[typeLoop]);
+              var cleanTarget = strStandardise(pokeDex[pokeNew]['Type(s)']);
+              var spam = cleanType[0];
+              var eggs = cleanTarget[0];
+              if (cleanTarget[0].includes(spam) && cleanType[0] != '') {
+                if (pokeType1 == '') {
+                  pokeType1 = pokeType[typeLoop];
+                  colType1 = pokeType[typeLoop+1];
+                } else {
+                  pokeType2 = pokeType[typeLoop];
+                  colType2 = pokeType[typeLoop+1];
+                }; // if (pokeType1
+              }; // if (cleanTarget
+            }; // for (typeLoop
+            if (colType1 == colType2) { colType2 = pokeType[0] };
+            if (colType1 == colType2) { colType2 = pokeType[1] };
+
+            var speciesNew = pokeSpecies.length - 1; // check empty?
+            console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ',speciesNew)
+
+            var base_stats =
+              strTitleCase(pokeDex[pokeNew]['Name']) + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + '\n\n' +
+              pokeType1 + ' ' + pokeType2 + ' ⚖️ ' + pokeDex[pokeNew]['Weight'] + ' 📊 ' + pokeDex[pokeNew]['Height'] + '\n\n' +
+              strBar(ceiling,pokeDex[pokeNew]['HP'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['HP'],3) + '] \t❤️ HP\n' +
+              strBar(ceiling,pokeDex[pokeNew]['Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Attack'],3) + '] \t⚔️ Attack\n' +
+              strBar(ceiling,pokeDex[pokeNew]['Defence'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Defence'],3) + '] \t🛡️ Defence\n' +
+              strBar(ceiling,pokeDex[pokeNew]['Sp. Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Attack'],3) + '] \t⚔️ Sp. Attack\n' +
+              strBar(ceiling,pokeDex[pokeNew]['Sp. Defence'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Defence'],3) + '] \t🛡️ Sp. Defence\n' +
+              strBar(ceiling,pokeDex[pokeNew]['Speed'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Speed'],3) + '] \t💨 Speed\n\n' +
+              '[Stats Total: ' + intPad(pokeDex[pokeNew]['Total'],3) + ']\n\n' +
+              pokeSpecies[speciesNew]['Description'];
+              //'(ℹ️ Info) (📶 Evolution) (◀️ Previous) (▶️ Next) (🔢 Random)';
+            postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
+            // Moves *may* need split over multiple messages
+
+
         }); // apiPOKEMONcb(pokeSpecies[speciesNew]
       }); // apiPOKEMONcb(pokeDex[pokeNew]
     } else {
       console.log('%%%%%%%%%%%%%%%%%%%%% Match: FALSE'); // TO DO
-    };
-    let ceiling = Math.max(
-      pokeDex[pokeNew]['Speed'],
-      pokeDex[pokeNew]['Defence'],
-      pokeDex[pokeNew]['Attack'],
-      pokeDex[pokeNew]['Sp. Defence'],
-      pokeDex[pokeNew]['Sp. Attack'],
-      pokeDex[pokeNew]['HP']
-    );
-    let pokeType1 = '';
-    let pokeType2 = '';
-    let colType1 = '';
-    let colType2 = pokeType[0];
-    let typeLoop = 0;
-    for (typeLoop = 2; typeLoop < pokeType.length; typeLoop++) {
-      var cleanType = strStandardise(pokeType[typeLoop]);
-      var cleanTarget = strStandardise(pokeDex[pokeNew]['Type(s)']);
-      var spam = cleanType[0];
-      var eggs = cleanTarget[0];
-      if (cleanTarget[0].includes(spam) && cleanType[0] != '') {
-        if (pokeType1 == '') {
-          pokeType1 = pokeType[typeLoop];
-          colType1 = pokeType[typeLoop+1];
-        } else {
-          pokeType2 = pokeType[typeLoop];
-          colType2 = pokeType[typeLoop+1];
-        }; // if (pokeType1
-      }; // if (cleanTarget
-    }; // for (typeLoop
-    if (colType1 == colType2) { colType2 = pokeType[0] };
-    if (colType1 == colType2) { colType2 = pokeType[1] };
-
-    var speciesNew = pokeSpecies.length - 1; // check empty?
-
-    var base_stats =
-      strTitleCase(pokeDex[pokeNew]['Name']) + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + '\n\n' +
-      pokeType1 + ' ' + pokeType2 + ' ⚖️ ' + pokeDex[pokeNew]['Weight'] + ' 📊 ' + pokeDex[pokeNew]['Height'] + '\n\n' +
-      strBar(ceiling,pokeDex[pokeNew]['HP'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['HP'],3) + '] \t❤️ HP\n' +
-      strBar(ceiling,pokeDex[pokeNew]['Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Attack'],3) + '] \t⚔️ Attack\n' +
-      strBar(ceiling,pokeDex[pokeNew]['Defence'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Defence'],3) + '] \t🛡️ Defence\n' +
-      strBar(ceiling,pokeDex[pokeNew]['Sp. Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Attack'],3) + '] \t⚔️ Sp. Attack\n' +
-      strBar(ceiling,pokeDex[pokeNew]['Sp. Defence'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Defence'],3) + '] \t🛡️ Sp. Defence\n' +
-      strBar(ceiling,pokeDex[pokeNew]['Speed'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Speed'],3) + '] \t💨 Speed\n\n' +
-      '[Stats Total: ' + intPad(pokeDex[pokeNew]['Total'],3) + ']\n\n' +
-      pokeSpecies[speciesNew]['Description'];
-      //'(ℹ️ Info) (📶 Evolution) (◀️ Previous) (▶️ Next) (🔢 Random)';
-    postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
-    // Moves *may* need split over multiple messages
-  });
+    }; // else
+  }); // apiPOKEMONcb(apiURL
 }
 
 // evo test cases 312, 67, 362, 116, 41, 268, 47
