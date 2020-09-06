@@ -4289,7 +4289,7 @@ function apiPOKEMONcb(apiCall,callback) {
           eggs = eggs.replace(/,([^,]*)$/, ' &$1'); // last comma for and
           let hatch_after = (poke.hatch_counter+1)*255;
           let habitat = "No Habitat";
-          if (poke.habitat.name != null) { habitat = poke.habitat.name };
+          if (poke.habitat != null) { habitat = poke.habitat.name };
           let hatch_steps = hatch_after + ' Steps';
           let female_eighth = poke.gender_rate; // in 1/8th female proportion i.e. 2=25% female
           let gender = '';
