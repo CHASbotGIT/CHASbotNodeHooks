@@ -4289,7 +4289,7 @@ function apiPOKEMONcb(apiCall,callback) {
           let description = 'No description'
           let flavCount = poke.flavour_text_entries.length;
           for (flavLoop = 0; flavLoop < flavCount; flavLoop++) {
-            let flavEntry = poke.flavour_text_entries[flavLoop];
+            let flavEntry = poke.flavor_text_entries[flavLoop];
             if (flavEntry.language.name == 'en' && flavEntry.version.name == 'red') {
               description = flavEntry.flavor_text;
             }; // if
