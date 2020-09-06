@@ -4303,7 +4303,7 @@ function apiPOKEMONcb(apiCall,callback) {
               description = flavEntry.flavor_text;
             }; // if
           }; // for (flavLoop
-          description = description.replace(/\\n\\f/g,' ');
+          description = description.replace(/\n\f/g,' ');
           let eggs = poke.egg_groups.map((element) => strTitleCase(element.name)).join(', ');
           eggs = eggs.replace(/,([^,]*)$/,' &$1'); // last comma for and
           let hatch_after = (poke.hatch_counter+1)*255;
