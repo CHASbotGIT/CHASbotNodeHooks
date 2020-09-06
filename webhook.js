@@ -4006,9 +4006,7 @@ function strBar(top,target,on,off) {
   return bar;
 }
 
-//356
 function lookupPokemon(eventPoke,pokemonID){
-
   var pokeDigits = pokemonID.replace(/\D/g,'');
   var pokeLetters = pokemonID.replace(/[^a-zA-Z-]/g,'');
   var pokeInt = parseInt(pokeDigits);
@@ -4027,46 +4025,34 @@ function lookupPokemon(eventPoke,pokemonID){
       pokemonID = '' + numRandomBetween(1,POKE_CEILING); // int out of range > query random
     }; // if (pokeInt > 0
   }; // if (pokemonID
-
   // check the array first - find a match then api not necessary
   // ***********************************************************
-
   //mime-jr 439; ho-oh 250; porygon2 233; porygon-z 474; nidoran-f 29; nidoran-m 32; jangmo-o 782
   //hakamo-o 783; kommo-o 784; tapu-koko 785; tapu-lele 786; tapu-bulu 787; tapu-fini 788
-
   let apiURL = URL_API_POKEMON + pokemonID + "/";
-
   apiPOKEMONcb(apiURL, function(){
-
     // check not empty
     var pokeNew = pokeDex.length - 1; // check empty?
     // NEWEST ONE
-
     var checkID = pokeDex[pokeNew]['ID'] + '';
     if (pokemonID == checkID || pokemonID == pokeDex[pokeNew]['Name']) {
       console.log('%%%%%%%%%%%%%%%%%%%%% Match: TRUE');
-
       // check the array first - find a match then api not necessary
       // ***********************************************************
-
       apiPOKEMONcb(pokeDex[pokeNew]['Species URL'], function(){
         // CHECK VALID?
         var speciesNew = pokeSpecies.length - 1; // check empty?
         // NEWEST ONE
-
         apiPOKEMONcb(pokeSpecies[speciesNew]['Evolution URL'], function(){
           // CHECK VALID?
           var evoNew = pokeEvolution.length - 1; // check empty?
           // NEWEST ONE
             console.log(pokeEvolution[evoNew]["Evolution Narrative"]);
-
-
         }); // apiPOKEMONcb(pokeSpecies[speciesNew]
       }); // apiPOKEMONcb(pokeDex[pokeNew]
     } else {
-      console.log('%%%%%%%%%%%%%%%%%%%%% Match: FALSE');
+      console.log('%%%%%%%%%%%%%%%%%%%%% Match: FALSE'); // TO DO
     };
-
     let ceiling = Math.max(
       pokeDex[pokeNew]['Speed'],
       pokeDex[pokeNew]['Defence'],
@@ -4098,7 +4084,7 @@ function lookupPokemon(eventPoke,pokemonID){
     if (colType1 == colType2) { colType2 = pokeType[0] };
     if (colType1 == colType2) { colType2 = pokeType[1] };
     var base_stats =
-      strTitleCase(pokeDex[pokeNew]['Name']) + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + ' [' + intPad(pokeDex[pokeNew]['Total'],3) + ']\n\n' +
+      strTitleCase(pokeDex[pokeNew]['Name']) + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + ' [Stats Total: ' + intPad(pokeDex[pokeNew]['Total'],3) + ']\n\n' +
       pokeType1 + ' ' + pokeType2 + ' ⚖️ ' + pokeDex[pokeNew]['Weight'] + ' 📊 ' + pokeDex[pokeNew]['Height'] + '\n\n' +
       strBar(ceiling,pokeDex[pokeNew]['HP'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['HP'],3) + '] \t❤️ HP\n' +
       strBar(ceiling,pokeDex[pokeNew]['Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Attack'],3) + '] \t⚔️ Attack\n' +
@@ -4108,6 +4094,7 @@ function lookupPokemon(eventPoke,pokemonID){
       strBar(ceiling,pokeDex[pokeNew]['Speed'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Speed'],3) + '] \t💨 Speed\n\n'; //+
       //'(ℹ️ Info) (📶 Evolution) (◀️ Previous) (▶️ Next) (🔢 Random)';
     postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
+    // Moves *may* need split over multiple messages
   });
 }
 
@@ -4120,9 +4107,7 @@ function apiPOKEMONcb(apiCall,callback) {
     res.on('data', function (chunk) { body += chunk });
     res.on('end', function() {
       if (body == 'Not Found') {
-
-        console.log('^^^^^^^^^^^^^^^^^^^^ DUD');
-
+        console.log('^^^^^^^^^^^^^^^^^^^^ DUD'); // TO DO
         callback();
       } else {
         if (apiCall.includes('evolution')) {
@@ -4302,8 +4287,10 @@ function apiPOKEMONcb(apiCall,callback) {
           let poke = JSON.parse(body);
           let eggs = poke.egg_groups.map((element) => strTitleCase(element.name)).join(', ');
           eggs = eggs.replace(/,([^,]*)$/, ' &$1'); // last comma for and
-          let hatch_after = (poke.hatch_counter+1)*255
-          let hatch_steps = hatch_after + ' Steps'
+          let hatch_after = (poke.hatch_counter+1)*255;
+          let habitat = "No Habitat";
+          if (poke.habitat.name != null) { habitat = poke.habitat.name };
+          let hatch_steps = hatch_after + ' Steps';
           let female_eighth = poke.gender_rate; // in 1/8th female proportion i.e. 2=25% female
           let gender = '';
           if (female_eighth == -1) {
@@ -4321,7 +4308,7 @@ function apiPOKEMONcb(apiCall,callback) {
             "Colour": poke.color.name,
             "Shape": poke.shape.name,
             "Growth Rate": poke.growth_rate.name,
-            "Habitat": poke.habitat.name,
+            "Habitat": habitat,
             "Base Happiness": poke.base_happiness,
             "Capture Rate": poke.capture_rate,
             "Evolution URL": poke.evolution_chain.url
