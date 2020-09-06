@@ -4288,6 +4288,7 @@ function apiPOKEMONcb(apiCall,callback) {
           let poke = JSON.parse(body);
           let description = 'No description'
           let flavCount = poke.flavor_text_entries.length;
+          let flavLoop = 0;
           for (flavLoop = 0; flavLoop < flavCount; flavLoop++) {
             let flavEntry = poke.flavor_text_entries[flavLoop];
             if (flavEntry.language.name == 'en' && flavEntry.version.name == 'red') {
