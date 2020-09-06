@@ -4326,7 +4326,8 @@ function apiPOKEMONcb(apiCall,callback) {
             "Capture Rate": poke.capture_rate,
             "Evolution URL": poke.evolution_chain.url
           }); // pokeSpecies.push
-          console.log("DEBUG [apiPOKEMONcb]> Species: \n" + pokeSpecies[pokeSpecies.length - 1]);
+          console.log("DEBUG [apiPOKEMONcb]> Species: \n");
+          console.table(pokeSpecies[pokeSpecies.length - 1])
           callback();
         } else { // pokemon URL
           let poke = JSON.parse(body);
@@ -4356,7 +4357,8 @@ function apiPOKEMONcb(apiCall,callback) {
             "Abilities": abilities,
             "Moves": moves
           }); // pokeDex.push
-          console.log("DEBUG [apiPOKEMONcb]> Pokemon: \n" + pokeDex[pokeDex.length - 1]);
+          console.log("DEBUG [apiPOKEMONcb]> Pokemon: \n");
+          console.table(pokeDex[pokeDex.length - 1]);
           callback();
         }; // else { // pokemon URL
       }; // if (body == 'Not Found')
