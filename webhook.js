@@ -29,7 +29,7 @@ const KEY_ADMIN_TRIGGER = process.env.KEY_ADMIN_TRIGGER;
 const KEY_MARVEL_PRIVATE = process.env.KEY_MARVEL_PRIVATE;
 const GOOGLE_CLIENT_EMAIL = process.env.GOOGLE_CLIENT_EMAIL;
 const GOOGLE_PRIVATE_KEY_ORIG = process.env.GOOGLE_PRIVATE_KEY;
-const GOOGLE_PRIVATE_KEY = GOOGLE_PRIVATE_KEY_ORIG.replace(/\\n/g, '\n');
+const GOOGLE_PRIVATE_KEY = GOOGLE_PRIVATE_KEY_ORIG(/\\n/g, '\n');
 
 // Set-up dependencies for app x-ref tp package.json
 const pg = require('pg'); // https://www.npmjs.com/package/pg
@@ -4303,7 +4303,7 @@ function apiPOKEMONcb(apiCall,callback) {
               description = flavEntry.flavor_text;
             }; // if
           }; // for (flavLoop
-          description = description.replace([\n\f],' ');
+          description = description.replace(/\\n\\f/g,' ');
           let eggs = poke.egg_groups.map((element) => strTitleCase(element.name)).join(', ');
           eggs = eggs.replace(/,([^,]*)$/,' &$1'); // last comma for and
           let hatch_after = (poke.hatch_counter+1)*255;
