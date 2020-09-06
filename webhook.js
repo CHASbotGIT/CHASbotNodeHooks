@@ -4114,7 +4114,7 @@ function lookupPokemon(eventPoke,pokemonID){
 // evo test cases 312, 67, 362, 116, 41, 268, 47
 function apiPOKEMONcb(apiCall,callback) {
   // API Reference @ https://pokeapi.co
-  console.log("API Request [POKE]: " + poke_url);
+  console.log("API Request [POKE]: " + apiCall);
   var req = http.get(poke_url, function(res) {
     let body = "";
     res.on('data', function (chunk) { body += chunk });
