@@ -4094,12 +4094,12 @@ function lookupPokemon(eventPoke,pokemonID){
               strBar(ceiling,pokeDex[pokeNew]['Speed'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Speed'],3) + '] \t💨 Speed\n\n' +
               '[Stats Total: ' + intPad(pokeDex[pokeNew]['Total'],3) + ']\n\n' +
               pokeSpecies[speciesNew]['Description'] + '\n' +
-              'Abilities' + pokeDex[pokeNew]['Abilities'] + '\n' +
-              '🌈 ' + strTitleCase(pokeSpecies[speciesNew]['Colour']) + ' Form: ' + strTitleCase(pokeSpecies[speciesNew]['Shape']) + '\n' +
-              '☺️ Base Happiness: ' + pokeSpecies[speciesNew]['Base Happiness'] + ' Base XP: ' + pokeDex[pokeNew]['Base Experience'] + '\n' +
-              '🥚 Groups: ' + pokeSpecies[speciesNew]['Egg Groups'] + ' Steps to Hatch: ' + pokeSpecies[speciesNew]['Steps to Hatch'] + '\n' +
-              '📈 Growth Rate: ' + strTitleCase(pokeSpecies[speciesNew]['Growth Rate']) + ' Gender Mix: ' + pokeSpecies[speciesNew]['Gender Distribution'] + '\n' +
-              '🕸️ Capture (0/Difficult to 255/Easy): ' + pokeSpecies[speciesNew]['Capture Rate'] + ' Habitat: ' + strTitleCase(pokeSpecies[speciesNew]['Habitat']);
+              'Abilities: ' + pokeDex[pokeNew]['Abilities'] + '\n' +
+              '🌈 Colour: ' + strTitleCase(pokeSpecies[speciesNew]['Colour']) + ' 🧬 Form: ' + strTitleCase(pokeSpecies[speciesNew]['Shape']) + '\n' +
+              '☺️ Base Happiness: ' + pokeSpecies[speciesNew]['Base Happiness'] + ' 🌡️ Base XP: ' + pokeDex[pokeNew]['Base Experience'] + '\n' +
+              '🥚 Groups: ' + pokeSpecies[speciesNew]['Egg Groups'] + ' 👣 Steps to Hatch: ' + pokeSpecies[speciesNew]['Steps to Hatch'] + '\n' +
+              '📈 Growth Rate: ' + strTitleCase(pokeSpecies[speciesNew]['Growth Rate']) + ' 🚻 Gender Mix: ' + pokeSpecies[speciesNew]['Gender Distribution'] + '\n' +
+              '🔒️ Capture (0/Difficult to 255/Easy): ' + pokeSpecies[speciesNew]['Capture Rate'] + ' 🏔️ Habitat: ' + strTitleCase(pokeSpecies[speciesNew]['Habitat']);
               //'(ℹ️ Info) (📶 Evolution) (◀️ Previous) (▶️ Next) (🔢 Random)';
             postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
             // Moves *may* need split over multiple messages
