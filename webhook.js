@@ -4093,7 +4093,13 @@ function lookupPokemon(eventPoke,pokemonID){
               strBar(ceiling,pokeDex[pokeNew]['Sp. Defence'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Defence'],3) + '] \t🛡️ Sp. Defence\n' +
               strBar(ceiling,pokeDex[pokeNew]['Speed'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Speed'],3) + '] \t💨 Speed\n\n' +
               '[Stats Total: ' + intPad(pokeDex[pokeNew]['Total'],3) + ']\n\n' +
-              pokeSpecies[speciesNew]['Description'];
+              pokeSpecies[speciesNew]['Description'] + '\n' +
+              'Abilities' + pokeDex[pokeNew]['Abilities'] + '\n' +
+              '🌈 ' + strTitleCase(pokeSpecies[speciesNew]['Colour']) + ' Form: ' + strTitleCase(pokeSpecies[speciesNew]['Shape']) + '\n' +
+              '☺️ Base Happiness: ' + pokeSpecies[speciesNew]['Base Happiness'] + ' Base XP: ' + pokeDex[pokeNew]['Base Experience'] + '\n' +
+              '🥚 Groups: ' + pokeSpecies[speciesNew]['Egg Groups'] + ' Steps to Hatch: ' + pokeSpecies[speciesNew]['Steps to Hatch'] + '\n' +
+              '📈 Growth Rate: ' + strTitleCase(pokeSpecies[speciesNew]['Growth Rate']) + ' Gender Mix: ' + pokeSpecies[speciesNew]['Gender Distribution'] + '\n' +
+              '🕸️ Capture (0/Difficult to 255/Easy): ' + pokeSpecies[speciesNew]['Capture Rate'] + ' Habitat: ' + strTitleCase(pokeSpecies[speciesNew]['Habitat']);
               //'(ℹ️ Info) (📶 Evolution) (◀️ Previous) (▶️ Next) (🔢 Random)';
             postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
             // Moves *may* need split over multiple messages
@@ -4267,22 +4273,15 @@ function apiPOKEMONcb(apiCall,callback) {
                 pokePrevious = evoChain[evoLoop]['Species'];
               } else if (evoChain[evoLoop]['Root'] == '*'  && evoLoop != (evoChainCnt - 1)) { // 1
                 evoSequence = evoSequence + pokePrevious + ' ➡️ ';
-                // Poliwag >
                 pokePrevious = evoChain[evoLoop]['Species'];
                 evoSequence = evoSequence + pokePrevious + ' 📶 ' + evoChain[evoLoop]['Evolution'] + '\n';
-                // Poliwag > Poliwhirl [Level Up with Level 25+]
-                //
               } else if (evoChain[evoLoop]['Root'] != '*') { // 2
                 evoSequence = evoSequence + pokePrevious + ' ➡️ ';
                 evoSequence = evoSequence + evoChain[evoLoop]['Species'] + ' 📶 ' + evoChain[evoLoop]['Evolution'] + '\n';
 
               } else if (evoChain[evoLoop]['Root'] == '*') { // Final evolution 3
                 evoSequence = evoSequence + pokePrevious + ' ➡️ ';
-                // Poliwag > Poliwhirl [Level Up with Level 25+]
-                // Poliwhirl >
                 evoSequence = evoSequence + evoChain[evoLoop]['Species'] + ' 📶 ' + evoChain[evoLoop]['Evolution'];
-                // Poliwag > Poliwhirl [Level Up with Level 25+]
-                // Poliwhirl > Poliwrath [Use Item Water Stone]
               };
             }; // for (evoLoop = 0
           }; // if (evoChainCnt == 0)
@@ -4305,7 +4304,7 @@ function apiPOKEMONcb(apiCall,callback) {
           }; // for (flavLoop
           description = strReplaceAll(description,'\n',' ');
           description = strReplaceAll(description,'\f',' ');
-          description = description.replace(/^((\S+\s+){7}\S+)\s+/, '$1\n');
+          //description = description.replace(/^((\S+\s+){7}\S+)\s+/, '$1\n'); // New line after 7 spaces
           let eggs = poke.egg_groups.map((element) => strTitleCase(element.name)).join(', ');
           eggs = eggs.replace(/,([^,]*)$/,' &$1'); // last comma for and
           let hatch_after = (poke.hatch_counter+1)*255;
