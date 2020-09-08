@@ -3958,9 +3958,7 @@ function playTopTrumps(eventTT,playTT){
 
 const URL_API_POKEMON = "https://pokeapi.co/api/v2/pokemon/";
 const POKE_CEILING = 893;
-var TRIGGER_DEV = 'poke'; // = pokemon number/name
-
-// DEV
+var TRIGGER_DEV = 'pokedex'; // = pokemon number/name
 
 let pokeEvoDetails = ['held_item','item','known_move','known_move_type','location','min_affection',
   'min_beauty','min_happiness','min_level','needs_overworld_rain','party_species','party_type',
@@ -4006,14 +4004,30 @@ function strBar(top,target,on,off) {
   return bar;
 }
 
+function catchEmAll(pokemonID) {
+  let catchEm = -1;
+  let catchEmLoop = 0;
+  for (catchEmLoop = 0; catchEmLoop < pokeDex.length; catchEmLoop++) {
+    var checkID = pokeDex[catchEmLoop]['ID'] + '';
+    if (pokemonID == checkID || pokemonID == pokeDex[catchEmLoop]['Name']) {
+      catchEm = catchEmLoop;
+      break;
+    };
+  };
+  return catchEm;
+}
+
 function lookupPokemon(eventPoke,pokemonID){
   var pokeDigits = pokemonID.replace(/\D/g,'');
   var pokeLetters = pokemonID.replace(/[^a-zA-Z-]/g,'');
   var pokeInt = parseInt(pokeDigits);
+  let randomPoke = false;
+  let nestAPI = 0;
   if (pokemonID == 'porygon2') {
     // exception
   } else if (isNaN(pokeInt) && pokeLetters == '') { // neither int nor str > random
     pokemonID = '' + numRandomBetween(1,POKE_CEILING);
+    randomPoke = true;
   } else if (!isNaN(pokeInt) && pokeLetters != ''){ // both int and str > query str
     pokemonID = pokeLetters;
   } else if (pokeLetters != ''){ // str > query str
@@ -4023,39 +4037,38 @@ function lookupPokemon(eventPoke,pokemonID){
       pokemonID = '' + pokeInt
     } else {
       pokemonID = '' + numRandomBetween(1,POKE_CEILING); // int out of range > query random
+      randomPoke = true;
     }; // if (pokeInt > 0
   }; // if (pokemonID
-  // check the array first - find a match then api not necessary
-  // ***********************************************************
-  //mime-jr 439; ho-oh 250; porygon2 233; porygon-z 474; nidoran-f 29; nidoran-m 32; jangmo-o 782
-  //hakamo-o 783; kommo-o 784; tapu-koko 785; tapu-lele 786; tapu-bulu 787; tapu-fini 788
-  let apiURL = URL_API_POKEMON + pokemonID + "/";
-  apiPOKEMONcb(apiURL, function(){
-    // check not empty
-    var pokeNew = pokeDex.length - 1; // check empty?
-    // NEWEST ONE
-    var checkID = pokeDex[pokeNew]['ID'] + '';
-    if (pokemonID == checkID || pokemonID == pokeDex[pokeNew]['Name']) {
-      console.log('%%%%%%%%%%%%%%%%%%%%% Match: TRUE');
-      // check the array first - find a match then api not necessary
-      // ***********************************************************
-      apiPOKEMONcb(pokeDex[pokeNew]['Species URL'], function(){
-        // CHECK VALID?
-        var speciesNew = pokeSpecies.length - 1; // check empty?
-        // NEWEST ONE
-        apiPOKEMONcb(pokeSpecies[speciesNew]['Evolution URL'], function(){
-          // CHECK VALID?
-          var evoNew = pokeEvolution.length - 1; // check empty?
-          // NEWEST ONE
-            console.log(pokeEvolution[evoNew]["Evolution Narrative"]);
+  let catchEm = -1;
 
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ',catchEmAll(pokemonID));
+
+  if (catchEmAll(pokemonID) == -1) { // Not in pokedex - search API
+    let apiURL = URL_API_POKEMON + pokemonID + "/";
+    apiPOKEMONcb(apiURL, function(){
+      // First API call should have returned *Pokemon* information
+      catchEm = catchEmAll(pokemonID);
+      if (catchEm != -1) {
+        apiPOKEMONcb(pokeDex[catchEm]['Species URL'], function(){
+          // Second API should have returned *Species* information
+          let idSpecies = -1;
+          let matchLoop = 0;
+          for (matchLoop = 0; matchLoop < pokeSpecies.length; matchLoop++) {
+            if (pokeSpecies[matchLoop]['Species URL'] == pokeDex[catchEm]['Species URL']){
+              idSpecies = matchLoop;
+              break
+            };
+          };
+          if (idSpecies != -1) {
+            // Pokemon and Species Information are ALIGNED
             let ceiling = Math.max(
-              pokeDex[pokeNew]['Speed'],
-              pokeDex[pokeNew]['Defence'],
-              pokeDex[pokeNew]['Attack'],
-              pokeDex[pokeNew]['Sp. Defence'],
-              pokeDex[pokeNew]['Sp. Attack'],
-              pokeDex[pokeNew]['HP']
+              pokeDex[catchEm]['Speed'],
+              pokeDex[catchEm]['Defence'],
+              pokeDex[catchEm]['Attack'],
+              pokeDex[catchEm]['Sp. Defence'],
+              pokeDex[catchEm]['Sp. Attack'],
+              pokeDex[catchEm]['HP']
             );
             let pokeType1 = '';
             let pokeType2 = '';
@@ -4064,10 +4077,10 @@ function lookupPokemon(eventPoke,pokemonID){
             let typeLoop = 0;
             for (typeLoop = 2; typeLoop < pokeType.length; typeLoop++) {
               var cleanType = strStandardise(pokeType[typeLoop]);
-              var cleanTarget = strStandardise(pokeDex[pokeNew]['Type(s)']);
-              var spam = cleanType[0];
-              var eggs = cleanTarget[0];
-              if (cleanTarget[0].includes(spam) && cleanType[0] != '') {
+              var cleanTarget = strStandardise(pokeDex[catchEm]['Type(s)']);
+              //var spam = cleanType[0];
+              //var eggs = cleanTarget[0];
+              if (cleanTarget[0].includes(cleanType[0]) && cleanType[0] != '') {
                 if (pokeType1 == '') {
                   pokeType1 = pokeType[typeLoop];
                   colType1 = pokeType[typeLoop+1];
@@ -4079,40 +4092,97 @@ function lookupPokemon(eventPoke,pokemonID){
             }; // for (typeLoop
             if (colType1 == colType2) { colType2 = pokeType[0] };
             if (colType1 == colType2) { colType2 = pokeType[1] };
-
-            var speciesNew = pokeSpecies.length - 1; // check empty?
-
-            var base_stats =
-              strTitleCase(pokeDex[pokeNew]['Name']) + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + '\n\n' +
-              pokeType1 + ' ' + pokeType2 + ' ⚖️ ' + pokeDex[pokeNew]['Weight'] + ' 📊 ' + pokeDex[pokeNew]['Height'] + '\n\n' +
-              strBar(ceiling,pokeDex[pokeNew]['HP'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['HP'],3) + '] \t❤️ HP\n' +
-              strBar(ceiling,pokeDex[pokeNew]['Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Attack'],3) + '] \t⚔️ Attack\n' +
-              strBar(ceiling,pokeDex[pokeNew]['Defence'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Defence'],3) + '] \t🛡️ Defence\n' +
-              strBar(ceiling,pokeDex[pokeNew]['Sp. Attack'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Attack'],3) + '] \t⚔️ Sp. Attack\n' +
-              strBar(ceiling,pokeDex[pokeNew]['Sp. Defence'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Sp. Defence'],3) + '] \t🛡️ Sp. Defence\n' +
-              strBar(ceiling,pokeDex[pokeNew]['Speed'],colType1,colType2) + ': [' + intPad(pokeDex[pokeNew]['Speed'],3) + '] \t💨 Speed\n\n' +
-              '[Stats Total: ' + intPad(pokeDex[pokeNew]['Total'],3) + ']\n\n' +
-              pokeSpecies[speciesNew]['Description'] + '\n' +
-              'Abilities: ' + pokeDex[pokeNew]['Abilities'] + '\n' +
-              '🌈 Colour: ' + strTitleCase(pokeSpecies[speciesNew]['Colour']) + ' 🧬 Form: ' + strTitleCase(pokeSpecies[speciesNew]['Shape']) + '\n' +
-              '☺️ Base Happiness: ' + pokeSpecies[speciesNew]['Base Happiness'] + ' 🌡️ Base XP: ' + pokeDex[pokeNew]['Base Experience'] + '\n' +
-              '🥚 Egg Groups: ' + pokeSpecies[speciesNew]['Egg Groups'] + '\n' +
-              '👣 Steps to Hatch: ' + pokeSpecies[speciesNew]['Steps to Hatch'] + '\n' +
-              '📈 Growth Rate: ' + strTitleCase(pokeSpecies[speciesNew]['Growth Rate']) + '\n' +
-              '🚻 Gender Mix: ' + pokeSpecies[speciesNew]['Gender Distribution'] + '\n' +
-              '🏔️ Habitat: ' + strTitleCase(pokeSpecies[speciesNew]['Habitat']) + '\n' +
-              '🔒️ Capture (0/Difficult to 255/Easy): ' + pokeSpecies[speciesNew]['Capture Rate'];
-              //'(ℹ️ Info) (📶 Evolution) (◀️ Previous) (▶️ Next) (🔢 Random)';
-            postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
-            // Moves *may* need split over multiple messages
-
-
-        }); // apiPOKEMONcb(pokeSpecies[speciesNew]
-      }); // apiPOKEMONcb(pokeDex[pokeNew]
-    } else {
-      console.log('%%%%%%%%%%%%%%%%%%%%% Match: FALSE'); // TO DO
-    }; // else
-  }); // apiPOKEMONcb(apiURL
+            pokeDex[catchEm]['Stats'] =
+              strTitleCase(pokeDex[catchEm]['Name']) + ' ID: ' + intEmoji(pokeDex[catchEm]['ID']) + '\n\n' +
+              pokeType1 + ' ' + pokeType2 + ' ⚖️ ' + pokeDex[catchEm]['Weight'] + ' 📊 ' + pokeDex[catchEm]['Height'] + '\n\n' +
+              strBar(ceiling,pokeDex[catchEm]['HP'],colType1,colType2) + ': [' + intPad(pokeDex[catchEm]['HP'],3) + '] \t❤️ HP\n' +
+              strBar(ceiling,pokeDex[catchEm]['Attack'],colType1,colType2) + ': [' + intPad(pokeDex[catchEm]['Attack'],3) + '] \t⚔️ Attack\n' +
+              strBar(ceiling,pokeDex[catchEm]['Defence'],colType1,colType2) + ': [' + intPad(pokeDex[catchEm]['Defence'],3) + '] \t🛡️ Defence\n' +
+              strBar(ceiling,pokeDex[catchEm]['Sp. Attack'],colType1,colType2) + ': [' + intPad(pokeDex[catchEm]['Sp. Attack'],3) + '] \t⚔️ Sp. Attack\n' +
+              strBar(ceiling,pokeDex[catchEm]['Sp. Defence'],colType1,colType2) + ': [' + intPad(pokeDex[catchEm]['Sp. Defence'],3) + '] \t🛡️ Sp. Defence\n' +
+              strBar(ceiling,pokeDex[catchEm]['Speed'],colType1,colType2) + ': [' + intPad(pokeDex[catchEm]['Speed'],3) + '] \t💨 Speed\n\n' +
+              '[Stats Total: ' + intPad(pokeDex[catchEm]['Total'],3) + ']';
+            pokeDex[catchEm]['Species Info'] =
+              pokeSpecies[idSpecies]['Description'] + '\n' +
+              'Abilities: ' + pokeDex[catchEm]['Abilities'] + '\n' +
+              '🌈 Colour: ' + strTitleCase(pokeSpecies[idSpecies]['Colour']) + ' 🧬 Form: ' + strTitleCase(pokeSpecies[idSpecies]['Shape']) + '\n' +
+              '☺️ Base Happiness: ' + pokeSpecies[idSpecies]['Base Happiness'] + ' 🌡️ Base XP: ' + pokeDex[catchEm]['Base Experience'] + '\n' +
+              '🥚 Egg Groups: ' + pokeSpecies[idSpecies]['Egg Groups'] + '\n' +
+              '👣 Steps to Hatch: ' + pokeSpecies[idSpecies]['Steps to Hatch'] + '\n' +
+              '📈 Growth Rate: ' + strTitleCase(pokeSpecies[idSpecies]['Growth Rate']) + '\n' +
+              '🚻 Gender Mix: ' + pokeSpecies[idSpecies]['Gender Distribution'] + '\n' +
+              '🏔️ Habitat: ' + strTitleCase(pokeSpecies[idSpecies]['Habitat']) + '\n' +
+              '🔒️ Capture (0/Difficult to 255/Easy): ' + pokeSpecies[idSpecies]['Capture Rate'];
+            // may
+            let idEvo = -1;
+            let matchLoop = 0;
+            for (matchLoop = 0; matchLoop < pokeEvolution.length; matchLoop++) {
+              if (pokeEvolution[matchLoop]["Evolution Narrative"] == pokeSpecies[idSpecies]['Evolution URL']){
+                idEvo = matchLoop;
+                break;
+              };
+            };
+            if (idEvo != -1) { // Already have evolution - covers more than one Pokemon/Species
+              pokeDex[catchEm]['Evolution Narrative'] = pokeEvolution[idEvo]["Evolution Narrative"];
+              console.log("DEBUG [lookupPokemon]> Retrieved from PokeDex with 2x API call stack");
+              console.log("DEBUG [lookupPokemon]> Image URL:\n" + pokeDex[catchEm]['Sprite']);
+              console.log("DEBUG [lookupPokemon]> Stats:\n" + pokeDex[catchEm]['Stats']);
+              console.log("DEBUG [lookupPokemon]> Moves:\n" + pokeDex[catchEm]['Moves']);
+              console.log("DEBUG [lookupPokemon]> Species:\n" + pokeDex[catchEm]['Species Info']);
+              console.log("DEBUG [lookupPokemon]> Evolution:\n" + pokeDex[catchEm]['Evolution Narrative']);
+              // NOW PULL TRIGGER
+              // NB Random
+              return;
+            } else { // Third API call to create evolution text
+              apiPOKEMONcb(pokeSpecies[idSpecies]['Evolution URL'], function(){
+                matchLoop = 0;
+                for (matchLoop = 0; matchLoop < pokeEvolution.length; matchLoop++) {
+                  if (pokeEvolution[matchLoop]["Evolution Narrative"] == pokeSpecies[idSpecies]['Evolution URL']){
+                    idEvo = matchLoop;
+                    break;
+                  };
+                };
+                if (idEvo != -1) {
+                  pokeDex[catchEm]['Evolution Narrative'] = pokeEvolution[idEvo]["Evolution Narrative"];
+                  console.log("DEBUG [lookupPokemon]> Retrieved from PokeDex with 3x API call stack");
+                  console.log("DEBUG [lookupPokemon]> Image URL:\n" + pokeDex[catchEm]['Sprite']);
+                  console.log("DEBUG [lookupPokemon]> Stats:\n" + pokeDex[catchEm]['Stats']);
+                  console.log("DEBUG [lookupPokemon]> Moves:\n" + pokeDex[catchEm]['Moves']);
+                  console.log("DEBUG [lookupPokemon]> Species:\n" + pokeDex[catchEm]['Species Info']);
+                  console.log("DEBUG [lookupPokemon]> Evolution:\n" + pokeDex[catchEm]['Evolution Narrative']);
+                  // NOW PULL TRIGGER
+                  // NB Random
+                  // postImage(eventPoke,pokeDex[catchEm]['Sprite'],true,base_stats);
+                  return;
+                } else {
+                  nestAPI = 3; // Third API call unsuccessful
+                  pokeDex.splice(catchEm,1); // Clean out first API result from Pokedex
+                  pokeSpecies.splice(idSpecies,1); // Clean out second API result from Species
+                }; // if (idEvo != -1)... with API
+              }); // apiPOKEMONcb(pokeSpecies[idSpecies]
+            }; // if (idEvo != -1)... without API
+          } else {
+            nestAPI = 2; // Second API call unsuccessful
+            pokeDex.splice(catchEm,1); // Clean out first API result from Pokedex
+          }; // else
+        }); // apiPOKEMONcb(pokeDex[catchEm]
+      } else {
+        nestAPI = 1; // first API call unsuccessful
+      }; // else
+    }); // apiPOKEMONcb(apiURL
+    // Failed one of the APIs
+    // SOZ
+    console.log("ERROR [lookupPokemon]> No POKeMON found: " + pokemonID + ' [API sequence failed at step ' + nestAPI + ']');
+  } else { // if (catchEmAll(pokemonID) == -1)
+    // NOW PULL TRIGGER
+    // NB Random
+    console.log("DEBUG [lookupPokemon]> Retrieved from PokeDex without API calls");
+    console.log("DEBUG [lookupPokemon]> Image URL:\n" + pokeDex[catchEm]['Sprite']);
+    console.log("DEBUG [lookupPokemon]> Stats:\n" + pokeDex[catchEm]['Stats']);
+    console.log("DEBUG [lookupPokemon]> Moves:\n" + pokeDex[catchEm]['Moves']);
+    console.log("DEBUG [lookupPokemon]> Species:\n" + pokeDex[catchEm]['Species Info']);
+    console.log("DEBUG [lookupPokemon]> Evolution:\n" + pokeDex[catchEm]['Evolution Narrative']);
+  };
 }
 
 // evo test cases 312, 67, 362, 116, 41, 268, 47
@@ -4365,7 +4435,10 @@ function apiPOKEMONcb(apiCall,callback) {
             "Base Experience": poke.base_experience,
             "Type(s)": types,
             "Abilities": abilities,
-            "Moves": moves
+            "Moves": moves,
+            "Stats": '',
+            "Species Info": '',
+            "Evolution Narrative": ''
           }); // pokeDex.push
           console.log("DEBUG [apiPOKEMONcb]> Pokemon: \n");
           console.table(pokeDex[pokeDex.length - 1]);
@@ -4379,24 +4452,3 @@ function apiPOKEMONcb(apiCall,callback) {
     callback();
   }); // req.on('error'
 }
-
-// pokedex <name>
-// find <name>
-// pokedex null or !match then random
-
-// look through stored first...
-// evlaluate whether int, string or null
-// if null then random
-
-// not found in store then fire API
-// if name not a match then pick random
-
-// in_play function...
-// store last pokemon loaded per person
-
-// [ℹ️ Info] [📶 Evolution] [◀️ Previous] [▶️ Next] [🔢 Random]
-// Details = Description & Abilities
-// Evolution = Evolution sequences
-
-// lookup and store
-// name/id - character THEN species THEN evolution
