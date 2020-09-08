@@ -4081,7 +4081,6 @@ function lookupPokemon(eventPoke,pokemonID){
             if (colType1 == colType2) { colType2 = pokeType[1] };
 
             var speciesNew = pokeSpecies.length - 1; // check empty?
-            console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ',speciesNew)
 
             var base_stats =
               strTitleCase(pokeDex[pokeNew]['Name']) + ' ID: ' + intEmoji(pokeDex[pokeNew]['ID']) + '\n\n' +
@@ -4097,9 +4096,12 @@ function lookupPokemon(eventPoke,pokemonID){
               'Abilities: ' + pokeDex[pokeNew]['Abilities'] + '\n' +
               '🌈 Colour: ' + strTitleCase(pokeSpecies[speciesNew]['Colour']) + ' 🧬 Form: ' + strTitleCase(pokeSpecies[speciesNew]['Shape']) + '\n' +
               '☺️ Base Happiness: ' + pokeSpecies[speciesNew]['Base Happiness'] + ' 🌡️ Base XP: ' + pokeDex[pokeNew]['Base Experience'] + '\n' +
-              '🥚 Groups: ' + pokeSpecies[speciesNew]['Egg Groups'] + ' 👣 Steps to Hatch: ' + pokeSpecies[speciesNew]['Steps to Hatch'] + '\n' +
-              '📈 Growth Rate: ' + strTitleCase(pokeSpecies[speciesNew]['Growth Rate']) + ' 🚻 Gender Mix: ' + pokeSpecies[speciesNew]['Gender Distribution'] + '\n' +
-              '🔒️ Capture (0/Difficult to 255/Easy): ' + pokeSpecies[speciesNew]['Capture Rate'] + ' 🏔️ Habitat: ' + strTitleCase(pokeSpecies[speciesNew]['Habitat']);
+              '🥚 Egg Groups: ' + pokeSpecies[speciesNew]['Egg Groups'] + '\n' +
+              '👣 Steps to Hatch: ' + pokeSpecies[speciesNew]['Steps to Hatch'] + '\n' +
+              '📈 Growth Rate: ' + strTitleCase(pokeSpecies[speciesNew]['Growth Rate']) + '\n' +
+              '🚻 Gender Mix: ' + pokeSpecies[speciesNew]['Gender Distribution'] + '\n' +
+              '🏔️ Habitat: ' + strTitleCase(pokeSpecies[speciesNew]['Habitat']) + '\n' +
+              '🔒️ Capture (0/Difficult to 255/Easy): ' + pokeSpecies[speciesNew]['Capture Rate'];
               //'(ℹ️ Info) (📶 Evolution) (◀️ Previous) (▶️ Next) (🔢 Random)';
             postImage(eventPoke,pokeDex[pokeNew]['Sprite'],true,base_stats);
             // Moves *may* need split over multiple messages
