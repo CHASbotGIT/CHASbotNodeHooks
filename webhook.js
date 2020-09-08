@@ -4007,9 +4007,20 @@ function strBar(top,target,on,off) {
 function catchEmAll(pokemonID) {
   let catchEm = -1;
   let catchEmLoop = 0;
+
+console.log('============================ Length:',pokeDex.length)
+
   for (catchEmLoop = 0; catchEmLoop < pokeDex.length; catchEmLoop++) {
     var checkID = pokeDex[catchEmLoop]['ID'] + '';
+
+console.log('============================ pokemonID>',pokemonID,'<')
+console.log('============================ ID>',checkID,'<')
+console.log('============================ Name>',pokeDex[catchEmLoop]['Name'],'<')
+
     if (pokemonID == checkID || pokemonID == pokeDex[catchEmLoop]['Name']) {
+
+console.log('============================ Loop:',catchEmLoop)
+
       catchEm = catchEmLoop;
       break;
     };
@@ -4113,7 +4124,6 @@ function lookupPokemon(eventPoke,pokemonID){
               '🚻 Gender Mix: ' + pokeSpecies[idSpecies]['Gender Distribution'] + '\n' +
               '🏔️ Habitat: ' + strTitleCase(pokeSpecies[idSpecies]['Habitat']) + '\n' +
               '🔒️ Capture (0/Difficult to 255/Easy): ' + pokeSpecies[idSpecies]['Capture Rate'];
-            // may
             let idEvo = -1;
             let matchLoop = 0;
             for (matchLoop = 0; matchLoop < pokeEvolution.length; matchLoop++) {
