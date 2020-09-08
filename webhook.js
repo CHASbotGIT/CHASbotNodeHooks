@@ -4147,7 +4147,7 @@ function lookupPokemon(eventPoke,pokemonID){
               apiPOKEMONcb(pokeSpecies[idSpecies]['Evolution URL'], function(){
                 matchLoop = 0;
                 for (matchLoop = 0; matchLoop < pokeEvolution.length; matchLoop++) {
-                  if (pokeEvolution[matchLoop]["Evolution Narrative"] == pokeSpecies[idSpecies]['Evolution URL']){
+                  if (pokeEvolution[matchLoop]["Evolution URL"] == pokeSpecies[idSpecies]['Evolution URL']){
                     idEvo = matchLoop;
                     break;
                   };
