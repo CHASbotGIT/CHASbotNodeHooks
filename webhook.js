@@ -729,9 +729,9 @@ function loadLOTRcb(lotrArray,chars_or_quotes,quote_id,callback) {
       var arrayQuote = [];
       for (var loopArray = 0; loopArray < lotrArray.length; loopArray++) {
         LOTR_ARRAY.push([lotrArray[loopArray]._id, // [0]
-          lotrArray[loopArray].Name,
+          lotrArray[loopArray].name,
           lotrArray[loopArray].gender,
-          lotrArray[loopArray].Url,
+          lotrArray[loopArray].wikiUrl,
           lotrArray[loopArray].race,
           lotrArray[loopArray].realm,
           lotrArray[loopArray].height,
