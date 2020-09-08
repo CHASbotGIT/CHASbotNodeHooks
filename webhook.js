@@ -4168,12 +4168,18 @@ function lookupPokemon(eventPoke,pokemonID){
                   nestAPI = 3; // Third API call unsuccessful
                   pokeDex.splice(catchEm,1); // Clean out first API result from Pokedex
                   pokeSpecies.splice(idSpecies,1); // Clean out second API result from Species
+
+console.log('============================ CLEAN DOWN x2')
+
                 }; // if (idEvo != -1)... with API
               }); // apiPOKEMONcb(pokeSpecies[idSpecies]
             }; // if (idEvo != -1)... without API
           } else {
             nestAPI = 2; // Second API call unsuccessful
             pokeDex.splice(catchEm,1); // Clean out first API result from Pokedex
+
+console.log('============================ CLEAN DOWN x1')
+
           }; // else
         }); // apiPOKEMONcb(pokeDex[catchEm]
       } else {
