@@ -4051,11 +4051,11 @@ function lookupPokemon(eventPoke,pokemonID){
       randomPoke = true;
     }; // if (pokeInt > 0
   }; // if (pokemonID
-  let catchEm = -1;
+  let catchEm = catchEmAll(pokemonID);
 
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ',catchEmAll(pokemonID));
 
-  if (catchEmAll(pokemonID) == -1) { // Not in pokedex - search API
+  if (catchEm == -1) { // Not in pokedex - search API
     let apiURL = URL_API_POKEMON + pokemonID + "/";
     apiPOKEMONcb(apiURL, function(){
       // First API call should have returned *Pokemon* information
