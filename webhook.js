@@ -1953,7 +1953,6 @@ function deliverText(eventSend,outbound_text,plusTemplate,messageData) {
   let sender = eventSend.sender.id;
   outbound_text = strGreeting(sender,true) + outbound_text;
   if (plusTemplate) { deliverTMPLTcb(eventSend,messageData, function(){
-      //await deliverPause(Q_DELIVERY * 1000); // function needs to be async
       request({
         uri: URL_CHAT_ENDPOINT,
         qs: {access_token: KEY_PAGE_ACCESS},
@@ -4017,12 +4016,35 @@ function catchEmAll(pokemonID) {
   return catchEm;
 }
 
+function deliverPokemon(eventPoke,bSuccess,bRandom,idPoke,pokeSource){
+  let sender = eventPoke.sender.id;
+  let txtStart = '';
+  console.log("INFO [deliverPokemon]> Sender: " + sender);
+  console.log("INFO [deliverPokemon]> Request: Pokedex " + pokeSource);
+  if (bSuccess) {
+    if (bRandom) {
+      txtStart = 'Picked this one instead:\n\n' + pokeDex[idPoke]['Stats'];
+    } else {
+      txtStart = pokeDex[idPoke]['Stats'];
+    };
+    postImage(eventPoke,pokeDex[idPoke]['Sprite'],true,txtStart);
+    deliverText(eventPoke,"Moves:\n\n" + pokeDex[idPoke]['Moves'],false,'');
+    deliverText(eventPoke,"Info:\n\n" + pokeDex[idPoke]['Species Info'],false,'');
+    deliverText(eventPoke,"Evolution:\n\n" + pokeDex[idPoke]['Evolution Narrative'],false,'');
+    console.log("INFO [deliverPokemon]> Action: postImage+deliverText");
+    console.log("INFO [deliverPokemon]> Response: " + strTitleCase(pokeDex[idPoke]['Name']) + ' ID: ' + pokeDex[idPoke]['ID']);
+  } else {
+    deliverText(eventPoke,"Pokedex ERROR",false,'');
+    console.log("INFO [deliverPokemon]> Action: deliverText");
+    console.log("INFO [deliverPokemon]> Response: Pokedex ERROR");
+  };
+}
+
 function lookupPokemon(eventPoke,pokemonID){
   var pokeDigits = pokemonID.replace(/\D/g,'');
   var pokeLetters = pokemonID.replace(/[^a-zA-Z-]/g,'');
   var pokeInt = parseInt(pokeDigits);
   let randomPoke = false;
-  let nestAPI = 0;
   if (pokemonID == 'porygon2') {
     // exception
   } else if (isNaN(pokeInt) && pokeLetters == '') { // neither int nor str > random
@@ -4115,14 +4137,10 @@ function lookupPokemon(eventPoke,pokemonID){
               };
             };
             if (idEvo != -1) { // Already have evolution - covers more than one Pokemon/Species
-              if (randomPoke) { console.log("DEBUG [lookupPokemon]> Chosen by random") };
+              if (randomPoke) { console.log("DEBUG [lookupPokemon]> Chosen at random") };
               pokeDex[catchEm]['Evolution Narrative'] = pokeEvolution[idEvo]["Evolution Narrative"];
               console.log("DEBUG [lookupPokemon]> Retrieved from PokeDex with 2x API call stack");
-              console.log("DEBUG [lookupPokemon]> Image URL:\n" + pokeDex[catchEm]['Sprite']);
-              console.log("DEBUG [lookupPokemon]> Stats:\n" + pokeDex[catchEm]['Stats']);
-              console.log("DEBUG [lookupPokemon]> Moves:\n" + pokeDex[catchEm]['Moves']);
-              console.log("DEBUG [lookupPokemon]> Species:\n" + pokeDex[catchEm]['Species Info']);
-              console.log("DEBUG [lookupPokemon]> Evolution:\n" + pokeDex[catchEm]['Evolution Narrative']);
+              deliverPokemon(eventPoke,true,randomPoke,catchEm,pokemonID);
               return;
             } else { // Third API call to create evolution text
               apiPOKEMONcb(pokeSpecies[idSpecies]['Evolution URL'], function(){
@@ -4134,46 +4152,38 @@ function lookupPokemon(eventPoke,pokemonID){
                   };
                 };
                 if (idEvo != -1) {
-                  if (randomPoke) { console.log("DEBUG [lookupPokemon]> Chosen by random") };
+                  if (randomPoke) { console.log("DEBUG [lookupPokemon]> Chosen at random") };
                   pokeDex[catchEm]['Evolution Narrative'] = pokeEvolution[idEvo]["Evolution Narrative"];
                   console.log("DEBUG [lookupPokemon]> Retrieved from PokeDex with 3x API call stack");
-                  console.log("DEBUG [lookupPokemon]> Image URL:\n" + pokeDex[catchEm]['Sprite']);
-                  console.log("DEBUG [lookupPokemon]> Stats:\n" + pokeDex[catchEm]['Stats']);
-                  console.log("DEBUG [lookupPokemon]> Moves:\n" + pokeDex[catchEm]['Moves']);
-                  console.log("DEBUG [lookupPokemon]> Species:\n" + pokeDex[catchEm]['Species Info']);
-                  console.log("DEBUG [lookupPokemon]> Evolution:\n" + pokeDex[catchEm]['Evolution Narrative']);
+                  deliverPokemon(eventPoke,true,randomPoke,catchEm,pokemonID);
                   // postImage(eventPoke,pokeDex[catchEm]['Sprite'],true,base_stats);
                   return;
-                } else {
-                  nestAPI = 3; // Third API call unsuccessful
+                } else { // Third API call unsuccessful
                   pokeDex.splice(catchEm,1); // Clean out first API result from Pokedex
                   pokeSpecies.splice(idSpecies,1); // Clean out second API result from Species
+                  deliverPokemon(eventPoke,false,randomPoke,catchEm,pokemonID);
                   console.log("DEBUG [lookupPokemon]> Unsuccessful after third API call");
                   return;
                 }; // if (idEvo != -1)... with API
               }); // apiPOKEMONcb(pokeSpecies[idSpecies]
             }; // if (idEvo != -1)... without API
-          } else {
-            nestAPI = 2; // Second API call unsuccessful
+          } else {  // Second API call unsuccessful
             pokeDex.splice(catchEm,1); // Clean out first API result from Pokedex
+            deliverPokemon(eventPoke,false,randomPoke,catchEm,pokemonID);
             console.log("DEBUG [lookupPokemon]> Unsuccessful after second API call");
             return;
           }; // else
         }); // apiPOKEMONcb(pokeDex[catchEm]
-      } else {
-        nestAPI = 1; // first API call unsuccessful
+      } else { // first API call unsuccessful
+        deliverPokemon(eventPoke,false,randomPoke,catchEm,pokemonID);
         console.log("DEBUG [lookupPokemon]> Unsuccessful after first API call");
         return;
       }; // else
     }); // apiPOKEMONcb(apiURL
   } else { // if (catchEmAll(pokemonID) == -1) i.e. In PokeDex
-    if (randomPoke) { console.log("DEBUG [lookupPokemon]> Chosen by random") };
+    if (randomPoke) { console.log("DEBUG [lookupPokemon]> Chosen at random") };
     console.log("DEBUG [lookupPokemon]> Retrieved from PokeDex without API calls");
-    console.log("DEBUG [lookupPokemon]> Image URL:\n" + pokeDex[catchEm]['Sprite']);
-    console.log("DEBUG [lookupPokemon]> Stats:\n" + pokeDex[catchEm]['Stats']);
-    console.log("DEBUG [lookupPokemon]> Moves:\n" + pokeDex[catchEm]['Moves']);
-    console.log("DEBUG [lookupPokemon]> Species:\n" + pokeDex[catchEm]['Species Info']);
-    console.log("DEBUG [lookupPokemon]> Evolution:\n" + pokeDex[catchEm]['Evolution Narrative']);
+    deliverPokemon(eventPoke,true,randomPoke,catchEm,pokemonID);
     return;
   };
 }
