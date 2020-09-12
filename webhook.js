@@ -4173,7 +4173,6 @@ function lookupPokemon(eventPoke,pokemonID){
       }; // else
     }); // apiPOKEMONcb(apiURL
   } else { // if (catchEmAll(pokemonID) == -1) i.e. In PokeDex
-    if (randomPoke) { //console.log("DEBUG [lookupPokemon]> Chosen at random") };
     //console.log("DEBUG [lookupPokemon]> Retrieved from PokeDex without API calls");
     deliverPokemon(eventPoke,true,randomPoke,catchEm,pokemonID);
     return;
