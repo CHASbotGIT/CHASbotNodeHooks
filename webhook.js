@@ -4060,12 +4060,8 @@ function lookupPokemon(eventPoke,pokemonID){
           if (idSpecies != -1) {
             // Pokemon and Species Information are ALIGNED
             let ceiling = Math.max(
-              pokeDex[catchEm]['Speed'],
-              pokeDex[catchEm]['Defence'],
-              pokeDex[catchEm]['Attack'],
-              pokeDex[catchEm]['Sp. Defence'],
-              pokeDex[catchEm]['Sp. Attack'],
-              pokeDex[catchEm]['HP']
+              pokeDex[catchEm]['Speed'], pokeDex[catchEm]['Defence'], pokeDex[catchEm]['Attack'],
+              pokeDex[catchEm]['Sp. Defence'], pokeDex[catchEm]['Sp. Attack'], pokeDex[catchEm]['HP']
             );
             let pokeType1 = '';
             let pokeType2 = '';
@@ -4154,32 +4150,19 @@ function lookupPokemon(eventPoke,pokemonID){
                   nestAPI = 3; // Third API call unsuccessful
                   pokeDex.splice(catchEm,1); // Clean out first API result from Pokedex
                   pokeSpecies.splice(idSpecies,1); // Clean out second API result from Species
-
-console.log('============================ CLEAN DOWN x2')
-
                 }; // if (idEvo != -1)... with API
               }); // apiPOKEMONcb(pokeSpecies[idSpecies]
             }; // if (idEvo != -1)... without API
           } else {
             nestAPI = 2; // Second API call unsuccessful
             pokeDex.splice(catchEm,1); // Clean out first API result from Pokedex
-
-console.log('============================ CLEAN DOWN x1')
-
           }; // else
         }); // apiPOKEMONcb(pokeDex[catchEm]
       } else {
         nestAPI = 1; // first API call unsuccessful
       }; // else
-
-      console.log("ERROR [lookupPokemon]> No POKeMON found: " + pokemonID + ' [API sequence failed at step ' + nestAPI + ']');
-      // Failed one of the APIs
-      // SOZ
-
     }); // apiPOKEMONcb(apiURL
-
-  } else { // if (catchEmAll(pokemonID) == -1)
-    // NOW PULL TRIGGER
+  } else { // if (catchEmAll(pokemonID) == -1) i.e. In PokeDex
     // NB Random
     console.log("DEBUG [lookupPokemon]> Retrieved from PokeDex without API calls");
     console.log("DEBUG [lookupPokemon]> Image URL:\n" + pokeDex[catchEm]['Sprite']);
@@ -4188,6 +4171,7 @@ console.log('============================ CLEAN DOWN x1')
     console.log("DEBUG [lookupPokemon]> Species:\n" + pokeDex[catchEm]['Species Info']);
     console.log("DEBUG [lookupPokemon]> Evolution:\n" + pokeDex[catchEm]['Evolution Narrative']);
   };
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ',nestAPI);
 }
 
 // evo test cases 312, 67, 362, 116, 41, 268, 47
