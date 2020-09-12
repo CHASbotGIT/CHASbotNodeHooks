@@ -4397,7 +4397,7 @@ function apiPOKEMONcb(apiCall,callback) {
           description = strReplaceAll(description,'\f',' ');
           //description = description.replace(/^((\S+\s+){7}\S+)\s+/, '$1\n'); // New line after 7 spaces
           let eggs = poke.egg_groups.map((element) => strTitleCase(element.name)).join(', ');
-          eggs = eggs.replace(/,([^,]*)$/,' &$1'); // last comma for and
+          eggs = eggs.replace(/,([^,]*)$/,' &$1'); // swap last comma for and
           let hatch_after = (poke.hatch_counter+1)*255;
           let habitat = "No Habitat";
           if (poke.habitat != null) { habitat = poke.habitat.name };
