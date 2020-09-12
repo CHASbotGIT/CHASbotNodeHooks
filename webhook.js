@@ -4007,20 +4007,9 @@ function strBar(top,target,on,off) {
 function catchEmAll(pokemonID) {
   let catchEm = -1;
   let catchEmLoop = 0;
-
-console.log('============================ Length:',pokeDex.length)
-
   for (catchEmLoop = 0; catchEmLoop < pokeDex.length; catchEmLoop++) {
     var checkID = pokeDex[catchEmLoop]['ID'] + '';
-
-console.log('============================ pokemonID>',pokemonID,'<')
-console.log('============================ ID>',checkID,'<')
-console.log('============================ Name>',pokeDex[catchEmLoop]['Name'],'<')
-
     if (pokemonID == checkID || pokemonID == pokeDex[catchEmLoop]['Name']) {
-
-console.log('============================ Loop:',catchEmLoop)
-
       catchEm = catchEmLoop;
       break;
     };
@@ -4213,7 +4202,7 @@ function apiPOKEMONcb(apiCall,callback) {
     res.on('data', function (chunk) { body += chunk });
     res.on('end', function() {
       if (body == 'Not Found') {
-        console.log('^^^^^^^^^^^^^^^^^^^^ DUD'); // TO DO
+        console.log("ERROR [apiPOKEMONcb]> Not Found Repsonse from API");
         callback();
       } else {
         if (apiCall.includes('evolution')) {
@@ -4380,7 +4369,7 @@ function apiPOKEMONcb(apiCall,callback) {
             "Evolution URL": apiCall,
             "Evolution Narrative": evoSequence
           }); //
-          console.log("DEBUG [apiPOKEMONcb]> Evolution sequence: \n" + evoSequence);
+          //console.log("DEBUG [apiPOKEMONcb]> Evolution sequence: \n" + evoSequence);
           callback();
         } else if (apiCall.includes('species')) {
           let poke = JSON.parse(body);
@@ -4425,8 +4414,8 @@ function apiPOKEMONcb(apiCall,callback) {
             "Capture Rate": poke.capture_rate,
             "Evolution URL": poke.evolution_chain.url
           }); // pokeSpecies.push
-          console.log("DEBUG [apiPOKEMONcb]> Species: \n");
-          console.table(pokeSpecies[pokeSpecies.length - 1])
+          //console.log("DEBUG [apiPOKEMONcb]> Species: \n");
+          //console.table(pokeSpecies[pokeSpecies.length - 1])
           callback();
         } else { // pokemon URL
           let poke = JSON.parse(body);
@@ -4459,8 +4448,8 @@ function apiPOKEMONcb(apiCall,callback) {
             "Species Info": '',
             "Evolution Narrative": ''
           }); // pokeDex.push
-          console.log("DEBUG [apiPOKEMONcb]> Pokemon: \n");
-          console.table(pokeDex[pokeDex.length - 1]);
+          //console.log("DEBUG [apiPOKEMONcb]> Pokemon: \n");
+          //console.table(pokeDex[pokeDex.length - 1]);
           callback();
         }; // else { // pokemon URL
       }; // if (body == 'Not Found')
