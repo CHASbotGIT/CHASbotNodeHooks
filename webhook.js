@@ -4115,6 +4115,7 @@ function lookupPokemon(eventPoke,pokemonID){
               };
             };
             if (idEvo != -1) { // Already have evolution - covers more than one Pokemon/Species
+              if (randomPoke) { console.log("DEBUG [lookupPokemon]> Chosen by random" };
               pokeDex[catchEm]['Evolution Narrative'] = pokeEvolution[idEvo]["Evolution Narrative"];
               console.log("DEBUG [lookupPokemon]> Retrieved from PokeDex with 2x API call stack");
               console.log("DEBUG [lookupPokemon]> Image URL:\n" + pokeDex[catchEm]['Sprite']);
@@ -4122,8 +4123,6 @@ function lookupPokemon(eventPoke,pokemonID){
               console.log("DEBUG [lookupPokemon]> Moves:\n" + pokeDex[catchEm]['Moves']);
               console.log("DEBUG [lookupPokemon]> Species:\n" + pokeDex[catchEm]['Species Info']);
               console.log("DEBUG [lookupPokemon]> Evolution:\n" + pokeDex[catchEm]['Evolution Narrative']);
-              // NOW PULL TRIGGER
-              // NB Random
               return;
             } else { // Third API call to create evolution text
               apiPOKEMONcb(pokeSpecies[idSpecies]['Evolution URL'], function(){
@@ -4135,6 +4134,7 @@ function lookupPokemon(eventPoke,pokemonID){
                   };
                 };
                 if (idEvo != -1) {
+                  if (randomPoke) { console.log("DEBUG [lookupPokemon]> Chosen by random" };
                   pokeDex[catchEm]['Evolution Narrative'] = pokeEvolution[idEvo]["Evolution Narrative"];
                   console.log("DEBUG [lookupPokemon]> Retrieved from PokeDex with 3x API call stack");
                   console.log("DEBUG [lookupPokemon]> Image URL:\n" + pokeDex[catchEm]['Sprite']);
@@ -4142,8 +4142,6 @@ function lookupPokemon(eventPoke,pokemonID){
                   console.log("DEBUG [lookupPokemon]> Moves:\n" + pokeDex[catchEm]['Moves']);
                   console.log("DEBUG [lookupPokemon]> Species:\n" + pokeDex[catchEm]['Species Info']);
                   console.log("DEBUG [lookupPokemon]> Evolution:\n" + pokeDex[catchEm]['Evolution Narrative']);
-                  // NOW PULL TRIGGER
-                  // NB Random
                   // postImage(eventPoke,pokeDex[catchEm]['Sprite'],true,base_stats);
                   return;
                 } else {
@@ -4163,13 +4161,14 @@ function lookupPokemon(eventPoke,pokemonID){
       }; // else
     }); // apiPOKEMONcb(apiURL
   } else { // if (catchEmAll(pokemonID) == -1) i.e. In PokeDex
-    // NB Random
+    if (randomPoke) { console.log("DEBUG [lookupPokemon]> Chosen by random" };
     console.log("DEBUG [lookupPokemon]> Retrieved from PokeDex without API calls");
     console.log("DEBUG [lookupPokemon]> Image URL:\n" + pokeDex[catchEm]['Sprite']);
     console.log("DEBUG [lookupPokemon]> Stats:\n" + pokeDex[catchEm]['Stats']);
     console.log("DEBUG [lookupPokemon]> Moves:\n" + pokeDex[catchEm]['Moves']);
     console.log("DEBUG [lookupPokemon]> Species:\n" + pokeDex[catchEm]['Species Info']);
     console.log("DEBUG [lookupPokemon]> Evolution:\n" + pokeDex[catchEm]['Evolution Narrative']);
+    return;
   };
   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ',nestAPI);
 }
