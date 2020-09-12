@@ -173,6 +173,7 @@ const TRIGGER_CHASABET_1 = 'chas alphabet';
 const TRIGGER_CHASABET_2 = 'chas letter';
 const TRIGGER_MARVEL = 'marvel';
 const TRIGGER_LOTR = 'lotr';
+const TRIGGER_POKE = 'pokedex';
 const TRIGGER_CHAS_EVENTS = 'when is';
 const TRIGGER_CHAS_BIOGS = 'who is';
 const TRIGGER_TOPTRUMPS = 'top trumps';
@@ -182,7 +183,6 @@ const TRIGGER_STOP = 'stop';
 var TRIGGER_SEARCH = ['search','google','wiki','beeb'];
 var TRIGGER_LOTTERY = ['lotto','lottery','euromillions','euro-millions'];
 var TRIGGER_MOVIEDB = ['synopsis','watched','watch','catch','seen','see'];
-
 
 //  _  _  ___   ___  _   _____
 // | || |/ _ \ / _ \| |/ / __|
@@ -211,6 +211,7 @@ var HOOKS_CUSTOM = [];
 
 // End-points
 const URL_CHAT_ENDPOINT = "https://graph.facebook.com/v2.6/me/messages";
+const URL_API_POKEMON = "https://pokeapi.co/api/v2/pokemon/";
 const URL_API_MOVIEDB = "https://api.themoviedb.org/3/";
 const URL_API_WEATHER = "https://api.openweathermap.org/data/2.5/weather?APPID=";
 const URL_API_MARVEL = "https://gateway.marvel.com:443/v1/public/characters?nameStartsWith=";
@@ -423,6 +424,22 @@ var HIGH_SCORE = ["CHASbot",0];
 // Film and TV
 var MOVIEDB_RECORDS_INDEX = -1;
 var MOVIEDB_RECORDS = new Array();
+// Pokemon
+const POKE_CEILING = 893;
+const POKE_DETAILS = ['held_item','item','known_move','known_move_type','location','min_affection',
+  'min_beauty','min_happiness','min_level','needs_overworld_rain','party_species','party_type',
+  'relative_physical_stats','time_of_day','trade_species','trigger'];
+const POKE_PREFIX = ['holding ','','with ','with ','at ','with Affection ','with Beauty ','with Happiness ',
+  'with Level ','','with ','with ','with ','in ','for ',''];
+const POKE_SUFFIX = ['','',' Move',' Type-Move','','+','+','+','+','',' Species in party','-type in party',
+  '','-time','',''];
+const POKE_TYPE = ["⚫","⚪","🔥 Fire","🔴","🌊 Water","🔵","🌱 Grass","🟢","⚡ Electric","🟡",
+  "💎 Rock","🟤","🌎 Ground","🟤","👊 Fighting","🟠","🔮 Psychic","🟣","🌒 Dark","⚫","🧊 Ice","⚪",
+  "🐲 Dragon","🟢","⚙️ Steel","🔵","✈️ Flying","🔵","👻 Ghost","⚪","☠️ Poison","🟣","🐞 Bug","🔴",
+  "🧚 Fairy","🟢","😊 Normal","🟡"];
+var POKEDEX = [];
+var POKE_SPECIES = [];
+var POKE_EVOLVE = [];
 
 // Valdate URLs
 function urlExists(url, cb) {
@@ -1505,13 +1522,12 @@ CHASbot.post('/webhook', (req, res) => {
           };
 
     // DEV
-    position_in_analyse_text = analyse_text.search(TRIGGER_DEV) + 1;
+    position_in_analyse_text = analyse_text.search(TRIGGER_POKE) + 1;
     if (position_in_analyse_text > 0) {
-      trigger_path = TRIGGER_DEV;
-      //let pokedex = analyse_text.replace(/[^0-9]+/g, '');
-      let pokedex = strReplaceAll(analyse_text,TRIGGER_DEV,'');
-      pokedex = pokedex.trim();
-      lookupPokemon(event,pokedex);
+      trigger_path = TRIGGER_POKE;
+      let poke_dex = strReplaceAll(analyse_text,TRIGGER_POKE,'');
+      poke_dex = poke_dex.trim();
+      lookupPokemon(event,poke_dex);
     };
 
           //console.log("DEBUG [postWebhook]> In play, survey: " + inPlay('survey',sender_index));
@@ -1680,7 +1696,7 @@ CHASbot.post('/webhook', (req, res) => {
             deliverText(routeEvent,adminMessage,false,'');
 
     // DEV
-    } else if (trigger_path == TRIGGER_DEV) {
+    } else if (trigger_path == TRIGGER_POKE) {
       // do nothing
 
           } else if (inPlay('survey',sender_index)) { // Survey first
@@ -3953,27 +3969,6 @@ function playTopTrumps(eventTT,playTT){
   };
 }
 
-// DEV >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-const URL_API_POKEMON = "https://pokeapi.co/api/v2/pokemon/";
-const POKE_CEILING = 893;
-var TRIGGER_DEV = 'pokedex'; // = pokemon number/name
-
-let pokeEvoDetails = ['held_item','item','known_move','known_move_type','location','min_affection',
-  'min_beauty','min_happiness','min_level','needs_overworld_rain','party_species','party_type',
-  'relative_physical_stats','time_of_day','trade_species','trigger'];
-let pokeEvoPrefix = ['holding ','','with ','with ','at ','with Affection ','with Beauty ','with Happiness ',
-  'with Level ','','with ','with ','with ','in ','for ',''];
-let pokeEvoSuffix = ['','',' Move',' Type-Move','','+','+','+','+','',' Species in party','-type in party',
-  '','-time','',''];
-let pokeType = ["⚫","⚪","🔥 Fire","🔴","🌊 Water","🔵","🌱 Grass","🟢","⚡ Electric","🟡",
-  "💎 Rock","🟤","🌎 Ground","🟤","👊 Fighting","🟠","🔮 Psychic","🟣","🌒 Dark","⚫","🧊 Ice","⚪",
-  "🐲 Dragon","🟢","⚙️ Steel","🔵","✈️ Flying","🔵","👻 Ghost","⚪","☠️ Poison","🟣","🐞 Bug","🔴",
-  "🧚 Fairy","🟢","😊 Normal","🟡"];
-let pokeDex = [];
-let pokeSpecies = [];
-let pokeEvolution = [];
-
 function intEmoji(num) {
   let numEmoji = ['0️⃣','1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣'];
   let strEmoji = '';
@@ -4006,9 +4001,9 @@ function strBar(top,target,on,off) {
 function catchEmAll(pokemonID) {
   let catchEm = -1;
   let catchEmLoop = 0;
-  for (catchEmLoop = 0; catchEmLoop < pokeDex.length; catchEmLoop++) {
-    var checkID = pokeDex[catchEmLoop]['ID'] + '';
-    if (pokemonID == checkID || pokemonID == pokeDex[catchEmLoop]['Name']) {
+  for (catchEmLoop = 0; catchEmLoop < POKEDEX.length; catchEmLoop++) {
+    var checkID = POKEDEX[catchEmLoop]['ID'] + '';
+    if (pokemonID == checkID || pokemonID == POKEDEX[catchEmLoop]['Name']) {
       catchEm = catchEmLoop;
       break;
     };
@@ -4025,14 +4020,14 @@ function deliverPokemon(eventPoke,bSuccess,bRandom,idPoke,pokeSource){
     if (bRandom) {
       txtStart = 'Picked this one instead:\n\n' + pokeDex[idPoke]['Stats'];
     } else {
-      txtStart = pokeDex[idPoke]['Stats'];
+      txtStart = POKEDEX[idPoke]['Stats'];
     };
-    postImage(eventPoke,pokeDex[idPoke]['Sprite'],true,txtStart);
-    deliverText(eventPoke,"Moves:\n\n" + pokeDex[idPoke]['Moves'],false,'');
-    deliverText(eventPoke,"Info:\n\n" + pokeDex[idPoke]['Species Info'],false,'');
-    deliverText(eventPoke,"Evolution:\n\n" + pokeDex[idPoke]['Evolution Narrative'],false,'');
+    postImage(eventPoke,POKEDEX[idPoke]['Sprite'],true,txtStart);
+    deliverText(eventPoke,"Moves:\n\n" + POKEDEX[idPoke]['Moves'],false,'');
+    deliverText(eventPoke,"Info:\n\n" + POKEDEX[idPoke]['Species Info'],false,'');
+    deliverText(eventPoke,"Evolution:\n\n" + POKEDEX[idPoke]['Evolution Narrative'],false,'');
     console.log("INFO [deliverPokemon]> Action: postImage+deliverText");
-    console.log("INFO [deliverPokemon]> Response: " + strTitleCase(pokeDex[idPoke]['Name']) + ' ID: ' + pokeDex[idPoke]['ID']);
+    console.log("INFO [deliverPokemon]> Response: " + strTitleCase(POKEDEX[idPoke]['Name']) + ' ID: ' + POKEDEX[idPoke]['ID']);
   } else {
     deliverText(eventPoke,"Pokedex ERROR",false,'');
     console.log("INFO [deliverPokemon]> Action: deliverText");
@@ -4069,12 +4064,12 @@ function lookupPokemon(eventPoke,pokemonID){
       // First API call should have returned *Pokemon* information
       catchEm = catchEmAll(pokemonID);
       if (catchEm != -1) {
-        apiPOKEMONcb(pokeDex[catchEm]['Species URL'], function(){
+        apiPOKEMONcb(POKEDEX[catchEm]['Species URL'], function(){
           // Second API should have returned *Species* information
           let idSpecies = -1;
           let matchLoop = 0;
-          for (matchLoop = 0; matchLoop < pokeSpecies.length; matchLoop++) {
-            if (pokeSpecies[matchLoop]['Species URL'] == pokeDex[catchEm]['Species URL']){
+          for (matchLoop = 0; matchLoop < POKE_SPECIES.length; matchLoop++) {
+            if (POKE_SPECIES[matchLoop]['Species URL'] == POKEDEX[catchEm]['Species URL']){
               idSpecies = matchLoop;
               break
             };
@@ -4082,107 +4077,104 @@ function lookupPokemon(eventPoke,pokemonID){
           if (idSpecies != -1) {
             // Pokemon and Species Information are ALIGNED
             let ceiling = Math.max(
-              pokeDex[catchEm]['Speed'], pokeDex[catchEm]['Defence'], pokeDex[catchEm]['Attack'],
-              pokeDex[catchEm]['Sp. Defence'], pokeDex[catchEm]['Sp. Attack'], pokeDex[catchEm]['HP']
+              POKEDEX[catchEm]['Speed'], POKEDEX[catchEm]['Defence'], POKEDEX[catchEm]['Attack'],
+              POKEDEX[catchEm]['Sp. Defence'], POKEDEX[catchEm]['Sp. Attack'], POKEDEX[catchEm]['HP']
             );
             let pokeType1 = '';
             let pokeType2 = '';
             let colType1 = '';
-            let colType2 = pokeType[0];
+            let colType2 = POKE_TYPE[0];
             let typeLoop = 0;
-            for (typeLoop = 2; typeLoop < pokeType.length; typeLoop++) {
-              var cleanType = strStandardise(pokeType[typeLoop]);
-              var cleanTarget = strStandardise(pokeDex[catchEm]['Type(s)']);
+            for (typeLoop = 2; typeLoop < POKE_TYPE.length; typeLoop++) {
+              var cleanType = strStandardise(POKE_TYPE[typeLoop]);
+              var cleanTarget = strStandardise(POKEDEX[catchEm]['Type(s)']);
               //var spam = cleanType[0];
               //var eggs = cleanTarget[0];
               if (cleanTarget[0].includes(cleanType[0]) && cleanType[0] != '') {
                 if (pokeType1 == '') {
-                  pokeType1 = pokeType[typeLoop];
-                  colType1 = pokeType[typeLoop+1];
+                  pokeType1 = POKE_TYPE[typeLoop];
+                  colType1 = POKE_TYPE[typeLoop+1];
                 } else {
-                  pokeType2 = pokeType[typeLoop];
-                  colType2 = pokeType[typeLoop+1];
+                  pokeType2 = POKE_TYPE[typeLoop];
+                  colType2 = POKE_TYPE[typeLoop+1];
                 }; // if (pokeType1
               }; // if (cleanTarget
             }; // for (typeLoop
-            if (colType1 == colType2) { colType2 = pokeType[0] };
-            if (colType1 == colType2) { colType2 = pokeType[1] };
-            pokeDex[catchEm]['Stats'] =
-              strTitleCase(pokeDex[catchEm]['Name']) + ' ID: ' + intEmoji(pokeDex[catchEm]['ID']) + '\n\n' +
-              pokeType1 + ' ' + pokeType2 + ' ⚖️ ' + pokeDex[catchEm]['Weight'] + ' 📊 ' + pokeDex[catchEm]['Height'] + '\n\n' +
-              strBar(ceiling,pokeDex[catchEm]['HP'],colType1,colType2) + ': [' + intPad(pokeDex[catchEm]['HP'],3) + '] \t❤️ HP\n' +
-              strBar(ceiling,pokeDex[catchEm]['Attack'],colType1,colType2) + ': [' + intPad(pokeDex[catchEm]['Attack'],3) + '] \t⚔️ Attack\n' +
-              strBar(ceiling,pokeDex[catchEm]['Defence'],colType1,colType2) + ': [' + intPad(pokeDex[catchEm]['Defence'],3) + '] \t🛡️ Defence\n' +
-              strBar(ceiling,pokeDex[catchEm]['Sp. Attack'],colType1,colType2) + ': [' + intPad(pokeDex[catchEm]['Sp. Attack'],3) + '] \t⚔️ Sp. Attack\n' +
-              strBar(ceiling,pokeDex[catchEm]['Sp. Defence'],colType1,colType2) + ': [' + intPad(pokeDex[catchEm]['Sp. Defence'],3) + '] \t🛡️ Sp. Defence\n' +
-              strBar(ceiling,pokeDex[catchEm]['Speed'],colType1,colType2) + ': [' + intPad(pokeDex[catchEm]['Speed'],3) + '] \t💨 Speed\n\n' +
-              '[Stats Total: ' + intPad(pokeDex[catchEm]['Total'],3) + ']';
-            pokeDex[catchEm]['Species Info'] =
-              pokeSpecies[idSpecies]['Description'] + '\n' +
-              'Abilities: ' + pokeDex[catchEm]['Abilities'] + '\n' +
-              '🌈 Colour: ' + strTitleCase(pokeSpecies[idSpecies]['Colour']) + ' 🧬 Form: ' + strTitleCase(pokeSpecies[idSpecies]['Shape']) + '\n' +
-              '☺️ Base Happiness: ' + pokeSpecies[idSpecies]['Base Happiness'] + ' 🌡️ Base XP: ' + pokeDex[catchEm]['Base Experience'] + '\n' +
-              '🥚 Egg Groups: ' + pokeSpecies[idSpecies]['Egg Groups'] + '\n' +
-              '👣 Steps to Hatch: ' + pokeSpecies[idSpecies]['Steps to Hatch'] + '\n' +
-              '📈 Growth Rate: ' + strTitleCase(pokeSpecies[idSpecies]['Growth Rate']) + '\n' +
-              '🚻 Gender Mix: ' + pokeSpecies[idSpecies]['Gender Distribution'] + '\n' +
-              '🏔️ Habitat: ' + strTitleCase(pokeSpecies[idSpecies]['Habitat']) + '\n' +
-              '🔒️ Capture (0/Difficult to 255/Easy): ' + pokeSpecies[idSpecies]['Capture Rate'];
+            if (colType1 == colType2) { colType2 = POKE_TYPE[0] };
+            if (colType1 == colType2) { colType2 = POKE_TYPE[1] };
+            POKEDEX[catchEm]['Stats'] =
+              strTitleCase(POKEDEX[catchEm]['Name']) + ' ID: ' + intEmoji(POKEDEX[catchEm]['ID']) + '\n\n' +
+              pokeType1 + ' ' + pokeType2 + ' ⚖️ ' + POKEDEX[catchEm]['Weight'] + ' 📊 ' + POKEDEX[catchEm]['Height'] + '\n\n' +
+              strBar(ceiling,POKEDEX[catchEm]['HP'],colType1,colType2) + ': [' + intPad(POKEDEX[catchEm]['HP'],3) + '] \t❤️ HP\n' +
+              strBar(ceiling,POKEDEX[catchEm]['Attack'],colType1,colType2) + ': [' + intPad(POKEDEX[catchEm]['Attack'],3) + '] \t⚔️ Attack\n' +
+              strBar(ceiling,POKEDEX[catchEm]['Defence'],colType1,colType2) + ': [' + intPad(POKEDEX[catchEm]['Defence'],3) + '] \t🛡️ Defence\n' +
+              strBar(ceiling,POKEDEX[catchEm]['Sp. Attack'],colType1,colType2) + ': [' + intPad(POKEDEX[catchEm]['Sp. Attack'],3) + '] \t⚔️ Sp. Attack\n' +
+              strBar(ceiling,POKEDEX[catchEm]['Sp. Defence'],colType1,colType2) + ': [' + intPad(POKEDEX[catchEm]['Sp. Defence'],3) + '] \t🛡️ Sp. Defence\n' +
+              strBar(ceiling,POKEDEX[catchEm]['Speed'],colType1,colType2) + ': [' + intPad(POKEDEX[catchEm]['Speed'],3) + '] \t💨 Speed\n\n' +
+              '[Stats Total: ' + intPad(POKEDEX[catchEm]['Total'],3) + ']';
+            POKEDEX[catchEm]['Species Info'] =
+              POKE_SPECIES[idSpecies]['Description'] + '\n' +
+              'Abilities: ' + POKEDEX[catchEm]['Abilities'] + '\n' +
+              '🌈 Colour: ' + strTitleCase(POKE_SPECIES[idSpecies]['Colour']) + ' 🧬 Form: ' + strTitleCase(POKE_SPECIES[idSpecies]['Shape']) + '\n' +
+              '☺️ Base Happiness: ' + POKE_SPECIES[idSpecies]['Base Happiness'] + ' 🌡️ Base XP: ' + POKEDEX[catchEm]['Base Experience'] + '\n' +
+              '🥚 Egg Groups: ' + POKE_SPECIES[idSpecies]['Egg Groups'] + '\n' +
+              '👣 Steps to Hatch: ' + POKE_SPECIES[idSpecies]['Steps to Hatch'] + '\n' +
+              '📈 Growth Rate: ' + strTitleCase(POKE_SPECIES[idSpecies]['Growth Rate']) + '\n' +
+              '🚻 Gender Mix: ' + POKE_SPECIES[idSpecies]['Gender Distribution'] + '\n' +
+              '🏔️ Habitat: ' + strTitleCase(POKE_SPECIES[idSpecies]['Habitat']) + '\n' +
+              '🔒️ Capture (0/Difficult to 255/Easy): ' + POKE_SPECIES[idSpecies]['Capture Rate'];
             let idEvo = -1;
             let matchLoop = 0;
-            for (matchLoop = 0; matchLoop < pokeEvolution.length; matchLoop++) {
-              if (pokeEvolution[matchLoop]["Evolution URL"] == pokeSpecies[idSpecies]['Evolution URL']){
+            for (matchLoop = 0; matchLoop < POKE_EVOLVE.length; matchLoop++) {
+              if (POKE_EVOLVE[matchLoop]["Evolution URL"] == POKE_SPECIES[idSpecies]['Evolution URL']){
                 idEvo = matchLoop;
                 break;
               };
             };
             if (idEvo != -1) { // Already have evolution - covers more than one Pokemon/Species
-              if (randomPoke) { console.log("DEBUG [lookupPokemon]> Chosen at random") };
-              pokeDex[catchEm]['Evolution Narrative'] = pokeEvolution[idEvo]["Evolution Narrative"];
-              console.log("DEBUG [lookupPokemon]> Retrieved from PokeDex with 2x API call stack");
+              POKEDEX[catchEm]['Evolution Narrative'] = POKE_EVOLVE[idEvo]["Evolution Narrative"];
+              //console.log("DEBUG [lookupPokemon]> Retrieved from PokeDex with 2x API call stack");
               deliverPokemon(eventPoke,true,randomPoke,catchEm,pokemonID);
               return;
             } else { // Third API call to create evolution text
-              apiPOKEMONcb(pokeSpecies[idSpecies]['Evolution URL'], function(){
+              apiPOKEMONcb(POKE_SPECIES[idSpecies]['Evolution URL'], function(){
                 matchLoop = 0;
-                for (matchLoop = 0; matchLoop < pokeEvolution.length; matchLoop++) {
-                  if (pokeEvolution[matchLoop]["Evolution URL"] == pokeSpecies[idSpecies]['Evolution URL']){
+                for (matchLoop = 0; matchLoop < POKE_EVOLVE.length; matchLoop++) {
+                  if (POKE_EVOLVE[matchLoop]["Evolution URL"] == POKE_SPECIES[idSpecies]['Evolution URL']){
                     idEvo = matchLoop;
                     break;
                   };
                 };
                 if (idEvo != -1) {
-                  if (randomPoke) { console.log("DEBUG [lookupPokemon]> Chosen at random") };
-                  pokeDex[catchEm]['Evolution Narrative'] = pokeEvolution[idEvo]["Evolution Narrative"];
-                  console.log("DEBUG [lookupPokemon]> Retrieved from PokeDex with 3x API call stack");
+                  POKEDEX[catchEm]['Evolution Narrative'] = POKE_EVOLVE[idEvo]["Evolution Narrative"];
+                  //console.log("DEBUG [lookupPokemon]> Retrieved from PokeDex with 3x API call stack");
                   deliverPokemon(eventPoke,true,randomPoke,catchEm,pokemonID);
-                  // postImage(eventPoke,pokeDex[catchEm]['Sprite'],true,base_stats);
                   return;
                 } else { // Third API call unsuccessful
-                  pokeDex.splice(catchEm,1); // Clean out first API result from Pokedex
-                  pokeSpecies.splice(idSpecies,1); // Clean out second API result from Species
+                  POKEDEX.splice(catchEm,1); // Clean out first API result from Pokedex
+                  POKE_SPECIES.splice(idSpecies,1); // Clean out second API result from Species
                   deliverPokemon(eventPoke,false,randomPoke,catchEm,pokemonID);
-                  console.log("DEBUG [lookupPokemon]> Unsuccessful after third API call");
+                  //console.log("DEBUG [lookupPokemon]> Unsuccessful after third API call");
                   return;
                 }; // if (idEvo != -1)... with API
-              }); // apiPOKEMONcb(pokeSpecies[idSpecies]
+              }); // apiPOKEMONcb(POKE_SPECIES[idSpecies]
             }; // if (idEvo != -1)... without API
           } else {  // Second API call unsuccessful
-            pokeDex.splice(catchEm,1); // Clean out first API result from Pokedex
+            POKEDEX.splice(catchEm,1); // Clean out first API result from Pokedex
             deliverPokemon(eventPoke,false,randomPoke,catchEm,pokemonID);
-            console.log("DEBUG [lookupPokemon]> Unsuccessful after second API call");
+            //console.log("DEBUG [lookupPokemon]> Unsuccessful after second API call");
             return;
           }; // else
-        }); // apiPOKEMONcb(pokeDex[catchEm]
+        }); // apiPOKEMONcb(POKEDEX[catchEm]
       } else { // first API call unsuccessful
         deliverPokemon(eventPoke,false,randomPoke,catchEm,pokemonID);
-        console.log("DEBUG [lookupPokemon]> Unsuccessful after first API call");
+        //console.log("DEBUG [lookupPokemon]> Unsuccessful after first API call");
         return;
       }; // else
     }); // apiPOKEMONcb(apiURL
   } else { // if (catchEmAll(pokemonID) == -1) i.e. In PokeDex
-    if (randomPoke) { console.log("DEBUG [lookupPokemon]> Chosen at random") };
-    console.log("DEBUG [lookupPokemon]> Retrieved from PokeDex without API calls");
+    if (randomPoke) { //console.log("DEBUG [lookupPokemon]> Chosen at random") };
+    //console.log("DEBUG [lookupPokemon]> Retrieved from PokeDex without API calls");
     deliverPokemon(eventPoke,true,randomPoke,catchEm,pokemonID);
     return;
   };
@@ -4211,31 +4203,31 @@ function apiPOKEMONcb(apiCall,callback) {
             nest = nest + 1;
             let numberOfEvolutions = evoData['evolves_to'].length;
             var evoDetails = evoData['evolution_details'][0];
-            let pokeEvoDetailsLoop = 0;
+            let evolveLoop = 0;
             if (typeof evoData['evolution_details'][0] != 'undefined') {
               //console.table(evoDataNest['evolution_details'][nestLoop]);
               evoChainNarrative = [];
-              for (pokeEvoDetailsLoop = 0; pokeEvoDetailsLoop < pokeEvoDetails.length; pokeEvoDetailsLoop++) {
-                var holder = evoData['evolution_details'][0][pokeEvoDetails[pokeEvoDetailsLoop]];
+              for (evolveLoop = 0; evolveLoop < POKE_DETAILS.length; evolveLoop++) {
+                var holder = evoData['evolution_details'][0][POKE_DETAILS[evolveLoop]];
                 if (typeof holder != 'undefined'  && holder != null && holder != '') {
                   if (typeof holder == 'object') { holder = holder.name };
                   holder = '' + holder;
                   if (holder != '-1') {holder = holder.replace(/-/g, ' ')};
                   holder = strTitleCase(holder);
-                  if (pokeEvoDetails[pokeEvoDetailsLoop] == 'trigger') {
+                  if (POKE_DETAILS[evolveLoop] == 'trigger') {
                     evoNarrative = holder;
                   } else {
-                    if (pokeEvoDetails[pokeEvoDetailsLoop] == 'relative_physical_stats') {
+                    if (POKE_DETAILS[evolveLoop] == 'relative_physical_stats') {
                       if (holder == '1') { holder = 'Attack > Defence' };
                       if (holder == '-1') { holder = 'Defence > Attack' };
                     };
                     if (holder == 'True') { holder = 'while raining'};
-                    holder = pokeEvoPrefix[pokeEvoDetailsLoop] + holder + pokeEvoSuffix[pokeEvoDetailsLoop];
+                    holder = POKE_PREFIX[evolveLoop] + holder + POKE_SUFFIX[evolveLoop];
                     evoChainNarrative.push(holder);
-                  }; // if (pokeEvoDetails[pokeEvoDetailsLoop]
-                  //console.log("DEBUG [apiPOKEMONcb]> Evolution parameters: " + pokeEvoDetails[pokeEvoDetailsLoop] + ' = ' + holder);
+                  }; // if (POKE_DETAILS[evolveLoop]
+                  //console.log("DEBUG [apiPOKEMONcb]> Evolution parameters: " + POKE_DETAILS[evolveLoop] + ' = ' + holder);
                 }; // if (typeof holder
-              }; // for (pokeEvoDetailsLoop
+              }; // for (evolveLoop
             }; // if (typeof evoData
             //if (typeof evoData['evolution_details'][0] != 'undefined') { console.table(evoData['evolution_details'][0]) };
             var evoPhraseCnt = evoChainNarrative.length;
@@ -4275,27 +4267,27 @@ function apiPOKEMONcb(apiCall,callback) {
                 let reached = -1;
                 for (nestLoop = 0; nestLoop < evoDataNest['evolution_details'].length; nestLoop++) {
                   if (typeof evoDataNest['evolution_details'][nestLoop] != 'undefined') {
-                    for (pokeEvoDetailsLoop = 0; pokeEvoDetailsLoop < pokeEvoDetails.length; pokeEvoDetailsLoop++) {
-                      var holder = evoDataNest['evolution_details'][nestLoop][pokeEvoDetails[pokeEvoDetailsLoop]];
+                    for (evolveLoop = 0; evolveLoop < POKE_DETAILS.length; evolveLoop++) {
+                      var holder = evoDataNest['evolution_details'][nestLoop][POKE_DETAILS[evolveLoop]];
                       if (typeof holder != 'undefined'  && holder != null && holder != '') {
                         if (typeof holder == 'object') { holder = holder.name };
                         holder = '' + holder;
                         if (holder != '-1') {holder = holder.replace(/-/g, ' ')};
                         holder = strTitleCase(holder);
-                        if (pokeEvoDetails[pokeEvoDetailsLoop] == 'trigger') {
+                        if (POKE_DETAILS[evolveLoop] == 'trigger') {
                           evoNarrative = holder;
                         } else {
-                          if (pokeEvoDetails[pokeEvoDetailsLoop] == 'relative_physical_stats') {
+                          if (POKE_DETAILS[evolveLoop] == 'relative_physical_stats') {
                             if (holder == '1') { holder = 'Attack > Defence' };
                             if (holder == '-1') { holder = 'Defence > Attack' };
                           };
                           if (holder == 'True') { holder = 'while raining'};
-                          holder = pokeEvoPrefix[pokeEvoDetailsLoop] + holder + pokeEvoSuffix[pokeEvoDetailsLoop];
+                          holder = POKE_PREFIX[evolveLoop] + holder + POKE_SUFFIX[evolveLoop];
                           evoChainNarrative.push(holder);
                         };
-                        //console.log("DEBUG [apiPOKEMONcb]> Evolution parameters (nested): " + pokeEvoDetails[pokeEvoDetailsLoop] + ' = ' + holder);
+                        //console.log("DEBUG [apiPOKEMONcb]> Evolution parameters (nested): " + POKE_DETAILS[evolveLoop] + ' = ' + holder);
                       }; // if (typeof holder
-                    }; // for (pokeEvoDetailsLoop
+                    }; // for (evolveLoop
                   }; // if (typeof evoDataNest
                   reached = nestLoop;
                 }; // for (nestLoop
@@ -4360,7 +4352,7 @@ function apiPOKEMONcb(apiCall,callback) {
               };
             }; // for (evoLoop = 0
           }; // if (evoChainCnt == 0)
-          pokeEvolution.push({
+          POKE_EVOLVE.push({
             "Evolution URL": apiCall,
             "Evolution Narrative": evoSequence
           }); //
@@ -4395,7 +4387,7 @@ function apiPOKEMONcb(apiCall,callback) {
             var male_proportion = 100 - female_proportion;
             gender = '♀️' + female_proportion.toFixed(1) + '% ♂️' + male_proportion.toFixed(1) + '%'; //ToFixed is string
           }
-          pokeSpecies.push({
+          POKE_SPECIES.push({
             "Species URL": apiCall,
             "Description": description,
             "Egg Groups": eggs,
@@ -4408,9 +4400,9 @@ function apiPOKEMONcb(apiCall,callback) {
             "Base Happiness": poke.base_happiness,
             "Capture Rate": poke.capture_rate,
             "Evolution URL": poke.evolution_chain.url
-          }); // pokeSpecies.push
+          }); // POKE_SPECIES.push
           //console.log("DEBUG [apiPOKEMONcb]> Species: \n");
-          //console.table(pokeSpecies[pokeSpecies.length - 1])
+          //console.table(POKE_SPECIES[POKE_SPECIES.length - 1])
           callback();
         } else { // pokemon URL
           let poke = JSON.parse(body);
@@ -4420,7 +4412,7 @@ function apiPOKEMONcb(apiCall,callback) {
           abilities = abilities.replace(/,([^,]*)$/, ' &$1');
           let moves = poke.moves.map((move) => strTitleCase(move.move.name)).join(', ');
           moves = moves.replace(/,([^,]*)$/, ' &$1');
-          pokeDex.push({
+          POKEDEX.push({
             "ID": poke.id,
             "Name": poke.species.name,
             "Species URL": poke.species.url,
@@ -4442,9 +4434,9 @@ function apiPOKEMONcb(apiCall,callback) {
             "Stats": '',
             "Species Info": '',
             "Evolution Narrative": ''
-          }); // pokeDex.push
+          }); // POKEDEX.push
           //console.log("DEBUG [apiPOKEMONcb]> Pokemon: \n");
-          //console.table(pokeDex[pokeDex.length - 1]);
+          //console.table(POKEDEX[POKEDEX.length - 1]);
           callback();
         }; // else { // pokemon URL
       }; // if (body == 'Not Found')
