@@ -4018,7 +4018,7 @@ function deliverPokemon(eventPoke,bSuccess,bRandom,idPoke,pokeSource){
   console.log("INFO [deliverPokemon]> Request: Pokedex " + pokeSource);
   if (bSuccess) {
     if (bRandom) {
-      txtStart = 'Picked this one instead:\n\n' + pokeDex[idPoke]['Stats'];
+      txtStart = 'Picked this one instead:\n\n' + POKEDEX[idPoke]['Stats'];
     } else {
       txtStart = POKEDEX[idPoke]['Stats'];
     };
