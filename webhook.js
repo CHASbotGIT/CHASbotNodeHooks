@@ -4384,7 +4384,7 @@ function apiPOKEMONcb(apiCall,callback) {
           callback();
         } else if (apiCall.includes('species')) {
           let poke = JSON.parse(body);
-          let description = 'No description'
+          let description = 'No Description';
           let flavCount = poke.flavor_text_entries.length;
           let flavLoop = 0;
           for (flavLoop = 0; flavLoop < flavCount; flavLoop++) {
