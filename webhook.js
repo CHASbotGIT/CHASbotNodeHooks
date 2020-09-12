@@ -4185,10 +4185,13 @@ console.log('============================ CLEAN DOWN x1')
       } else {
         nestAPI = 1; // first API call unsuccessful
       }; // else
+
+      console.log("ERROR [lookupPokemon]> No POKeMON found: " + pokemonID + ' [API sequence failed at step ' + nestAPI + ']');
+      // Failed one of the APIs
+      // SOZ
+
     }); // apiPOKEMONcb(apiURL
-    // Failed one of the APIs
-    // SOZ
-    console.log("ERROR [lookupPokemon]> No POKeMON found: " + pokemonID + ' [API sequence failed at step ' + nestAPI + ']');
+
   } else { // if (catchEmAll(pokemonID) == -1)
     // NOW PULL TRIGGER
     // NB Random
