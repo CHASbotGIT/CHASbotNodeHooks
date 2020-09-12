@@ -4148,16 +4148,22 @@ function lookupPokemon(eventPoke,pokemonID){
                   nestAPI = 3; // Third API call unsuccessful
                   pokeDex.splice(catchEm,1); // Clean out first API result from Pokedex
                   pokeSpecies.splice(idSpecies,1); // Clean out second API result from Species
+                  console.log("DEBUG [lookupPokemon]> Unsuccessful after third API call");
+                  return;
                 }; // if (idEvo != -1)... with API
               }); // apiPOKEMONcb(pokeSpecies[idSpecies]
             }; // if (idEvo != -1)... without API
           } else {
             nestAPI = 2; // Second API call unsuccessful
             pokeDex.splice(catchEm,1); // Clean out first API result from Pokedex
+            console.log("DEBUG [lookupPokemon]> Unsuccessful after second API call");
+            return;
           }; // else
         }); // apiPOKEMONcb(pokeDex[catchEm]
       } else {
         nestAPI = 1; // first API call unsuccessful
+        console.log("DEBUG [lookupPokemon]> Unsuccessful after first API call");
+        return;
       }; // else
     }); // apiPOKEMONcb(apiURL
   } else { // if (catchEmAll(pokemonID) == -1) i.e. In PokeDex
@@ -4170,7 +4176,6 @@ function lookupPokemon(eventPoke,pokemonID){
     console.log("DEBUG [lookupPokemon]> Evolution:\n" + pokeDex[catchEm]['Evolution Narrative']);
     return;
   };
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ',nestAPI);
 }
 
 // evo test cases 312, 67, 362, 116, 41, 268, 47
