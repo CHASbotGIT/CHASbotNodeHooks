@@ -4041,9 +4041,6 @@ function lookupPokemon(eventPoke,pokemonID){
     }; // if (pokeInt > 0
   }; // if (pokemonID
   let catchEm = catchEmAll(pokemonID);
-
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ',catchEmAll(pokemonID));
-
   if (catchEm == -1) { // Not in pokedex - search API
     let apiURL = URL_API_POKEMON + pokemonID + "/";
     apiPOKEMONcb(apiURL, function(){
@@ -4116,7 +4113,7 @@ function lookupPokemon(eventPoke,pokemonID){
             let idEvo = -1;
             let matchLoop = 0;
             for (matchLoop = 0; matchLoop < pokeEvolution.length; matchLoop++) {
-              if (pokeEvolution[matchLoop]["Evolution Narrative"] == pokeSpecies[idSpecies]['Evolution URL']){
+              if (pokeEvolution[matchLoop]["Evolution URL"] == pokeSpecies[idSpecies]['Evolution URL']){
                 idEvo = matchLoop;
                 break;
               };
