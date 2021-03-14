@@ -2443,7 +2443,7 @@ function deliverPokemon(eventPoke,bSuccess,bRandom,idPoke,pokeSource){
 // Post Functions - Prep Responses For Delivery
 // ============================================
 function postImage(postEvent,image_url,plusText,passText) {
-  //console.log("DEBUG [postImage]> Input: " + image_url);
+  console.log("DEBUG [postImage]> Input: " + image_url);
   let imgTemplate = {
     attachment: {
       type: "image",
