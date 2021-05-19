@@ -20,5 +20,6 @@ workplace$https://groups/733856763459096/files/$Come and join the Workplace Help
 plan$https://s3-eu-west-1.amazonaws.com/chas-assets/downloads/3958+CHAS+Infographic-Plan-download.pdf$The CHAS plan explains how we intend to reach every child and family in Scotland who needs our support. Please read it.$📖 CHAS Plan
 vol_opportunities$https://www.chas.org.uk/get-involved/volunteer/volunteer-opportunities$If you check the CHAS website you are able to search all available volunteering opportunities around Scotland. If you need any further details you can contact volunteering@chas.org.uk$CHAS Volunteering
 contact_info$https://www.chas.org.uk/about-us/contact-us$If you check the CHAS website you will find contact details for all our offices, shops, and care services.$CHAS Contact Info
+// contact_info$https://www.chas.org.uk/about-us/contact-us$If you check the CHAS website you will find contact details for all our offices, shops, and care services.$CHAS Contact Info
 // Pic Only
 spam$https://thumbs2.imgbox.com/7f/b6/n0IMRWtM_t.jpg
