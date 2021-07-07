@@ -22,6 +22,6 @@ vol_opportunities$https://www.chas.org.uk/get-involved/volunteer/volunteer-oppor
 contact_info$https://www.chas.org.uk/about-us/contact-us$If you check the CHAS website you will find contact details for all our offices, shops, and care services.$CHAS Contact Info
 chas_expenses_hook$https://work-75777966.workplace.com/groups/1707079182933694/permalink/2580795685562035/$Here is all the information you need to claim expenses.$Expenses
 chas_experiment_hook$https://www.bbc.co.uk$If you check the BBC website you will get....news etc.$BBC
-chas_learnpro_hook$http://community.learnprouk.com$To access your Learnpro account please click the button below.You can reset your password by using the link below and clicking on forgotten login.$Learnpro
+chas_learnpro_hook$http://community.learnprouk.com$To access your Learnpro account please click the button below. You can reset your password by using the link below and clicking on forgotten login.$Learnpro
 // Pic Only
 spam$https://thumbs2.imgbox.com/7f/b6/n0IMRWtM_t.jpg
