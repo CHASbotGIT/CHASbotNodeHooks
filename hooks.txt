@@ -26,7 +26,7 @@ chas_volhandbook_hook$https://work-75777966.workplace.com/groups/170707918293369
 chas_corelearning_hook$https://community.learnprouk.com$To access the Learnpro site click the button below. You can reset your password using the button below and clicking on forgotten login.$Learnpro
 chas_volpolicy_hook$https://work-75777966.workplace.com/groups/1707079182933694/permalink/2590256817949255/$You can find the volunteering policy here.$Policy
 chas_idguidelines_hook$https://work-75777966.workplace.com/groups/1707079182933694/permalink/1856903014617976/$All volunteers are able to get an ID card. You can find the ID photo guidelines here with more information on how to take your photo.$ID guidelines
-chas_workplacenotifications_hook$https://work-75777966.workplace.com/groups/733856763459096/permalink/832018483642923/$You can find out how to turn off Workplace notifications here.$Disable notifications
+chas_workplacenotifications_hook$https://work-75777966.workplace.com/groups/733856763459096/permalink/832018483642923/$You can find out how to turn off Workplace notifications here.$Disable notifications.
 // Pic Only
 spam$https://thumbs2.imgbox.com/7f/b6/n0IMRWtM_t.jpg
 
