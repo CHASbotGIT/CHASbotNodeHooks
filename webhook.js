@@ -1652,10 +1652,6 @@ CHASbot.post('/webhook', (req, res) => {
           }; // for
           // Trigger priority increases down list i.e. if multiple tirggers, lower ones trump higher
           // ****** CHAS THINGS *******
-          // CHAS logo
-          position_in_analyse_text = analyse_text.search(TRIGGER_CHAS_LOGO) + 1;
-          //console.log("DEBUG [postWebhook]> " + TRIGGER_CHAS_LOGO + " search result: " + position_in_analyse_text);
-          if (position_in_analyse_text > 0) { trigger_path = TRIGGER_CHAS_LOGO };
           // CHAS alphabet
           let alpha = '';
           let alpha_1st = true;
