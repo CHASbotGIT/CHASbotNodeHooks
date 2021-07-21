@@ -28,6 +28,7 @@ chas_volpolicy_hook$https://work-75777966.workplace.com/groups/1707079182933694/
 chas_idguidelines_hook$https://work-75777966.workplace.com/groups/1707079182933694/permalink/1856903014617976/$All volunteers are able to get an ID card. You can find the ID photo guidelines here with more information on how to take your photo.$ID guidelines
 chas_workplacenotifications_hook$https://work-75777966.workplace.com/groups/733856763459096/permalink/832018483642923/$You can find out how to turn off Workplace notifications here.$Notifications
 chas_workplaceprocedures_hook$https://work-75777966.workplace.com/groups/733856763459096/permalink/1836965106481584/$You can find guidelines on how to use Workplace here.$Workplace guidance
+chas_welcomepack_hook$https://work-75777966.workplace.com/groups/1707079182933694/permalink/2599906923650911/$You can find all of the welcome pack documents here.$Welcome pack
 // Pic Only
 spam$https://thumbs2.imgbox.com/7f/b6/n0IMRWtM_t.jpg
 
