@@ -17,7 +17,7 @@
 // URL Button
 group_docs$https://groups/1707079182933694$For an answer to this and other similar questions, visit and join the group that stores the library of all relevant CHAS forms, documents and policies.$📚 Useful Documents
 workplace$https://groups/733856763459096/files/$Come and join the Workplace Help Group, for answers to this and other questions.$🆘 Workplace Help
-plan$https://s3-eu-west-1.amazonaws.com/chas-assets/downloads/3958+CHAS+Infographic-Plan-download.pdf$The CHAS plan explains how we intend to reach every child and family in Scotland who needs our support. Please read it.$📖 CHAS Plan
+plan$https://www.chas.org.uk/about-us/our-vision/our-publications#CHAS-Plan$The CHAS plan explains how we intend to reach every child and family in Scotland who needs our support. Please read it.$📖 CHAS Plan
 vol_opportunities$https://www.chas.org.uk/get-involved/volunteer/volunteer-opportunities$If you check the CHAS website you are able to search all available volunteering opportunities around Scotland. If you need any further details you can contact volunteering@chas.org.uk$CHAS Volunteering
 contact_info$https://www.chas.org.uk/about-us/contact-us$If you check the CHAS website you will find contact details for all our offices, shops, and care services.$CHAS Contact Info
 chas_expenses_hook$https://work-75777966.workplace.com/groups/1707079182933694/permalink/2580795685562035/$Here is all the information you need to claim expenses.$Expenses
