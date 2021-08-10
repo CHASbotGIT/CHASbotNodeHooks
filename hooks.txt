@@ -32,7 +32,7 @@ chas_welcomepack_hook$https://work-75777966.workplace.com/groups/170707918293369
 chas_brandguidelines_hook$https://work-75777966.workplace.com/groups/1707079182933694/permalink/2599911003650503/$You can find the CHAS brand guidelines here.$Brand guidelines
 // Pic Only
 spam$https://thumbs2.imgbox.com/7f/b6/n0IMRWtM_t.jpg
-CHAS_volunteerstrategy_hook$https://www.chas.org.uk/about-us/our-vision/our-publications#Volunteering-Strategy$You can find the CHAS Volunteering Strategy here$Volunteering Strategy
+CHAS_volunteerstrategy_hook$https://www.chas.org.uk/about-us/our-vision/our-publications#Volunteering-Strategy/$You can find the CHAS Volunteering Strategy here$Volunteering Strategy
 
 
 
