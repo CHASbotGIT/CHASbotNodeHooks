@@ -32,6 +32,7 @@ chas_welcomepack_hook$https://work-75777966.workplace.com/groups/170707918293369
 chas_brandguidelines_hook$https://work-75777966.workplace.com/groups/1707079182933694/permalink/2599911003650503/$You can find the CHAS brand guidelines here.$Brand guidelines
 chas_volunteerstrategy_hook$https://www.chas.org.uk/about-us/our-vision/our-publications#Volunteering-Strategy/$You can find the CHAS Volunteering Strategy here$Strategy
 chas_incidentform_hook$https://work-75777966.workplace.com/groups/1707079182933694/permalink/2436310196677252/$You can find the incident reporting form here$Incident Form
+chas_youtube_hook$https://www.youtube.com/c/supportCHAS$CHAS has it's own You Tube channel. You can view this here$You Tube
 spam$https://thumbs2.imgbox.com/7f/b6/n0IMRWtM_t.jpg
 // Pic Only
 
