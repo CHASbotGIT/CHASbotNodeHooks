@@ -33,7 +33,7 @@ chas_brandguidelines_hook$https://work-75777966.workplace.com/groups/17070791829
 chas_volunteerstrategy_hook$https://www.chas.org.uk/about-us/our-vision/our-publications#Volunteering-Strategy/$You can find the CHAS Volunteering Strategy here$Strategy
 chas_incidentform_hook$https://work-75777966.workplace.com/groups/1707079182933694/permalink/2436310196677252/$You can find the incident reporting form here$Incident Form
 chas_youtube_hook$https://www.youtube.com/c/supportCHAS$CHAS has it's own You Tube channel. You can view this here$You Tube
-astridjess_hook$https://work-75777966.workplace.com/permalink.php?story_fbid=1053992768669406&id=100021760788910$The logo files
+astridjess_hook$https://work-75777966.workplace.com/permalink.php?story_fbid=1053992768669406&id=100021760788910$The logo files are very large and come in different format depending on how they are used. If you need a logo please contact commsupport@chas.org.uk and please include a description of how the logo will be used.
 spam$https://thumbs2.imgbox.com/7f/b6/n0IMRWtM_t.jpg
 // Pic Only
 
