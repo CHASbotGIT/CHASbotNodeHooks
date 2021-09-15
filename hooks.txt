@@ -35,7 +35,7 @@ chas_incidentform_hook$https://work-75777966.workplace.com/groups/17070791829336
 chas_youtube_hook$https://www.youtube.com/c/supportCHAS$CHAS has it's own You Tube channel. You can view this here$You Tube
 astridjess_hook$https://work-75777966.workplace.com/permalink.php?story_fbid=1053992768669406&id=100021760788910$The logo files are very large and come in different format depending on how they are used. If you need a logo please contact commsupport@chas.org.uk and please include a description of how the logo will be used.
 chas_reportingabsences_hook$https://www.chas.org.uk/about-us/contact-us$If you can't make your shift please contact your line manager in the first instance. If you do not have your line manager's contact number you can find site contact details here:$Contact Details
-chas_complaints_hook$https://www.chas.org.uk/about-us/contact-us$If you have any concerns or would like to make a complaint please contact your line manager in the first instance. If you do not have your line manager's contact number you can find site contact details here:$Contact Details
+chas_complaints_hook$https://www.chas.org.uk/about-us/contact-us$If you have any concerns, or would like to make a complaint please contact your line manager in the first instance. If you do not have your line manager's contact number you can find site contact details here:$Contact Details
 spam$https://thumbs2.imgbox.com/7f/b6/n0IMRWtM_t.jpg
 // Pic Only
 
