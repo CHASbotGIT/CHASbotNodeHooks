@@ -37,7 +37,7 @@ astridjess_hook$https://work-75777966.workplace.com/permalink.php?story_fbid=105
 chas_reportingabsences_hook$https://www.chas.org.uk/about-us/contact-us$If you can't make your shift please contact your line manager in the first instance. If you do not have your line manager's contact number you can find site contact details here:$CHAS Contact Info
 chas_complaints_hook$https://www.chas.org.uk/about-us/contact-us$If you have any concerns, or would like to make a complaint please contact your line manager in the first instance. If you do not have your line manager's contact number you can find site contact details here:$CHAS Contact Info
 chas_reportspublications_hook$https://www.chas.org.uk/about-us/our-vision/our-publications$You can find our Annual Report, strategy and research papers here:$Our Publications
-chas_careers_hook$https://chas.current-vacancies.com/v?id=CHILDRENSH&t=CHAS$Great, we are delighted you are interested in working for CHAS. Please visit our recruitment website for all the latest vacancies and to apply online$CHAS Current Vacancies
+chas_careers_hook$https://chas.current-vacancies.com/v?id=CHILDRENSH&t=CHAS$Great, we are delighted you are interested in working for CHAS. Please visit our recruitment website for all the latest vacancies and to apply online.$Current Vacancies
 spam$https://thumbs2.imgbox.com/7f/b6/n0IMRWtM_t.jpg
 // Pic Only
 
