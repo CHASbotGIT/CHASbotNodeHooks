@@ -20,7 +20,7 @@ workplace$https://groups/733856763459096/files/$Come and join the Workplace Help
 plan$https://www.chas.org.uk/about-us/our-vision/our-publications#CHAS-Plan$The CHAS plan explains how we intend to reach every child and family in Scotland who needs our support. Please click here to find out more.$📖 CHAS Plan
 vol_opportunities$https://www.chas.org.uk/get-involved/volunteer/volunteer-opportunities$If you check the CHAS website you are able to search all available volunteering opportunities around Scotland. If you need any further details you can contact volunteering@chas.org.uk$CHAS Volunteering
 contact_info$https://www.chas.org.uk/about-us/contact-us$If you check the CHAS website you will find contact details for all our offices, shops, and care services.$CHAS Contact Info
-chas_expenses_hook$https://work-75777966.workplace.com/groups/1707079182933694/permalink/2580795685562035/$Here is all the information you need to claim expenses.$Expenses
+chas_expenses_hook$https://work-75777966.workplace.com/work/knowledge/3019262268317288/$Here is the the expenses claim form. Please make sure you add a scan of your receipts or a photo of your receipts with your claim.$Expenses
 chas_experiment_hook$https://www.bbc.co.uk$If you check the BBC website you will get....news etc.$BBC
 chas_volhandbook_hook$https://work-75777966.workplace.com/groups/1707079182933694/permalink/2590256614615942/$You can find the volunteering handbook here.$Handbook
 chas_corelearning_hook$https://community.learnprouk.com$To access the Learnpro site click the button below. You can reset your password using the button below and clicking on forgotten login.$Learnpro
