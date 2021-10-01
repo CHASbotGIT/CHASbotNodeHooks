@@ -24,7 +24,7 @@ chas_expenses_hook$https://work-75777966.workplace.com/work/knowledge/3019262268
 chas_experiment_hook$https://www.bbc.co.uk$If you check the BBC website you will get....news etc.$BBC
 chas_volhandbook_hook$https://work-75777966.workplace.com/work/knowledge/3019262268317288$You can find the volunteering handbook here.$Handbook
 chas_corelearning_hook$https://community.learnprouk.com$To access the Learnpro site click the button below. You can reset your password using the button below and clicking on forgotten login.$Learnpro
-chas_volpolicy_hook$https://work-75777966.workplace.com/groups/1707079182933694/permalink/2590256817949255/$You can find the volunteering policy here.$Policy
+chas_volpolicy_hook$https://work-75777966.workplace.com/work/knowledge/3022544807989034$You can find the volunteering policy here.$Policy
 chas_workplacenotifications_hook$https://work-75777966.workplace.com/groups/733856763459096/permalink/832018483642923/$You can find out how to turn off Workplace notifications here.$Notifications
 chas_workplaceprocedures_hook$https://work-75777966.workplace.com/groups/733856763459096/permalink/1836965106481584/$You can find guidelines on how to use Workplace here.$Workplace guidance
 chas_welcomepack_hook$https://work-75777966.workplace.com/work/knowledge/3019262268317288$You can find all of the welcome pack documents (bank details form, volunteer expenses form, emergency contact details form, image consent form, volunteer handbook and ID photo guidelines) here.$Welcome pack
