@@ -47,6 +47,7 @@ chas_volunteersurvey_hook$https://work-75777966.workplace.com/work/knowledge/301
 chas_volunteerhighlights_hook$https://work-75777966.workplace.com/work/knowledge/3019250011651847$You can find the most recent Volunteer Highlights Report here$Volunteer Highlights
 chas_infectioncontrol_hook$https://work-75777966.workplace.com/work/knowledge/3022536274656554/edit$Our preventative measures are known as Standard Infection Control Precautions (SICPs). Volunteers who are required to take the infection control module will be expected to familiarise themselves with the standard infection control precautions to reduce the risks of spreading healthcare associated infection. The Infection Control Policy and Standard Infection Control Precaution procedures 01-10 can be found here:$Infection Control
 chas_fundraising_hook$https://work-75777966.workplace.com/work/knowledge/3022545591322289$You can find fundraising resources here. If you do not find what you are looking for or have questions please drop the fundraising team an email at support@chas.org.uk and they will be more than happy to help you.$Fundraising
+chas_internetpolicy_hook$If you are looking for guidance on the use of the internet and email, our policy can be found here. If you have any further questions please email volunteering@chas.org.uk.$Internet Policy
 
 // Pic Only
 
