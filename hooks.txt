@@ -16,7 +16,7 @@
 // HOOKS
 // URL Button
 vol_opportunities$https://www.chas.org.uk/get-involved/volunteer/volunteer-opportunities$All available volunteering opportunities around Scotland can be found on our website. If you have any questions or need any further information please contact the Volunteering Team at volunteering@chas.org.uk$CHAS Volunteering
-contact_info$https://www.chas.org.uk/about-us/contact-us$Contact details for all our offices, shops, and care services can be found on our website. If you can't find what you are looking for please contact the volunteering team at volunteering@chas.org.uk and we will try our very best to put you in contact with the correct person$CHAS Contact Info
+contact_info$https://www.chas.org.uk/about-us/contact-us$Contact details for all our offices, shops, and care services can be found on our website. If you can't find what you are looking for please contact the volunteering team at volunteering@chas.org.uk and we will try our very best to put you in contact with the correct person.$CHAS Contact Info
 chas_expenses_hook$https://work-75777966.workplace.com/work/knowledge/3019262268317288/$You can find the expenses claim form here. Please forward the completed form to volunteering@chas.org.uk stating your name and the location that you volunteer. Please make sure you attach a scan or a photo of your receipts.$Expenses
 chas_experiment_hook$https://www.bbc.co.uk$If you check the BBC website you will get....news etc.$BBC
 chas_volhandbook_hook$https://work-75777966.workplace.com/work/knowledge/3019262268317288$You can find the volunteering handbook here.$Handbook
