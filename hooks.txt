@@ -47,6 +47,7 @@ chas_infectioncontrol_hook$https://work-75777966.workplace.com/work/knowledge/30
 chas_fundraising_hook$https://work-75777966.workplace.com/work/knowledge/3022545591322289$You can find fundraising resources here. If you don't find what you are looking for or if you have any questions please drop the fundraising team an email at support@chas.org.uk and they will be more than happy to help you.$Fundraising
 chas_internetpolicy_hook$https://work-75777966.workplace.com/work/knowledge/3022544807989034$If you are looking for guidance on the use of the internet and email, our policy can be found here. If you have any further questions please email volunteering@chas.org.uk.$Internet Policy
 chas_events_hook$https://www.chas.org.uk/whats-on/events$CHAS events are a vital part of the fundraising that helps us to keep the joy alive for families all over Scotland. There are challenge events going on all year round and you can find more information about them here:$CHAS Events
+chas_christmascards_hook$https://www.chas.org.uk/get-involved/support-us/our-shops$If you would like to buy CHAS Christmas cards, you can find where to buy them here:$Christmas Cards
 
 // Pic Only
 
