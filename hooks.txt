@@ -50,6 +50,7 @@ chas_events_hook$https://www.chas.org.uk/whats-on/events$CHAS events are a vital
 chas_christmascards_hook$https://www.chas.org.uk/get-involved/support-us/our-shops$If you would like to buy CHAS Christmas cards, you can find where to buy them here:$Christmas Cards
 chas_donations_hook$https://www.chas.org.uk/donate$If you want to donate anything to one of our charity shops please get in touch by emailing support@chas.org.uk or phoning 01383 723515 to check where the best place to drop off your donation is. If you want to donate money please click here:$Donate
 chas_volunteerhours_hook$https://work-75777966.workplace.com/work/knowledge/3019250011651847$You can find how many hours were donated by volunteers in the Volunteering Highlights Report which can be found here:$Reports
+chas_alphabet_hook$https://www.chas.org.uk/about-us/our-stories/the-chas-alphabet$The children and families we care for are central to everything we do, including playing a huge part in the creation of our new identity – the CHAS Alphabet. The 68 unique CHAS letters are designed by one of our children. For more information and to buy online please click here. The can also be bought from our Shops:$Alphabet
 
 // Pic Only
 
